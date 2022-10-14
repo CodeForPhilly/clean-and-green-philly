@@ -82,3 +82,9 @@
       from arcpy.sa import *
 
       gun_crime_kde = KernelDensity("recent_gun_crime", "", 50, 5280, "SQUARE_FEET", "", "PLANAR")
+      
+      
+      # https://pro.arcgis.com/en/pro-app/latest/tool-reference/data-management/calculate-field.htm
+      # https://pro.arcgis.com/en/pro-app/latest/tool-reference/data-management/calculate-field-examples.htm
+      # https://desktop.arcgis.com/en/arcmap/10.3/analyze/arcpy-mapping/removelayer.htm
+      
