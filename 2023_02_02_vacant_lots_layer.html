@@ -1,0 +1,2049 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.247">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>vacant_lots_layer</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="2023_02_02_vacant_lots_layer_files/libs/clipboard/clipboard.min.js"></script>
+<script src="2023_02_02_vacant_lots_layer_files/libs/quarto-html/quarto.js"></script>
+<script src="2023_02_02_vacant_lots_layer_files/libs/quarto-html/popper.min.js"></script>
+<script src="2023_02_02_vacant_lots_layer_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="2023_02_02_vacant_lots_layer_files/libs/quarto-html/anchor.min.js"></script>
+<link href="2023_02_02_vacant_lots_layer_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="2023_02_02_vacant_lots_layer_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="2023_02_02_vacant_lots_layer_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="2023_02_02_vacant_lots_layer_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="2023_02_02_vacant_lots_layer_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+<section id="imports" class="level1">
+<h1>Imports</h1>
+<p>First, we’ll import the necessary libraries.</p>
+<div class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> requests</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> geopandas <span class="im">as</span> gpd</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> shapely.geometry <span class="im">import</span> Polygon</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> datetime</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> io</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> zipfile</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> rasterio</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio.plot <span class="im">import</span> show</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sklearn</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.neighbors <span class="im">import</span> KernelDensity</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> collections</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="co"># in response to an error importing collections, I used this: https://stackoverflow.com/questions/72032032/importerror-cannot-import-name-iterable-from-collections-in-python</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections.abc <span class="im">import</span> Iterable</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>collections.Iterable <span class="op">=</span> collections.abc.Iterable</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>collections.Mapping <span class="op">=</span> collections.abc.Mapping</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>collections.MutableSet <span class="op">=</span> collections.abc.MutableSet</span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>collections.MutableMapping <span class="op">=</span> collections.abc.MutableMapping</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> mapclassify</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Next, we’ll query the City of Philadelphia data via the ArcGIS REST API using the <code>requests</code> library. We’ll also use the <code>json</code> library to parse the response.</p>
+<p>Finally, we’ll use the <code>geopandas</code> library to create a geodataframe from the response.</p>
+<p>We have three different datasets to import from the City’s ArcGIS server. These are:</p>
+<section id="vacant-land" class="level3">
+<h3 class="anchored" data-anchor-id="vacant-land">1. Vacant Land</h3>
+<div class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the URL for the Vacant_Indicators_Land feature service</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>land_url <span class="op">=</span> <span class="st">'https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Vacant_Indicators_Land/FeatureServer/0/query'</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the parameters for the Vacant_Indicators_Land API request</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>land_params <span class="op">=</span> {</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'where'</span>: <span class="st">'1=1'</span>,</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'outFields'</span>: <span class="st">'*'</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'returnGeometry'</span>: <span class="st">'true'</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'f'</span>: <span class="st">'json'</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Make the Vacant_Indicators_Land API request</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>land_response <span class="op">=</span> requests.get(land_url, params<span class="op">=</span>land_params)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if the Vacant_Indicators_Land request was successful</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> land_response.status_code <span class="op">==</span> <span class="dv">200</span>:</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert the Vacant_Indicators_Land JSON data to a geopandas geodataframe; convert to CRS 3857</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    land_data <span class="op">=</span> land_response.json()</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert the JSON data to a pandas dataframe</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    land_df <span class="op">=</span> pd.DataFrame(land_data[<span class="st">'features'</span>])</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># separate the attributes column into one column per attribute</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    land_df <span class="op">=</span> pd.concat([land_df.drop([<span class="st">'attributes'</span>], axis<span class="op">=</span><span class="dv">1</span>), land_df[<span class="st">'attributes'</span>].<span class="bu">apply</span>(pd.Series)], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'Vacant_Indicators_Land Request failed with status code:'</span>, land_response.status_code)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="co"># make the `geometry` column a shapely geometry object</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>land_df[<span class="st">'geometry'</span>] <span class="op">=</span> land_df[<span class="st">'geometry'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: Polygon(x[<span class="st">'rings'</span>][<span class="dv">0</span>]))</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a> <span class="co"># convert the pandas dataframe to a geopandas geodataframe</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>land_gdf <span class="op">=</span> gpd.GeoDataFrame(land_df, geometry<span class="op">=</span><span class="st">'geometry'</span>, crs<span class="op">=</span><span class="st">'EPSG:3857'</span>)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>land_gdf.to_crs(epsg<span class="op">=</span><span class="dv">2272</span>, inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="vacant-buildings" class="level3">
+<h3 class="anchored" data-anchor-id="vacant-buildings">2. Vacant Buildings</h3>
+<div class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the URL for the Vacant_Indicators_Bldg feature service</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>bldg_url <span class="op">=</span> <span class="st">'https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Vacant_Indicators_Bldg/FeatureServer/0/query'</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the parameters for the Vacant_Indicators_Bldg API request</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>bldg_params <span class="op">=</span> {</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'where'</span>: <span class="st">'1=1'</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'outFields'</span>: <span class="st">'*'</span>,</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'returnGeometry'</span>: <span class="st">'true'</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'f'</span>: <span class="st">'json'</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Make the Vacant_Indicators_Bldg API request</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>bldg_response <span class="op">=</span> requests.get(bldg_url, params<span class="op">=</span>bldg_params)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if the Vacant_Indicators_Bldg request was successful</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> bldg_response.status_code <span class="op">==</span> <span class="dv">200</span>:</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert the Vacant_Indicators_Bldg JSON data to a geopandas geodataframe; convert to CRS 3857</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    bldg_data <span class="op">=</span> bldg_response.json()</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert the JSON data to a pandas dataframe</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    bldg_df <span class="op">=</span> pd.DataFrame(bldg_data[<span class="st">'features'</span>])</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># separate the attributes column into one column per attribute</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    bldg_df <span class="op">=</span> pd.concat([bldg_df.drop([<span class="st">'attributes'</span>], axis<span class="op">=</span><span class="dv">1</span>), bldg_df[<span class="st">'attributes'</span>].<span class="bu">apply</span>(pd.Series)], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'Vacant_Indicators_bldg Request failed with status code:'</span>, bldg_response.status_code)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co"># make the `geometry` column a shapely geometry object</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>bldg_df[<span class="st">'geometry'</span>] <span class="op">=</span> bldg_df[<span class="st">'geometry'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: Polygon(x[<span class="st">'rings'</span>][<span class="dv">0</span>]))</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a> <span class="co"># convert the pandas dataframe to a geopandas geodataframe</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>bldg_gdf <span class="op">=</span> gpd.GeoDataFrame(bldg_df, geometry<span class="op">=</span><span class="st">'geometry'</span>, crs<span class="op">=</span><span class="st">'EPSG:3857'</span>)</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>bldg_gdf.to_crs(epsg<span class="op">=</span><span class="dv">2272</span>, inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="now-combine-the-two-datasets-in-preparation-for-string-cleaning." class="level3">
+<h3 class="anchored" data-anchor-id="now-combine-the-two-datasets-in-preparation-for-string-cleaning.">Now, combine the two datasets in preparation for string cleaning.</h3>
+<div class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>columns <span class="op">=</span> [<span class="st">'geometry'</span>, <span class="st">'ADDRESS'</span>, <span class="st">'BLDG_DESC'</span>,</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>       <span class="st">'OPA_ID'</span>,<span class="st">'COUNCILDISTRICT'</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>       <span class="st">'ZIPCODE'</span>,<span class="st">'OWNER1'</span>, <span class="st">'OWNER2'</span>]</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># reduce gdfs to only the columns we want</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>land_gdf <span class="op">=</span> land_gdf[columns]</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>bldg_gdf <span class="op">=</span> bldg_gdf[columns]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>land_gdf[<span class="st">'type'</span>] <span class="op">=</span> <span class="st">'Lot'</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>bldg_gdf[<span class="st">'type'</span>] <span class="op">=</span> <span class="st">'Building'</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># bind the two geodataframes together using pandas.concat</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>full_gdf <span class="op">=</span> pd.concat([land_gdf, bldg_gdf], axis<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="now-well-apply-string-cleaning-to-the-owner1-and-owner2-columns-to-identify-public-vs.-private-ownership." class="level3">
+<h3 class="anchored" data-anchor-id="now-well-apply-string-cleaning-to-the-owner1-and-owner2-columns-to-identify-public-vs.-private-ownership.">Now we’ll apply string cleaning to the OWNER1 and OWNER2 columns to identify public vs.&nbsp;private ownership.</h3>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>public_owners <span class="op">=</span> [<span class="st">'PHILADELPHIA LAND BANK'</span>,</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA HOUSING AUTH'</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>                <span class="st">'CITY OF PHILA'</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REDEVELOPMENT AUTHORITY OF PHILADELPHIA'</span>,</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>                <span class="st">'CITY OF PHILADELPHIA'</span>,</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>                <span class="st">'DEPT OF PUBLC PROP; CITY OF PHILA'</span>,</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>                <span class="st">'DEPT OF PUBLIC PROP; CITY OF PHILA'</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>                <span class="st">'DEPT PUB PROP; CITY OF PHILA'</span>,</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REDEVELOPMENT AUTHORITY OF PHILA'</span>,</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILA REDEVELOPMENT AUTH'</span>,</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA LAND INVESTM'</span>,</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REDEVELOPMENT AUTHORITY O'</span>,</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA REDEVELOPMEN'</span>,</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILA HOUSING AUTHORITY'</span>,</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>                <span class="st">'KENSINGTON HOUSING AUTHOR'</span>,</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>                <span class="st">'DEVELOPMENT CORPORATION; PHILADELPHIA HOUSING'</span>,</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILA REDEVELOPMENT AUTHO'</span>,</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>                <span class="st">'DEPT OF PUB PROP; CITY OF PHILA'</span>,</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILA HOUSING DEV CORP'</span>,</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>                <span class="st">'DEP OF PUB PROP; CITY OF PHILA'</span>,</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REDEVELOPMENT AUTHORITY'</span>,</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>                <span class="st">'COMMONWEALTH OF PA'</span>,</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>                <span class="st">'COMMONWEALTH OF PENNA'</span>,</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>                <span class="st">'DEPT OF PUBLIC PROP; CITY OF PHILADELPHIA'</span>,</span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>                <span class="st">'DEPT PUBLIC PROP R E DIV; CITY OF PHILA'</span>,</span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PUBLIC PROP DIV; CITY OF PHILA'</span>,</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PUBLIC PROP REAL ESTATE; CITY OF PHILA'</span>,</span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REAL ESTATE DIV; CITY OF PHILA'</span>,</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REAL ESTATE DIVISION; CITY OF PHILA'</span>,</span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>                <span class="st">'URBAN DEVELOPMENT; SECRETARY OF HOUSING'</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>                <span class="st">'URBAN DEVELOPMENT; SECRETARY OF HOUSING AND'</span>,</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA REDEVELOPMENT AUTHORITY'</span>,</span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA REDEVELOPMENT AUTH'</span>,</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA HOUSING AUTHORITY'</span>,</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA LAND BANK'</span>,</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REDEVELOPMENT AUTHORITY OF PHILADELPHIA'</span>,</span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA HOUSING AUTHORITY'</span>,</span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>                <span class="st">'CITY OF PHILADELPHIA'</span>,</span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>                <span class="st">'CITY OF PHILADELPHIA DEPARTMENT OF PUBLIC PROPERTY'</span>,</span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REDEVELOPMENT AUTHORITY OF PHILADELPHIA'</span>,</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA LAND INVESTMENT'</span>,</span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA REDEVELOPMENT AUTHORITY'</span>,</span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA HOUSING AUTHORITY'</span>,</span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>                <span class="st">'KENSINGTON HOUSING AUTHORITY'</span>,</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA HOUSING DEVELOPMENT CORPORATION'</span>,</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REDEVELOPMENT AUTHORITY OF PHILADELPHIA'</span>,</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>                <span class="st">'CITY OF PHILADELPHIA DEPARTMENT OF PUBLIC PROPERTY'</span>,</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA HOUSING DEVELOPMENT CORPORATION'</span>,</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>                <span class="st">'CITY OF PHILADELPHIA DEPARTMENT OF PUBLIC PROPERTY'</span>,</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REDEVELOPMENT AUTHORITY OF PHILADELPHIA'</span>,</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>                <span class="st">'COMMONWEALTH OF PENNSYLVANIA'</span>,</span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>                <span class="st">'CITY OF PHILADELPHIA DEPARTMENT OF PUBLIC PROPERTY'</span>,</span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>                <span class="st">'SECRETARY OF HOUSING AND URBAN DEVELOPMENT'</span>,</span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>                <span class="st">'REDEVELOPMENT AUTHORITY OF PHILADELPHIA'</span>,</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PHILADELPHIA LAND INVESTMENT'</span>,</span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>                <span class="st">'CITY OF PHILADELPHIA DEPARTMENT OF PUBLIC PROPERTY'</span>,</span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>                <span class="st">'PENNDOT'</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a><span class="co"># return unique public_owners</span></span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>public_owners <span class="op">=</span> <span class="bu">list</span>(<span class="bu">set</span>(public_owners))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new column that combines the OWNER1 and OWNER2 columns according to the following rules:</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="co"># if OWNER1 is not null and OWNER2 is null, then the new column is OWNER1</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co"># if OWNER1 is null and OWNER2 is not null, then the new column is OWNER2</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co"># if OWNER2 starts with a preposition, then the new column is OWNER1 + OWNER2 separated by a space</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># if OWNER2 does not start with a preposition, then the new column is OWNER2 + OWNER1 separated by a se</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="co"># define a function to check if a string starts with a preposition</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> starts_with_preposition(string):</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    prepositions <span class="op">=</span> [<span class="st">'a'</span>, <span class="st">'an'</span>, <span class="st">'and'</span>, <span class="st">'as'</span>, <span class="st">'at'</span>, <span class="st">'but'</span>, <span class="st">'by'</span>, <span class="st">'for'</span>, <span class="st">'from'</span>, <span class="st">'in'</span>, <span class="st">'into'</span>, <span class="st">'nor'</span>, <span class="st">'of'</span>, <span class="st">'on'</span>, <span class="st">'or'</span>, <span class="st">'so'</span>, <span class="st">'the'</span>, <span class="st">'to'</span>, <span class="st">'up'</span>, <span class="st">'yet'</span>]</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> string.split(<span class="st">' '</span>)[<span class="dv">0</span>].lower() <span class="kw">in</span> prepositions:</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">True</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">False</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="co"># define a function to combine the OWNER1 and OWNER2 columns</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> combine_owners(row):</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> pd.isnull(row[<span class="st">'OWNER1'</span>]) <span class="kw">and</span> pd.isnull(row[<span class="st">'OWNER2'</span>]):</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> pd.isnull(row[<span class="st">'OWNER1'</span>]) <span class="kw">and</span> <span class="kw">not</span> pd.isnull(row[<span class="st">'OWNER2'</span>]):</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> row[<span class="st">'OWNER2'</span>]</span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> <span class="kw">not</span> pd.isnull(row[<span class="st">'OWNER1'</span>]) <span class="kw">and</span> pd.isnull(row[<span class="st">'OWNER2'</span>]):</span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> row[<span class="st">'OWNER1'</span>]</span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">elif</span> starts_with_preposition(row[<span class="st">'OWNER2'</span>]):</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> row[<span class="st">'OWNER1'</span>] <span class="op">+</span> <span class="st">' '</span> <span class="op">+</span> row[<span class="st">'OWNER2'</span>]</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> row[<span class="st">'OWNER2'</span>] <span class="op">+</span> <span class="st">'; '</span> <span class="op">+</span> row[<span class="st">'OWNER1'</span>]</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a><span class="co"># apply the combine_owners function to the full_gdf dataframe</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>full_gdf[<span class="st">'OWNER'</span>] <span class="op">=</span> full_gdf.<span class="bu">apply</span>(combine_owners, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a><span class="co"># if OWNER is 'PHILADELPHIA HOUSING AUTH' or 'PHILA HOUSING AUTHORITY', replace with 'PHILADELPHIA HOUSING AUTHORITY'</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> <span class="st">'PHILADELPHIA HOUSING AUTH'</span>, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'PHILADELPHIA HOUSING AUTHORITY'</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> <span class="st">'PHILA HOUSING AUTHORITY'</span>, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'PHILADELPHIA HOUSING AUTHORITY'</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="co"># redevelopment authority typos</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>redev_owner_variations <span class="op">=</span> [<span class="st">'REDEVELOPMENT AUTHORITY OF PHILA'</span>, <span class="st">'PHILA REDEVELOPMENT AUTH'</span>,</span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="st">'REDEVELOPMENT AUTHORITY O'</span>, <span class="st">'PHILADELPHIA REDEVELOPMEN'</span>,</span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="st">'PHILA REDEVELOPMENT AUTHO'</span>, <span class="st">'REDEVELOPMENT AUTHORITY'</span>,</span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="st">'REDEVELOPMENT AUTH'</span>]</span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> var <span class="kw">in</span> redev_owner_variations:</span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>    full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> var, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'REDEVELOPMENT AUTHORITY OF PHILADELPHIA'</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="co"># department of public property typos</span></span>
+<span id="cb7-46"><a href="#cb7-46" aria-hidden="true" tabindex="-1"></a>dpp_owner_variations <span class="op">=</span> [<span class="st">'DEPT OF PUBLIC PROPERTY'</span>, <span class="st">'DEPT OF PUBLIC PROPERT'</span>, <span class="st">'DEPT OF PUBLC PROP; CITY OF PHILA'</span>,</span>
+<span id="cb7-47"><a href="#cb7-47" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'DEPT OF PUBLIC PROP; CITY OF PHILA'</span>, <span class="st">'DEPT OF PUBLIC PROPERTY; CITY OF PHILA'</span>, <span class="st">'DEPT PUB PROP; CITY OF PHILA'</span>,</span>
+<span id="cb7-48"><a href="#cb7-48" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'DEPT OF PUB PROP; CITY OF PHILA'</span>, <span class="st">'DEP OF PUB PROP; CITY OF PHILA'</span>, <span class="st">'DEPT OF PUBLIC PROP; CITY OF PHILADELPHIA'</span>,</span>
+<span id="cb7-49"><a href="#cb7-49" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'DEPT PUBLIC PROP R E DIV; CITY OF PHILA'</span>, <span class="st">'PUBLIC PROP DIV; CITY OF PHILA'</span>, <span class="st">'PUBLIC PROP REAL ESTATE; CITY OF PHILA'</span>,</span>
+<span id="cb7-50"><a href="#cb7-50" aria-hidden="true" tabindex="-1"></a>                        <span class="st">'REAL ESTATE DIV; CITY OF PHILA'</span>, <span class="st">'REAL ESTATE DIVISION; CITY OF PHILA'</span>]</span>
+<span id="cb7-51"><a href="#cb7-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-52"><a href="#cb7-52" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> var <span class="kw">in</span> dpp_owner_variations:</span>
+<span id="cb7-53"><a href="#cb7-53" aria-hidden="true" tabindex="-1"></a>    full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> var, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'CITY OF PHILADELPHIA DEPARTMENT OF PUBLIC PROPERTY'</span></span>
+<span id="cb7-54"><a href="#cb7-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-55"><a href="#cb7-55" aria-hidden="true" tabindex="-1"></a><span class="co"># HUD</span></span>
+<span id="cb7-56"><a href="#cb7-56" aria-hidden="true" tabindex="-1"></a>full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> <span class="st">'URBAN DEVELOPMENT; SECRETARY OF HOUSING'</span>, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'SECRETARY OF HOUSING AND URBAN DEVELOPMENT'</span></span>
+<span id="cb7-57"><a href="#cb7-57" aria-hidden="true" tabindex="-1"></a>full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> <span class="st">'URBAN DEVELOPMENT; SECRETARY OF HOUSING AND'</span>, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'SECRETARY OF HOUSING AND URBAN DEVELOPMENT'</span></span>
+<span id="cb7-58"><a href="#cb7-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-59"><a href="#cb7-59" aria-hidden="true" tabindex="-1"></a><span class="co"># commonwealth of pennsylvania</span></span>
+<span id="cb7-60"><a href="#cb7-60" aria-hidden="true" tabindex="-1"></a>full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> <span class="st">'COMMONWEALTH OF PA'</span>, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'COMMONWEALTH OF PENNSYLVANIA'</span></span>
+<span id="cb7-61"><a href="#cb7-61" aria-hidden="true" tabindex="-1"></a>full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> <span class="st">'COMMONWEALTH OF PENNA'</span>, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'COMMONWEALTH OF PENNSYLVANIA'</span></span>
+<span id="cb7-62"><a href="#cb7-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-63"><a href="#cb7-63" aria-hidden="true" tabindex="-1"></a><span class="co"># phdc</span></span>
+<span id="cb7-64"><a href="#cb7-64" aria-hidden="true" tabindex="-1"></a>full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> <span class="st">'DEVELOPMENT CORPORATION; PHILADELPHIA HOUSING'</span>, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'PHILADELPHIA HOUSING DEVELOPMENT CORPORATION'</span></span>
+<span id="cb7-65"><a href="#cb7-65" aria-hidden="true" tabindex="-1"></a>full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> <span class="st">'PHILA HOUSING DEV CORP'</span>, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'PHILADELPHIA HOUSING DEVELOPMENT CORPORATION'</span></span>
+<span id="cb7-66"><a href="#cb7-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-67"><a href="#cb7-67" aria-hidden="true" tabindex="-1"></a><span class="co"># PennDOT</span></span>
+<span id="cb7-68"><a href="#cb7-68" aria-hidden="true" tabindex="-1"></a>full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> <span class="st">'DEPARTMENT OF TRANSPORTAT; COMMONWEALTH OF PENNSYLVA'</span>, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'PENNDOT'</span></span>
+<span id="cb7-69"><a href="#cb7-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-70"><a href="#cb7-70" aria-hidden="true" tabindex="-1"></a><span class="co"># city of Philadelphia</span></span>
+<span id="cb7-71"><a href="#cb7-71" aria-hidden="true" tabindex="-1"></a>full_gdf.loc[full_gdf[<span class="st">'OWNER'</span>] <span class="op">==</span> <span class="st">'CITY OF PHILADELPHIA'</span>, <span class="st">'OWNER'</span>] <span class="op">=</span> <span class="st">'CITY OF PHILA'</span></span>
+<span id="cb7-72"><a href="#cb7-72" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-73"><a href="#cb7-73" aria-hidden="true" tabindex="-1"></a><span class="co"># create a new column called 'public_owner' that is True if the OWNER column is in the public_owners list</span></span>
+<span id="cb7-74"><a href="#cb7-74" aria-hidden="true" tabindex="-1"></a>full_gdf[<span class="st">'public_owner'</span>] <span class="op">=</span> full_gdf[<span class="st">'OWNER'</span>].isin(public_owners)</span>
+<span id="cb7-75"><a href="#cb7-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-76"><a href="#cb7-76" aria-hidden="true" tabindex="-1"></a><span class="co"># drop the OWNER1 and OWNER2 columns</span></span>
+<span id="cb7-77"><a href="#cb7-77" aria-hidden="true" tabindex="-1"></a>full_gdf <span class="op">=</span> full_gdf.drop([<span class="st">'OWNER1'</span>, <span class="st">'OWNER2'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># randomly sample ten rows from the full_gdf dataframe</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>full_gdf.sample(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="8">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>geometry</th>
+      <th>ADDRESS</th>
+      <th>BLDG_DESC</th>
+      <th>OPA_ID</th>
+      <th>COUNCILDISTRICT</th>
+      <th>ZIPCODE</th>
+      <th>type</th>
+      <th>OWNER</th>
+      <th>public_owner</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1110</th>
+      <td>POLYGON ((2694472.865 257356.396, 2694469.455 ...</td>
+      <td>1813 W ERIE AVE</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>131061900</td>
+      <td>8</td>
+      <td>19140</td>
+      <td>Lot</td>
+      <td>3637 REALTY LLC</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>525</th>
+      <td>POLYGON ((2700537.723 262872.070, 2700537.147 ...</td>
+      <td>4821 N MARSHALL ST</td>
+      <td>ROW 2 STY MASONRY</td>
+      <td>491191600</td>
+      <td>8</td>
+      <td>19120</td>
+      <td>Building</td>
+      <td>ROSARIO JACKELINE P; GARCIA GERMAN G</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1467</th>
+      <td>POLYGON ((2686463.987 239434.331, 2686350.867 ...</td>
+      <td>406 N 32ND ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>241213800</td>
+      <td>3</td>
+      <td>19104</td>
+      <td>Lot</td>
+      <td>VRESILOVIC KELLY FRENCH; VRESILOVIC EDWARD J JR</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1111</th>
+      <td>POLYGON ((2696824.374 223350.476, 2696816.256 ...</td>
+      <td>314 PORTER ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>392217700</td>
+      <td>1</td>
+      <td>19148</td>
+      <td>Lot</td>
+      <td>BARKOWITZ EDWARD J</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>POLYGON ((2693333.093 250775.579, 2693266.942 ...</td>
+      <td>2533 N 19TH ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>162081000</td>
+      <td>5</td>
+      <td>19132</td>
+      <td>Lot</td>
+      <td>PHILADELPHIA LAND INVESTM</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>32</th>
+      <td>POLYGON ((2696417.559 226064.805, 2696415.117 ...</td>
+      <td>1913 S 5TH ST</td>
+      <td>VAC LAND COMM. &lt; ACRE</td>
+      <td>392272300</td>
+      <td>1</td>
+      <td>19148</td>
+      <td>Lot</td>
+      <td>XIONG DAFEN</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>209</th>
+      <td>POLYGON ((2700164.086 248824.671, 2700162.164 ...</td>
+      <td>2344 N 3RD ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>191185000</td>
+      <td>7</td>
+      <td>19133</td>
+      <td>Lot</td>
+      <td>VALDEZ LUZ DEL ALBA SANCHEZ; VALDEZ FRANKELLY</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1062</th>
+      <td>POLYGON ((2676140.277 243453.148, 2676138.463 ...</td>
+      <td>5125 KERSHAW ST</td>
+      <td>SEMI DET 2 STY MASONRY</td>
+      <td>442148600</td>
+      <td>3</td>
+      <td>19131</td>
+      <td>Building</td>
+      <td>HAYNES HENRY</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>236</th>
+      <td>POLYGON ((2715594.506 260553.768, 2715594.012 ...</td>
+      <td>1612-14 FOULKROD ST</td>
+      <td>APT 2-4  UNTS 3STY MASONR</td>
+      <td>232170600</td>
+      <td>7</td>
+      <td>19124</td>
+      <td>Building</td>
+      <td>ADIGHIBE UMACHI CHINYERE</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1111</th>
+      <td>POLYGON ((2696119.982 230162.033, 2696115.046 ...</td>
+      <td>641 WASHINGTON AVE</td>
+      <td>ROW CONV/APT 3STY MASONRY</td>
+      <td>021145700</td>
+      <td>1</td>
+      <td>19147</td>
+      <td>Building</td>
+      <td>QUACH LEE</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="phs-community-landcare-parcels" class="level3">
+<h3 class="anchored" data-anchor-id="phs-community-landcare-parcels">3. PHS Community Landcare Parcels</h3>
+<p>Now we can import the PHS Community LandCare parcels and spatially join them to our full_gdf, which contains all of the vacant parcels in the city (both lots and buildings).</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the URL for the Vacant_Indicators_phs_landcare feature service</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>phs_landcare_url <span class="op">=</span> <span class="st">'https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PHS_CommunityLandcare/FeatureServer/0/query'</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the parameters for the Vacant_Indicators_phs_landcare API request</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>phs_landcare_params <span class="op">=</span> {</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'where'</span>: <span class="st">'1=1'</span>,</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'outFields'</span>: <span class="st">'*'</span>,</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'returnGeometry'</span>: <span class="st">'true'</span>,</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'f'</span>: <span class="st">'json'</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Make the Vacant_Indicators_phs_landcare API request</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>phs_landcare_response <span class="op">=</span> requests.get(phs_landcare_url, params<span class="op">=</span>phs_landcare_params)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if the Vacant_Indicators_phs_landcare request was successful</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> phs_landcare_response.status_code <span class="op">==</span> <span class="dv">200</span>:</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert the Vacant_Indicators_phs_landcare JSON data to a geopandas geodataframe</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    phs_landcare_data <span class="op">=</span> phs_landcare_response.json()</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert the JSON data to a pandas dataframe</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    phs_landcare_df <span class="op">=</span> pd.DataFrame(phs_landcare_data[<span class="st">'features'</span>])</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># separate the attributes column into one column per attribute</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    phs_landcare_df <span class="op">=</span> pd.concat([phs_landcare_df.drop([<span class="st">'attributes'</span>], axis<span class="op">=</span><span class="dv">1</span>), phs_landcare_df[<span class="st">'attributes'</span>].<span class="bu">apply</span>(pd.Series)], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="co"># make the `geometry` column a shapely geometry object</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>    phs_landcare_df[<span class="st">'geometry'</span>] <span class="op">=</span> phs_landcare_df[<span class="st">'geometry'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: Polygon(x[<span class="st">'rings'</span>][<span class="dv">0</span>]))</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert the pandas dataframe to a geopandas geodataframe</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>    phs_landcare_gdf <span class="op">=</span> gpd.GeoDataFrame(phs_landcare_df, geometry<span class="op">=</span><span class="st">'geometry'</span>, crs<span class="op">=</span><span class="st">'EPSG:2272'</span>)</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'PHS_CommunityLandcare Request failed with status code:'</span>, phs_landcare_response.status_code)</span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>phs_columns <span class="op">=</span> [<span class="st">'geometry'</span>, <span class="st">'ADDRESS'</span>, <span class="st">'COMM_PARTN'</span>]</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>phs_landcare_gdf <span class="op">=</span> phs_landcare_gdf[phs_columns]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># spatially join phs_landcare_gdf to full_gdf</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> gpd.sjoin(full_gdf, phs_landcare_gdf, how<span class="op">=</span><span class="st">'left'</span>, op<span class="op">=</span><span class="st">'intersects'</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co"># drop the index_right column and the ADDRESS_right column</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.drop([<span class="st">'index_right'</span>, <span class="st">'ADDRESS_right'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># rename the ADDRESS_left column to ADDRESS</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.rename(columns<span class="op">=</span>{<span class="st">'ADDRESS_left'</span>: <span class="st">'ADDRESS'</span>})</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>joined_gdf[<span class="st">'COMM_PARTN'</span>] <span class="op">=</span> joined_gdf[<span class="st">'COMM_PARTN'</span>].fillna(<span class="st">'None'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\Nissim\anaconda3\envs\vac_props_guncrime_dash\Lib\site-packages\IPython\core\interactiveshell.py:3382: FutureWarning: The `op` parameter is deprecated and will be removed in a future release. Please use the `predicate` parameter instead.
+  if await self.run_code(code, result, async_=asy):</code></pre>
+</div>
+</div>
+<p>Now we need to import two more datasets from the City’s Carto database (SQL).</p>
+</section>
+<section id="li-complaints" class="level3">
+<h3 class="anchored" data-anchor-id="li-complaints">1. L&amp;I Complaints</h3>
+<div class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate one year ago from today's date</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>one_year_ago <span class="op">=</span> (datetime.datetime.now() <span class="op">-</span> datetime.timedelta(days<span class="op">=</span><span class="dv">365</span>)).strftime(<span class="st">"%Y-%m-</span><span class="sc">%d</span><span class="st">"</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the SQL query</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>complaints_sql_query <span class="op">=</span> <span class="st">"SELECT address, service_request_id, subject, status, service_name, service_code, lat, lon FROM public_cases_fc WHERE requested_datetime &gt;= '</span><span class="sc">{}</span><span class="st">'"</span>.<span class="bu">format</span>(one_year_ago)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Make the GET request</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>complaints_response <span class="op">=</span> requests.get(<span class="st">"https://phl.carto.com/api/v2/sql"</span>, params<span class="op">=</span>{<span class="st">"q"</span>: complaints_sql_query})</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the data</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>complaints_data <span class="op">=</span> complaints_response.json()[<span class="st">"rows"</span>]</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="co"># convert complaints_data to a pandas dataframe</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>complaints_df <span class="op">=</span> pd.DataFrame(complaints_data)</span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the data to a geopandas dataframe</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>complaints_gdf <span class="op">=</span> gpd.GeoDataFrame(complaints_df, geometry<span class="op">=</span>gpd.points_from_xy(complaints_df.lon, complaints_df.lat), crs<span class="op">=</span><span class="st">'EPSG:2272'</span>)</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a><span class="co"># drop the lat and lon columns</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>complaints_gdf.drop([<span class="st">'lat'</span>, <span class="st">'lon'</span>], axis<span class="op">=</span><span class="dv">1</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a><span class="co"># filter for only Status = 'Open'</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>complaints_gdf <span class="op">=</span> complaints_gdf[complaints_gdf[<span class="st">'status'</span>] <span class="op">==</span> <span class="st">'Open'</span>]</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a><span class="co"># collapse complaints_gdf by address and concatenate the violationcodetitle values into a list with a semicolon separator</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>complaints_gdf <span class="op">=</span> complaints_gdf.groupby(<span class="st">'address'</span>)[<span class="st">'service_name'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">'; '</span>.join([val <span class="cf">for</span> val <span class="kw">in</span> x <span class="cf">if</span> val <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>])).reset_index()</span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a><span class="co"># rename the column to 'li_complaints'</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>complaints_gdf.rename(columns<span class="op">=</span>{<span class="st">'service_name'</span>: <span class="st">'li_complaints'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="li-code-violations" class="level3">
+<h3 class="anchored" data-anchor-id="li-code-violations">2. L&amp;I Code Violations</h3>
+<div class="cell" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate one year ago from today's date</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>one_year_ago <span class="op">=</span> (datetime.datetime.now() <span class="op">-</span> datetime.timedelta(days<span class="op">=</span><span class="dv">365</span>)).strftime(<span class="st">"%Y-%m-</span><span class="sc">%d</span><span class="st">"</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create the SQL query</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>violations_sql_query <span class="op">=</span> <span class="st">"SELECT parcel_id_num, casenumber, casecreateddate, casetype, casestatus, violationnumber, violationcodetitle, violationstatus, opa_account_num, address, opa_owner, geocode_x, geocode_y FROM violations WHERE violationdate &gt;= '</span><span class="sc">{}</span><span class="st">'"</span>.<span class="bu">format</span>(one_year_ago)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Make the GET request</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>violations_response <span class="op">=</span> requests.get(<span class="st">"https://phl.carto.com/api/v2/sql"</span>, params<span class="op">=</span>{<span class="st">"q"</span>: violations_sql_query})</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the data</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>violations_data <span class="op">=</span> violations_response.json()[<span class="st">"rows"</span>]</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="co"># convert violations_data to a pandas dataframe</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>violations_df <span class="op">=</span> pd.DataFrame(violations_data)</span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the data to a geopandas dataframe</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>violations_gdf <span class="op">=</span> gpd.GeoDataFrame(violations_df, geometry<span class="op">=</span>gpd.points_from_xy(violations_df.geocode_x, violations_df.geocode_y), crs<span class="op">=</span><span class="st">'EPSG:2272'</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co"># drop the lat and lon columns</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>violations_gdf.drop([<span class="st">'geocode_x'</span>, <span class="st">'geocode_y'</span>], axis<span class="op">=</span><span class="dv">1</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="co"># filter for only cases where the casestatus is 'IN VIOLATION' or 'UNDER INVESTIGATION'</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>violations_gdf <span class="op">=</span> violations_gdf[(violations_gdf[<span class="st">'violationstatus'</span>] <span class="op">==</span> <span class="st">'OPEN'</span>)]</span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="co"># collapse violations_gdf by address and concatenate the violationcodetitle values into a list with a semicolon separator</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>violations_gdf <span class="op">=</span> violations_gdf.groupby(<span class="st">'opa_account_num'</span>)[<span class="st">'violationcodetitle'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">'; '</span>.join([val <span class="cf">for</span> val <span class="kw">in</span> x <span class="cf">if</span> val <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>])).reset_index()</span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="co"># rename the column to 'li_violations'</span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>violations_gdf.rename(columns<span class="op">=</span>{<span class="st">'violationcodetitle'</span>: <span class="st">'li_code_violations'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="13">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># left join the complaints_gdf to the joined_gdf on address</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.merge(complaints_gdf, how<span class="op">=</span><span class="st">'left'</span>, left_on<span class="op">=</span><span class="st">'ADDRESS'</span>, right_on<span class="op">=</span><span class="st">'address'</span>)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># left join the violations_gdf to the joined_gdf on opa_account_num</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.merge(violations_gdf, how<span class="op">=</span><span class="st">'left'</span>, left_on<span class="op">=</span><span class="st">'OPA_ID'</span>, right_on<span class="op">=</span><span class="st">'opa_account_num'</span>)</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># drop the address and opa_account_num columns</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>joined_gdf.drop([<span class="st">'address'</span>, <span class="st">'opa_account_num'</span>], axis<span class="op">=</span><span class="dv">1</span>, inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="next-well-add-a-centroids-column-to-the-joined_gdf-in-order-to-make-it-easier-to-cleanly-join-neighborhoods-rcos-tree-canopy-and-guncrime-data." class="level3">
+<h3 class="anchored" data-anchor-id="next-well-add-a-centroids-column-to-the-joined_gdf-in-order-to-make-it-easier-to-cleanly-join-neighborhoods-rcos-tree-canopy-and-guncrime-data.">Next, we’ll add a centroids column to the joined_gdf in order to make it easier to cleanly join neighborhoods, RCOs, tree canopy, and guncrime data.</h3>
+<p>Joining by points rather than polygons makes it far less likely that a point straddles two polygons, which make the join ambiguous and potentially incorrect.</p>
+<div class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># add a column for centroids geometry to use for joins and to extrct raster values</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>joined_gdf[<span class="st">'centroid'</span>] <span class="op">=</span> joined_gdf[<span class="st">'geometry'</span>].centroid</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># create a geodata of polygon geoms and opa_id</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>poly_gdf <span class="op">=</span> joined_gdf[[<span class="st">'OPA_ID'</span>, <span class="st">'geometry'</span>]]</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># drop the 'geometry' column from joined_gdf</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>joined_gdf.drop([<span class="st">'geometry'</span>], axis<span class="op">=</span><span class="dv">1</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># set the 'centroid' column as the geometry column</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>joined_gdf.set_geometry(<span class="st">'centroid'</span>, inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="import-philadelphias-neighborhoods-from-azavea" class="level3">
+<h3 class="anchored" data-anchor-id="import-philadelphias-neighborhoods-from-azavea">Import Philadelphia’s Neighborhoods from Azavea</h3>
+<div class="cell" data-execution_count="15">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>hoods_url <span class="op">=</span> <span class="st">'https://github.com/azavea/geo-data/raw/master/Neighborhoods_Philadelphia/Neighborhoods_Philadelphia.zip'</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>hoods_response <span class="op">=</span> requests.get(hoods_url)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> io.BytesIO(hoods_response.content) <span class="im">as</span> f:</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> zipfile.ZipFile(f, <span class="st">'r'</span>) <span class="im">as</span> zip_ref:</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        zip_ref.extractall(<span class="st">"path/to/destination/folder"</span>)</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>hoods <span class="op">=</span> gpd.read_file(<span class="st">"path/to/destination/folder/Neighborhoods_Philadelphia.shp"</span>)</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>hoods <span class="op">=</span> hoods.to_crs(epsg<span class="op">=</span><span class="dv">2272</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="16">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> gpd.sjoin(joined_gdf, hoods, how<span class="op">=</span><span class="st">'left'</span>, op<span class="op">=</span><span class="st">'intersects'</span>)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.drop([<span class="st">'index_right'</span>, <span class="st">'NAME'</span>, <span class="st">'LISTNAME'</span>, <span class="st">'Shape_Leng'</span>, <span class="st">'Shape_Area'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>joined_gdf.rename(columns<span class="op">=</span>{<span class="st">'MAPNAME'</span>: <span class="st">'neighborhood'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\Nissim\anaconda3\envs\vac_props_guncrime_dash\Lib\site-packages\IPython\core\interactiveshell.py:3382: FutureWarning: The `op` parameter is deprecated and will be removed in a future release. Please use the `predicate` parameter instead.
+  if await self.run_code(code, result, async_=asy):</code></pre>
+</div>
+</div>
+</section>
+<section id="import-rcos-from-the-city" class="level3">
+<h3 class="anchored" data-anchor-id="import-rcos-from-the-city">Import RCOs from the City</h3>
+<div class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the URL for the RCOs feature service</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>rcos_url <span class="op">=</span> <span class="st">'https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Zoning_RCO/FeatureServer/0/query'</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Define the parameters for the RCOs API request</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>rcos_params <span class="op">=</span> {</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="st">'where'</span>: <span class="st">'1=1'</span>,</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'outFields'</span>: <span class="st">'*'</span>,</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'returnGeometry'</span>: <span class="st">'true'</span>,</span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'f'</span>: <span class="st">'json'</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Make the RCOs API request</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>rcos_response <span class="op">=</span> requests.get(rcos_url, params<span class="op">=</span>rcos_params)</span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Check if the RCOs request was successful</span></span>
+<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> rcos_response.status_code <span class="op">==</span> <span class="dv">200</span>:</span>
+<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convert the RCOs JSON data to a geopandas geodataframe; convert to CRS 3857</span></span>
+<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>    rcos_data <span class="op">=</span> rcos_response.json()</span>
+<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convert the JSON data to a pandas dataframe</span></span>
+<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    rcos_df <span class="op">=</span> pd.DataFrame(rcos_data[<span class="st">'features'</span>])</span>
+<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>    <span class="co"># separate the attributes column into one column per attribute</span></span>
+<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    rcos_df <span class="op">=</span> pd.concat([rcos_df.drop([<span class="st">'attributes'</span>], axis<span class="op">=</span><span class="dv">1</span>), rcos_df[<span class="st">'attributes'</span>].<span class="bu">apply</span>(pd.Series)], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">'RCOs Request failed with status code:'</span>, rcos_response.status_code)</span>
+<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a><span class="co"># make the `geometry` column a shapely geometry object</span></span>
+<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>rcos_df[<span class="st">'geometry'</span>] <span class="op">=</span> rcos_df[<span class="st">'geometry'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: Polygon(x[<span class="st">'rings'</span>][<span class="dv">0</span>]))</span>
+<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a> <span class="co"># convert the pandas dataframe to a geopandas geodataframe</span></span>
+<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>rcos_gdf <span class="op">=</span> gpd.GeoDataFrame(rcos_df, geometry<span class="op">=</span><span class="st">'geometry'</span>, crs<span class="op">=</span><span class="st">'EPSG:3857'</span>)</span>
+<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>rcos_gdf.to_crs(epsg<span class="op">=</span><span class="dv">2272</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>rcos_cols <span class="op">=</span> [<span class="st">'geometry'</span>, <span class="st">'ORGANIZATION_NAME'</span>, <span class="st">'ORGANIZATION_ADDRESS'</span>,</span>
+<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>       <span class="st">'ORG_TYPE'</span>, <span class="st">'PREFFERED_CONTACT_METHOD'</span>,</span>
+<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>       <span class="st">'PRIMARY_NAME'</span>, <span class="st">'PRIMARY_ADDRESS'</span>, <span class="st">'PRIMARY_EMAIL'</span>, <span class="st">'PRIMARY_PHONE'</span>,</span>
+<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>       <span class="st">'EXPIRATIONYEAR'</span>]</span>
+<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a><span class="co"># convert primary_phone and expirationyear to strings</span></span>
+<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>rcos_gdf[<span class="st">'PRIMARY_PHONE'</span>] <span class="op">=</span> rcos_gdf[<span class="st">'PRIMARY_PHONE'</span>].astype(<span class="bu">str</span>)</span>
+<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>rcos_gdf[<span class="st">'EXPIRATIONYEAR'</span>] <span class="op">=</span> rcos_gdf[<span class="st">'EXPIRATIONYEAR'</span>].astype(<span class="bu">str</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="18">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>rco_aggregate_cols <span class="op">=</span> [<span class="st">'ORGANIZATION_NAME'</span>, <span class="st">'ORGANIZATION_ADDRESS'</span>, <span class="st">'PRIMARY_EMAIL'</span>, <span class="st">'PRIMARY_PHONE'</span>]</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>rcos_gdf[<span class="st">"rco_info"</span>] <span class="op">=</span> rcos_gdf[rco_aggregate_cols].agg(<span class="st">"; "</span>.join, axis<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="19">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>rcos_final_cols <span class="op">=</span> [<span class="st">'geometry'</span>, <span class="st">'rco_info'</span>]</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>rcos_gdf <span class="op">=</span> rcos_gdf[rcos_final_cols]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="now-we-can-join-the-rcos-to-the-joined_gdf." class="level3">
+<h3 class="anchored" data-anchor-id="now-we-can-join-the-rcos-to-the-joined_gdf.">Now we can join the RCOs to the joined_gdf.</h3>
+<div class="cell" data-execution_count="20">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># spatially join rcos_gdf to joined_gdf</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>w_rcos_gdf <span class="op">=</span> gpd.sjoin(joined_gdf, rcos_gdf, how<span class="op">=</span><span class="st">'left'</span>, op<span class="op">=</span><span class="st">'within'</span>)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="co"># drop the index_right column</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>w_rcos_gdf <span class="op">=</span> w_rcos_gdf.drop([<span class="st">'index_right'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co"># change MAPNAME to neighborhood</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>w_rcos_gdf.rename(columns<span class="op">=</span>{<span class="st">'rco_info'</span>: <span class="st">'rco_info'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co"># remove duplicates by OPA_ID</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a>w_rcos_gdf <span class="op">=</span> w_rcos_gdf.drop_duplicates(subset<span class="op">=</span><span class="st">'OPA_ID'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\Nissim\anaconda3\envs\vac_props_guncrime_dash\Lib\site-packages\IPython\core\interactiveshell.py:3382: FutureWarning: The `op` parameter is deprecated and will be removed in a future release. Please use the `predicate` parameter instead.
+  if await self.run_code(code, result, async_=asy):</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="21">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot w_rcos_gdf</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>w_rcos_gdf.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
+<pre><code>(3969, 14)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="22">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># make OPA_ID a string</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>w_rcos_gdf[<span class="st">'OPA_ID'</span>] <span class="op">=</span> w_rcos_gdf[<span class="st">'OPA_ID'</span>].astype(<span class="bu">str</span>)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="co"># collapse w_rcos_gdf by opa_id and concatenate the rco_info values into a list with a | separator</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>rcos_by_opa_id_gdf <span class="op">=</span> w_rcos_gdf.groupby(<span class="st">'OPA_ID'</span>)[<span class="st">'rco_info'</span>].<span class="bu">apply</span>(<span class="kw">lambda</span> x: <span class="st">'| '</span>.join([<span class="bu">str</span>(val) <span class="cf">for</span> val <span class="kw">in</span> x <span class="cf">if</span> val <span class="kw">is</span> <span class="kw">not</span> <span class="va">None</span>])).reset_index()</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># rename the column to 'relevant_rcos'</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>rcos_by_opa_id_gdf.rename(columns<span class="op">=</span>{<span class="st">'rco_info'</span>: <span class="st">'relevant_rcos'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="23">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>rcos_by_opa_id_gdf.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="23">
+<pre><code>(3969, 2)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="24">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># left join the rcos_by_opa_id_gdf to the joined_gdf on opa_id</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.merge(rcos_by_opa_id_gdf, how<span class="op">=</span><span class="st">'left'</span>, left_on<span class="op">=</span><span class="st">'OPA_ID'</span>, right_on<span class="op">=</span><span class="st">'OPA_ID'</span>)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="co"># drop duplicate rows</span></span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.drop_duplicates(subset<span class="op">=</span><span class="st">'OPA_ID'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="25">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>joined_gdf.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="25">
+<pre><code>(3969, 14)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="26">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>joined_gdf.sample(<span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="26">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>ADDRESS</th>
+      <th>BLDG_DESC</th>
+      <th>OPA_ID</th>
+      <th>COUNCILDISTRICT</th>
+      <th>ZIPCODE</th>
+      <th>type</th>
+      <th>OWNER</th>
+      <th>public_owner</th>
+      <th>COMM_PARTN</th>
+      <th>li_complaints</th>
+      <th>li_code_violations</th>
+      <th>centroid</th>
+      <th>neighborhood</th>
+      <th>relevant_rcos</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>364</th>
+      <td>2207 N ORIANNA ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>191191100</td>
+      <td>7</td>
+      <td>19133</td>
+      <td>Lot</td>
+      <td>JACOB BARBARA; JACOB JOSEPH</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2699969.540 248013.282)</td>
+      <td>West Kensington</td>
+      <td>Zulu Nation RCO; 2045 N Lawrence Street\r\nPhi...</td>
+    </tr>
+    <tr>
+      <th>3585</th>
+      <td>2220 S BEECHWOOD ST</td>
+      <td>ROW 2 STY MASONRY</td>
+      <td>482181100</td>
+      <td>2</td>
+      <td>19145</td>
+      <td>Building</td>
+      <td>BRAUDE RICHARD</td>
+      <td>False</td>
+      <td>None</td>
+      <td>Dangerous Building Complaint; Maintenance Comp...</td>
+      <td>EXTERIOR STRUCTURE WINDOWS, SKYLIGHTS DOOR FRA...</td>
+      <td>POINT (2688447.819 225741.536)</td>
+      <td>West Passyunk</td>
+      <td>Concerned Citizens of Point Breeze; Concerned ...</td>
+    </tr>
+    <tr>
+      <th>331</th>
+      <td>960 FARSON ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>442244300</td>
+      <td>3</td>
+      <td>19131</td>
+      <td>Lot</td>
+      <td>KOLE AND COMPANY LLC</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2677108.061 242009.135)</td>
+      <td>Mill Creek</td>
+      <td>Parkside Association; Parkside Evans Recreatio...</td>
+    </tr>
+    <tr>
+      <th>2490</th>
+      <td>5833 MONTROSE ST</td>
+      <td>ROW 2 STY MASONRY</td>
+      <td>033073500</td>
+      <td>3</td>
+      <td>19143</td>
+      <td>Building</td>
+      <td>BLANKS CLARENCE N</td>
+      <td>False</td>
+      <td>None</td>
+      <td>Maintenance Complaint; Maintenance Complaint; ...</td>
+      <td>UNSAFE STRUCTURE; ROOF DEFICIENCIES; INTERIOR ...</td>
+      <td>POINT (2671996.133 234154.587)</td>
+      <td>Cobbs Creek</td>
+      <td>Progressive Communities CDC; 413 South 60th St...</td>
+    </tr>
+    <tr>
+      <th>3613</th>
+      <td>3851 N FAIRHILL ST</td>
+      <td>ROW 2 STY MASONRY</td>
+      <td>432252700</td>
+      <td>7</td>
+      <td>19140</td>
+      <td>Building</td>
+      <td>ALEGARBES ALBERTO; FLORO ISABELITA A</td>
+      <td>False</td>
+      <td>None</td>
+      <td>Maintenance Complaint</td>
+      <td>NaN</td>
+      <td>POINT (2700243.251 257409.531)</td>
+      <td>Hunting Park</td>
+      <td>Nueva Esperanza Housing and Economic Developme...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="finally-tree-canopy-data." class="level3">
+<h3 class="anchored" data-anchor-id="finally-tree-canopy-data.">Finally, tree canopy data.</h3>
+<div class="cell" data-execution_count="27">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>tree_url <span class="op">=</span> <span class="st">'https://national-tes-data-share.s3.amazonaws.com/national_tes_share/pa.zip.zip'</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>tree_response <span class="op">=</span> requests.get(tree_url)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> io.BytesIO(tree_response.content) <span class="im">as</span> f:</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> zipfile.ZipFile(f, <span class="st">'r'</span>) <span class="im">as</span> zip_ref:</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>        zip_ref.extractall(<span class="st">"path/to/destination/folder"</span>)</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>pa <span class="op">=</span> gpd.read_file(<span class="st">"path/to/destination/folder/pa.shp"</span>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>pa <span class="op">=</span> pa.to_crs(epsg<span class="op">=</span><span class="dv">2272</span>)</span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>phl <span class="op">=</span> pa[pa[<span class="st">'county'</span>] <span class="op">==</span> <span class="st">'Philadelphia County'</span>]</span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>tree_cols <span class="op">=</span> [<span class="st">'tc_gap'</span>, <span class="st">'geometry'</span>]</span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>phl <span class="op">=</span> phl[tree_cols]</span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>phl.rename(columns<span class="op">=</span>{<span class="st">'tc_gap'</span>: <span class="st">'tree_canopy_gap'</span>}, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>phl.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="27">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>tree_canopy_gap</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>5395</th>
+      <td>0.216832</td>
+      <td>POLYGON ((2698038.313 234970.868, 2697586.173 ...</td>
+    </tr>
+    <tr>
+      <th>5396</th>
+      <td>0.196093</td>
+      <td>POLYGON ((2699640.691 237442.051, 2699638.100 ...</td>
+    </tr>
+    <tr>
+      <th>5397</th>
+      <td>0.297005</td>
+      <td>POLYGON ((2696855.043 237339.498, 2696827.290 ...</td>
+    </tr>
+    <tr>
+      <th>5398</th>
+      <td>0.346134</td>
+      <td>POLYGON ((2693798.320 238055.129, 2693725.464 ...</td>
+    </tr>
+    <tr>
+      <th>5399</th>
+      <td>0.097603</td>
+      <td>POLYGON ((2689575.081 237146.348, 2689561.703 ...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="28">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># spatially join phl to joined_gdf</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> gpd.sjoin(joined_gdf, phl, how<span class="op">=</span><span class="st">'left'</span>, op<span class="op">=</span><span class="st">'intersects'</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.drop([<span class="st">'index_right'</span>], axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a><span class="co"># drop duplicate opa_ids</span></span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.drop_duplicates(subset<span class="op">=</span><span class="st">'OPA_ID'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\Nissim\anaconda3\envs\vac_props_guncrime_dash\Lib\site-packages\IPython\core\interactiveshell.py:3382: FutureWarning: The `op` parameter is deprecated and will be removed in a future release. Please use the `predicate` parameter instead.
+  if await self.run_code(code, result, async_=asy):</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="29">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>joined_gdf.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="29">
+<pre><code>(3969, 15)</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="30">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>joined_gdf.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="30">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>ADDRESS</th>
+      <th>BLDG_DESC</th>
+      <th>OPA_ID</th>
+      <th>COUNCILDISTRICT</th>
+      <th>ZIPCODE</th>
+      <th>type</th>
+      <th>OWNER</th>
+      <th>public_owner</th>
+      <th>COMM_PARTN</th>
+      <th>li_complaints</th>
+      <th>li_code_violations</th>
+      <th>centroid</th>
+      <th>neighborhood</th>
+      <th>relevant_rcos</th>
+      <th>tree_canopy_gap</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3232 HENRY AVE</td>
+      <td>COM.CONDO.1STY MASONRY</td>
+      <td>882921188</td>
+      <td>4</td>
+      <td>19129</td>
+      <td>Lot</td>
+      <td>NEWCOURTLAND ELDER SVCS</td>
+      <td>False</td>
+      <td>None</td>
+      <td>Abandoned Vehicle</td>
+      <td>NaN</td>
+      <td>POINT (2687670.347 256881.319)</td>
+      <td>Allegheny West</td>
+      <td>East Falls Community Council; PO Box 12672, 19...</td>
+      <td>0.230223</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>633 N 53RD ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>442316810</td>
+      <td>3</td>
+      <td>19131</td>
+      <td>Lot</td>
+      <td>REDEVELOPMENT AUTHORITY OF PHILADELPHIA</td>
+      <td>True</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2675594.486 242078.492)</td>
+      <td>Haddington</td>
+      <td>Parkside Association; Parkside Evans Recreatio...</td>
+      <td>0.104381</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2424 N MOLE ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>161064101</td>
+      <td>5</td>
+      <td>19132</td>
+      <td>Lot</td>
+      <td>REDEVELOPMENT AUTHORITY OF PHILADELPHIA</td>
+      <td>True</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2694579.519 249996.821)</td>
+      <td>Stanton</td>
+      <td>Uptown Entertainment and Development Corporati...</td>
+      <td>0.165151</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>437 ARLINGTON ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>183194500</td>
+      <td>7</td>
+      <td>19122</td>
+      <td>Lot</td>
+      <td>MCHUGH JOHN</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2699241.653 246723.548)</td>
+      <td>West Kensington</td>
+      <td>Zulu Nation RCO; 2045 N Lawrence Street\r\nPhi...</td>
+      <td>0.199069</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2735 N HICKS ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>111168200</td>
+      <td>8</td>
+      <td>19132</td>
+      <td>Lot</td>
+      <td>VICTORIA; HERBERT MITCHELL</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2695050.897 251708.887)</td>
+      <td>Stanton</td>
+      <td>Tioga United, Inc.; 1539 W. Venango Street \r\...</td>
+      <td>0.327281</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="31">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the joined_gdf</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>joined_gdf.plot()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="31">
+<pre><code>&lt;AxesSubplot: &gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="2023_02_02_vacant_lots_layer_files/figure-html/cell-32-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="gun-crimes" class="level1">
+<h1>Gun Crimes</h1>
+<p>For our gun crime kernel density estimate, we have two steps:</p>
+<section id="import-gun-crime-data-from-the-citys-carto-database-sql" class="level3">
+<h3 class="anchored" data-anchor-id="import-gun-crime-data-from-the-citys-carto-database-sql">1. Import gun crime data from the City’s Carto database (SQL):</h3>
+<div class="cell" data-execution_count="32">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Modify the SQL query</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>guncrime_sql_query <span class="op">=</span> <span class="st">"SELECT text_general_code, dispatch_date, point_x, point_y FROM incidents_part1_part2 WHERE dispatch_date_time &gt;= '</span><span class="sc">{}</span><span class="st">' AND text_general_code IN ('Aggravated Assault Firearm', 'Robbery Firearm')"</span>.<span class="bu">format</span>(one_year_ago)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Make the GET request</span></span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>guncrime_response <span class="op">=</span> requests.get(<span class="st">"https://phl.carto.com/api/v2/sql"</span>, params<span class="op">=</span>{<span class="st">"q"</span>: guncrime_sql_query})</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-7"><a href="#cb41-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Get the data</span></span>
+<span id="cb41-8"><a href="#cb41-8" aria-hidden="true" tabindex="-1"></a>guncrime_data <span class="op">=</span> guncrime_response.json()[<span class="st">"rows"</span>]</span>
+<span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-10"><a href="#cb41-10" aria-hidden="true" tabindex="-1"></a><span class="co"># convert guncrime_data to a pandas dataframe</span></span>
+<span id="cb41-11"><a href="#cb41-11" aria-hidden="true" tabindex="-1"></a>guncrime_df <span class="op">=</span> pd.DataFrame(guncrime_data)</span>
+<span id="cb41-12"><a href="#cb41-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-13"><a href="#cb41-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert the data to a geopandas dataframe</span></span>
+<span id="cb41-14"><a href="#cb41-14" aria-hidden="true" tabindex="-1"></a>guncrime_gdf <span class="op">=</span> gpd.GeoDataFrame(guncrime_df, geometry<span class="op">=</span>gpd.points_from_xy(guncrime_df.point_x, guncrime_df.point_y), crs<span class="op">=</span><span class="st">'EPSG:4326'</span>)</span>
+<span id="cb41-15"><a href="#cb41-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-16"><a href="#cb41-16" aria-hidden="true" tabindex="-1"></a><span class="co"># drop the lat and lon columns</span></span>
+<span id="cb41-17"><a href="#cb41-17" aria-hidden="true" tabindex="-1"></a>guncrime_gdf.drop([<span class="st">'point_x'</span>, <span class="st">'point_y'</span>], axis<span class="op">=</span><span class="dv">1</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb41-18"><a href="#cb41-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-19"><a href="#cb41-19" aria-hidden="true" tabindex="-1"></a><span class="co"># convert the geometry column to a CRS 2272</span></span>
+<span id="cb41-20"><a href="#cb41-20" aria-hidden="true" tabindex="-1"></a>guncrime_gdf.to_crs(epsg<span class="op">=</span><span class="dv">2272</span>, inplace<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb41-21"><a href="#cb41-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-22"><a href="#cb41-22" aria-hidden="true" tabindex="-1"></a><span class="co"># drop null geometry values</span></span>
+<span id="cb41-23"><a href="#cb41-23" aria-hidden="true" tabindex="-1"></a>guncrime_gdf <span class="op">=</span> guncrime_gdf[guncrime_gdf[<span class="st">'geometry'</span>].notnull()]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>c:\Users\Nissim\anaconda3\envs\vac_props_guncrime_dash\Lib\site-packages\geopandas\geoseries.py:751: UserWarning: GeoSeries.notna() previously returned False for both missing (None) and empty geometries. Now, it only returns False for missing values. Since the calling GeoSeries contains empty geometries, the result has changed compared to previous versions of GeoPandas.
+Given a GeoSeries 's', you can use '~s.is_empty &amp; s.notna()' to get back the old behaviour.
+
+To further ignore this warning, you can do: 
+import warnings; warnings.filterwarnings('ignore', 'GeoSeries.notna', UserWarning)
+  return self.notna()</code></pre>
+</div>
+</div>
+<div class="cell" data-execution_count="33">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>guncrime_gdf.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="33">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>text_general_code</th>
+      <th>dispatch_date</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>Robbery Firearm</td>
+      <td>2022-08-19</td>
+      <td>POINT (2726676.221 264105.934)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>Robbery Firearm</td>
+      <td>2022-09-11</td>
+      <td>POINT (2697059.540 255757.300)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>Aggravated Assault Firearm</td>
+      <td>2022-09-16</td>
+      <td>POINT (2674924.522 243211.406)</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>Aggravated Assault Firearm</td>
+      <td>2022-09-06</td>
+      <td>POINT (2694009.941 248712.979)</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>Aggravated Assault Firearm</td>
+      <td>2022-10-11</td>
+      <td>POINT (2674606.387 241816.289)</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+<section id="create-a-kernel-density-estimate-from-the-gun-crime-data" class="level3">
+<h3 class="anchored" data-anchor-id="create-a-kernel-density-estimate-from-the-gun-crime-data">2. Create a kernel density estimate from the gun crime data:</h3>
+<div class="cell" data-execution_count="34">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get X and Y coordinates of well points</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>x_sk <span class="op">=</span> guncrime_gdf[<span class="st">"geometry"</span>].x</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>y_sk <span class="op">=</span> guncrime_gdf[<span class="st">"geometry"</span>].y</span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a><span class="co"># drop null values</span></span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a>x_sk <span class="op">=</span> x_sk.dropna()</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a>y_sk <span class="op">=</span> y_sk.dropna()</span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Get minimum and maximum coordinate values of well points</span></span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>min_x_sk, min_y_sk, max_x_sk, max_y_sk <span class="op">=</span> guncrime_gdf.total_bounds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="35">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a cell mesh grid</span></span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Horizontal and vertical cell counts should be the same</span></span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>XX_sk, YY_sk <span class="op">=</span> np.mgrid[min_x_sk:max_x_sk:<span class="ot">100j</span>, min_y_sk:max_y_sk:<span class="ot">100j</span>]</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Create 2-D array of the coordinates (paired) of each cell in the mesh grid</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>positions_sk <span class="op">=</span> np.vstack([XX_sk.ravel(), YY_sk.ravel()]).T</span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Create 2-D array of the coordinate values of the well points</span></span>
+<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>Xtrain_sk <span class="op">=</span> np.vstack([x_sk, y_sk]).T</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Get kernel density estimator (can change parameters as desired)</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>kde_sk <span class="op">=</span> KernelDensity(bandwidth <span class="op">=</span> <span class="dv">5280</span>, metric <span class="op">=</span> <span class="st">'euclidean'</span>, kernel <span class="op">=</span> <span class="st">'gaussian'</span>, algorithm <span class="op">=</span> <span class="st">'auto'</span>)</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Fit kernel density estimator to wells coordinates</span></span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>kde_sk.fit(Xtrain_sk)</span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Evaluate the estimator on coordinate pairs</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>Z_sk <span class="op">=</span> np.exp(kde_sk.score_samples(positions_sk))</span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape the data to fit mesh grid</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>Z_sk <span class="op">=</span> Z_sk.reshape(XX_sk.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="37">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>today <span class="op">=</span> datetime.datetime.today().strftime(<span class="st">'%Y_%m_</span><span class="sc">%d</span><span class="st">'</span>)</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> export_kde_raster(Z, XX, YY, min_x, max_x, min_y, max_y, proj, filename):</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">'''Export and save a kernel density raster.'''</span></span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Flip array vertically and rotate 270 degrees</span></span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    Z_export <span class="op">=</span> np.rot90(np.flip(Z, <span class="dv">0</span>), <span class="dv">3</span>)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Get resolution</span></span>
+<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>    xres <span class="op">=</span> (max_x <span class="op">-</span> min_x) <span class="op">/</span> <span class="bu">len</span>(XX)</span>
+<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a>    yres <span class="op">=</span> (max_y <span class="op">-</span> min_y) <span class="op">/</span> <span class="bu">len</span>(YY)</span>
+<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Set transform</span></span>
+<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>    transform <span class="op">=</span> rasterio.Affine.translation(min_x <span class="op">-</span> xres <span class="op">/</span> <span class="dv">2</span>, min_y <span class="op">-</span> yres <span class="op">/</span> <span class="dv">2</span>) <span class="op">*</span> rasterio.Affine.scale(xres, yres)</span>
+<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Export array as raster</span></span>
+<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> rasterio.<span class="bu">open</span>(</span>
+<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>            filename,</span>
+<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>            mode <span class="op">=</span> <span class="st">"w"</span>,</span>
+<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>            driver <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
+<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>            height <span class="op">=</span> Z_export.shape[<span class="dv">0</span>],</span>
+<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>            width <span class="op">=</span> Z_export.shape[<span class="dv">1</span>],</span>
+<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>            count <span class="op">=</span> <span class="dv">1</span>,</span>
+<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>            dtype <span class="op">=</span> Z_export.dtype,</span>
+<span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a>            crs <span class="op">=</span> proj,</span>
+<span id="cb47-27"><a href="#cb47-27" aria-hidden="true" tabindex="-1"></a>            transform <span class="op">=</span> transform,</span>
+<span id="cb47-28"><a href="#cb47-28" aria-hidden="true" tabindex="-1"></a>    ) <span class="im">as</span> new_dataset:</span>
+<span id="cb47-29"><a href="#cb47-29" aria-hidden="true" tabindex="-1"></a>            new_dataset.write(Z_export, <span class="dv">1</span>)</span>
+<span id="cb47-30"><a href="#cb47-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-31"><a href="#cb47-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Export raster</span></span>
+<span id="cb47-32"><a href="#cb47-32" aria-hidden="true" tabindex="-1"></a>kde_filename <span class="op">=</span> <span class="ss">f"C:/Users/Nissim/Desktop/Vacant Lots Project/guncrime_kde_rast_</span><span class="sc">{</span>today<span class="sc">}</span><span class="ss">.tif"</span></span>
+<span id="cb47-33"><a href="#cb47-33" aria-hidden="true" tabindex="-1"></a>export_kde_raster(Z <span class="op">=</span> Z_sk, XX <span class="op">=</span> XX_sk, YY <span class="op">=</span> YY_sk,</span>
+<span id="cb47-34"><a href="#cb47-34" aria-hidden="true" tabindex="-1"></a>                  min_x <span class="op">=</span> min_x_sk, max_x <span class="op">=</span> max_x_sk, min_y <span class="op">=</span> min_y_sk, max_y <span class="op">=</span> max_y_sk,</span>
+<span id="cb47-35"><a href="#cb47-35" aria-hidden="true" tabindex="-1"></a>                  proj <span class="op">=</span> <span class="dv">2272</span>, filename <span class="op">=</span> kde_filename)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="38">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>src <span class="op">=</span> rasterio.<span class="bu">open</span>(kde_filename)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="39">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> rasterio.plot <span class="im">import</span> show</span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>fix, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>extent <span class="op">=</span> (src.bounds.left, src.bounds.right, src.bounds.bottom, src.bounds.top)</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> rasterio.plot.show(src, extent<span class="op">=</span>extent, ax<span class="op">=</span>ax, cmap<span class="op">=</span><span class="st">'Blues'</span>)</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>joined_gdf.plot(ax<span class="op">=</span>ax)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="39">
+<pre><code>&lt;AxesSubplot: &gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="2023_02_02_vacant_lots_layer_files/figure-html/cell-40-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="40">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>coord_list <span class="op">=</span> [(x,y) <span class="cf">for</span> x,y <span class="kw">in</span> <span class="bu">zip</span>(joined_gdf[<span class="st">'centroid'</span>].x, joined_gdf[<span class="st">'centroid'</span>].y)]</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>joined_gdf[<span class="st">'guncrime_density'</span>] <span class="op">=</span> [x <span class="cf">for</span> x <span class="kw">in</span> src.sample(coord_list)]</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a><span class="co"># convert 'guncrime_density' column to float</span></span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>joined_gdf[<span class="st">'guncrime_density'</span>] <span class="op">=</span> joined_gdf[<span class="st">'guncrime_density'</span>].astype(<span class="bu">float</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="41">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>joined_gdf.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="41">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>ADDRESS</th>
+      <th>BLDG_DESC</th>
+      <th>OPA_ID</th>
+      <th>COUNCILDISTRICT</th>
+      <th>ZIPCODE</th>
+      <th>type</th>
+      <th>OWNER</th>
+      <th>public_owner</th>
+      <th>COMM_PARTN</th>
+      <th>li_complaints</th>
+      <th>li_code_violations</th>
+      <th>centroid</th>
+      <th>neighborhood</th>
+      <th>relevant_rcos</th>
+      <th>tree_canopy_gap</th>
+      <th>guncrime_density</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3232 HENRY AVE</td>
+      <td>COM.CONDO.1STY MASONRY</td>
+      <td>882921188</td>
+      <td>4</td>
+      <td>19129</td>
+      <td>Lot</td>
+      <td>NEWCOURTLAND ELDER SVCS</td>
+      <td>False</td>
+      <td>None</td>
+      <td>Abandoned Vehicle</td>
+      <td>NaN</td>
+      <td>POINT (2687670.347 256881.319)</td>
+      <td>Allegheny West</td>
+      <td>East Falls Community Council; PO Box 12672, 19...</td>
+      <td>0.230223</td>
+      <td>3.863540e-10</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>633 N 53RD ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>442316810</td>
+      <td>3</td>
+      <td>19131</td>
+      <td>Lot</td>
+      <td>REDEVELOPMENT AUTHORITY OF PHILADELPHIA</td>
+      <td>True</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2675594.486 242078.492)</td>
+      <td>Haddington</td>
+      <td>Parkside Association; Parkside Evans Recreatio...</td>
+      <td>0.104381</td>
+      <td>4.676726e-10</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2424 N MOLE ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>161064101</td>
+      <td>5</td>
+      <td>19132</td>
+      <td>Lot</td>
+      <td>REDEVELOPMENT AUTHORITY OF PHILADELPHIA</td>
+      <td>True</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2694579.519 249996.821)</td>
+      <td>Stanton</td>
+      <td>Uptown Entertainment and Development Corporati...</td>
+      <td>0.165151</td>
+      <td>8.706567e-10</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>437 ARLINGTON ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>183194500</td>
+      <td>7</td>
+      <td>19122</td>
+      <td>Lot</td>
+      <td>MCHUGH JOHN</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2699241.653 246723.548)</td>
+      <td>West Kensington</td>
+      <td>Zulu Nation RCO; 2045 N Lawrence Street\r\nPhi...</td>
+      <td>0.199069</td>
+      <td>7.364297e-10</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2735 N HICKS ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>111168200</td>
+      <td>8</td>
+      <td>19132</td>
+      <td>Lot</td>
+      <td>VICTORIA; HERBERT MITCHELL</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2695050.897 251708.887)</td>
+      <td>Stanton</td>
+      <td>Tioga United, Inc.; 1539 W. Venango Street \r\...</td>
+      <td>0.327281</td>
+      <td>8.856570e-10</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="42">
+<div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plot the centroids with the guncrime density as the color</span></span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>joined_gdf.plot(column<span class="op">=</span><span class="st">'guncrime_density'</span>, cmap<span class="op">=</span><span class="st">'Reds'</span>, legend<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="42">
+<pre><code>&lt;AxesSubplot: &gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="2023_02_02_vacant_lots_layer_files/figure-html/cell-43-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>Reclassify data into percentiles.</p>
+<div class="cell" data-execution_count="43">
+<div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>guncrime_classifier <span class="op">=</span> mapclassify.Percentiles(joined_gdf[<span class="st">'guncrime_density'</span>], pct<span class="op">=</span>[<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">90</span>, <span class="dv">99</span>, <span class="dv">100</span>])</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>joined_gdf[<span class="st">'guncrime_density'</span>] <span class="op">=</span> joined_gdf[[<span class="st">'guncrime_density'</span>]].<span class="bu">apply</span>(guncrime_classifier)</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>joined_gdf[<span class="st">'guncrime_density'</span>] <span class="op">=</span> joined_gdf[<span class="st">'guncrime_density'</span>].replace([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>], [<span class="st">'Bottom 10%'</span>, <span class="st">'Bottom 50%'</span>, <span class="st">'Top 50%'</span>, <span class="st">'Top 10%'</span>, <span class="st">'Top 1%'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="44">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>tree_classifier <span class="op">=</span> mapclassify.Percentiles(joined_gdf[<span class="st">'tree_canopy_gap'</span>], pct<span class="op">=</span>[<span class="dv">10</span>, <span class="dv">50</span>, <span class="dv">90</span>, <span class="dv">99</span>, <span class="dv">100</span>])</span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>joined_gdf[<span class="st">'tree_canopy_gap'</span>] <span class="op">=</span> joined_gdf[[<span class="st">'tree_canopy_gap'</span>]].<span class="bu">apply</span>(tree_classifier)</span>
+<span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb56-5"><a href="#cb56-5" aria-hidden="true" tabindex="-1"></a>joined_gdf[<span class="st">'tree_canopy_gap'</span>] <span class="op">=</span> joined_gdf[<span class="st">'tree_canopy_gap'</span>].replace([<span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>], [<span class="st">'Bottom 10%'</span>, <span class="st">'Bottom 50%'</span>, <span class="st">'Top 50%'</span>, <span class="st">'Top 10%'</span>, <span class="st">'Top 1%'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="45">
+<div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>joined_gdf.head()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="45">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>ADDRESS</th>
+      <th>BLDG_DESC</th>
+      <th>OPA_ID</th>
+      <th>COUNCILDISTRICT</th>
+      <th>ZIPCODE</th>
+      <th>type</th>
+      <th>OWNER</th>
+      <th>public_owner</th>
+      <th>COMM_PARTN</th>
+      <th>li_complaints</th>
+      <th>li_code_violations</th>
+      <th>centroid</th>
+      <th>neighborhood</th>
+      <th>relevant_rcos</th>
+      <th>tree_canopy_gap</th>
+      <th>guncrime_density</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>3232 HENRY AVE</td>
+      <td>COM.CONDO.1STY MASONRY</td>
+      <td>882921188</td>
+      <td>4</td>
+      <td>19129</td>
+      <td>Lot</td>
+      <td>NEWCOURTLAND ELDER SVCS</td>
+      <td>False</td>
+      <td>None</td>
+      <td>Abandoned Vehicle</td>
+      <td>NaN</td>
+      <td>POINT (2687670.347 256881.319)</td>
+      <td>Allegheny West</td>
+      <td>East Falls Community Council; PO Box 12672, 19...</td>
+      <td>Top 50%</td>
+      <td>Bottom 50%</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>633 N 53RD ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>442316810</td>
+      <td>3</td>
+      <td>19131</td>
+      <td>Lot</td>
+      <td>REDEVELOPMENT AUTHORITY OF PHILADELPHIA</td>
+      <td>True</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2675594.486 242078.492)</td>
+      <td>Haddington</td>
+      <td>Parkside Association; Parkside Evans Recreatio...</td>
+      <td>Bottom 50%</td>
+      <td>Bottom 50%</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2424 N MOLE ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>161064101</td>
+      <td>5</td>
+      <td>19132</td>
+      <td>Lot</td>
+      <td>REDEVELOPMENT AUTHORITY OF PHILADELPHIA</td>
+      <td>True</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2694579.519 249996.821)</td>
+      <td>Stanton</td>
+      <td>Uptown Entertainment and Development Corporati...</td>
+      <td>Bottom 50%</td>
+      <td>Top 10%</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>437 ARLINGTON ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>183194500</td>
+      <td>7</td>
+      <td>19122</td>
+      <td>Lot</td>
+      <td>MCHUGH JOHN</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2699241.653 246723.548)</td>
+      <td>West Kensington</td>
+      <td>Zulu Nation RCO; 2045 N Lawrence Street\r\nPhi...</td>
+      <td>Top 50%</td>
+      <td>Top 50%</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>2735 N HICKS ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>111168200</td>
+      <td>8</td>
+      <td>19132</td>
+      <td>Lot</td>
+      <td>VICTORIA; HERBERT MITCHELL</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>POINT (2695050.897 251708.887)</td>
+      <td>Stanton</td>
+      <td>Tioga United, Inc.; 1539 W. Venango Street \r\...</td>
+      <td>Top 10%</td>
+      <td>Top 10%</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="48">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># now join the poly_gdf back to the joined_gdf on the opa_id column</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.join(poly_gdf.set_index(<span class="st">'OPA_ID'</span>), on<span class="op">=</span><span class="st">'OPA_ID'</span>)</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a><span class="co"># drop the 'centroids' column</span></span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.drop(columns<span class="op">=</span>[<span class="st">'centroid'</span>])</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a><span class="co"># make 'geometry' the geometry column</span></span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>joined_gdf <span class="op">=</span> joined_gdf.set_geometry(<span class="st">'geometry'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="49">
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="co"># set all column names to lowercase</span></span>
+<span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>joined_gdf.columns <span class="op">=</span> <span class="bu">map</span>(<span class="bu">str</span>.lower, joined_gdf.columns)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="51">
+<div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>joined_gdf.sample(<span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="51">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>address</th>
+      <th>bldg_desc</th>
+      <th>opa_id</th>
+      <th>councildistrict</th>
+      <th>zipcode</th>
+      <th>type</th>
+      <th>owner</th>
+      <th>public_owner</th>
+      <th>comm_partn</th>
+      <th>li_complaints</th>
+      <th>li_code_violations</th>
+      <th>neighborhood</th>
+      <th>relevant_rcos</th>
+      <th>tree_canopy_gap</th>
+      <th>guncrime_density</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1651</th>
+      <td>623 N CAMAC ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>141178900</td>
+      <td>5</td>
+      <td>19123</td>
+      <td>Lot</td>
+      <td>METROPOLY LLC</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>West Poplar</td>
+      <td>14th Ward Democratic Executive Committee; 1117...</td>
+      <td>Top 50%</td>
+      <td>Bottom 50%</td>
+      <td>POLYGON ((2695025.755 240430.543, 2695037.061 ...</td>
+    </tr>
+    <tr>
+      <th>878</th>
+      <td>819 W BIRCH ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>372398700</td>
+      <td>5</td>
+      <td>19133</td>
+      <td>Lot</td>
+      <td>BCM SECOND INVESTMENT LLC</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Hartranft</td>
+      <td>Asociacion Puertorriquenos En Marcha (APM); 60...</td>
+      <td>Bottom 10%</td>
+      <td>Top 1%</td>
+      <td>POLYGON ((2698292.959 252353.432, 2698286.438 ...</td>
+    </tr>
+    <tr>
+      <th>3904</th>
+      <td>6616 CHEW AVE</td>
+      <td>ROW 2 STY MASONRY</td>
+      <td>221254600</td>
+      <td>8</td>
+      <td>19119</td>
+      <td>Building</td>
+      <td>TOWER PROPERTY LLC</td>
+      <td>False</td>
+      <td>None</td>
+      <td>Maintenance Complaint</td>
+      <td>DOOR AND WINDOW VACANT; EXTERIOR STRUCTURE ROO...</td>
+      <td>East Mount Airy</td>
+      <td>East Mt. Airy Neighbors; 7301 Germantown Ave.,...</td>
+      <td>Bottom 10%</td>
+      <td>Bottom 10%</td>
+      <td>POLYGON ((2687976.391 273128.854, 2687937.199 ...</td>
+    </tr>
+    <tr>
+      <th>3887</th>
+      <td>1325 W SELTZER ST</td>
+      <td>ROW 2 STY MASONRY</td>
+      <td>372325300</td>
+      <td>5</td>
+      <td>19132</td>
+      <td>Building</td>
+      <td>OUR DEEDS LLC</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Hartranft</td>
+      <td>Asociacion Puertorriquenos En Marcha (APM); 60...</td>
+      <td>Top 50%</td>
+      <td>Top 10%</td>
+      <td>POLYGON ((2696082.984 251778.746, 2696076.498 ...</td>
+    </tr>
+    <tr>
+      <th>2055</th>
+      <td>2415 W MONTGOMERY AVE</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>322214500</td>
+      <td>5</td>
+      <td>19121</td>
+      <td>Lot</td>
+      <td>ROBINSON ADOPHNEY</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>North Central</td>
+      <td>32nd Democratic Ward; 2112 N Woodstock St, Phi...</td>
+      <td>Bottom 50%</td>
+      <td>Top 50%</td>
+      <td>POLYGON ((2690229.701 247058.709, 2690218.742 ...</td>
+    </tr>
+    <tr>
+      <th>3660</th>
+      <td>6635 GERMANTOWN AVE</td>
+      <td>ROW W-OFF/STR 2STY MASONR</td>
+      <td>871528200</td>
+      <td>8</td>
+      <td>19119</td>
+      <td>Building</td>
+      <td>BENNETT CLINTON</td>
+      <td>False</td>
+      <td>None</td>
+      <td>Maintenance Complaint; Maintenance Complaint</td>
+      <td>VACANT STRUCTURE &amp; LAND; EXTERIOR AREA SANITAT...</td>
+      <td>East Mount Airy</td>
+      <td>East Mt. Airy Neighbors; 7301 Germantown Ave.,...</td>
+      <td>Bottom 50%</td>
+      <td>Bottom 10%</td>
+      <td>POLYGON ((2686699.647 271696.275, 2686648.645 ...</td>
+    </tr>
+    <tr>
+      <th>545</th>
+      <td>5213 W GIRARD AVE</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>442090500</td>
+      <td>3</td>
+      <td>19131</td>
+      <td>Lot</td>
+      <td>DAWKINS WILLIAM C</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Carroll Park</td>
+      <td>Parkside Association; Parkside Evans Recreatio...</td>
+      <td>Top 50%</td>
+      <td>Bottom 50%</td>
+      <td>POLYGON ((2675724.377 242569.480, 2675708.177 ...</td>
+    </tr>
+    <tr>
+      <th>228</th>
+      <td>244 N LAWRENCE ST</td>
+      <td>VAC LAND COMM. &lt; ACRE</td>
+      <td>885675780</td>
+      <td>1</td>
+      <td>19106</td>
+      <td>Lot</td>
+      <td>AUTHORITY; DELAWARE RIVER PORT</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Old City</td>
+      <td>5th Ward Republican RCO; 1500 Walnut Street Su...</td>
+      <td>Top 50%</td>
+      <td>Bottom 50%</td>
+      <td>POLYGON ((2698033.064 237411.856, 2698061.050 ...</td>
+    </tr>
+    <tr>
+      <th>1731</th>
+      <td>2171 E WILLIAM ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>252078000</td>
+      <td>1</td>
+      <td>19134</td>
+      <td>Lot</td>
+      <td>FRANCES; ONNIE PRIMUS</td>
+      <td>False</td>
+      <td>None</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>Richmond</td>
+      <td>Port Richmond On Patrol &amp; Civic Association (P...</td>
+      <td>Bottom 50%</td>
+      <td>Top 50%</td>
+      <td>POLYGON ((2706444.192 249261.885, 2706388.606 ...</td>
+    </tr>
+    <tr>
+      <th>1277</th>
+      <td>1438 N CARLISLE ST</td>
+      <td>VAC LAND RES &lt; ACRE</td>
+      <td>471169310</td>
+      <td>5</td>
+      <td>19121</td>
+      <td>Lot</td>
+      <td>CITY OF PHILA</td>
+      <td>True</td>
+      <td>None</td>
+      <td>Maintenance Complaint; Maintenance Complaint</td>
+      <td>NaN</td>
+      <td>North Central</td>
+      <td>Temple Area Property Association (TAPA); 1639 ...</td>
+      <td>Bottom 50%</td>
+      <td>Top 50%</td>
+      <td>POLYGON ((2694389.486 244715.636, 2694388.196 ...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="cell" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb61"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>joined_gdf.plot(column<span class="op">=</span><span class="st">'guncrime_density'</span>, cmap<span class="op">=</span>plt.cm.RdBu_r, legend<span class="op">=</span><span class="va">True</span>, figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="59">
+<pre><code>&lt;AxesSubplot: &gt;</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="2023_02_02_vacant_lots_layer_files/figure-html/cell-50-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
