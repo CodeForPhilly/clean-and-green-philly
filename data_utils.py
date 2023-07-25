@@ -12,6 +12,9 @@ from constants import (
     DEFAULT_ARCGIS_QUERY_PARAMETERS,
     ARCGIS_BASE_URL,
     PHILADELPHIA_CARTO_BASE_URL,
+    REDEVELOPMENT_OWNER_VALUES,
+    DEPARTMENT_OF_PUBLIC_PROPERTY_OWNER_VALUES,
+    PUBLIC_PROPERTY_OWNER_VALUES,
 )
 
 warnings.filterwarnings("ignore", "GeoSeries.notna", UserWarning)
@@ -150,3 +153,96 @@ def get_shapefile_dataset(dataset_url: str) -> gpd.GeoDataFrame:
         gdf = gpd.GeoDataFrame.from_features(src, crs=crs)
 
     return gdf
+
+
+def starts_with_preposition(string):
+    return string.split(" ")[0].lower() in [
+        "a",
+        "an",
+        "and",
+        "as",
+        "at",
+        "but",
+        "by",
+        "for",
+        "from",
+        "in",
+        "into",
+        "nor",
+        "of",
+        "on",
+        "or",
+        "so",
+        "the",
+        "to",
+        "up",
+        "yet",
+    ]
+
+
+def combine_owners(row):
+    if pd.isnull(row["OWNER1"]) and pd.isnull(row["OWNER2"]):
+        return None
+    elif pd.isnull(row["OWNER1"]) and not pd.isnull(row["OWNER2"]):
+        return row["OWNER2"]
+    elif not pd.isnull(row["OWNER1"]) and pd.isnull(row["OWNER2"]):
+        return row["OWNER1"]
+    elif starts_with_preposition(row["OWNER2"]):
+        return row["OWNER1"] + " " + row["OWNER2"]
+    else:
+        return row["OWNER2"] + "; " + row["OWNER1"]
+
+
+def clean_ownership_values(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """
+    correct misspellings, and identify public vs. private ownership
+    """
+    gdf["OWNER"] = gdf.apply(combine_owners, axis=1)
+
+    gdf.loc[
+        gdf["OWNER"] == "PHILADELPHIA HOUSING AUTH", "OWNER"
+    ] = "PHILADELPHIA HOUSING AUTHORITY"
+    gdf.loc[
+        gdf["OWNER"] == "PHILA HOUSING AUTHORITY", "OWNER"
+    ] = "PHILADELPHIA HOUSING AUTHORITY"
+
+    for val in REDEVELOPMENT_OWNER_VALUES:
+        gdf.loc[
+            gdf["OWNER"] == val, "OWNER"
+        ] = "REDEVELOPMENT AUTHORITY OF PHILADELPHIA"
+
+    for var in DEPARTMENT_OF_PUBLIC_PROPERTY_OWNER_VALUES:
+        gdf.loc[
+            gdf["OWNER"] == var, "OWNER"
+        ] = "CITY OF PHILADELPHIA DEPARTMENT OF PUBLIC PROPERTY"
+
+    gdf.loc[
+        gdf["OWNER"] == "URBAN DEVELOPMENT; SECRETARY OF HOUSING", "OWNER"
+    ] = "SECRETARY OF HOUSING AND URBAN DEVELOPMENT"
+    gdf.loc[
+        gdf["OWNER"] == "URBAN DEVELOPMENT; SECRETARY OF HOUSING AND", "OWNER"
+    ] = "SECRETARY OF HOUSING AND URBAN DEVELOPMENT"
+
+    gdf.loc[
+        gdf["OWNER"] == "COMMONWEALTH OF PA", "OWNER"
+    ] = "COMMONWEALTH OF PENNSYLVANIA"
+    gdf.loc[
+        gdf["OWNER"] == "COMMONWEALTH OF PENNA", "OWNER"
+    ] = "COMMONWEALTH OF PENNSYLVANIA"
+
+    gdf.loc[
+        gdf["OWNER"] == "DEVELOPMENT CORPORATION; PHILADELPHIA HOUSING", "OWNER"
+    ] = "PHILADELPHIA HOUSING DEVELOPMENT CORPORATION"
+    gdf.loc[
+        gdf["OWNER"] == "PHILA HOUSING DEV CORP", "OWNER"
+    ] = "PHILADELPHIA HOUSING DEVELOPMENT CORPORATION"
+
+    gdf.loc[
+        gdf["OWNER"] == "DEPARTMENT OF TRANSPORTAT; COMMONWEALTH OF PENNSYLVA", "OWNER"
+    ] = "PENNDOT"
+
+    gdf.loc[gdf["OWNER"] == "CITY OF PHILADELPHIA", "OWNER"] = "CITY OF PHILA"
+
+    gdf["public_owner"] = gdf["OWNER"].isin(PUBLIC_PROPERTY_OWNER_VALUES)
+
+    return gdf.drop(["OWNER1", "OWNER2"], axis=1)
