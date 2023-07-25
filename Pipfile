@@ -13,6 +13,7 @@ matplotlib = "*"
 rasterio = "*"
 scikit-learn = "*"
 mapclassify = "*"
+black = "*"
 
 [dev-packages]
 
