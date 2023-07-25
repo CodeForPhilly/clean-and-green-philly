@@ -1,4 +1,6 @@
-from data_utils import *
+from constants import ARCGIS_LAND_DATASET_PATH, ARCGIS_BUILDINGS_DATASET_PATH, ARCGIS_PHS_LANDCARE_DATASET_PATH, \
+    ARCGIS_PHS_MAINTENANCE_DATASET_PATH, ARCGIS_RCO_DATASET_PATH
+from data_utils import get_arcgis_dataset, get_philadelphia_li_complaint_dataset, get_philadelphia_li_violation_dataset
 
 
 def main():
@@ -10,7 +12,7 @@ def main():
     phs_maintenance_gdf = get_arcgis_dataset(ARCGIS_PHS_MAINTENANCE_DATASET_PATH)
     rco_gdf = get_arcgis_dataset(ARCGIS_RCO_DATASET_PATH)
     complaints_gdf = get_philadelphia_li_complaint_dataset()
-    violations_gdf = get_philadelphia_li_complaint_dataset()
+    violations_gdf = get_philadelphia_li_violation_dataset()
 
     # preprocess data
 
