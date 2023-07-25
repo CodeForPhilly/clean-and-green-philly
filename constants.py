@@ -6,7 +6,7 @@ ARCGIS_PHS_LANDCARE_DATASET_PATH: str = (
     "/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PHS_CommunityLandcare/FeatureServer/0/query"
 )
 ARCGIS_PHS_MAINTENANCE_DATASET_PATH: str = "/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PHS_PhilaLandCare_Maintenance/FeatureServer/0/query"
-ARCGIS_RCO_DATASET_PATH: str = (
+ARCGIS_COMMUNITY_ORGANISATIONS_DATASET_PATH: str = (
     "/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Zoning_RCO/FeatureServer/0/query"
 )
 
