@@ -5,7 +5,7 @@ from constants import (
     ARCGIS_BUILDINGS_DATASET_PATH,
     ARCGIS_PHS_LANDCARE_DATASET_PATH,
     ARCGIS_PHS_MAINTENANCE_DATASET_PATH,
-    ARCGIS_RCO_DATASET_PATH,
+    ARCGIS_COMMUNITY_ORGANISATIONS_DATASET_PATH,
     PHILADELPHIA_TREE_CANOPY_DATASET_URL,
     PHILADELPHIA_NEIGHBORHOODS_DATASET_URL,
 )
@@ -26,13 +26,13 @@ def orchestrate_processing(output_filename: str) -> bool:
     buildings_gdf = get_arcgis_dataset(ARCGIS_BUILDINGS_DATASET_PATH)
     phs_landcare_gdf = get_arcgis_dataset(ARCGIS_PHS_LANDCARE_DATASET_PATH)
     phs_maintenance_gdf = get_arcgis_dataset(ARCGIS_PHS_MAINTENANCE_DATASET_PATH)
-    rco_gdf = get_arcgis_dataset(ARCGIS_RCO_DATASET_PATH)
+    community_orgs_gdf = get_arcgis_dataset(ARCGIS_COMMUNITY_ORGANISATIONS_DATASET_PATH)
     complaints_gdf = get_philadelphia_li_complaint_dataset()
     violations_gdf = get_philadelphia_li_violation_dataset()
     neighborhoods_gdf = get_shapefile_dataset(PHILADELPHIA_NEIGHBORHOODS_DATASET_URL)
     tree_canopy_gdf = get_shapefile_dataset(PHILADELPHIA_TREE_CANOPY_DATASET_URL)
     gun_crime_gdf = get_philadelphia_gun_crime_dataset()
-    opa_df = get_property_assessment_dataset()
+    property_assessment_df = get_property_assessment_dataset()
     delinquency_df = get_delinquency_dataset()
 
     # preprocess data
