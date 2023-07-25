@@ -1,8 +1,17 @@
 import argparse
 
-from constants import ARCGIS_LAND_DATASET_PATH, ARCGIS_BUILDINGS_DATASET_PATH, ARCGIS_PHS_LANDCARE_DATASET_PATH, \
-    ARCGIS_PHS_MAINTENANCE_DATASET_PATH, ARCGIS_RCO_DATASET_PATH
-from data_utils import get_arcgis_dataset, get_philadelphia_li_complaint_dataset, get_philadelphia_li_violation_dataset
+from constants import (
+    ARCGIS_LAND_DATASET_PATH,
+    ARCGIS_BUILDINGS_DATASET_PATH,
+    ARCGIS_PHS_LANDCARE_DATASET_PATH,
+    ARCGIS_PHS_MAINTENANCE_DATASET_PATH,
+    ARCGIS_RCO_DATASET_PATH,
+)
+from data_utils import (
+    get_arcgis_dataset,
+    get_philadelphia_li_complaint_dataset,
+    get_philadelphia_li_violation_dataset,
+)
 
 
 def orchestrate_processing(output_filename: str) -> bool:
@@ -21,8 +30,10 @@ def orchestrate_processing(output_filename: str) -> bool:
 
 
 def main():
-    parser: argparse.ArgumentParser = argparse.ArgumentParser(description='Process various Philadelphia data into a GeoJSON file')
-    parser.add_argument('filename', help='the output file name')
+    parser: argparse.ArgumentParser = argparse.ArgumentParser(
+        description="Process various Philadelphia data into a GeoJSON file"
+    )
+    parser.add_argument("filename", help="the output file name")
     args = parser.parse_args()
 
     output_filename: str = args.filename
@@ -35,4 +46,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
