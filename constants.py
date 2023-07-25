@@ -12,6 +12,12 @@ ARCGIS_RCO_DATASET_PATH: str = (
 
 PHILADELPHIA_CARTO_BASE_URL: str = "https://phl.carto.com/api/v2/sql"
 
+PHILADELPHIA_NEIGHBORHOODS_DATASET_URL: str = "https://github.com/azavea/geo-data/raw/master/Neighborhoods_Philadelphia/Neighborhoods_Philadelphia.zip"
+
+PHILADELPHIA_TREE_CANOPY_DATASET_URL: str = (
+    "https://national-tes-data-share.s3.amazonaws.com/national_tes_share/pa.zip.zip"
+)
+
 DEFAULT_ARCGIS_QUERY_PARAMETERS: dict = {
     "where": "1=1",
     "outFields": "*",
