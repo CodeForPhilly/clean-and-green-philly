@@ -5,7 +5,7 @@ import geopandas as gpd
 import requests
 from shapely import Polygon
 
-from constants import *
+from constants import DEFAULT_ARCGIS_QUERY_PARAMETERS, ARCGIS_BASE_URL, PHILADELPHIA_CARTO_BASE_URL
 
 
 def get_arcgis_dataset(dataset_path: str) -> gpd.GeoDataFrame:
