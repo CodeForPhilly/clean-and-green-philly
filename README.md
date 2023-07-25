@@ -12,7 +12,7 @@ Gun crime x vacant lots mapping tool layer
 2. Run the main script: `python process_data.py [output_filename]`
 
 # Contribution Instructions
-1. Create a fork of this repository, and work from branches in your fork. When those changes are ready for review, please create a pull request from fork:branch to upstream:main.
+1. Create a fork of this repository and work from branches within your fork. When those changes are ready for review, create a pull request from fork:branch to upstream:main.
 2. Before committing changes, format your code to maintain a consistent codebase: 
     ```
     pipenv shell
