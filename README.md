@@ -6,4 +6,7 @@ Gun crime x vacant lots mapping tool layer
 2. Install the latest Python 3.11: `pyenv install 3.11.4`
 3. Install [pipenv](https://github.com/pypa/pipenv) for environment management
 4. Install project requirements: `pipenv install`
-5. Launch Jupyter notebooks: `pipenv run python -m jupyter notebook --no-browser --notebook-dir=./notebooks`
+
+# Usage Instructions
+1. Activate the pipenv shell: `pipenv shell`
+2. Run the main script: `python process_data.py [output_filename]`
