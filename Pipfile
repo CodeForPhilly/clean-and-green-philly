@@ -15,6 +15,7 @@ scikit-learn = "*"
 mapclassify = "*"
 black = "*"
 fiona = "*"
+esridump = "*"
 
 [dev-packages]
 
