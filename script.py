@@ -124,9 +124,9 @@ vacant_properties = FeatureLayer(
 )
 
 
-# '''
-# Load City Owned Properties
-# '''
+"""
+Load City Owned Properties
+"""
 city_owned_properties = FeatureLayer(
     name="City Owned Properties",
     esri_rest_urls="https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/LAMAAssets/FeatureServer/0/",
@@ -146,9 +146,9 @@ vacant_properties.gdf = vacant_properties.gdf.loc[
 # Note: This removes some entries from the dataset, need to revisit this
 
 
-# '''
-# Load PHS Data
-# '''
+"""
+Load PHS Data
+"""
 
 phs_layers_to_load = [
     "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PHS_CommunityLandcare/FeatureServer/0/",
@@ -162,66 +162,3 @@ phs_properties.gdf = phs_properties.gdf[["COMM_PARTN", "geometry"]]
 
 vacant_properties.spatial_join(phs_properties)
 vacant_properties.gdf["COMM_PARTN"].fillna("None", inplace=True)
-
-
-# '''
-# L&I Data
-# '''
-
-# # L&I Complaints
-# one_year_ago = (datetime.datetime.now() -
-#                 datetime.timedelta(days=365)).strftime("%Y-%m-%d")
-
-# complaints_sql_query = f"SELECT address, service_request_id, subject, status, service_name, service_code, lat as y, lon as x FROM public_cases_fc WHERE requested_datetime >= '{one_year_ago}'"
-# l_and_i_complaints = FeatureLayer(
-#     name='L&I Complaints', carto_sql_queries=complaints_sql_query, type='carto')
-
-# # filter for only Status = 'Open'
-# l_and_i_complaints.gdf = l_and_i_complaints.gdf[l_and_i_complaints.gdf['status'] == 'Open']
-
-# # collapse complaints_gdf by address and concatenate the violationcodetitle values into a list with a semicolon separator
-# l_and_i_complaints.gdf = l_and_i_complaints.gdf.groupby('address')['service_name'].apply(
-#     lambda x: '; '.join([val for val in x if val is not None])).reset_index()
-
-# # rename the column to 'li_complaints'
-# l_and_i_complaints.gdf.rename(
-#     columns={'service_name': 'li_complaints'}, inplace=True)
-
-# # L&I Code Violations
-# violations_sql_query = f"SELECT parcel_id_num, casenumber, casecreateddate, casetype, casestatus, violationnumber, violationcodetitle, violationstatus, opa_account_num, address, opa_owner, geocode_x as x, geocode_y as y FROM violations WHERE violationdate >= '{one_year_ago}'"
-# l_and_i_violations = FeatureLayer(
-#     name='L&I Code Violations', carto_sql_queries=violations_sql_query, type='carto')
-
-# # Manipulation of L&I data- not changed much from the original script
-# all_violations_count_df = l_and_i_violations.gdf.groupby(
-#     'opa_account_num').count().reset_index()[['opa_account_num', 'violationnumber']]
-# all_violations_count_df = all_violations_count_df.rename(
-#     columns={'violationnumber': 'all_violations_past_year'})
-# l_and_i_violations.gdf = l_and_i_violations.gdf[(
-#     l_and_i_violations.gdf['violationstatus'] == 'OPEN')]
-
-# open_violations_count_df = l_and_i_violations.gdf.groupby(
-#     'opa_account_num').count().reset_index()[['opa_account_num', 'violationnumber']]
-# open_violations_count_df = open_violations_count_df.rename(
-#     columns={'violationnumber': 'open_violations_past_year'})
-
-# # join the all_violations_count_df and open_violations_count_df dataframes on opa_account_num
-# violations_count_gdf = all_violations_count_df.merge(
-#     open_violations_count_df, how='left', on='opa_account_num')
-
-# # replace NaN values with 0
-# violations_count_gdf.fillna(0, inplace=True)
-
-# # convert the all_violations_past_year and open_violations_past_year columns to integers
-# violations_count_gdf['all_violations_past_year'] = violations_count_gdf['all_violations_past_year'].astype(
-#     int)
-# violations_count_gdf['open_violations_past_year'] = violations_count_gdf['open_violations_past_year'].astype(
-#     int)
-
-# # collapse violations_gdf by address and concatenate the violationcodetitle values into a list with a semicolon separator
-# violations_gdf = l_and_i_violations.gdf.groupby('opa_account_num')['violationcodetitle'].apply(
-#     lambda x: '; '.join([val for val in x if val is not None])).reset_index()
-
-# # rename the column to 'li_violations'
-# violations_gdf.rename(
-#     columns={'violationcodetitle': 'li_code_violations'}, inplace=True)
