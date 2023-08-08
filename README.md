@@ -21,6 +21,7 @@ Currently we are in the process of user testing a newer prototype, which looks l
 At the moment, we are working on:
 - User testing with the prototype
 - Finishing the Python script that creates the underlying dataset
+
 Current tasks for the Python script are visible under the Issues section.
 
 In September, we hope to begin turning our attention to building the dashboard and website, which will be built in React JS.
