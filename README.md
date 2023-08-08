@@ -25,6 +25,14 @@ Current tasks for the Python script are visible under the Issues section.
 
 In September, we hope to begin turning our attention to building the dashboard and website, which will be built in React JS.
 
+# Looking For
+- Front end engineer w/mapping experience (React JS)
+- Python data engineer
+
+# Languages
+- React JS (front end)
+- Python (back end)
+
 # Setup Instructions
 1. Install [pyenv](https://github.com/pyenv/pyenv) (or [pyenv-win](https://github.com/pyenv-win/pyenv-win) for Windows) for Python version management
 2. Install the latest Python 3.11: `pyenv install 3.11.4`
