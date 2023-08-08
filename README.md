@@ -50,3 +50,6 @@ In September, we hope to begin turning our attention to building the dashboard a
     pipenv shell
     black .
     ```
+
+# License
+MIT © Code for Philly
