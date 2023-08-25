@@ -16,6 +16,9 @@ mapclassify = "*"
 black = "*"
 fiona = "*"
 esridump = "*"
+sqlalchemy = "*"
+psycopg2-binary = "*"
+geoalchemy2 = "*"
 
 [dev-packages]
 
