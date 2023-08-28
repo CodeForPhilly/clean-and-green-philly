@@ -21,10 +21,15 @@ Gun crime x vacant lots mapping tool layer
    `CREATE EXTENSION postgis;`
 5. Set your database connection string to an environment variable `VACANT_LOTS_DB`
 
+# awkde
+
+We are using the [awkde package](https://github.com/mennthor/awkde) to create the Adaptive Width KDE. It is not available through pip. Install directly in the `src` folder using their instructions.
+
 # Usage Instructions
 
 1. Activate the pipenv shell: `pipenv shell`
-2. Run the main script: `python process_data.py [output_filename]`
+2. Move the to src folder `cd src`
+3. Run the main script `python script.py`
 
 # Contribution Instructions
 

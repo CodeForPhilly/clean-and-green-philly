@@ -39,24 +39,22 @@ class FeatureLayer:
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
 
-        if len(non_none_inputs) != 1:
-            raise ValueError(
-                "Exactly one of esri_rest_urls, carto_sql_queries, or gdf must be provided."
-            )
+        if len(non_none_inputs) > 0:
+            if self.esri_rest_urls is not None:
+                self.type = "esri"
+            elif self.carto_sql_queries is not None:
+                self.type = "carto"
+            elif self.gdf is not None:
+                self.type = "gdf"
 
-        if self.esri_rest_urls is not None:
-            self.type = "esri"
-        elif self.carto_sql_queries is not None:
-            self.type = "carto"
-        elif self.gdf is not None:
-            self.type = "gdf"
-
-        if force_reload:
-            self.load_data()
-        else:
-            psql_exists = self.check_psql()
-            if not psql_exists:
+            if force_reload:
                 self.load_data()
+            else:
+                psql_exists = self.check_psql()
+                if not psql_exists:
+                    self.load_data()
+        else:
+            print('Initialized FeatureLayer with no data.')
 
     def check_psql(self):
         try:
@@ -145,7 +143,7 @@ class FeatureLayer:
         # If other_layer.gdf isn't a geodataframe, try to make it one
         if not isinstance(other_layer.gdf, gpd.GeoDataFrame):
             try:
-                other_layer.gdf = gpd.GeoDataFrame(other_layer.gdf, geometry="geometry")
+                other_layer.rebuild_gdf()
 
             except:
                 print(other_layer.gdf)
@@ -156,3 +154,6 @@ class FeatureLayer:
         self.gdf = gpd.sjoin(self.gdf, other_layer.gdf, how=how, predicate=predicate)
         self.gdf.drop(columns=["index_right"], inplace=True)
         self.gdf.drop_duplicates(inplace=True)
+
+    def rebuild_gdf(self):
+        self.gdf = gpd.GeoDataFrame(self.gdf, geometry="geometry")
