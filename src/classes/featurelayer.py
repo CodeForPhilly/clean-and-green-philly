@@ -54,7 +54,7 @@ class FeatureLayer:
                 if not psql_exists:
                     self.load_data()
         else:
-            print('Initialized FeatureLayer with no data.')
+            print("Initialized FeatureLayer with no data.")
 
     def check_psql(self):
         try:
