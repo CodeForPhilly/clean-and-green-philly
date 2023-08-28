@@ -1,3 +1,4 @@
 /notebooks/.ipynb_checkpoints/
 .idea
 src/tmp
+.DS_Store
