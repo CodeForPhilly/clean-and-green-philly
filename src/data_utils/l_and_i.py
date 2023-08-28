@@ -1,6 +1,5 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import COMPLAINTS_SQL_QUERY, VIOLATIONS_SQL_QUERY
-import geopandas as gpd
 
 
 def l_and_i(primary_featurelayer):
@@ -20,9 +19,7 @@ def l_and_i(primary_featurelayer):
         .apply(lambda x: "; ".join([val for val in x if val is not None]))
         .reset_index()
     )
-    l_and_i_complaints.gdf = gpd.GeoDataFrame(
-        l_and_i_complaints.gdf, geometry="geometry"
-    )
+    l_and_i_complaints.rebuild_gdf()
 
     # collapse complaints_gdf by address and concatenate the violationcodetitle values into a list with a semicolon separator
     # l_and_i_complaints.gdf = l_and_i_complaints.gdf.groupby('address')['service_name'].apply(lambda x: '; '.join([val for val in x if val is not None])).reset_index()
@@ -80,9 +77,7 @@ def l_and_i(primary_featurelayer):
         .apply(lambda x: "; ".join([val for val in x if val is not None]))
         .reset_index()
     )
-    l_and_i_complaints.gdf = gpd.GeoDataFrame(
-        l_and_i_complaints.gdf, geometry="geometry"
-    )
+    l_and_i_complaints.rebuild_gdf()
 
     # rename the column to 'li_violations'
     l_and_i_violations.gdf.rename(
