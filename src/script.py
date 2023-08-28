@@ -54,7 +54,6 @@ Gun Crime Data
 vacant_properties = gun_crimes(vacant_properties)
 
 
-
 # Clean up
 vacant_properties.gdf.to_postgis(
     "vacant_properties_end", conn, if_exists="replace", index=False
