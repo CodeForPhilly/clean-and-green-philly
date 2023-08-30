@@ -160,44 +160,43 @@ class FeatureLayer:
     def rebuild_gdf(self):
         self.gdf = gpd.GeoDataFrame(self.gdf, geometry="geometry")
 
-
     def upload_to_mapbox(self, tileset_id):
         """Upload GeoDataFrame to Mapbox as Tileset."""
-        
+
         # Initialize Mapbox Uploader
         uploader = Uploader()
         uploader.session.params.update(access_token=MAPBOX_TOKEN)
 
-        # Reproject 
+        # Reproject
         self.gdf_wm = self.gdf.to_crs(epsg=4326)
 
         # Convert to GeoJSON
         geojson_data = json.loads(self.gdf_wm.to_json())
 
         # Save to a temporary file
-        with open('tmp/temp.geojson', 'w') as f:
+        with open("tmp/temp.geojson", "w") as f:
             json.dump(geojson_data, f)
 
         # Stage the data on S3
-        print('Beginning Mapbox upload.')
-        s3_url = uploader.stage(open('tmp/temp.geojson', 'rb'))
+        print("Beginning Mapbox upload.")
+        s3_url = uploader.stage(open("tmp/temp.geojson", "rb"))
 
         # Create Tileset
         response = uploader.create(s3_url, tileset_id)
-        print('Uploaded gdf tileset to Mapbox.')
+        print("Uploaded gdf tileset to Mapbox.")
 
         return response
-    
+
     def drop_columns(self):
-        '''
+        """
         Method to clean up the database by dropping columns that are not needed.
         Ideally we'll do this in each data_utils file, but for now we'll do it here.
-        '''
+        """
         columns = [
             "OBJECTID_left",
             "Shape__Area_left",
             "Shape__Length_left",
-            "OBJECTID_right",   
+            "OBJECTID_right",
             "Shape__Area_right",
             "Shape__Length_right",
             "MAPREG_1",
