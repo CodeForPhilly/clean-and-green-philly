@@ -1,0 +1,13 @@
+LICENSE
+README.md
+pyproject.toml
+setup.py
+awkde/__init__.py
+awkde/awkde.py
+awkde/tools.py
+awkde.egg-info/PKG-INFO
+awkde.egg-info/SOURCES.txt
+awkde.egg-info/dependency_links.txt
+awkde.egg-info/requires.txt
+awkde.egg-info/top_level.txt
+cpp/backend.cpp

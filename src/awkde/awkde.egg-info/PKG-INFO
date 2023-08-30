@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: awkde
+Version: 0.1
+Summary: Adaptive width gaussian KDE
+Home-page: https://github.com/mennthor/awkde
+Author: Thorben Menne
+Author-email: thorben.menne@tu-dortmund.de
+License-File: LICENSE

@@ -19,6 +19,7 @@ esridump = "*"
 sqlalchemy = "*"
 psycopg2-binary = "*"
 geoalchemy2 = "*"
+mapbox = "*"
 
 [dev-packages]
 
