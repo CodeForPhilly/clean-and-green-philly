@@ -54,6 +54,12 @@ Gun Crime Data
 vacant_properties = gun_crimes(vacant_properties)
 
 
+"""
+Post to Mapbox
+"""
+vacant_properties.drop_columns()
+vacant_properties.upload_to_mapbox("vacant_properties")
+
 # Clean up
 vacant_properties.gdf.to_postgis(
     "vacant_properties_end", conn, if_exists="replace", index=False
