@@ -57,6 +57,7 @@ vacant_properties = gun_crimes(vacant_properties)
 """
 Post to Mapbox
 """
+vacant_properties.drop_columns()
 vacant_properties.upload_to_mapbox('vacant_properties')
 
 # Clean up
