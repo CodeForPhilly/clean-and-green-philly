@@ -33,6 +33,7 @@ def gun_crimes(primary_featurelayer):
     grid_points = np.array([xx.ravel(), yy.ravel()]).T
 
     # Compute adaptive KDE values
+    print('fitting KDE for gun crime data')
     kde = GaussianKDE(glob_bw="silverman", alpha=0.999, diag_cov=True)
     kde.fit(X)
 

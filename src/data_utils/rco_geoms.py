@@ -12,13 +12,8 @@ def rco_geoms(primary_featurelayer):
         "PRIMARY_PHONE",
     ]
 
-    rco_geoms.gdf["rco_info"] = (
-        rco_geoms.gdf[rco_aggregate_cols].apply(
-            lambda x: "; ".join(map(str, x)), axis=1
-        )
-        + "; "
-        + rco_geoms.gdf["geometry"].apply(str)
-    )
+    rco_geoms.gdf["rco_info"] = rco_geoms.gdf[rco_aggregate_cols].apply(lambda x: "; ".join(map(str, x)), axis=1)
+    
     rco_geoms.gdf = rco_geoms.gdf[["rco_info", "geometry"]]
     rco_geoms.rebuild_gdf()
 
