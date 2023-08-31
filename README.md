@@ -43,6 +43,14 @@ In September, we hope to begin turning our attention to building the dashboard a
 - Tailwind
 - Python (data engineering)
 
+### Codebase
+
+This is a monorepo for both the nextjs app and the scripts which ETL and analyze the data.
+
+## Data Scripts
+
+All of the data scripting is in python and lives in the `data` folder. Everything below should be run in that folder.
+
 # Setup Instructions
 
 1. Install [pyenv](https://github.com/pyenv/pyenv) (or [pyenv-win](https://github.com/pyenv-win/pyenv-win) for Windows) for Python version management
@@ -66,7 +74,7 @@ In `/config/config`, set `FORCE_RELOAD` = `False` to read "cached" data in postg
 
 # awkde
 
-We are using the [awkde package](https://github.com/mennthor/awkde) to create the Adaptive Width KDE. It is not available through pip. To install, navigate to `src/awkde` and run
+We are using the [awkde package](https://github.com/mennthor/awkde) to create the Adaptive Width KDE. It is not available through pip. To install, navigate to `src` and run
 
 ```
 pip install -e ./awkde
@@ -82,7 +90,23 @@ pip install -e ./awkde
 
 To upload to Mapbox through the API you'll need a key with `upload` write access, saved to the environment variable `CFP_MAPBOX_TOKEN_UPLOADER`
 
-# Contribution Instructions
+## Nextjs App
+
+Install dependencies with:
+
+```bash
+npm i --legacy-peer-deps
+```
+
+First, run the development server:
+
+```bash
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+## Contribution Instructions
 
 1. Create a fork of this repository and work from branches within your fork. When those changes are ready for review, create a pull request from fork:branch to upstream:main
 2. Before committing changes, format your code to maintain a consistent codebase:
