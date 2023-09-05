@@ -7,6 +7,7 @@ from data_utils.l_and_i import l_and_i
 from data_utils.rco_geoms import rco_geoms
 from data_utils.tree_canopy import tree_canopy
 from data_utils.gun_crimes import gun_crimes
+from data_utils.deliquencies import deliquencies
 
 
 """
@@ -52,6 +53,12 @@ vacant_properties = tree_canopy(vacant_properties)
 Gun Crime Data
 """
 vacant_properties = gun_crimes(vacant_properties)
+
+
+'''
+Property Tax Delinquencies
+'''
+vacant_properties = deliquencies(vacant_properties)
 
 
 """
