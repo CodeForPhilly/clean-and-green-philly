@@ -7,6 +7,7 @@ import traceback
 from config.config import USE_CRS, FORCE_RELOAD, MAPBOX_TOKEN
 from config.psql import conn
 from mapbox import Uploader
+from shapely import wkb
 
 
 class FeatureLayer:
@@ -23,6 +24,7 @@ class FeatureLayer:
         crs=USE_CRS,
         force_reload=FORCE_RELOAD,
         from_xy=False,
+        use_wkb_geom_field=None
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -37,6 +39,7 @@ class FeatureLayer:
         self.crs = crs
         self.psql_table = name.lower().replace(" ", "_")
         self.input_crs = "EPSG:4326" if not from_xy else USE_CRS
+        self.use_wkb_geom_field = use_wkb_geom_field
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
@@ -114,10 +117,11 @@ class FeatureLayer:
 
                         data = response.json()["rows"]
                         df = pd.DataFrame(data)
+                        geometry = wkb.loads(df[self.use_wkb_geom_field], hex=True) if self.use_wkb_geom_field else gpd.points_from_xy(df.x, df.y)
 
                         gdf = gpd.GeoDataFrame(
                             df,
-                            geometry=gpd.points_from_xy(df.x, df.y),
+                            geometry=geometry,
                             crs=self.input_crs,
                         )
                         gdf = gdf.to_crs(USE_CRS)
@@ -148,7 +152,6 @@ class FeatureLayer:
                 other_layer.rebuild_gdf()
 
             except:
-                print(other_layer.gdf)
                 raise ValueError(
                     "other_layer.gdf must be a GeoDataFrame or a DataFrame with x and y columns."
                 )
