@@ -70,7 +70,7 @@ All of the data scripting is in python and lives in the `data` folder. Everythin
    `CREATE EXTENSION postgis;`
 5. Set your database connection string to an environment variable `VACANT_LOTS_DB`
 
-In `/config/config`, set `FORCE_RELOAD` = `False` to read "cached" data in postgres instead of downloading new data.
+Optionally, in `/config/config`, set `FORCE_RELOAD` = `False` to read "cached" data in postgres instead of downloading new data.
 
 # awkde
 
