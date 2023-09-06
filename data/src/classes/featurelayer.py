@@ -161,7 +161,7 @@ class FeatureLayer:
         self.gdf.drop_duplicates(inplace=True)
 
     def rebuild_gdf(self):
-        self.gdf = gpd.GeoDataFrame(self.gdf, geometry="geometry")
+        self.gdf = gpd.GeoDataFrame(self.gdf, geometry="geometry", crs=self.crs)
 
     def upload_to_mapbox(self, tileset_id):
         """Upload GeoDataFrame to Mapbox as Tileset."""
