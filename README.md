@@ -54,14 +54,17 @@ All of the data scripting is in python and lives in the `data` folder. Everythin
 # Setup Instructions
 
 1. Install [pyenv](https://github.com/pyenv/pyenv) (or [pyenv-win](https://github.com/pyenv-win/pyenv-win) for Windows) for Python version management
+  * [troubleshooting for `pyenv_win` downloadn and script permissions](https://www.sharepointdiary.com/2014/03/fix-for-powershell-script-cannot-be-loaded-because-running-scripts-is-disabled-on-this-system.html)
 2. Install the latest Python 3.11: `pyenv install 3.11.4`
 3. Install [pipenv](https://github.com/pypa/pipenv) for environment management
 4. Install project requirements: `pipenv install`
+   * *Note*: run this from the following directory: `[whever you have this repo locally]\vacant-lots-proj\data` 
+   * A virtual environment will be created in this directory and the packages from the Pipfile will be installed.
 
 # Database
 
 1. Make sure postgres and postgis are installed
-   TODO: Add instructions here
+   * Follow the steps here: [Introduction to PostGIS](https://postgis.net/workshops/postgis-intro/installation.html)
 2. Create a new databse
    `createdb vacantlotdb`
 3. Connect to the db
