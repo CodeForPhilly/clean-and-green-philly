@@ -64,7 +64,7 @@ All of the data scripting is in python and lives in the `data` folder. Everythin
 # Database
 
 1. Make sure postgres and postgis are installed
-   TODO: Add instructions here
+   * Follow the steps here: [Introduction to PostGIS](https://postgis.net/workshops/postgis-intro/installation.html)
 2. Create a new databse
    `createdb vacantlotdb`
 3. Connect to the db
