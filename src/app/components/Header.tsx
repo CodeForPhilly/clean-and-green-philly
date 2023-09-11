@@ -16,12 +16,12 @@ const navbarButtons = [
   {
     icon: <HomeIcon />,
     text: "Intro",
-    href: "#",
+    href: "/",
   },
   {
     icon: <MapIcon />,
     text: "Map",
-    href: "#",
+    href: "/map",
   },
   {
     icon: <QuestionMarkCircleIcon />,
