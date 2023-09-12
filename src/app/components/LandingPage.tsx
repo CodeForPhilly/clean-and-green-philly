@@ -1,4 +1,4 @@
-import { Button } from "@nextui-org/react";
+import { Button, Link } from "@nextui-org/react";
 import LandingPageImage from "./LandingPageImage";
 
 const images = [
@@ -43,9 +43,11 @@ const LandingPage = () => (
       ))}
     </div>
     <div className="flex justify-center mt-20">
-      <Button size="lg" color="primary">
-        View Map
-      </Button>
+      <Link href="/map">
+        <Button size="lg" color="primary">
+          View Map
+        </Button>
+      </Link>
     </div>
   </div>
 );
