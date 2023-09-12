@@ -2,15 +2,15 @@
 
 import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
-import Header from "./components/Header";
-import LandingPage from "./components/LandingPage";
+import Header from "../components/Header";
+import PropertyMap from "../components/PropertyMap";
 
 const Page: FC = () => {
   return (
     <NextUIProvider>
       <div className="h-screen overflow-hidden">
         <Header />
-        <LandingPage />
+        <PropertyMap />
       </div>
     </NextUIProvider>
   );
