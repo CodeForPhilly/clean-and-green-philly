@@ -24,7 +24,7 @@ class FeatureLayer:
         crs=USE_CRS,
         force_reload=FORCE_RELOAD,
         from_xy=False,
-        use_wkb_geom_field=None
+        use_wkb_geom_field=None,
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -117,7 +117,11 @@ class FeatureLayer:
 
                         data = response.json()["rows"]
                         df = pd.DataFrame(data)
-                        geometry = wkb.loads(df[self.use_wkb_geom_field], hex=True) if self.use_wkb_geom_field else gpd.points_from_xy(df.x, df.y)
+                        geometry = (
+                            wkb.loads(df[self.use_wkb_geom_field], hex=True)
+                            if self.use_wkb_geom_field
+                            else gpd.points_from_xy(df.x, df.y)
+                        )
 
                         gdf = gpd.GeoDataFrame(
                             df,
