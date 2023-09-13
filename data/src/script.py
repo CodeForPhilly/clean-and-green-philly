@@ -55,9 +55,9 @@ Gun Crime Data
 vacant_properties = gun_crimes(vacant_properties)
 
 
-'''
+"""
 Property Tax Delinquencies
-'''
+"""
 vacant_properties = deliquencies(vacant_properties)
 
 

@@ -22,14 +22,19 @@ def rco_geoms(primary_featurelayer):
     primary_featurelayer.spatial_join(rco_geoms)
 
     # Collapse columns and aggregate rco_info
-    group_columns = [col for col in primary_featurelayer.gdf.columns if col not in ['geometry', 'rco_info']]
+    group_columns = [
+        col
+        for col in primary_featurelayer.gdf.columns
+        if col not in ["geometry", "rco_info"]
+    ]
     for col in group_columns:
-        primary_featurelayer.gdf[col].fillna('', inplace=True)
+        primary_featurelayer.gdf[col].fillna("", inplace=True)
 
-    primary_featurelayer.gdf = primary_featurelayer.gdf.groupby(group_columns).agg({
-        'rco_info': lambda x: '|'.join(map(str, x)),
-        'geometry': 'first'
-    }).reset_index()
+    primary_featurelayer.gdf = (
+        primary_featurelayer.gdf.groupby(group_columns)
+        .agg({"rco_info": lambda x: "|".join(map(str, x)), "geometry": "first"})
+        .reset_index()
+    )
     primary_featurelayer.gdf.drop_duplicates(inplace=True)
     primary_featurelayer.rebuild_gdf()
 
