@@ -1,5 +1,5 @@
 from classes.featurelayer import FeatureLayer
-from config.psql import conn
+from config.psql import local_conn, remote_conn
 from constants.services import VACANT_PROPS_LAYERS_TO_LOAD
 from data_utils.city_owned_properties import city_owned_properties
 from data_utils.phs_properties import phs_properties
@@ -68,7 +68,9 @@ vacant_properties.drop_columns()
 vacant_properties.upload_to_mapbox("vacant_properties")
 
 # Clean up
-vacant_properties.gdf.to_postgis(
-    "vacant_properties_end", conn, if_exists="replace", index=False
-)
-conn.close()
+
+for conn in [local_conn, remote_conn]:
+    vacant_properties.gdf.to_postgis(
+        "vacant_properties_end", conn, if_exists="replace", index=False
+    )
+    conn.close()
