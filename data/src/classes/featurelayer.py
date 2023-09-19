@@ -5,7 +5,7 @@ import pandas as pd
 from esridump.dumper import EsriDumper
 import traceback
 from config.config import USE_CRS, FORCE_RELOAD, MAPBOX_TOKEN
-from config.psql import conn
+from config.psql import local_conn
 from mapbox import Uploader
 from shapely import wkb
 
@@ -64,7 +64,7 @@ class FeatureLayer:
     def check_psql(self):
         try:
             psql_table = gpd.read_postgis(
-                f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
+                f"SELECT * FROM {self.psql_table}", local_conn, geom_col="geometry"
             )
             if len(psql_table) == 0:
                 return False
@@ -135,7 +135,7 @@ class FeatureLayer:
 
                 # save self.gdf to psql
                 self.gdf.to_postgis(
-                    name=self.psql_table, con=conn, if_exists="replace", chunksize=1000
+                    name=self.psql_table, con=local_conn, if_exists="replace", chunksize=1000
                 )
 
             except Exception as e:
