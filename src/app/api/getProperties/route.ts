@@ -1,9 +1,10 @@
 // route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
+import { pgConnString } from "@/app/config/config";
 
 const pool = new Pool({
-  connectionString: process.env.VACANT_LOTS_DB,
+  connectionString: pgConnString,
 });
 
 export const POST = async (req: NextRequest) => {
