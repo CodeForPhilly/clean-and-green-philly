@@ -1,11 +1,15 @@
 import React, { FC, useEffect, useState } from "react";
 import { Popup, Map as MapboxMap } from "mapbox-gl";
-import { mapboxAccessToken } from "../../config/mapbox";
+import { mapboxAccessToken, apiBaseUrl } from "../config/config";
 import ZoomModal from "./ZoomModal";
 
 let popup: Popup | null = null;
 
-const PropertyMap: FC = () => {
+interface PropertyMapProps {
+  setFeaturesInView: (features: any[]) => void;
+}
+
+const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
   const [isZoomModalHidden, setIsZoomModalHidden] = useState(true);
 
   useEffect(() => {
@@ -17,7 +21,7 @@ const PropertyMap: FC = () => {
       accessToken: mapboxAccessToken,
     });
 
-    map.on("load", () => {
+    map.on("load", async () => {
       const minZoom = 13;
 
       map.on("zoomend", () => {
@@ -26,7 +30,9 @@ const PropertyMap: FC = () => {
 
       map.addSource("vacant_properties", {
         type: "vector",
-        url: "mapbox://nlebovits.vacant_properties",
+        tiles: [`${apiBaseUrl}/api/generateTiles/{z}/{x}/{y}`],
+        minzoom: minZoom,
+        maxzoom: 23,
       });
 
       map.addLayer({
@@ -38,6 +44,14 @@ const PropertyMap: FC = () => {
           "fill-color": "#0000FF",
           "fill-opacity": 0.2,
         },
+      });
+
+      map.on("moveend", () => {
+        let features = map.queryRenderedFeatures();
+        features = features.filter(
+          (feature) => feature.layer.id === "vacant_properties"
+        );
+        setFeaturesInView(features);
       });
 
       map.on("click", "vacant_properties", (e) => {
@@ -71,10 +85,10 @@ const PropertyMap: FC = () => {
   }, []);
 
   return (
-    <>
-      <div id="mapContainer" style={{ height: "100vh", width: "100%" }}></div>
+    <div className="relative h-full w-full">
+      <div id="mapContainer" className="h-full w-full"></div>
       <ZoomModal isHidden={isZoomModalHidden} />
-    </>
+    </div>
   );
 };
 
