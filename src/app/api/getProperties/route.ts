@@ -12,7 +12,8 @@ export const POST = async (req: NextRequest) => {
 
   const query = `
     SELECT * FROM vacant_properties_end
-    WHERE ST_Within(geometry, ST_MakeEnvelope($1, $2, $3, $4, 2272));
+    WHERE ST_Within(geometry, ST_MakeEnvelope($1, $2, $3, $4, 2272))
+    LIMIT 20;
   `;
 
   try {

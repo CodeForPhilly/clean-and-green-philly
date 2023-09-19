@@ -21,7 +21,9 @@
     "mapbox-gl": "^2.15.0",
     "next": "13.4.19",
     "pg": "^8.11.3",
+    "pg-promise": "^11.5.4",
     "postcss": "8.4.29",
+    "protobufjs": "^7.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-mapbox-gl": "^5.1.1",
@@ -30,6 +32,7 @@
   },
   "devDependencies": {
     "@types/mapbox-gl": "^2.7.13",
+    "@types/pbf": "^3.0.2",
     "@types/pg": "^8.10.2"
   }
 }
