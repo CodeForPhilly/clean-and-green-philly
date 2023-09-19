@@ -12,8 +12,6 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
 
   const loadMore = () => setLimit(limit + 20);
 
-  console.log(Math.min(limit, featuresInView.length));
-  console.log(featuresInView);
   return (
     <div
       className={`h-full transition-all duration-300 ${
