@@ -8,7 +8,7 @@ import RecommendedActions from "../components/RecommendedActions";
 const Actions: FC = () => {
   return (
     <NextUIProvider>
-      <div className="h-screen">
+      <div className="h-screen overflow-hidden">
         <Header />
         <RecommendedActions />
       </div>
