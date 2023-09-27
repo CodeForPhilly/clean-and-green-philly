@@ -32,7 +32,7 @@ const navbarButtons = [
   {
     icon: <InformationCircleIcon />,
     text: "About",
-    href: "#",
+    href: "/about",
   },
 ];
 
