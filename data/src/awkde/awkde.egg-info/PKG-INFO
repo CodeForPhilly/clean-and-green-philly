@@ -6,3 +6,8 @@ Home-page: https://github.com/mennthor/awkde
 Author: Thorben Menne
 Author-email: thorben.menne@tu-dortmund.de
 License-File: LICENSE
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: scikit-learn
+Requires-Dist: pybind11
+Requires-Dist: future
