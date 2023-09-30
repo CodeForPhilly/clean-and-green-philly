@@ -1,7 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
 import { Popup, Map as MapboxMap } from "mapbox-gl";
-import { mapboxAccessToken, apiBaseUrl } from "../config/config";
+import { mapboxAccessToken, apiBaseUrl } from "../../config/config";
 import ZoomModal from "./ZoomModal";
+import { useFilter } from "@/context/FilterContext";
 
 let popup: Popup | null = null;
 
@@ -11,9 +12,35 @@ interface PropertyMapProps {
 
 const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
   const [isZoomModalHidden, setIsZoomModalHidden] = useState(true);
+  const { filter } = useFilter();
+  const [map, setMap] = useState<MapboxMap | null>(null);
+
+  const updateFilter = () => {
+    if (map) {
+      const isFilterEmpty = Object.values(filter).every(
+        (values) => values.length === 0
+      );
+
+      if (isFilterEmpty) {
+        map.setFilter("vacant_properties", ["==", ["id"], ""]);
+      } else {
+        const mapFilter = Object.entries(filter).reduce(
+          (acc, [property, values]) => {
+            if (values.length) {
+              acc.push(["in", property, ...values]);
+            }
+            return acc;
+          },
+          [] as any[]
+        );
+
+        map.setFilter("vacant_properties", ["all", ...mapFilter]);
+      }
+    }
+  };
 
   useEffect(() => {
-    const map = new MapboxMap({
+    const mapInstance = new MapboxMap({
       container: "mapContainer",
       style: "mapbox://styles/mapbox/streets-v9",
       center: [-75.1652, 39.9526],
@@ -21,21 +48,21 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
       accessToken: mapboxAccessToken,
     });
 
-    map.on("load", async () => {
+    mapInstance.on("load", async () => {
       const minZoom = 13;
 
-      map.on("zoomend", () => {
-        setIsZoomModalHidden(map.getZoom() >= minZoom);
+      mapInstance.on("zoomend", () => {
+        setIsZoomModalHidden(mapInstance.getZoom() >= minZoom);
       });
 
-      map.addSource("vacant_properties", {
+      mapInstance.addSource("vacant_properties", {
         type: "vector",
         tiles: [`${apiBaseUrl}/api/generateTiles/{z}/{x}/{y}`],
         minzoom: minZoom,
         maxzoom: 23,
       });
 
-      map.addLayer({
+      mapInstance.addLayer({
         id: "vacant_properties",
         type: "fill",
         source: "vacant_properties",
@@ -46,15 +73,17 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
         },
       });
 
-      map.on("moveend", () => {
-        let features = map.queryRenderedFeatures();
+      updateFilter();
+
+      mapInstance.on("moveend", () => {
+        let features = mapInstance.queryRenderedFeatures();
         features = features.filter(
           (feature) => feature.layer.id === "vacant_properties"
         );
         setFeaturesInView(features);
       });
 
-      map.on("click", "vacant_properties", (e) => {
+      mapInstance.on("click", "vacant_properties", (e) => {
         if (popup) {
           popup.remove();
         }
@@ -70,19 +99,25 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
           popup = new Popup({ offset: [0, -15] })
             .setLngLat(e.lngLat)
             .setHTML(`<div style='color: black;'><p>${propertyHTML}</p></div>`)
-            .addTo(map);
+            .addTo(mapInstance);
         }
       });
 
-      map.on("mouseenter", "vacant_properties", () => {
-        map.getCanvas().style.cursor = "pointer";
+      mapInstance.on("mouseenter", "vacant_properties", () => {
+        mapInstance.getCanvas().style.cursor = "pointer";
       });
 
-      map.on("mouseleave", "vacant_properties", () => {
-        map.getCanvas().style.cursor = "";
+      mapInstance.on("mouseleave", "vacant_properties", () => {
+        mapInstance.getCanvas().style.cursor = "";
       });
+
+      setMap(mapInstance);
     });
   }, []);
+
+  useEffect(() => {
+    updateFilter();
+  }, [filter]);
 
   return (
     <div className="relative h-full w-full">
