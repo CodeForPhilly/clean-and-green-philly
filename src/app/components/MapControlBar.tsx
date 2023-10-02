@@ -6,26 +6,18 @@ import {
   ArrowDownTrayIcon,
 } from "@heroicons/react/20/solid";
 
-type SearchBarComponentProps = {
-  setCurrentView: React.Dispatch<React.SetStateAction<"filter" | "detail">>;
+type MapControlBarProps = {
+  currentView: string;
+  setCurrentView: (view: string) => void;
 };
 
-const SearchBarComponent: React.FC<SearchBarComponentProps> = ({
+const SearchBarComponent: React.FC<MapControlBarProps> = ({
+  currentView,
   setCurrentView,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const handleSavedClick = async () => {
-    // Handle "Saved" button click
-  };
-
-  const handleFilterClick = async () => {
-    setCurrentView("filter");
-  };
-
-  const handleDownloadClick = async () => {
-    // Handle "Download" button click
-  };
+  const handleClick;
 
   return (
     <div className="flex items-center">
