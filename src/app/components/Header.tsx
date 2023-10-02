@@ -10,6 +10,7 @@ import {
   MapIcon,
   QuestionMarkCircleIcon,
   InformationCircleIcon,
+  BoltIcon,
 } from "@heroicons/react/20/solid";
 
 const navbarButtons = [
@@ -24,14 +25,14 @@ const navbarButtons = [
     href: "/map",
   },
   {
-    icon: <QuestionMarkCircleIcon />,
-    text: "Help",
-    href: "#",
+    icon: <BoltIcon />,
+    text: "Take Action",
+    href: "/actions",
   },
   {
     icon: <InformationCircleIcon />,
     text: "About",
-    href: "#",
+    href: "/about",
   },
 ];
 
