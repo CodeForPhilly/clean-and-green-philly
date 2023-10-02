@@ -36,27 +36,29 @@ const RecommendedActions = () => {
             </Button>
           </h2>
           {isExpanded["canDo"] && (
-            <ul className="list-disc pl-6 mb-6">
-              <li>Removing trash and debris</li>
-              <li>Grading the land</li>
-              <li>Planting a small number of trees to create a park-like setting</li>
-              <li>
-                Installing low-perimeter (about 1 meter high) fences with multiple
-                ungated entrances to encourage use
-              </li>
-              <li>Regularly maintaining the lot</li>
-            </ul>
-          )}
+            <div>
+              <ul className="list-disc pl-6 mb-6">
+                <li>Removing trash and debris</li>
+                <li>Grading the land</li>
+                <li>Planting a small number of trees to create a park-like setting</li>
+                <li>
+                  Installing low-perimeter (about 1 meter high) fences with multiple
+                  ungated entrances to encourage use
+                </li>
+                <li>Regularly maintaining the lot</li>
+              </ul>
               <p>
                 <a
-                  href="https://phdcphila.org/land/buy-land/"
+                  href="https://detroitfuturecity.com/whatwedo/land-use/DFC-lots/lot-types/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-500 hover:underline"
                 >
-                  Get help purchasing properties from PHDC
+                  Learn more about potential interventions in different types of lots
                 </a>
               </p>
+            </div>
+          )}
         </div>
 
         <div className="mb-4">
@@ -79,6 +81,14 @@ const RecommendedActions = () => {
               Neighborhood Advisory Committee, a nearby Community Development
               Corporation, or your local representative. Explain to them what you
               want to do and why. Show them this map to support your explanation!
+              <a
+                  href="https://phdcphila.org/land/buy-land/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 hover:underline"
+              >
+              Get help purchasing properties from PHDC
+              </a>
             </p>
           )}
         </div>
