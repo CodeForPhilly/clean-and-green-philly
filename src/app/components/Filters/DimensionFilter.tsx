@@ -13,7 +13,7 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
   display,
 }) => {
   const [dimensions, setDimensions] = useState<any[]>([]);
-  const { filter, setFilter } = useFilter();
+  const { filter, dispatch } = useFilter();
 
   useEffect(() => {
     const fetchDimensions = async () => {
@@ -21,23 +21,15 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
         `${apiBaseUrl}/api/getUniqueDimensionValues?p=${property}`
       );
       const data = await response.json();
-      console.log(data);
       setDimensions(data);
-      const newFilter = { ...filter, [property]: data };
-      setFilter(newFilter);
+      dispatch({ type: "SET_DIMENSIONS", property, dimensions: data });
     };
 
     fetchDimensions();
   }, []);
 
   const toggleDimension = (dimension: string) => {
-    setFilter((prevFilter) => {
-      const prevSelectedDimensions = prevFilter[property] || [];
-      const updatedDimensions = prevSelectedDimensions.includes(dimension)
-        ? prevSelectedDimensions.filter((d) => d !== dimension)
-        : [...prevSelectedDimensions, dimension];
-      return { ...prevFilter, [property]: updatedDimensions };
-    });
+    dispatch({ type: "TOGGLE_DIMENSION", property, dimension });
   };
 
   return (
@@ -48,7 +40,7 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
           key={index}
           radius="full"
           className={
-            filter[property].includes(dimension)
+            filter[property]?.includes(dimension)
               ? "bg-blue-500 text-white"
               : "bg-gray-200 text-gray-700"
           }
