@@ -1,6 +1,6 @@
 import React, {
   FC,
-  useState,
+  useReducer,
   createContext,
   useContext,
   ReactNode,
@@ -8,7 +8,32 @@ import React, {
 
 export interface FilterContextProps {
   filter: Record<string, string[]>;
-  setFilter: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
+  dispatch: React.Dispatch<FilterAction>;
+}
+
+type FilterAction =
+  | { type: "SET_DIMENSIONS"; property: string; dimensions: string[] }
+  | { type: "TOGGLE_DIMENSION"; property: string; dimension: string };
+
+function filterReducer(
+  state: Record<string, string[]>,
+  action: FilterAction
+): Record<string, string[]> {
+  switch (action.type) {
+    case "SET_DIMENSIONS":
+      return { ...state, [action.property]: action.dimensions };
+    case "TOGGLE_DIMENSION": {
+      const prevSelectedDimensions = state[action.property] || [];
+      const updatedDimensions = prevSelectedDimensions.includes(
+        action.dimension
+      )
+        ? prevSelectedDimensions.filter((d) => d !== action.dimension)
+        : [...prevSelectedDimensions, action.dimension];
+      return { ...state, [action.property]: updatedDimensions };
+    }
+    default:
+      throw new Error("Unhandled action type");
+  }
 }
 
 export const FilterContext = createContext<FilterContextProps | undefined>(
@@ -28,10 +53,10 @@ interface FilterProviderProps {
 }
 
 export const FilterProvider: FC<FilterProviderProps> = ({ children }) => {
-  const [filter, setFilter] = useState<Record<string, string[]>>({});
+  const [filter, dispatch] = useReducer(filterReducer, {});
 
   return (
-    <FilterContext.Provider value={{ filter, setFilter }}>
+    <FilterContext.Provider value={{ filter, dispatch }}>
       {children}
     </FilterContext.Provider>
   );

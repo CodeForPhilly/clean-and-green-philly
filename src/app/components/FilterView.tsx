@@ -1,17 +1,27 @@
 import React, { FC, useState } from "react";
 import DimensionFilter from "./Filters/DimensionFilter";
 
-interface SidePanelProps {
-  children?: React.ReactNode;
-}
+const filters = [
+  {
+    property: "guncrime_density",
+    display: "Gun Crime Density",
+  },
+  {
+    property: "ZONINGBASEDISTRICT",
+    display: "Zoning",
+  },
+  {
+    property: "COUNCILDISTRICT_left",
+    display: "Council District",
+  },
+];
 
 const FilterView: FC = () => {
   return (
     <>
-      <DimensionFilter
-        property="guncrime_density"
-        display="Gun Crime Density"
-      />
+      {filters.map(({ property, display }) => (
+        <DimensionFilter key={property} property={property} display={display} />
+      ))}
     </>
   );
 };

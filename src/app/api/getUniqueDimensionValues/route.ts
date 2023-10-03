@@ -16,11 +16,11 @@ export const GET = async (req: NextRequest) => {
       { status: 400 }
     );
   }
-  const distinctQuery = `SELECT DISTINCT ${p} FROM vacant_properties_end;`;
+  const distinctQuery = `SELECT DISTINCT "${p}" FROM vacant_properties_end;`;
 
   try {
     const result = await pool.query(distinctQuery);
-    const valuesArray = result.rows.map((row) => row[p]);
+    const valuesArray = result.rows.map((row) => row[p] || "(null)");
     return NextResponse.json(valuesArray, { status: 200 });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
