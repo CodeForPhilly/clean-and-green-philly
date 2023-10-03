@@ -42,7 +42,7 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
   useEffect(() => {
     const mapInstance = new MapboxMap({
       container: "mapContainer",
-      style: "mapbox://styles/mapbox/streets-v9",
+      style: "mapbox://styles/mapbox/light-v10",
       center: [-75.1652, 39.9526],
       zoom: 13,
       accessToken: mapboxAccessToken,
