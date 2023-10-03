@@ -17,7 +17,9 @@ const SearchBarComponent: React.FC<MapControlBarProps> = ({
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const handleClick;
+  const handleClick = (view: string) => {
+    setCurrentView(view);
+  };
 
   return (
     <div className="flex items-center">
@@ -31,19 +33,19 @@ const SearchBarComponent: React.FC<MapControlBarProps> = ({
 
       <ButtonGroup fullWidth className="w-1/2">
         <Button
-          onClick={handleSavedClick}
+          onClick={() => handleClick("saved")}
           startContent={<BookmarkIcon className="w-5 h-5" />}
         >
           Saved
         </Button>
         <Button
-          onClick={handleFilterClick}
+          onClick={() => handleClick("filter")}
           startContent={<FunnelIcon className="w-5 h-5" />}
         >
           Filter
         </Button>
         <Button
-          onClick={handleDownloadClick}
+          onClick={() => handleClick("download")}
           startContent={<ArrowDownTrayIcon className="w-5 h-5" />}
         >
           Download

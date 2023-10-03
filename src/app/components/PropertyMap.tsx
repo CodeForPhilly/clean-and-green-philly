@@ -17,11 +17,11 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
 
   const updateFilter = () => {
     if (map) {
-      const isFilterEmpty = Object.values(filter).every(
+      const isAnyFilterEmpty = Object.values(filter).some(
         (values) => values.length === 0
       );
 
-      if (isFilterEmpty) {
+      if (isAnyFilterEmpty) {
         map.setFilter("vacant_properties", ["==", ["id"], ""]);
       } else {
         const mapFilter = Object.entries(filter).reduce(
