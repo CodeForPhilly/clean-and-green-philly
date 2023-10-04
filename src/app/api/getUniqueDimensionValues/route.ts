@@ -16,7 +16,7 @@ export const GET = async (req: NextRequest) => {
       { status: 400 }
     );
   }
-  const distinctQuery = `SELECT DISTINCT "${p}" FROM vacant_properties_end;`;
+  const distinctQuery = `SELECT DISTINCT "${p}" FROM vacant_properties_end ORDER BY "${p}" ASC;`;
 
   try {
     const result = await pool.query(distinctQuery);
