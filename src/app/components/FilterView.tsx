@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import DimensionFilter from "./Filters/DimensionFilter";
+import DimensionFilter from "./filters/DimensionFilter";
 
 const filters = [
   {
@@ -18,11 +18,13 @@ const filters = [
 
 const FilterView: FC = () => {
   return (
-    <>
+    <div className="p-6">
+      <div className="font-semibold text-xl mb-2">Filters</div>
+
       {filters.map(({ property, display }) => (
         <DimensionFilter key={property} property={property} display={display} />
       ))}
-    </>
+    </div>
   );
 };
 
