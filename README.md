@@ -20,27 +20,38 @@ Currently we are in the process of user testing a newer prototype, which looks l
 
 ![User prototype map](https://github.com/CodeForPhilly/vacant-lots-proj/assets/111617674/8cbf0b06-b299-49cd-8f9f-bbb714e55b44)
 
+# Project Updates
+
+**Oct. 2, 2023:** Met with the Philadelphia District Attorney's Office data analytics team. They are very excited about the dashboard and are connecting us with folks in the Managing Director's Office and the Civic Coalition to Save Lives.
+
+**Sept. 29, 2023** Got our first funding from a donor! He's writing us a check to cover costs associated with user testing, hosting, domain name, etc., and will connet us with other folks who may be willing to give us more.
+
+**Sept. 27, 2023** Nissim spoke with a reporter from WHYY who may be including our project in a longer piece about Philadelphians working on solutions to the gun violence crisis.
+
 # Current Tasks
 
 At the moment, we are working on:
 
 - User testing with the prototype
 - Finishing the Python script that creates the underlying dataset
+- Building out the UI using Next.js and mapbox-gl in React
 
-Current tasks for the Python script are visible under the Issues section.
+Current tasks for the are visible under the Issues section.
 
-In September, we hope to begin turning our attention to building the dashboard and website, which will be built in React JS.
+We also need non-technical help with researching and writing content for our Recommended Actions and About sections.
 
 # Looking For
 
 - Front end engineer w/mapping experience
 - Python data engineer
+- Non-technical support with research and writing
+- Ditigal design support creating additional website graphics
 
 # Languages/Frameworks
 
 - React
-- Nextjs
-- Tailwind
+- Next.js
+- Tailwind CSS
 - Python (data engineering)
 
 ### Codebase
