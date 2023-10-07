@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Button,
+  DropdownSection,
 } from "@nextui-org/react";
 import { apiBaseUrl } from "../../../config/config";
 import { useFilter } from "@/context/FilterContext";
@@ -23,11 +24,6 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
   const { filter, dispatch } = useFilter();
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
     filter[property] || []
-  );
-
-  const selectedValue = useMemo(
-    () => Array.from(selectedKeys).join(", "),
-    [selectedKeys]
   );
 
   useEffect(() => {
@@ -48,13 +44,18 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
     dispatch({ type: "TOGGLE_DIMENSION", property, dimension });
   };
 
-  const handleSelectionChange = (newSelectedKeys: any) => {
-    const selectedKeysArray = Array.from(newSelectedKeys as Set<string>);
-    setSelectedKeys(selectedKeysArray);
+  const handleSelectionChange = (newSelectedKeys: Set<string>) => {
+    let filteredKeys = Array.from(newSelectedKeys);
+    if (filteredKeys.length > 1) {
+      filteredKeys = filteredKeys.filter(
+        (currentKey: string) => currentKey !== "selectAll"
+      );
+    }
+    setSelectedKeys(filteredKeys);
     dispatch({
       type: "SET_DIMENSIONS",
       property,
-      dimensions: selectedKeysArray,
+      dimensions: filteredKeys,
     });
   };
 
@@ -76,16 +77,6 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
     <div className="pb-6">
       <div className="flex items-center justify-between mb-2">
         <div className="text-md">{display}</div>
-        {dimensions.length > 10 && (
-          <Button
-            variant="bordered"
-            size="sm"
-            className="text-xs"
-            onClick={toggleAllDimensions}
-          >
-            Select All
-          </Button>
-        )}
       </div>
       <div className="space-x-2">
         {dimensions.length > 10 ? (
@@ -93,7 +84,9 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
             <Dropdown>
               <DropdownTrigger>
                 <Button variant="bordered" className="capitalize">
-                  {selectedValue.length > 5 ? "Multiple" : selectedValue}
+                  {selectedKeys.length > 5
+                    ? "Multiple"
+                    : selectedKeys.join(", ")}
                 </Button>
               </DropdownTrigger>
               <DropdownMenu
@@ -103,12 +96,21 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
                 disallowEmptySelection
                 selectionMode="multiple"
                 selectedKeys={selectedKeys}
-                onSelectionChange={handleSelectionChange}
+                onSelectionChange={(keys) => {
+                  handleSelectionChange(keys as Set<string>);
+                }}
                 className="max-h-[200px] overflow-y-auto"
               >
-                {dimensions.map((dimension) => (
-                  <DropdownItem key={dimension}>{dimension}</DropdownItem>
-                ))}
+                <DropdownSection>
+                  <DropdownItem onClick={toggleAllDimensions} key="selectAll">
+                    Select All
+                  </DropdownItem>
+                </DropdownSection>
+                <DropdownSection>
+                  {dimensions.map((dimension) => (
+                    <DropdownItem key={dimension}>{dimension}</DropdownItem>
+                  ))}
+                </DropdownSection>
               </DropdownMenu>
             </Dropdown>
           </>
@@ -121,7 +123,7 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
               color={
                 filter[property]?.includes(dimension) ? "success" : "default"
               }
-              className="cursor-pointer"
+              className="cursor-pointer mb-2 p-2"
             >
               {dimension}
             </Chip>
