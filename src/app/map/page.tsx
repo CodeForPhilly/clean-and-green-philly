@@ -2,24 +2,42 @@
 
 import React, { FC, useState } from "react";
 import { NextUIProvider, Button } from "@nextui-org/react";
-import Header from "../components/Header";
-import PropertyMap from "../components/PropertyMap";
-import PropertyDetailSection from "../components/PropertyDetailSection";
+import { FilterProvider } from "@/context/FilterContext";
+import {
+  Header,
+  PropertyMap,
+  PropertyDetailSection,
+  SidePanel,
+  MapControlBar,
+  FilterView,
+} from "../components";
+
+export type BarClickOptions = "saved" | "filter" | "download" | "detail";
 
 const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
+  const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
+
   return (
-    <NextUIProvider>
-      <div className="h-screen overflow-hidden">
-        <Header />
-        <div className="flex h-full relative">
-          <div className="flex-grow h-full">
-            <PropertyMap setFeaturesInView={setFeaturesInView} />
+    <FilterProvider>
+      <NextUIProvider>
+        <div className="h-screen overflow-hidden">
+          <Header />
+          <div className="flex h-full relative">
+            <div className="flex-grow h-full">
+              <PropertyMap setFeaturesInView={setFeaturesInView} />
+            </div>
+            <SidePanel>
+              <MapControlBar setCurrentView={setCurrentView} />
+              {currentView === "filter" && <FilterView />}
+              {currentView === "detail" && (
+                <PropertyDetailSection featuresInView={featuresInView} />
+              )}
+            </SidePanel>
           </div>
-          <PropertyDetailSection featuresInView={featuresInView} />
         </div>
-      </div>
-    </NextUIProvider>
+      </NextUIProvider>
+    </FilterProvider>
   );
 };
 

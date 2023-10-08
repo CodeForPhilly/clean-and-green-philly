@@ -1,5 +1,5 @@
 import pgPromise from "pg-promise";
-import { pgConnString } from "@/app/config/config";
+import { pgConnString } from "@/config/config";
 
 const pgp = pgPromise();
 
