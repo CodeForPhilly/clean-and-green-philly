@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/app/api/db/db";
+import { finalDataset } from "@/config/config";
 
 export const GET = async (req: NextRequest, { params }: { params: any }) => {
   const { z, x, y } = params;
@@ -14,7 +15,7 @@ export const GET = async (req: NextRequest, { params }: { params: any }) => {
             ST_TileEnvelope($1, $2, $3)
           ) AS geometry,
           *
-        FROM vacant_properties_end
+        FROM ${finalDataset}
         WHERE ST_Intersects(
           ST_Transform(geometry, 3857),
           ST_TileEnvelope($1, $2, $3)

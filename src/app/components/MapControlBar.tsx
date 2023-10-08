@@ -5,19 +5,18 @@ import {
   FunnelIcon,
   ArrowDownTrayIcon,
 } from "@heroicons/react/20/solid";
+import { BarClickOptions } from "@/app/map/page";
 
 type MapControlBarProps = {
-  currentView: string;
-  setCurrentView: (view: string) => void;
+  setCurrentView: (view: BarClickOptions) => void;
 };
 
 const SearchBarComponent: React.FC<MapControlBarProps> = ({
-  currentView,
   setCurrentView,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const handleClick = (view: string) => {
+  const handleClick = (view: BarClickOptions) => {
     setCurrentView(view);
   };
 

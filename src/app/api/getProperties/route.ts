@@ -1,7 +1,7 @@
 // route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
-import { pgConnString } from "@/config/config";
+import { pgConnString, finalDataset } from "@/config/config";
 
 const pool = new Pool({
   connectionString: pgConnString,
@@ -12,7 +12,7 @@ export const POST = async (req: NextRequest) => {
   const { xmin, ymin, xmax, ymax } = body;
 
   const query = `
-    SELECT * FROM vacant_properties_end
+    SELECT * FROM ${finalDataset}
     WHERE ST_Within(geometry, ST_MakeEnvelope($1, $2, $3, $4, 2272))
     LIMIT 20;
   `;

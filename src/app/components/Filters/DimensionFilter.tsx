@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Chip,
   Dropdown,
@@ -9,7 +9,10 @@ import {
   DropdownSection,
 } from "@nextui-org/react";
 import { apiBaseUrl } from "../../../config/config";
-import { useFilter } from "@/context/FilterContext";
+import {
+  useFilter,
+  DimensionFilter as DimensionFilterType,
+} from "@/context/FilterContext";
 
 type DimensionFilterProps = {
   property: string;
@@ -20,10 +23,12 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
   property,
   display,
 }) => {
-  const [dimensions, setDimensions] = useState<any[]>([]);
+  const [dimensions, setDimensions] = useState<string[]>([]);
   const { filter, dispatch } = useFilter();
+  const filterValue = filter[property];
+  const isDimensionFilter = filterValue?.type === "dimension";
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
-    filter[property] || []
+    isDimensionFilter ? filterValue.values : []
   );
 
   useEffect(() => {
@@ -38,7 +43,7 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
     };
 
     fetchDimensions();
-  }, []);
+  }, [property, dispatch]);
 
   const toggleDimension = (dimension: string) => {
     dispatch({ type: "TOGGLE_DIMENSION", property, dimension });
@@ -121,7 +126,9 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
               onClick={() => toggleDimension(dimension)}
               size="sm"
               color={
-                filter[property]?.includes(dimension) ? "success" : "default"
+                isDimensionFilter && filterValue.values.includes(dimension)
+                  ? "primary"
+                  : "default"
               }
               className="cursor-pointer mb-2 p-2"
             >
