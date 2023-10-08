@@ -12,7 +12,7 @@ import {
   FilterView,
 } from "../components";
 
-type BarClickOptions = "saved" | "filter" | "download" | "detail";
+export type BarClickOptions = "saved" | "filter" | "download" | "detail";
 
 const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
@@ -28,10 +28,7 @@ const Page: FC = () => {
               <PropertyMap setFeaturesInView={setFeaturesInView} />
             </div>
             <SidePanel>
-              <MapControlBar
-                currentView={currentView}
-                setCurrentView={setCurrentView}
-              />
+              <MapControlBar setCurrentView={setCurrentView} />
               {currentView === "filter" && <FilterView />}
               {currentView === "detail" && (
                 <PropertyDetailSection featuresInView={featuresInView} />

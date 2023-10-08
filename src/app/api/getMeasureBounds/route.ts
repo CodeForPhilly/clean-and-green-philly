@@ -16,12 +16,11 @@ export const GET = async (req: NextRequest) => {
       { status: 400 }
     );
   }
-  const distinctQuery = `SELECT DISTINCT "${p}" FROM ${finalDataset} ORDER BY "${p}" ASC;`;
+  const boundQuery = `SELECT MIN(${p}), MAX(${p}) FROM ${finalDataset};`;
 
   try {
-    const result = await pool.query(distinctQuery);
-    const valuesArray = result.rows.map((row) => row[p] || "(null)");
-    return NextResponse.json(valuesArray, { status: 200 });
+    const result = await pool.query(boundQuery);
+    return NextResponse.json(result.rows[0], { status: 200 });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

@@ -16,27 +16,39 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
   const [map, setMap] = useState<MapboxMap | null>(null);
 
   const updateFilter = () => {
-    if (map) {
-      const isAnyFilterEmpty = Object.values(filter).some(
-        (values) => values.length === 0
-      );
+    if (!map) return;
 
-      if (isAnyFilterEmpty) {
-        map.setFilter("vacant_properties", ["==", ["id"], ""]);
-      } else {
-        const mapFilter = Object.entries(filter).reduce(
-          (acc, [property, values]) => {
-            if (values.length) {
-              acc.push(["in", property, ...values]);
-            }
-            return acc;
-          },
-          [] as any[]
-        );
-
-        map.setFilter("vacant_properties", ["all", ...mapFilter]);
+    const isAnyFilterEmpty = Object.values(filter).some((filterItem) => {
+      if (filterItem.type === "dimension") {
+        return filterItem.values.length === 0;
+      } else if (filterItem.type === "measure") {
+        return filterItem.min === filterItem.max;
       }
+      return true;
+    });
+
+    if (isAnyFilterEmpty) {
+      map.setFilter("vacant_properties", ["==", ["id"], ""]);
+      return;
     }
+
+    const mapFilter = Object.entries(filter).reduce(
+      (acc, [property, filterItem]) => {
+        if (filterItem.type === "dimension" && filterItem.values.length) {
+          acc.push(["in", property, ...filterItem.values]);
+        } else if (
+          filterItem.type === "measure" &&
+          filterItem.min !== filterItem.max
+        ) {
+          acc.push([">=", property, filterItem.min]);
+          acc.push(["<=", property, filterItem.max]);
+        }
+        return acc;
+      },
+      [] as any[]
+    );
+
+    map.setFilter("vacant_properties", ["all", ...mapFilter]);
   };
 
   useEffect(() => {
@@ -49,7 +61,7 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
     });
 
     mapInstance.on("load", async () => {
-      const minZoom = 13;
+      const minZoom = 4;
 
       mapInstance.on("zoomend", () => {
         setIsZoomModalHidden(mapInstance.getZoom() >= minZoom);
