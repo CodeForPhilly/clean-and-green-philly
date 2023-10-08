@@ -7,17 +7,12 @@ interface PropertyDetailSectionProps {
 const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   featuresInView,
 }) => {
-  const [expanded, setExpanded] = useState(true);
   const [limit, setLimit] = useState(20);
 
   const loadMore = () => setLimit(limit + 20);
 
   return (
-    <div
-      className={`h-full transition-all duration-300 ${
-        expanded ? "w-1/3" : "w-0"
-      } bg-white overflow-hidden`}
-    >
+    <>
       <div className="flex flex-wrap overflow-y-auto h-[85vh]">
         {featuresInView
           .slice(0, Math.min(limit, featuresInView.length))
@@ -40,7 +35,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
           Load More
         </button>
       )}
-    </div>
+    </>
   );
 };
 

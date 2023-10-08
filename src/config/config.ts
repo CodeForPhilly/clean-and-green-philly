@@ -8,3 +8,5 @@ export const pgConnString = process.env.VACANT_LOTS_DB || EMPTY_STRING;
 
 export const apiBaseUrl =
   process.env.NEXT_PUBLIC_VACANT_LOTS_API_BASE_URL || EMPTY_STRING;
+
+export const finalDataset = "vacant_properties_end";
