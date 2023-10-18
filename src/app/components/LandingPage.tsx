@@ -1,5 +1,6 @@
 import { Button, Link } from "@nextui-org/react";
 import LandingPageImage from "./LandingPageImage";
+import { ArrowRightIcon } from "@heroicons/react/20/solid";
 
 const images = [
   {
@@ -45,15 +46,17 @@ const LandingPage = () => (
       <Link href="/map">
         <Button size="lg" color="primary">
           Use the Map
+          <ArrowRightIcon className="w-5 h-5 ml-2" />
         </Button>
       </Link>
-    </div>
-    <div className="flex justify-right mt-20">
-      <Link href="/map">
-        <Button size="lg" color="primary">
-          Learn More about the Project
-        </Button>
-      </Link>
+      <div className="ml-4">
+        <Link href="/about">
+          <Button size="lg" color="default">
+            Learn More about the Project
+            <ArrowRightIcon className="w-5 h-5 ml-2" />
+          </Button>
+        </Link>
+      </div>
     </div>
   </div>
 );
