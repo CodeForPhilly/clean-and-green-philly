@@ -28,8 +28,7 @@ const LandingPage = () => (
   <div className="container mx-auto pt-20">
     <div className="text-left text-2xl my-10">
       Research has shown that cleaning and greening vacant properties can reduce
-      gun violence. This website can help you identify properties where to make
-      the most impact.
+      gun violence by as much as 29%. This website can help you identify the properties where you can have the biggest impact.
     </div>
     <div className="flex justify-between space-x-2.5">
       {images.map(({ src, alt, captionTitle, captionBody }) => (
@@ -45,7 +44,14 @@ const LandingPage = () => (
     <div className="flex justify-center mt-20">
       <Link href="/map">
         <Button size="lg" color="primary">
-          View Map
+          Use the Map
+        </Button>
+      </Link>
+    </div>
+    <div className="flex justify-right mt-20">
+      <Link href="/map">
+        <Button size="lg" color="primary">
+          Learn More about the Project
         </Button>
       </Link>
     </div>
