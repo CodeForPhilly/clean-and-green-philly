@@ -127,7 +127,7 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
               size="sm"
               color={
                 isDimensionFilter && filterValue.values.includes(dimension)
-                  ? "primary"
+                  ? "success"
                   : "default"
               }
               className="cursor-pointer mb-2 p-2"
