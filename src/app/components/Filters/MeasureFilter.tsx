@@ -11,6 +11,8 @@ type MeasureFilterProps = {
   display: string;
 };
 
+const green60 = getComputedStyle(document.documentElement).getPropertyValue('--tw-bg-green-60').trim();
+
 const MeasureFilter: React.FC<MeasureFilterProps> = ({ property, display }) => {
   const { filter, dispatch } = useFilter();
   const filterValue = filter[property] as MeasureFilterType;
@@ -62,7 +64,7 @@ const MeasureFilter: React.FC<MeasureFilterProps> = ({ property, display }) => {
         <div className="text-md">{display}</div>
       </div>
       <div className="space-x-2">
-        <MultiRangeSlider
+      <MultiRangeSlider
           min={dbMinValue}
           max={dbMaxValue}
           step={(dbMaxValue - dbMinValue) / 25}
@@ -71,6 +73,13 @@ const MeasureFilter: React.FC<MeasureFilterProps> = ({ property, display }) => {
           onChange={(e) => {
             handleInput(e);
           }}
+          style={{
+            border: 'none',
+            boxShadow: 'none',
+            padding: '15px 10px'
+          }}
+          ruler = 'false'
+          barInnerColor = {green60}
         />
       </div>
     </div>
