@@ -44,7 +44,7 @@ const LandingPage = () => (
     </div>
     <div className="flex justify-center mt-20">
       <Link href="/map">
-        <Button size="lg" color="primary">
+        <Button size="lg" className="bg-green-60">
           Use the Map
           <ArrowRightIcon className="w-5 h-5 ml-2" />
         </Button>
