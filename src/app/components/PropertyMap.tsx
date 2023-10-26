@@ -1,8 +1,12 @@
 import React, { FC, useEffect, useState } from "react";
-import { Popup, Map as MapboxMap } from "mapbox-gl";
+import {  Popup, Map as MapboxMap, NavigationControl, FullscreenControl } from "mapbox-gl";
 import { mapboxAccessToken, apiBaseUrl } from "../../config/config";
 import ZoomModal from "./ZoomModal";
 import { useFilter } from "@/context/FilterContext";
+import LegendControl from 'mapboxgl-legend';
+import 'mapboxgl-legend/dist/style.css';
+import '../globals.css';
+
 
 let popup: Popup | null = null;
 
@@ -67,6 +71,9 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
         setIsZoomModalHidden(mapInstance.getZoom() >= minZoom);
       });
 
+      mapInstance.addControl(new NavigationControl(), 'top-left');
+      mapInstance.addControl(new FullscreenControl(), 'top-left');
+
       mapInstance.addSource("vacant_properties", {
         type: "vector",
         tiles: [`${apiBaseUrl}/api/generateTiles/{z}/{x}/{y}`],
@@ -80,12 +87,28 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
         source: "vacant_properties",
         "source-layer": "vacant_properties",
         paint: {
-          "fill-color": "#0000FF",
-          "fill-opacity": 0.2,
+          "fill-color": [
+            "match",
+            ["get", "guncrime_density"], // get the value of the guncrime_density property
+            "Bottom 50%", "#B0E57C", // Light Green
+            "Top 50%", "#FFD700", // Gold
+            "Top 25%", "#FF8C00", // Dark Orange
+            "Top 10%", "#FF4500", // Orange Red
+            "Top 5%", "#B22222", // FireBrick
+            "Top 1%", "#8B0000", // Dark Rednp
+            "#0000FF" // default color if none of the categories match
+          ],
+          "fill-opacity": 0.7
         },
+        metadata: {
+          name: 'Guncrime Density',
+        }
       });
-
+      
       updateFilter();
+
+      const legend = new LegendControl();
+      mapInstance.addControl(legend, 'bottom-left');
 
       mapInstance.on("moveend", () => {
         let features = mapInstance.queryRenderedFeatures();

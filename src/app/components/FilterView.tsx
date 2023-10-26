@@ -9,6 +9,11 @@ const filters = [
     type: "dimension",
   },
   {
+    property: "all_violations_past_year",
+    display: "L&I Violations in the Past Year",
+    type: "measure",
+  },
+  {
     property: "ZONINGBASEDISTRICT",
     display: "Zoning",
     type: "dimension",
