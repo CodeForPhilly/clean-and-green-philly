@@ -23,3 +23,7 @@ body {
   background-color: white;
   font-family: 'DIN 1451', sans-serif; 
 }
+
+.mapboxgl-ctrl-legend {
+  @apply p-5 w-full;
+}
