@@ -11,7 +11,7 @@ type MeasureFilterProps = {
   display: string;
 };
 
-const green60 = getComputedStyle(document.documentElement).getPropertyValue('--tw-bg-green-60').trim();
+//const green60 = getComputedStyle(document.documentElement).getPropertyValue('--tw-bg-green-60').trim();
 
 const MeasureFilter: React.FC<MeasureFilterProps> = ({ property, display }) => {
   const { filter, dispatch } = useFilter();
@@ -79,7 +79,7 @@ const MeasureFilter: React.FC<MeasureFilterProps> = ({ property, display }) => {
             padding: '15px 10px'
           }}
           ruler = 'false'
-          barInnerColor = {green60}
+          //barInnerColor = {green60}
         />
       </div>
     </div>
