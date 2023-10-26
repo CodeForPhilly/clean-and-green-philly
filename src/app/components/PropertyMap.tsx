@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import { Popup, Map as MapboxMap } from "mapbox-gl";
+import {  Popup, Map as MapboxMap, NavigationControl, FullscreenControl } from "mapbox-gl";
 import { mapboxAccessToken, apiBaseUrl } from "../../config/config";
 import ZoomModal from "./ZoomModal";
 import { useFilter } from "@/context/FilterContext";
@@ -66,6 +66,9 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
       mapInstance.on("zoomend", () => {
         setIsZoomModalHidden(mapInstance.getZoom() >= minZoom);
       });
+
+      mapInstance.addControl(new NavigationControl(), 'top-left');
+      mapInstance.addControl(new FullscreenControl(), 'top-left');
 
       mapInstance.addSource("vacant_properties", {
         type: "vector",
