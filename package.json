@@ -28,7 +28,7 @@
     "protobufjs": "^7.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-mapbox-gl": "^5.1.1",
+    "react-map-gl": "^7.1.6",
     "tailwindcss": "3.3.3",
     "typescript": "5.2.2"
   },
