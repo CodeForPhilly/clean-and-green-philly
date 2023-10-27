@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/app/api/db/db";
 import { finalDataset } from "@/config/config";
 
+export const dynamic = "force-dynamic";
+
 export const GET = async (req: NextRequest, { params }: { params: any }) => {
   const { z, x, y } = params;
 
