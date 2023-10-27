@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { Pool } from "pg";
 import { pgConnString, finalDataset } from "@/config/config";
 
+export const dynamic = "force-dynamic";
+
 const pool = new Pool({
   connectionString: pgConnString,
 });
