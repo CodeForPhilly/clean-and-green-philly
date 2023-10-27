@@ -65,17 +65,19 @@ All of the data scripting is in python and lives in the `data` folder. Everythin
 # Setup Instructions
 
 1. Install [pyenv](https://github.com/pyenv/pyenv) (or [pyenv-win](https://github.com/pyenv-win/pyenv-win) for Windows) for Python version management
-  * [troubleshooting for `pyenv_win` downloadn and script permissions](https://www.sharepointdiary.com/2014/03/fix-for-powershell-script-cannot-be-loaded-because-running-scripts-is-disabled-on-this-system.html)
+
+- [troubleshooting for `pyenv_win` downloadn and script permissions](https://www.sharepointdiary.com/2014/03/fix-for-powershell-script-cannot-be-loaded-because-running-scripts-is-disabled-on-this-system.html)
+
 2. Install the latest Python 3.11: `pyenv install 3.11.4`
 3. Install [pipenv](https://github.com/pypa/pipenv) for environment management
 4. Install project requirements: `pipenv install`
-   * *Note*: run this from the following directory: `[whever you have this repo locally]\vacant-lots-proj\data` 
-   * A virtual environment will be created in this directory and the packages from the Pipfile will be installed.
+   - _Note_: run this from the following directory: `[whever you have this repo locally]\vacant-lots-proj\data`
+   - A virtual environment will be created in this directory and the packages from the Pipfile will be installed.
 
 # Database
 
 1. Make sure postgres and postgis are installed
-   * Follow the steps here: [Introduction to PostGIS](https://postgis.net/workshops/postgis-intro/installation.html)
+   - Follow the steps here: [Introduction to PostGIS](https://postgis.net/workshops/postgis-intro/installation.html)
 2. Create a new databse
    `createdb vacantlotdb`
 3. Connect to the db
@@ -100,6 +102,12 @@ pip install -e ./awkde
 2. Move the to src folder `cd src`
 3. Run the main script `python script.py`
 
+# Environment Variables
+
+The following environment variables must be set:
+`VACANT_LOTS_DB`: The local postgres URL for your database.
+`VACANT_LOTS_DB_REMOTE`: The remote postgres URL for the hosted database.
+
 # Mapbox
 
 To upload to Mapbox through the API you'll need a key with `upload` write access, saved to the environment variable `CFP_MAPBOX_TOKEN_UPLOADER`
@@ -109,7 +117,7 @@ To upload to Mapbox through the API you'll need a key with `upload` write access
 Install dependencies with:
 
 ```bash
-npm i --legacy-peer-deps
+npm i
 ```
 
 First, run the development server:
@@ -117,6 +125,12 @@ First, run the development server:
 ```bash
 npm run dev
 ```
+
+# Environment Variables
+
+The following environment variables must be set:
+`VACANT_LOTS_DB`: The local postgres URL for your database.
+`NEXT_PUBLIC_VACANT_LOTS_API_BASE_URL`: Set this to `http://localhost:3000`.
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
