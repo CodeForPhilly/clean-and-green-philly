@@ -1,15 +1,83 @@
 import React, { FC, useEffect, useState } from "react";
-import {  Popup, Map as MapboxMap, NavigationControl, FullscreenControl } from "mapbox-gl";
+import {  Popup, Map as MapboxMap, VectorSource, SourceVectorLayer } from "mapbox-gl";
 import { mapboxAccessToken, apiBaseUrl } from "../../config/config";
 import ZoomModal from "./ZoomModal";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from 'mapboxgl-legend';
 import 'mapboxgl-legend/dist/style.css';
 import '../globals.css';
+import Map, { 
+  Source, 
+  Layer, 
+  //CustomSource
+  VectorTileSource,
+  NavigationControl, 
+  FullscreenControl, 
+  ScaleControl,
+  GeolocateControl
+} from 'react-map-gl';
+import type { FillLayer, CustomSource, VectorSourceRaw } from 'react-map-gl';
 
+//let popup: Popup | null = null;
 
-let popup: Popup | null = null;
+const minZoom = 4;
 
+const VectorTiles: VectorSourceRaw = {
+  id: "vacant_properties",
+  type: "vector",
+  tiles: [`${apiBaseUrl}/api/generateTiles/{z}/{x}/{y}`],
+  minzoom: minZoom,
+  maxzoom: 23
+}
+
+const layerStyle: FillLayer = {
+  id: "vacant_properties",
+  type: "fill",
+  source: "vacant_properties",
+  "source-layer": "vacant_properties",
+  paint: {
+    "fill-color": [
+      "match",
+      ["get", "guncrime_density"], // get the value of the guncrime_density property
+      "Bottom 50%", "#B0E57C", // Light Green
+      "Top 50%", "#FFD700", // Gold
+      "Top 25%", "#FF8C00", // Dark Orange
+      "Top 10%", "#FF4500", // Orange Red
+      "Top 5%", "#B22222", // FireBrick
+      "Top 1%", "#8B0000", // Dark Rednp
+      "#0000FF" // default color if none of the categories match
+    ],
+    "fill-opacity": 0.7
+  },
+  metadata: {
+    name: 'Guncrime Density',
+  }
+};
+
+export default function PropertyMap() {
+
+  return <Map
+    mapboxAccessToken={mapboxAccessToken}
+    mapLib={import('mapbox-gl')}
+    initialViewState={{
+      longitude: -75.1652,
+      latitude: 39.9526,
+      zoom: 13
+    }}
+    mapStyle="mapbox://styles/mapbox/light-v10"
+  >
+    <GeolocateControl position="top-left" />
+    <FullscreenControl position="top-left" />
+    <NavigationControl position="top-left" />
+    <ScaleControl />
+
+    <Source id="vacant_properties" {...VectorTiles} >
+      <Layer {...layerStyle} />
+    </Source>
+  </Map>;
+}
+
+/*
 interface PropertyMapProps {
   setFeaturesInView: (features: any[]) => void;
 }
@@ -162,4 +230,7 @@ const PropertyMap: FC<PropertyMapProps> = ({ setFeaturesInView }) => {
   );
 };
 
+
 export default PropertyMap;
+
+*/
