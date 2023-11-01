@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useState } from "react";
-import {  Popup, Map as MapboxMap, VectorSource, SourceVectorLayer } from "mapbox-gl";
+import {  Map as MapboxMap, VectorSource, SourceVectorLayer } from "mapbox-gl";
 import { mapboxAccessToken, apiBaseUrl } from "../../config/config";
 import ZoomModal from "./ZoomModal";
 import { useFilter } from "@/context/FilterContext";
@@ -9,8 +9,7 @@ import '../globals.css';
 import Map, { 
   Source, 
   Layer, 
-  //CustomSource
-  VectorTileSource,
+  Popup,
   NavigationControl, 
   FullscreenControl, 
   ScaleControl,
@@ -54,27 +53,142 @@ const layerStyle: FillLayer = {
   }
 };
 
-export default function PropertyMap() {
 
-  return <Map
-    mapboxAccessToken={mapboxAccessToken}
-    mapLib={import('mapbox-gl')}
-    initialViewState={{
-      longitude: -75.1652,
-      latitude: 39.9526,
-      zoom: 13
-    }}
-    mapStyle="mapbox://styles/mapbox/light-v10"
-  >
-    <GeolocateControl position="top-left" />
-    <FullscreenControl position="top-left" />
-    <NavigationControl position="top-left" />
-    <ScaleControl />
 
-    <Source id="vacant_properties" {...VectorTiles} >
-      <Layer {...layerStyle} />
+function MapControls() {
+  return (
+    <>
+      <GeolocateControl position="top-left" />
+      <FullscreenControl position="top-left" />
+      <NavigationControl position="top-left" />
+      <ScaleControl />
+    </>
+  );
+}
+
+function MapSourceAndLayer({ onClick }) {
+  return (
+    <Source id="vacant_properties" {...VectorTiles}>
+      <Layer {...layerStyle} onClick={onClick} />
     </Source>
-  </Map>;
+  );
+}
+
+
+export default function PropertyMap() {
+  const [isZoomModalHidden, setIsZoomModalHidden] = useState(true);
+  const { filter } = useFilter();
+  const [map, setMap] = useState<MapboxMap | null>(null);
+  const legend = new LegendControl();
+  const [popupInfo, setPopupInfo] = useState<any>(null);
+
+  // filter function
+  const updateFilter = () => {
+    if (!map) return;
+
+    const isAnyFilterEmpty = Object.values(filter).some((filterItem) => {
+      if (filterItem.type === "dimension") {
+        return filterItem.values.length === 0;
+      } else if (filterItem.type === "measure") {
+        return filterItem.min === filterItem.max;
+      }
+      return true;
+    });
+
+    if (isAnyFilterEmpty) {
+      map.setFilter("vacant_properties", ["==", ["id"], ""]);
+      return;
+    }
+
+    const mapFilter = Object.entries(filter).reduce(
+      (acc, [property, filterItem]) => {
+        if (filterItem.type === "dimension" && filterItem.values.length) {
+          acc.push(["in", property, ...filterItem.values]);
+        } else if (
+          filterItem.type === "measure" &&
+          filterItem.min !== filterItem.max
+        ) {
+          acc.push([">=", property, filterItem.min]);
+          acc.push(["<=", property, filterItem.max]);
+        }
+        return acc;
+      },
+      [] as any[]
+    );
+
+    map.setFilter("vacant_properties", ["all", ...mapFilter]);
+  };
+
+  // handle map click
+  const onMapClick = (event: any) => {
+    console.log(event); 
+
+    if (map) {
+      const features = map.queryRenderedFeatures(event.point);
+      console.log(features);
+
+      if (features.length > 0) {
+        setPopupInfo({ 
+          longitude: event.lngLat.lng, 
+          latitude: event.lngLat.lat, 
+          feature: features[0].properties
+        });
+      }
+    }
+  };
+
+  // handle zoom
+  const onMapZoomEnd = () => {
+    if (map) {
+      setIsZoomModalHidden(map.getZoom() >= minZoom);
+    }
+  };
+
+  useEffect(() => {
+    if (map) {
+      const legend = new LegendControl();
+      map.addControl(legend, 'bottom-left');
+    }
+    updateFilter();
+  }, [map, filter, updateFilter]);
+
+  // map load
+  return (
+    <div className="relative h-full w-full">
+    <Map
+      mapboxAccessToken={mapboxAccessToken}
+      mapLib={import('mapbox-gl')}
+      initialViewState={{
+        longitude: -75.1652,
+        latitude: 39.9526,
+        zoom: 13,
+      }}
+      mapStyle="mapbox://styles/mapbox/light-v10"
+      onClick={onMapClick}
+      onZoomEnd={onMapZoomEnd}
+      interactiveLayerIds={["vacant_properties"]}
+      onLoad={(e) => {
+        setMap(e.target);
+      }}
+    >
+      <MapControls />
+      
+      {popupInfo && (
+        <Popup
+          longitude={popupInfo.longitude}
+          latitude={popupInfo.latitude}
+          onClose={() => setPopupInfo(null)}
+        >
+          <div>
+            <p>{popupInfo.feature.ADDRESS}</p>
+          </div>
+        </Popup>
+        
+      )}
+      <MapSourceAndLayer onClick={onMapClick} />
+    </Map>
+    </div>
+  );
 }
 
 /*
