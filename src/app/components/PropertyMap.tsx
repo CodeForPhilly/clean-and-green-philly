@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useRef } from "react";
 import {  Map as MapboxMap, VectorSource, SourceVectorLayer } from "mapbox-gl";
 import { mapboxAccessToken, apiBaseUrl } from "../../config/config";
 import ZoomModal from "./ZoomModal";
@@ -144,12 +144,29 @@ export default function PropertyMap() {
     }
   };
 
+  const legendRef = useRef<LegendControl | null>(null);
+
   useEffect(() => {
     if (map) {
-      const legend = new LegendControl();
-      map.addControl(legend, 'bottom-left');
+      if (!legendRef.current) {
+        legendRef.current = new LegendControl();
+        map.addControl(legendRef.current, 'bottom-left');
+      }
     }
-    updateFilter();
+  
+    return () => {
+      if (map && legendRef.current) {
+        map.removeControl(legendRef.current);
+        legendRef.current = null;
+      }
+    };
+  }, [map]);
+  
+  // Filter update
+  useEffect(() => {
+    if (map) {
+      updateFilter();
+    }
   }, [map, filter, updateFilter]);
 
   // map load
@@ -180,7 +197,10 @@ export default function PropertyMap() {
           onClose={() => setPopupInfo(null)}
         >
           <div>
-            <p>{popupInfo.feature.ADDRESS}</p>
+            <p className="font-bold">{popupInfo.feature.ADDRESS}</p>
+            <p>Owner: {popupInfo.feature.OWNER1}</p>
+            <p>Gun Crime Density: {popupInfo.feature.guncrime_density}</p>
+            <p>Tree Canopy Gap: {popupInfo.feature.tree_canopy_gap}</p>
           </div>
         </Popup>
         
