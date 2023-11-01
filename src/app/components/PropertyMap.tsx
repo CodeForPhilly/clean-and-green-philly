@@ -66,13 +66,17 @@ function MapControls() {
   );
 }
 
-function MapSourceAndLayer({ onClick }) {
+interface MapSourceAndLayerProps {
+  onClick: (event: MapEvent) => void;
+}
+
+const MapSourceAndLayer: React.FC<MapSourceAndLayerProps> = ({ onClick }) => {
   return (
     <Source id="vacant_properties" {...VectorTiles}>
       <Layer {...layerStyle} onClick={onClick} />
     </Source>
   );
-}
+};
 
 
 export default function PropertyMap() {
