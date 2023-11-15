@@ -65,7 +65,7 @@ const MapControls = () => (
   </>
 );
 
-const PropertyMap = () => {
+const PropertyMap: React.FC = ({ setFeaturesInView }: any) => {
   const { filter } = useFilter();
   const [map, setMap] = useState<MapboxMap | null>(null);
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
@@ -108,7 +108,6 @@ const PropertyMap = () => {
     map.setFilter("vacant_properties", ["all", ...mapFilter]);
   };
 
-  // handle map click
   const onMapClick = (event: any) => {
     if (map) {
       const features = map.queryRenderedFeatures(event.point, {
@@ -124,6 +123,15 @@ const PropertyMap = () => {
       } else {
         setPopupInfo(null);
       }
+    }
+  };
+
+  const setFeaturesInViewOnMove = (event: any) => {
+    if (map) {
+      const features = map.queryRenderedFeatures(event.point, {
+        layers: ["vacant_properties"],
+      });
+      setFeaturesInView(features);
     }
   };
 
@@ -172,6 +180,7 @@ const PropertyMap = () => {
         onLoad={(e) => {
           setMap(e.target);
         }}
+        onMoveEnd={setFeaturesInViewOnMove}
       >
         <MapControls />
 
