@@ -18,10 +18,6 @@ const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
 
-  useEffect(() => {
-    console.log(featuresInView);
-  }, [featuresInView]);
-
   return (
     <FilterProvider>
       <NextUIProvider>
