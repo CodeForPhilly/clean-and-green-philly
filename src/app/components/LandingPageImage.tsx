@@ -17,7 +17,7 @@ const LandingPageImage: FC<LandingPageImageProps> = ({
   return (
     <div className="text-center w-1/4">
       <div className="w-full h-56 relative">
-        <Image src={src} alt={alt} layout="fill" objectFit="cover" />
+        <Image src={src} alt={alt} objectFit="cover" />
       </div>
       <h4 className="text-xl mt-2 font-bold pt-5">{captionTitle}</h4>
       <p className="text-lg text-gray-600 pt-5">{captionBody}</p>
