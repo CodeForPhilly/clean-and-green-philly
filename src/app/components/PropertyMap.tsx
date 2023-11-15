@@ -1,4 +1,10 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, {
+  useEffect,
+  useState,
+  useRef,
+  Dispatch,
+  SetStateAction,
+} from "react";
 import { Map as MapboxMap, PopupOptions } from "mapbox-gl";
 import { mapboxAccessToken, apiBaseUrl } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
@@ -65,7 +71,12 @@ const MapControls = () => (
   </>
 );
 
-const PropertyMap: React.FC = ({ setFeaturesInView }: any) => {
+interface PropertyMapProps {
+  setFeaturesInView: Dispatch<SetStateAction<any[]>>;
+}
+const PropertyMap: React.FC<PropertyMapProps> = ({
+  setFeaturesInView,
+}: any) => {
   const { filter } = useFilter();
   const [map, setMap] = useState<MapboxMap | null>(null);
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
