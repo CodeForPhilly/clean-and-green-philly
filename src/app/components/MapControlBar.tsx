@@ -32,12 +32,6 @@ const SearchBarComponent: React.FC<MapControlBarProps> = ({
 
       <ButtonGroup fullWidth className="w-1/2">
         <Button
-          onClick={() => handleClick("saved")}
-          startContent={<BookmarkIcon className="w-5 h-5" />}
-        >
-          Saved
-        </Button>
-        <Button
           onClick={() => handleClick("filter")}
           startContent={<FunnelIcon className="w-5 h-5" />}
         >
