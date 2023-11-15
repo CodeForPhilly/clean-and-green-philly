@@ -1,14 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/app/api/db/db";
+import { IDatabase, IConnected } from "pg-promise";
 import { finalDataset } from "@/config/config";
 
 export const dynamic = "force-dynamic";
 
+const getConnection = (() => {
+  let connection: IConnected<any, any> | null = null;
+  return async (): Promise<IConnected<any, any>> => {
+    if (!connection) {
+      connection = await db.connect();
+    }
+    return connection;
+  };
+})();
+
 export const GET = async (req: NextRequest, { params }: { params: any }) => {
   const { z, x, y } = params;
 
-  const connection = await db.connect();
   try {
+    const connection = await getConnection();
     const tileData = await connection.one(
       `SELECT ST_AsMVT(tile, 'vacant_properties', 4096, 'geometry') FROM (
         SELECT 
@@ -32,7 +43,5 @@ export const GET = async (req: NextRequest, { params }: { params: any }) => {
     });
   } catch (error: any) {
     return new NextResponse(error.message, { status: 500 });
-  } finally {
-    connection.done();
   }
 };

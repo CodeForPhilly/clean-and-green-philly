@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { NextUIProvider, Button } from "@nextui-org/react";
 import { FilterProvider } from "@/context/FilterContext";
 import {
@@ -12,11 +12,15 @@ import {
   FilterView,
 } from "../components";
 
-export type BarClickOptions = "saved" | "filter" | "download" | "detail";
+export type BarClickOptions = "filter" | "download" | "detail";
 
 const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
+
+  useEffect(() => {
+    console.log(featuresInView);
+  }, [featuresInView]);
 
   return (
     <FilterProvider>
