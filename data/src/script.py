@@ -1,5 +1,5 @@
 from classes.featurelayer import FeatureLayer
-from config.psql import local_conn, remote_conn
+from config.psql import connections
 from constants.services import VACANT_PROPS_LAYERS_TO_LOAD
 from data_utils.city_owned_properties import city_owned_properties
 from data_utils.phs_properties import phs_properties
@@ -8,6 +8,12 @@ from data_utils.rco_geoms import rco_geoms
 from data_utils.tree_canopy import tree_canopy
 from data_utils.gun_crimes import gun_crimes
 from data_utils.deliquencies import deliquencies
+import sys
+
+# Ensure the directory containing awkde is in the Python path
+awkde_path = '/usr/src/app'
+if awkde_path not in sys.path:
+    sys.path.append(awkde_path)
 
 
 """
@@ -69,7 +75,7 @@ vacant_properties.upload_to_mapbox("vacant_properties")
 
 # Clean up
 
-for conn in [local_conn, remote_conn]:
+for conn in connections:
     vacant_properties.gdf.to_postgis(
         "vacant_properties_end", conn, if_exists="replace", index=False
     )
