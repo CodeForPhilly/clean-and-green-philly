@@ -6,7 +6,7 @@ interface PropertyCardProps {
   feature: any;
 }
 
-const PropertyCard = ({ feature }: any) => {
+const PropertyCard = ({ feature }: PropertyCardProps) => {
   const { ADDRESS, guncrime_density, tree_canopy_gap } = feature.properties;
 
   const roundedCanopyGap = Math.round(tree_canopy_gap * 100);
