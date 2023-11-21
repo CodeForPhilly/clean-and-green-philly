@@ -64,15 +64,7 @@ All of the data scripting is in python and lives in the `data` folder. Everythin
 
 # Setup Instructions
 
-1. Install [pyenv](https://github.com/pyenv/pyenv) (or [pyenv-win](https://github.com/pyenv-win/pyenv-win) for Windows) for Python version management
-
-- [troubleshooting for `pyenv_win` downloadn and script permissions](https://www.sharepointdiary.com/2014/03/fix-for-powershell-script-cannot-be-loaded-because-running-scripts-is-disabled-on-this-system.html)
-
-2. Install the latest Python 3.11: `pyenv install 3.11.4`
-3. Install [pipenv](https://github.com/pypa/pipenv) for environment management
-4. Install project requirements: `pipenv install`
-   - _Note_: run this from the following directory: `[whever you have this repo locally]\vacant-lots-proj\data`
-   - A virtual environment will be created in this directory and the packages from the Pipfile will be installed.
+1. Download [Docker](https://www.docker.com/products/docker-desktop/)
 
 # Database
 
@@ -90,23 +82,33 @@ Optionally, in `/config/config`, set `FORCE_RELOAD` = `False` to read "cached" d
 
 # awkde
 
-We are using the [awkde package](https://github.com/mennthor/awkde) to create the Adaptive Width KDE. It is not available through pip. To install, navigate to `src` and run
-
-```
-pip install -e ./awkde
-```
+We are using the [awkde package](https://github.com/mennthor/awkde) to create the Adaptive Width KDE. It is not available through pip, but is handled as a part of the Docker build.
 
 # Usage Instructions
 
-1. Activate the pipenv shell: `pipenv shell`
-2. Move the to src folder `cd src`
-3. Run the main script `python script.py`
+1. Build the Docker image:
+
+```
+docker build -t vacant-proj-data .
+```
+
+2. Run the script:
+
+```
+ docker run --rm -e CFP_MAPBOX_TOKEN_UPLOADER -e VACANT_LOTS_DB -e VACANT_LOTS_DB_REMOTE vacant-proj-data
+```
+
+As of right now, if you make changes to the script you'll have to build the script before running it.
 
 # Environment Variables
 
 The following environment variables must be set:
-`VACANT_LOTS_DB`: The local postgres URL for your database.
+`VACANT_LOTS_DB`: The local postgres URL for your database.\*
 `VACANT_LOTS_DB_REMOTE`: The remote postgres URL for the hosted database.
+
+\* to run in docker on mac or windows, change `localhost` to `host.docker.internal`
+
+You can choose to write to local, remote, both, or neither in the settings in `config.py`
 
 # Mapbox
 
@@ -137,11 +139,7 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 ## Contribution Instructions
 
 1. Create a fork of this repository and work from branches within your fork. When those changes are ready for review, create a pull request from fork:branch to upstream:main
-2. Before committing changes, format your code to maintain a consistent codebase:
-   ```
-   pipenv shell
-   black .
-   ```
+2. ~~Before committing changes, format your code to maintain a consistent codebase:~~ TODO: Figure out how to do this with Docker.
 
 # License
 
