@@ -3,3 +3,5 @@ import os
 FORCE_RELOAD = True
 USE_CRS = "EPSG:2272"
 MAPBOX_TOKEN = os.environ.get("CFP_MAPBOX_TOKEN_UPLOADER")
+USE_LOCAL_DB = True
+USE_REMOTE_DB = False
