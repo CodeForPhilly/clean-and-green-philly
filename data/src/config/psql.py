@@ -7,7 +7,7 @@ connections = []
 # Connect to local psql
 if USE_LOCAL_DB:
     local_engine = create_engine(os.environ["VACANT_LOTS_DB"].replace(
-        "localhost", "docker.host.internal"))
+        "localhost", "host.docker.internal"))
     local_conn = local_engine.connect()
     connections.append(local_conn)
 
