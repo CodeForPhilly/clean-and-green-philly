@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  vacant-lots-proj:
+    build: .
+    environment:
+      - CFP_MAPBOX_TOKEN_UPLOADER
+      - VACANT_LOTS_DB
+      - VACANT_LOTS_DB_REMOTE
+    volumes:
+      - /Users/brandoncohen/Documents/dev/vacant-lots-proj/data/src:/usr/src/app
