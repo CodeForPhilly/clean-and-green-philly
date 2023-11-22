@@ -42,6 +42,7 @@ export const GET = async (req: NextRequest, { params }: { params: any }) => {
       },
     });
   } catch (error: any) {
+    console.error(error);
     return new NextResponse(error.message, { status: 500 });
   }
 };
