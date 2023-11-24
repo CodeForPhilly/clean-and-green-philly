@@ -17,11 +17,15 @@ ENV GDAL_CONFIG=/usr/bin/gdal-config
 # Install Pipenv
 RUN pip install pipenv
 
-# Copy the content of the local src directory to the working directory
-COPY src/ .
+# Copy the Pipfile and Pipfile.lock from the src directory
+COPY src/Pipfile src/Pipfile.lock ./
 
 # Install the dependencies from Pipfile
 RUN pipenv install --deploy --ignore-pipfile
+
+
+# Copy the src directory (including awkde)
+COPY src/ .
 
 # Install awkde within the Pipenv environment
 # Assuming awkde is located in /usr/src/app/awkde

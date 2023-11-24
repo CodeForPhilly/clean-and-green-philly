@@ -15,10 +15,9 @@ awkde_path = '/usr/src/app'
 if awkde_path not in sys.path:
     sys.path.append(awkde_path)
 
-
-"""
-Load Vacant Properties Datasets
-"""
+# """
+# Load Vacant Properties Datasets
+# """
 
 
 vacant_properties = FeatureLayer(
@@ -70,10 +69,10 @@ vacant_properties = deliquencies(vacant_properties)
 """
 Post to Mapbox
 """
-vacant_properties.drop_columns()
-vacant_properties.upload_to_mapbox("vacant_properties")
+# vacant_properties.drop_columns()
+# vacant_properties.upload_to_mapbox("vacant_properties")
 
-# Clean up
+# # Clean up
 
 for conn in connections:
     vacant_properties.gdf.to_postgis(

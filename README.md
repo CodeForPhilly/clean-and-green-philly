@@ -54,7 +54,7 @@ We also need non-technical help with researching and writing content for our Rec
 - Tailwind CSS
 - Python (data engineering)
 
-### Codebase
+# Codebase
 
 This is a monorepo for both the nextjs app and the scripts which ETL and analyze the data.
 
@@ -62,11 +62,11 @@ This is a monorepo for both the nextjs app and the scripts which ETL and analyze
 
 All of the data scripting is in python and lives in the `data` folder. Everything below should be run in that folder.
 
-# Setup Instructions
+#### Setup Instructions
 
 1. Download [Docker](https://www.docker.com/products/docker-desktop/)
 
-# Database
+##### Database
 
 1. Make sure postgres and postgis are installed
    - Follow the steps here: [Introduction to PostGIS](https://postgis.net/workshops/postgis-intro/installation.html)
@@ -80,39 +80,25 @@ All of the data scripting is in python and lives in the `data` folder. Everythin
 
 Optionally, in `/config/config`, set `FORCE_RELOAD` = `False` to read "cached" data in postgres instead of downloading new data.
 
-# awkde
+##### awkde
 
 We are using the [awkde package](https://github.com/mennthor/awkde) to create the Adaptive Width KDE. It is not available through pip, but is handled as a part of the Docker build.
 
-# Usage Instructions
+#### Usage Instructions
 
-1. Build the Docker image:
-
-```
-docker build -t vacant-proj-data .
+```shell
+docker-compose up
 ```
 
-2. Run the script:
+Run the image in Docker. If needed, it will build (this will take a few minutes). It should only need to build if it's your first time running or if major configuation changes are made. Changes to the python script should not trigger a re-build.
 
-```
- docker run --rm -e CFP_MAPBOX_TOKEN_UPLOADER -e VACANT_LOTS_DB -e VACANT_LOTS_DB_REMOTE vacant-proj-data
-```
-
-As of right now, if you make changes to the script you'll have to build the script before running it.
-
-# Environment Variables
+## Environment Variables
 
 The following environment variables must be set:
-`VACANT_LOTS_DB`: The local postgres URL for your database.\*
+`VACANT_LOTS_DB`: The local postgres URL for your database.
 `VACANT_LOTS_DB_REMOTE`: The remote postgres URL for the hosted database.
 
-\* to run in docker on mac or windows, change `localhost` to `host.docker.internal`
-
 You can choose to write to local, remote, both, or neither in the settings in `config.py`
-
-# Mapbox
-
-To upload to Mapbox through the API you'll need a key with `upload` write access, saved to the environment variable `CFP_MAPBOX_TOKEN_UPLOADER`
 
 ## Nextjs App
 
