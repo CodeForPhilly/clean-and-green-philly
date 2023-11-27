@@ -1,36 +1,131 @@
-import React, { FC, useState } from "react";
+import React, { FC, useState, useMemo, useEffect } from "react";
+import {
+  Table,
+  TableHeader,
+  TableColumn,
+  TableBody,
+  TableRow,
+  TableCell,
+  getKeyValue,
+  Pagination,
+  Spinner,
+} from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
+import SinglePropertyDetail from "./SinglePropertyDetail";
+import { MapboxGeoJSONFeature } from "mapbox-gl";
+
+const tableCols = [
+  {
+    key: "ADDRESS",
+    label: "Address",
+  },
+  {
+    key: "guncrime_density",
+    label: "Crime Rate",
+  },
+  {
+    key: "tree_canopy_gap",
+    label: "Canopy Gap",
+  },
+];
 
 interface PropertyDetailSectionProps {
-  featuresInView: any[];
+  featuresInView: MapboxGeoJSONFeature[];
+  display: "detail" | "list";
+  loading: boolean;
+  propertyMapZoom: number;
+  zoom: number;
 }
 
 const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   featuresInView,
+  display,
+  loading,
+  propertyMapZoom,
+  zoom,
 }) => {
-  const [limit, setLimit] = useState(20);
+  const [page, setPage] = useState(1);
+  const [selectedProperty, setSelectedProperty] =
+    useState<MapboxGeoJSONFeature | null>(null);
 
-  const loadMore = () => setLimit(limit + 20);
+  const rowsPerPage = 20;
+  const pages = Math.ceil(featuresInView.length / rowsPerPage);
 
-  return (
+  const items = useMemo(() => {
+    const start = (page - 1) * rowsPerPage;
+    const end = start + rowsPerPage;
+
+    return featuresInView.slice(start, end);
+  }, [page, featuresInView]);
+
+  console.log(loading);
+
+  return loading ? (
+    <Spinner />
+  ) : zoom <= propertyMapZoom ? (
+    "zoom in"
+  ) : selectedProperty ? (
+    <SinglePropertyDetail
+      property={selectedProperty}
+      setSelectedProperty={setSelectedProperty}
+    />
+  ) : (
     <>
       <div className="flex flex-wrap overflow-y-auto max-h-[calc(100vh-110px)]">
-        {featuresInView
-          .slice(0, Math.min(limit, featuresInView.length))
-          .map((feature, index) => (
-            <PropertyCard feature={feature} key={index} />
-          ))}
-
-        {featuresInView.length > limit && (
-          <div>
-            <button
-              onClick={loadMore}
-              className="p-2 m-4 bg-blue-500 text-white rounded"
-            >
-              Load More
-            </button>
-          </div>
+        {display === "list" ? (
+          <Table
+            aria-label="Property Details"
+            radius="none"
+            removeWrapper
+            classNames={{
+              th: "bg-white",
+            }}
+          >
+            <TableHeader>
+              {tableCols.map((column) => (
+                <TableColumn key={column.key}>{column.label}</TableColumn>
+              ))}
+            </TableHeader>
+            <TableBody items={items}>
+              {({ properties }) => (
+                <TableRow
+                  key={properties?.OPA_ID}
+                  onClick={() => {
+                    setSelectedProperty(
+                      items.find(
+                        (item) =>
+                          properties?.OPA_ID === item?.properties?.OPA_ID
+                      ) || null
+                    );
+                  }}
+                >
+                  {(columnKey) => (
+                    <TableCell>{getKeyValue(properties, columnKey)}</TableCell>
+                  )}
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        ) : (
+          items.map((feature, index) => (
+            <PropertyCard
+              feature={feature}
+              key={index}
+              setSelectedProperty={setSelectedProperty}
+            />
+          ))
         )}
+        <div className="flex w-full justify-center">
+          <Pagination
+            isCompact
+            showControls
+            showShadow
+            color="secondary"
+            page={page}
+            total={pages}
+            onChange={(newPage) => setPage(newPage)}
+          />
+        </div>
       </div>
     </>
   );

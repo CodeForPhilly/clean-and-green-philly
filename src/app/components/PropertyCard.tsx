@@ -1,32 +1,24 @@
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { Chip } from "@nextui-org/react";
-import PropertyDetail from "./PropertyDetail";
 
 interface PropertyCardProps {
   feature: any;
+  setSelectedProperty: (feature: any) => void;
 }
 
-const PropertyCard = ({ feature }: PropertyCardProps) => {
-  const [showDetail, setShowDetail] = useState(false);
-
+const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
   const { ADDRESS, guncrime_density, tree_canopy_gap } = feature.properties;
 
   const roundedCanopyGap = Math.round(tree_canopy_gap * 100);
-  const randomImage = `/image${Math.floor(Math.random() * 3) + 1}.jpg`;
-
-  const toggleDetail = () => setShowDetail(!showDetail);
-
-  if (showDetail) {
-    return <PropertyDetail feature={feature} />;
-  }
+  const randomImage = `/image1.jpg`;
 
   return (
     <div
       className="max-w-sm w-full md:w-1/2 p-4 cursor-pointer"
-      onClick={toggleDetail}
+      onClick={() => setSelectedProperty(feature)}
     >
-      <div className="max-w-sm w-full md:w-1/2 p-4">
+      <div className="max-w-sm w-full p-4">
         <div className="bg-white rounded-lg overflow-hidden">
           <div className="relative h-48 w-full rounded-lg overflow-hidden">
             <Image
