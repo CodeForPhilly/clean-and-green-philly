@@ -12,15 +12,20 @@ There are roughly 40,000 vaccant properties in Philadelphia. Identifying the hig
 
 # Current Draft
 
-You can view the [most recent prototype of the website and dashboard](https://nlebovits.github.io/dashboard_demo_website/more_info.html), which was created in Quarto.
-
-Currently we are in the process of user testing a newer prototype, which looks like this:
+You can view [the current build of the website here](https://vacant-lots-proj.vercel.app/). We are building based off of a prototype which looks like this:
 
 ![User prototype landing page](https://github.com/CodeForPhilly/vacant-lots-proj/assets/111617674/0776acde-9fe0-42a5-b8ab-6680525a31d7)
 
 ![User prototype map](https://github.com/CodeForPhilly/vacant-lots-proj/assets/111617674/8cbf0b06-b299-49cd-8f9f-bbb714e55b44)
 
+An older proptotype is also [available here](https://nlebovits.github.io/dashboard_demo_website/more_info.html), although it is now significantly out of date. 
+
+Likewise, you can view the [very first iteration as an ArcGIS Storymap here](https://storymaps.arcgis.com/stories/551f77d85a584705b97c41db7711ba1b).
+
+
 # Project Updates
+
+**Nov. 15, 2023:** The Center for Philadelphia's Urban Future has officially voted to be a fiscal sponsor for our project and maintain it long-term. We are working with them to assemble a steering committee that will help inform future development of the web tool.
 
 **Oct. 2, 2023:** Met with the Philadelphia District Attorney's Office data analytics team. They are very excited about the dashboard and are connecting us with folks in the Managing Director's Office and the Civic Coalition to Save Lives.
 
@@ -35,10 +40,9 @@ At the moment, we are working on:
 - User testing with the prototype
 - Finishing the Python script that creates the underlying dataset
 - Building out the UI using Next.js and mapbox-gl in React
+- Research and writing content for our Recommended Actions and About sections
 
 Current tasks for the are visible under the Issues section.
-
-We also need non-technical help with researching and writing content for our Recommended Actions and About sections.
 
 # Looking For
 
