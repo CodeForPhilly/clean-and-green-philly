@@ -90,7 +90,7 @@ We are using the [awkde package](https://github.com/mennthor/awkde) to create th
 docker-compose up
 ```
 
-Run the image in Docker. If needed, it will build (this will take a few minutes). It should only need to build if it's your first time running or if major configuation changes are made. Changes to the python script should not trigger a re-build.
+Run the image in Docker. If needed, it will build (this will take a few minutes). It should only need to build if it's your first time running or if major configuation changes are made. Changes to the python script should not trigger a re-build. Linux users may run into a permissions error, in which case they should use `sudo docker-compose up`.
 
 ## Environment Variables
 
