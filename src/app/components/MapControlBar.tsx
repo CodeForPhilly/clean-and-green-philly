@@ -1,24 +1,28 @@
 import React, { useState } from "react";
 import { Input, Button, ButtonGroup } from "@nextui-org/react";
 import {
-  BookmarkIcon, // This is the icon currently used for the "Search..." input
-  FunnelIcon,
+  ListBulletIcon,
+  MagnifyingGlassIcon,
+  AdjustmentsHorizontalIcon,
   ArrowDownTrayIcon,
-  BookmarkSquareIcon, // Assuming you want to use this for the "Saved" button
+  BookmarkSquareIcon,
+  // Import an icon for the default view button if available
 } from "@heroicons/react/20/solid";
 import { BarClickOptions } from "@/app/map/page";
 
 type MapControlBarProps = {
   setCurrentView: (view: BarClickOptions) => void;
+  currentView: BarClickOptions;
 };
 
 const MapControlBar: React.FC<MapControlBarProps> = ({
   setCurrentView,
+  currentView,
 }) => {
   const [searchTerm, setSearchTerm] = useState<string>("");
 
-  const handleClick = (view: BarClickOptions) => {
-    setCurrentView(view);
+  const getButtonClassName = (view: BarClickOptions) => {
+    return currentView === view ? "bg-gray-300" : "";
   };
 
   return (
@@ -28,26 +32,36 @@ const MapControlBar: React.FC<MapControlBarProps> = ({
         onValueChange={setSearchTerm}
         placeholder="Search..."
         width="50%"
-        // If you want an icon inside the search bar, it should be here
-        startContent={<BookmarkIcon className="w-5 h-5" />} 
+        startContent={<MagnifyingGlassIcon className="w-5 h-5" />} 
       />
 
       <ButtonGroup fullWidth className="w-1/2">
         <Button
-          onClick={() => handleClick("filter")}
-          startContent={<FunnelIcon className="w-5 h-5" />}
+          className={getButtonClassName("detail")}
+          onClick={() => setCurrentView("detail")}
+
+          startContent={<ListBulletIcon className="w-5 h-5" />} 
+        >
+          Default
+        </Button>
+        <Button
+          className={getButtonClassName("filter")}
+          onClick={() => setCurrentView("filter")}
+          startContent={<AdjustmentsHorizontalIcon className="w-5 h-5" />}
         >
           Filter
         </Button>
         <Button
-          onClick={() => handleClick("download")}
-          startContent={<ArrowDownTrayIcon className="w-5 h-5" />} // Ensure this is the correct icon for "Download"
+          className={getButtonClassName("download")}
+          onClick={() => setCurrentView("download")}
+          startContent={<ArrowDownTrayIcon className="w-5 h-5" />}
         >
           Download
         </Button>
         <Button
-          onClick={() => handleClick("saved")}
-          startContent={<BookmarkSquareIcon className="w-5 h-5" />} // Use a distinct icon for "Saved"
+          className={getButtonClassName("saved")}
+          onClick={() => setCurrentView("saved")}
+          startContent={<BookmarkSquareIcon className="w-5 h-5" />}
         >
           Saved
         </Button>

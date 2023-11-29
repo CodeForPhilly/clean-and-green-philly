@@ -33,7 +33,7 @@ const Page: FC = () => {
               />
             </div>
             <SidePanel>
-              <MapControlBar setCurrentView={setCurrentView} />
+              <MapControlBar setCurrentView={setCurrentView} currentView={currentView} />
               {currentView === "filter" && <FilterView />}
               {currentView === "detail" && (
                 <PropertyDetailSection featuresInView={featuresInView} />
