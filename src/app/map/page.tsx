@@ -1,7 +1,7 @@
 "use client";
 
-import React, { FC, useEffect, useState } from "react";
-import { NextUIProvider, Button } from "@nextui-org/react";
+import React, { FC, useState } from "react";
+import { NextUIProvider } from "@nextui-org/react";
 import { FilterProvider } from "@/context/FilterContext";
 import {
   Header,
@@ -10,13 +10,15 @@ import {
   SidePanel,
   MapControlBar,
   FilterView,
+  PropertyCard, // Import PropertyCard
 } from "../components";
 
-export type BarClickOptions = "filter" | "download" | "detail";
+export type BarClickOptions = "filter" | "download" | "detail" | "saved";
 
 const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
+  const [savedProperties, setSavedProperties] = useState<any[]>([]);
 
   return (
     <FilterProvider>
@@ -25,7 +27,10 @@ const Page: FC = () => {
           <Header />
           <div className="flex h-full relative">
             <div className="flex-grow h-full">
-              <PropertyMap setFeaturesInView={setFeaturesInView} />
+              <PropertyMap 
+                setFeaturesInView={setFeaturesInView} 
+                setSavedProperties={setSavedProperties}
+              />
             </div>
             <SidePanel>
               <MapControlBar setCurrentView={setCurrentView} />
@@ -33,6 +38,9 @@ const Page: FC = () => {
               {currentView === "detail" && (
                 <PropertyDetailSection featuresInView={featuresInView} />
               )}
+              {currentView === "saved" && savedProperties.map((property, index) => (
+                <PropertyCard key={index} feature={property} />
+              ))}
             </SidePanel>
           </div>
         </div>

@@ -5,6 +5,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
+import { BookmarkSquareIcon } from '@heroicons/react/24/outline'; // Make sure to import the correct icon
 import { Map as MapboxMap, PopupOptions } from "mapbox-gl";
 import { mapboxAccessToken, apiBaseUrl } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
@@ -73,14 +74,27 @@ const MapControls = () => (
 
 interface PropertyMapProps {
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
+  setSavedProperties: Dispatch<SetStateAction<any[]>>; // Add this line
 }
+
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
-}: any) => {
+  setSavedProperties, // Add this line
+}) => {
   const { filter } = useFilter();
   const [map, setMap] = useState<MapboxMap | null>(null);
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const legendRef = useRef<LegendControl | null>(null);
+
+  const handleSaveProperty = (feature: any) => {
+    setSavedProperties(prevProperties => [...prevProperties, feature]);
+  };
+
+  // Inside your Map component
+  const handlePropertyClick = (propertyData: any) => {
+    // Assume propertyData is the data of the clicked property
+    handlePropertyClick(propertyData); // onPropertyClick is the prop passed from SearchBarComponent
+  };
 
   // filter function
   const updateFilter = () => {
@@ -124,17 +138,18 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       const features = map.queryRenderedFeatures(event.point, {
         layers: ["vacant_properties"],
       });
-
+  
       if (features.length > 0) {
         setPopupInfo({
           longitude: event.lngLat.lng,
           latitude: event.lngLat.lat,
-          feature: features[0].properties,
+          feature: features[0], // Pass the entire feature object
+          onSave: () => handleSaveProperty(features[0]) // Save the entire feature
         });
       } else {
         setPopupInfo(null);
       }
-    }
+    } // This curly brace was missing
   };
 
   const setFeaturesInViewOnMove = (event: any) => {
@@ -202,13 +217,19 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             closeOnClick={false}
           >
             <div>
-              <p className="font-bold">{popupInfo.feature.ADDRESS}</p>
-              <p>Owner: {popupInfo.feature.OWNER1}</p>
-              <p>Gun Crime Density: {popupInfo.feature.guncrime_density}</p>
-              <p>Tree Canopy Gap: {popupInfo.feature.tree_canopy_gap}</p>
-            </div>
+            <p className="font-bold">{popupInfo.feature.ADDRESS}</p>
+            <p>Owner: {popupInfo.feature.OWNER1}</p>
+            <p>Gun Crime Density: {popupInfo.feature.guncrime_density}</p>
+            <p>Tree Canopy Gap: {popupInfo.feature.tree_canopy_gap}</p>
+            {/* Add the save button with an onClick handler */}
+            <button onClick={popupInfo.onSave} className="flex items-center justify-center p-2 rounded-md hover:bg-gray-200">
+              <BookmarkSquareIcon className="h-5 w-5" />
+              Save
+            </button>
+          </div>
           </Popup>
         )}
+
         <Source id="vacant_properties" {...VectorTiles}>
           <Layer {...layerStyle} />
         </Source>
@@ -216,4 +237,5 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     </div>
   );
 };
+
 export default PropertyMap;
