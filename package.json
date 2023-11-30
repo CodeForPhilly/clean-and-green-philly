@@ -21,7 +21,7 @@
     "mapbox-gl": "^2.15.0",
     "mapboxgl-legend": "^1.13.0",
     "multi-range-slider-react": "^2.0.5",
-    "next": "^13.5.4",
+    "next": "^14.0.3",
     "pg": "^8.11.3",
     "pg-promise": "^11.5.4",
     "postcss": "8.4.29",
