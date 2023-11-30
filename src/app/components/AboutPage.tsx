@@ -1,7 +1,7 @@
 import { Accordion, AccordionItem, Button, Link } from "@nextui-org/react";
 import { get } from "http";
 
-import AboutPageImage from "./AboutIPageImage";
+import AboutPageImage from "./AboutPageImage";
 
 const image=[{
   src: "/annual_guncrimes_plot.png",
