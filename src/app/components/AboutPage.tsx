@@ -1,18 +1,35 @@
 import { Accordion, AccordionItem, Button, Link } from "@nextui-org/react";
 import { get } from "http";
 
+import AboutPageImage from "./AboutPageImage";
+
+const image=[{
+  src: "/annual_guncrimes_plot.png",
+  alt: "Vacant lot in Philadelphia",
+},]
 export default function AboutPage() {
   const defaultContent =
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
 
     const motivationContent = (
-      <p className="text-2xl mb-4">
-        Philadelphia has a gun violence problem. Homicides have been on the rise since 2013.
-        The past three years—2020, 2021, and 2022—have been the deadliest on record, with a high of 562 homicides in 2021.
-        Community members need solutions, but many city-run initiatives are frustratingly slow or inadequate.
-        Nearly 80% of the city’s anti-violence spending focuses on long-term violence reduction without any clear, immediate impact.
-      </p>
+    <><div className="flex">
+        <p className="text-2xl mb-4">
+          Philadelphia has a gun violence problem. Homicides have been on the rise since 2013.
+          The past three years—2020, 2021, and 2022—have been the deadliest on record, with a high of 562 homicides in 2021.
+          Community members need solutions, but many city-run initiatives are frustratingly slow or inadequate.
+          Nearly 80% of the city’s anti-violence spending focuses on long-term violence reduction without any clear, immediate impact.
+        </p>
+      </div>
+      <div className="object-center w-50 h-50">
+          {image.map(({ src, alt }) => (
+            <AboutPageImage
+              key={src}
+              src={src}
+              alt={alt} />
+          ))}
+        </div></>
     );
+   
 
     const researchContent = (
       <p className="text-2xl mb-4">
