@@ -13,7 +13,7 @@ import {
   PropertyCard, // Import PropertyCard
 } from "../components";
 
-export type BarClickOptions = "filter" | "download" | "detail" | "saved";
+export type BarClickOptions = "filter" | "detail" | "saved";
 
 const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
@@ -38,9 +38,9 @@ const Page: FC = () => {
               {currentView === "detail" && (
                 <PropertyDetailSection featuresInView={featuresInView} />
               )}
-              {currentView === "saved" && savedProperties.map((property, index) => (
-                <PropertyCard key={index} feature={property} />
-              ))}
+              {currentView === "saved" && (
+                <PropertyDetailSection featuresInView={savedProperties} />
+              )}
             </SidePanel>
           </div>
         </div>
@@ -50,3 +50,4 @@ const Page: FC = () => {
 };
 
 export default Page;
+

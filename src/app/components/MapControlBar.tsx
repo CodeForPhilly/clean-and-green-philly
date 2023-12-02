@@ -22,7 +22,7 @@ const MapControlBar: React.FC<MapControlBarProps> = ({
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   const getButtonClassName = (view: BarClickOptions) => {
-    return currentView === view ? "bg-gray-300" : "";
+    return currentView === view ? "bg-green-60" : "bg-gray-40";
   };
 
   return (
@@ -50,13 +50,6 @@ const MapControlBar: React.FC<MapControlBarProps> = ({
           startContent={<AdjustmentsHorizontalIcon className="w-5 h-5" />}
         >
           Filter
-        </Button>
-        <Button
-          className={getButtonClassName("download")}
-          onClick={() => setCurrentView("download")}
-          startContent={<ArrowDownTrayIcon className="w-5 h-5" />}
-        >
-          Download
         </Button>
         <Button
           className={getButtonClassName("saved")}
