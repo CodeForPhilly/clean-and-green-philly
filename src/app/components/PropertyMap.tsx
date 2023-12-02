@@ -197,6 +197,10 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     e.target.getCanvas().style.cursor = cursorType;
   };
 
+  if (popupInfo) {
+    console.log("Popup Info Feature:", popupInfo.feature);
+  }  
+  
   // map load
   return (
     <div className="relative h-full w-full">
@@ -226,20 +230,20 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             closeOnClick={false}
           >
             <div>
-              <p className="font-bold">{popupInfo.feature.ADDRESS}</p>
-              <p>Owner: {popupInfo.feature.OWNER1}</p>
-              <p>Gun Crime Density: {popupInfo.feature.guncrime_density}</p>
-              <p>Tree Canopy Gap: {popupInfo.feature.tree_canopy_gap}</p>
+              <p className="font-bold">{popupInfo.feature.properties.ADDRESS}</p>
+              <p>Owner: {popupInfo.feature.properties.OWNER1}</p>
+              <p>Gun Crime Density: {popupInfo.feature.properties.guncrime_density}</p>
+              <p>Tree Canopy Gap: {popupInfo.feature.properties.tree_canopy_gap}</p>
               <button
-                onClick={popupInfo.onSave}
-                className={`flex items-center justify-center p-2 rounded-md hover:bg-gray-200 ${isPropertySaved(popupInfo.feature) ? 'bg-green-500' : ''}`}
-              >
-                <BookmarkSquareIcon className="h-5 w-5" />
-                {isPropertySaved(popupInfo.feature) ? 'Saved!' : 'Save'}
-              </button>
+              onClick={popupInfo.onSave}
+              className={`flex items-center justify-center p-2 mx-auto my-3 rounded-md hover:bg-gray-200 ${isPropertySaved(popupInfo.feature) ? 'bg-green-500' : ''}`}
+            >
+              <BookmarkSquareIcon className="h-5 w-5" />
+              {isPropertySaved(popupInfo.feature) ? 'Saved!' : 'Save'}
+            </button>
             </div>
           </Popup>
-        )}
+          )}
 
         <Source id="vacant_properties" {...VectorTiles}>
           <Layer {...layerStyle} />
