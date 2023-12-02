@@ -2,13 +2,50 @@
 
 ## Overview
 
+🎉 First off, thanks for taking the time to contribute! 🎉 Clean & Green Philly wouldn't be possible without volunteers like you.
+
 This document will outline guidelines for contributing to the Clean & Green Philly [codebase](https://github.com/CodeForPhilly/vacant-lots-proj).
+
+Before contributing, we encourage you to read our [LICENSE](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/LICENSE) and [README](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/README.md) files. If you have any questions not answered by the content of this repository, please contact us via [our Slack channel](https://codeforphilly.slack.com/archives/C05H9QBMP96).
 
 ## Joining the regular meetings
 
 We host weekly meetings both in person and remotely. This is largely where we make decisions and set up collaborative pairing sessions to get large chunks of work done.
 
 The best way to find out about our meetings is joining the [#clean-and-green-philly](https://codeforphilly.slack.com/archives/C05H9QBMP96) channel on the [Code for Philly](https://www.codeforphilly.org/) [Slack](https://www.codeforphilly.org/chat/).
+
+## How can I contribute?
+
+### Report a Bug
+
+### Suggest an Enhancement
+
+If you don't have specific language or code to submit but would like to suggest a change, request a feature, or have something addressed, you can open an issue in this repository.
+
+Please open an issue of type `Feature request` here.
+
+In this issue, please describe the feature you would like to see, why you need it, and how it should work. Team members will respond to the Feature request as soon as possible.
+
+### Contribute to the Code
+
+### Contribute to Documentation
+
+As this project grows, building our documentation is an important part of making sure it's accessible and sustainable. We welcome contributions to our documentation, ranging from refining existing content for better clarity, adding examples and tutorials for complex features, to ensuring inclusivity in language and presentation. This collaborative effort not only improves the immediate usability of the project but also lays a strong foundation for its future growth and evolution. By contributing to our documentation, you're playing a crucial role in building a more informed, engaged, and capable civic tech community.
+
+To contribute to our documentation, please:
+
+    Familiarize Yourself: Start by reading the existing documentation to understand the style and structure.
+    Identify Gaps or Errors: Look for areas that need improvement, additional detail, or corrections.
+    Branch and Edit: Create a new branch in the repository, and make your changes there. This can include adding new sections, editing existing content, or fixing typos.
+    Adhere to Style Guidelines: Ensure your contributions follow any established documentation style guidelines, such as formatting, tone, and language.
+    Submit a Pull Request: Once your changes are complete, submit a pull request. Include a brief description of your changes and why they're necessary.
+    Wait for Review: The project maintainers will review your changes. Be open to feedback and ready to make further edits if needed.
+
+Your contributions help make our project more accessible and easier to use for everyone. Thank you for helping us build a better Clean & Green Philly community!
+
+### Suggesting Something Else
+
+Got an idea for another way in which you could contribute to our project? Maybe you want to write an article for us, or help us with research or graphic design. If you have an idea for a way to improve the project that we aren't currently including, [reach out via Slack](https://codeforphilly.slack.com/archives/C05H9QBMP96) and let us know how you'd like to get involved. We can't promise that we'll have the bandwidth to tackle everything (this is a volunteer project, after all), but we do our best to find ways to involve contributors.
 
 ## Issues
 
