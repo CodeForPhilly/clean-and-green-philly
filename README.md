@@ -50,6 +50,7 @@ Current tasks for the are visible under the Issues section.
 - Python data engineer
 - Non-technical support with research and writing
 - Ditigal design support creating additional website graphics
+- Support for project documentation
 
 # Languages/Frameworks
 
