@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC, useState } from "react";
-import { NextUIProvider } from "@nextui-org/react";
+import { NextUIProvider, Button } from "@nextui-org/react";
 import { FilterProvider } from "@/context/FilterContext";
 import {
   Header,
@@ -13,7 +13,9 @@ import {
   PropertyCard, // Import PropertyCard
 } from "../components";
 
-export type BarClickOptions = "filter" | "detail" | "saved";
+export type BarClickOptions = "filter" | "detail" | "saved" | "download";
+
+const propertyMapZoom = 14;
 
 const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
@@ -38,6 +40,9 @@ const Page: FC = () => {
     }));
   };
   
+  const [zoom, setZoom] = useState<number>(propertyMapZoom);
+  const [loading, setLoading] = useState(false);
+  
 
   return (
     <FilterProvider>
@@ -51,6 +56,8 @@ const Page: FC = () => {
                 setSavedProperties={handleSaveProperty}
                 savedProperties={savedProperties} // Pass savedProperties to PropertyMap
                 savedStatus={savedStatus} // Pass savedStatus to PropertyMap
+                setZoom={setZoom}
+                setLoading={setLoading}
               />
             </div>
             <SidePanel>

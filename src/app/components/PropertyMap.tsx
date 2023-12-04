@@ -24,6 +24,7 @@ import Map, {
 import type { FillLayer, VectorSourceRaw } from "react-map-gl";
 
 const minZoom = 4;
+const getFeaturesZoom = 14;
 
 const VectorTiles: VectorSourceRaw = {
   id: "vacant_properties",
@@ -75,17 +76,20 @@ const MapControls = () => (
 interface PropertyMapProps {
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
   setSavedProperties: Dispatch<SetStateAction<any[]>>;
-  savedProperties: any[]; // Add this line
-  savedStatus: { [key: string]: boolean }; // Add this line
+  savedProperties: any[];
+  savedStatus: { [key: string]: boolean };
+  setZoom: Dispatch<SetStateAction<number>>;
+  setLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
   setSavedProperties,
   savedProperties,
-  savedStatus, // Include savedStatus in the component props
-  // ... other props ...
-}) => {
+  savedStatus,
+  setZoom,
+  setLoading,
+}: any) => {
   const { filter } = useFilter();
   const [map, setMap] = useState<MapboxMap | null>(null);
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
