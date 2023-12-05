@@ -28,7 +28,8 @@ const SearchBarComponent: React.FC<MapControlBarProps> = ({
   };
 
   return (
-    <div className="flex items-center space-x-2 bg-white p-2 h-12">
+    <div className="flex items-center space-x-2 bg-white p-2 h-12"
+      style={{ minWidth: "500px" }}>
       <Button className="bg-white" onClick={toggleDetailView}>
         {currentView === "detail" ? (
           <ListBulletIcon className="h-6 w-6" />
