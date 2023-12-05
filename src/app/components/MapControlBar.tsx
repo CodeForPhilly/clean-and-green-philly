@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-import { Input, Button, ButtonGroup } from "@nextui-org/react";
+import { Input, Button } from "@nextui-org/react";
+import { ArrowDownTrayIcon, ListBulletIcon } from "@heroicons/react/20/solid";
 import {
   FunnelIcon,
-  TableCellsIcon,
-  MagnifyingGlassIcon,
   BookmarkSquareIcon,
-  ArrowDownTrayIcon
-  // Import an icon for the default view button if available
-} from "@heroicons/react/20/solid";
+  MagnifyingGlassIcon,
+  TableCellsIcon,
+} from "@heroicons/react/24/outline";
 import { BarClickOptions } from "@/app/map/page";
 
 
@@ -26,32 +25,42 @@ const SearchBarComponent: React.FC<MapControlBarProps> = ({
     setCurrentView(view);
   };
 
+  const toggleDetailView = () => {
+    setCurrentView(currentView === "detail" ? "list" : "detail");
+  };
+
   const getButtonClassName = (view: BarClickOptions) => {
-    return currentView === view ? "bg-green-60" : "bg-gray-40";
+    return currentView === view ? "bg-green-60" : "";
   };
 
   return (
-    <div className="flex items-center">
+    <div className="flex items-center space-x-2 bg-white p-2 h-12">
+      <Button className="bg-white" onClick={toggleDetailView}>
+        {currentView === "detail" ? (
+          <ListBulletIcon className="h-5 w-5" />
+        ) : (
+          <TableCellsIcon className="h-5 w-5" />
+        )}
+      </Button>
       <Input
         value={searchTerm}
         onValueChange={setSearchTerm}
         placeholder="Search..."
-        width="50%"
-        startContent={<MagnifyingGlassIcon className="h-6 w-6" />}
-        className="w-1/2"
+        startContent={<MagnifyingGlassIcon className="w-5 h-5" />}
+        width="40%"
       />
-      <ButtonGroup>
+
         <Button
+          className={getButtonClassName("filter")}
           onClick={() => handleClick("filter")}
-          startContent={<FunnelIcon className="h-6 w-6" />}
-          className="bg-white"
+          startContent={<FunnelIcon className="w-5 h-5" />}
         >
           Filter
         </Button>
         <Button
+          className={getButtonClassName("download")}
           onClick={() => handleClick("download")}
-          startContent={<ArrowDownTrayIcon className="h-6 w-6" />}
-          className="bg-white"
+          startContent={<ArrowDownTrayIcon className="w-5 h-5" />}
         >
           Download
         </Button>
@@ -62,7 +71,6 @@ const SearchBarComponent: React.FC<MapControlBarProps> = ({
         >
           Saved
         </Button>
-      </ButtonGroup>
     </div>
   );
   

@@ -89,10 +89,10 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   savedStatus,
   setZoom,
   setLoading,
-}: any) => {
+}: PropertyMapProps) => {
   const { filter } = useFilter();
-  const [map, setMap] = useState<MapboxMap | null>(null);
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
+  const [map, setMap] = useState<MapboxMap | null>(null);
   const legendRef = useRef<LegendControl | null>(null);
 
   const isPropertySaved = (property: any) => {
@@ -103,6 +103,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     setSavedProperties(property); // Directly use the function from Page
   };
 
+  
   // Inside your Map component
   const handlePropertyClick = (propertyData: any) => {
     // Assume propertyData is the data of the clicked property
@@ -165,12 +166,35 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     }
   };
 
-  const setFeaturesInViewOnMove = (event: any) => {
-    if (map) {
-      const features = map.queryRenderedFeatures(event.point, {
+  const handleSetFeatures = (event: any) => {
+    if (event.type !== "moveend") return;
+    if (!map) return;
+    setLoading(true);
+
+    const zoom = map.getZoom();
+    setZoom(zoom);
+
+    if (map.getZoom() >= getFeaturesZoom) {
+      // use `undefined` to get all features
+      const features = map.queryRenderedFeatures(undefined, {
         layers: ["vacant_properties"],
       });
-      setFeaturesInView(features);
+
+      // Remove duplicate features (which can occur because of the way the tiles are generated)
+      const uniqueFeatures = features.reduce((acc: any[], feature: any) => {
+        if (
+          !acc.find((f) => f.properties.OPA_ID === feature.properties.OPA_ID)
+        ) {
+          acc.push(feature);
+        }
+        return acc;
+      }, []);
+
+      setFeaturesInView(uniqueFeatures);
+      setLoading(false);
+    } else {
+      setFeaturesInView([]);
+      setLoading(false);
     }
   };
 
@@ -190,7 +214,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     };
   }, [map]);
 
-  // Filter update
   useEffect(() => {
     if (map) {
       updateFilter();
@@ -223,7 +246,10 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         onLoad={(e) => {
           setMap(e.target);
         }}
-        onMoveEnd={setFeaturesInViewOnMove}
+        onSourceData={(e) => {
+          handleSetFeatures(e);
+        }}
+        onMoveEnd={handleSetFeatures}
       >
         <MapControls />
 
