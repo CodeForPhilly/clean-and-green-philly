@@ -50,13 +50,6 @@ Note for all OS: Optionally, in `/config/config`, set `FORCE_RELOAD` = `False` t
 
 ### Set Environment Variables
 
-The following environment variables must be set:
-`VACANT_LOTS_DB`: The local postgres URL for your database.
-`VACANT_LOTS_DB_REMOTE`: The remote postgres URL for the hosted database.
-The following environment variables must be set:
-`VACANT_LOTS_DB`: The local postgres URL for your database.
-`NEXT_PUBLIC_VACANT_LOTS_API_BASE_URL`: Set this to `http://localhost:3000`.
-
 #### Windows
 Open the command prompt as an admin. Run `setx VACANT_LOTS_DB "postgresql://postgres:password@localhost/vacantlotdb"`. Make sure to replace “password” with your user password (not your postgres password). You should get a message saying something like “Success! Specified value was saved.” Also, run `setx NEXT_PUBLIC_VACANT_LOTS_API_BASE_URL "http://localhost:3000"`.
 
