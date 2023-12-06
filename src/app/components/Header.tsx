@@ -5,6 +5,7 @@ import {
   NavbarItem,
 } from "@nextui-org/react";
 import IconLink from "./IconLink";
+import Link from 'next/link';
 import {
   HomeIcon,
   MapIcon,
@@ -40,7 +41,11 @@ const Header = () => (
   <Navbar maxWidth="full" position="sticky">
     <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
       <NavbarBrand>
-        <span className="font-bold text-3xl">Clean & Green Philly</span>
+        <Link href="/"> 
+          <span className="font-bold text-3xl">
+            Clean & Green Philly
+          </span>
+        </Link>
         <span className="text-sm text-gray-600 ml-4">
           Clean and green vacant properties
           <br /> to reduce gun crime.
