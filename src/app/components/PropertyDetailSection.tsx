@@ -61,7 +61,9 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   return loading ? (
     <Spinner />
   ) : zoom <= propertyMapZoom ? (
-    "zoom in"
+    <div className="p-4 mt-8 text-center">
+      <p className="text-lg">Please zoom in to see property details.</p>
+    </div>
   ) : selectedProperty ? (
     <SinglePropertyDetail
       property={selectedProperty}
