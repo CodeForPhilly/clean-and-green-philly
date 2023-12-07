@@ -86,7 +86,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   const [propertyVectorTiles, setPropertyVectorTiles] =
     useState<VectorSourceRaw | null>(null);
   const legendRef = useRef<LegendControl | null>(null);
-  const geocoderContainerRef = useRef<HTMLDivElement | null>(null);
+  const geocoderRef = useRef<MapboxGeocoder | null>(null);
 
   useEffect(() => {
     const apiBaseUrl = window.location.origin;
@@ -101,29 +101,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
     setPropertyVectorTiles(vectorTiles);
   }, []);
-
-  useEffect(() => {
-    if (map) {
-      const center = map.getCenter();
-      const geocoder = new MapboxGeocoder({
-        accessToken: mapboxAccessToken,
-        mapboxgl: mapboxgl,
-        marker: false,
-        proximity: {
-          longitude: center.lng,
-          latitude: center.lat,
-        },
-      });
-      map.addControl(geocoder, "top-right");
-
-      geocoder.on("result", (e) => {
-        map.flyTo({
-          center: e.result.center,
-          zoom: 16,
-        });
-      });
-    }
-  }, [map]);
 
   // filter function
   const updateFilter = () => {
@@ -230,25 +207,49 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
   useEffect(() => {
     if (map) {
-      const center = map.getCenter();
-      const geocoder = new MapboxGeocoder({
-        accessToken: mapboxAccessToken,
-        mapboxgl: mapboxgl,
-        marker: false,
-        proximity: {
-          longitude: center.lng,
-          latitude: center.lat,
-        },
-      });
-      map.addControl(geocoder, "top-right");
+      // Add Legend Control
+      if (!legendRef.current) {
+        legendRef.current = new LegendControl();
+        map.addControl(legendRef.current, "bottom-left");
+      }
 
-      geocoder.on("result", (e) => {
-        map.flyTo({
-          center: e.result.center,
-          zoom: 16,
+      // Add Geocoder
+      if (!geocoderRef.current) {
+        const center = map.getCenter();
+        geocoderRef.current = new MapboxGeocoder({
+          accessToken: mapboxAccessToken,
+          mapboxgl: mapboxgl,
+          marker: false,
+          proximity: {
+            longitude: center.lng,
+            latitude: center.lat,
+          },
         });
-      });
+
+        map.addControl(geocoderRef.current, "top-right");
+
+        geocoderRef.current.on("result", (e) => {
+          map.flyTo({
+            center: e.result.center,
+            zoom: 16,
+          });
+        });
+      }
     }
+
+    return () => {
+      // Remove Legend Control
+      if (map && legendRef.current) {
+        map.removeControl(legendRef.current);
+        legendRef.current = null;
+      }
+
+      // Remove Geocoder
+      if (map && geocoderRef.current) {
+        map.removeControl(geocoderRef.current);
+        geocoderRef.current = null;
+      }
+    };
   }, [map]);
 
   useEffect(() => {
@@ -285,10 +286,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         onMoveEnd={handleSetFeatures}
       >
         <MapControls />
-        {/* <div
-          ref={geocoderContainerRef}
-          className="z-1 relative top-20 right-2"
-        /> */}
         {popupInfo && (
           <Popup
             longitude={popupInfo.longitude}

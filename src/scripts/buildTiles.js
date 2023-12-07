@@ -17,7 +17,7 @@ const boundingBox = {
   minLon: -75.42842835904274,
   maxLon: -74.8545199004561,
 };
-const zoomLevels = { minZoom: 12, maxZoom: 18 };
+const zoomLevels = { minZoom: 12, maxZoom: 16 };
 
 // Calculate tile range for given lat/lon
 const long2tile = (lon, zoom) =>
@@ -52,7 +52,15 @@ const queryAndSaveTile = async (z, x, y) => {
   try {
     const res = await client.query(query);
     const tileData = res.rows[0].st_asmvt;
-    const tilePath = path.join("..", "..", "public", "tiles", `${z}`, `${x}`);
+    const tilePath = path.join(
+      __dirname,
+      "..",
+      "..",
+      "public",
+      "tiles",
+      `${z}`,
+      `${x}`
+    );
     const fileName = `${y}.pbf`;
     const filePath = path.join(tilePath, fileName);
     fs.mkdirSync(tilePath, { recursive: true });
