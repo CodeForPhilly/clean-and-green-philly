@@ -21,7 +21,7 @@ const boundingBox = {
   minLon: -75.42842835904274,
   maxLon: -74.8545199004561,
 };
-const zoomLevels = { minZoom: 13, maxZoom: 17 };
+const zoomLevels = { minZoom: 12, maxZoom: 13 };
 
 const uploadTileToGCS = async (z, x, y, tileData) => {
   const destination = `tiles/${z}/${x}/${y}.pbf`;
@@ -69,8 +69,13 @@ const queryAndSaveTile = async (z, x, y) => {
   try {
     const res = await client.query(query);
     const tileData = res.rows[0].st_asmvt;
-
-    const tilePath = path.join(__dirname, "..", "tiles", `${z}`, `${x}`);
+    const tilePath = path.join(
+      process.cwd(),
+      "public",
+      "tiles",
+      `${z}`,
+      `${x}`
+    );
     const fileName = `${y}.pbf`;
     const filePath = path.join(tilePath, fileName);
     fs.mkdirSync(tilePath, { recursive: true });
