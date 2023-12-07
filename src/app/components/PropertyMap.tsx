@@ -21,8 +21,11 @@ import Map, {
   FullscreenControl,
   ScaleControl,
   GeolocateControl,
+  AttributionControl
 } from "react-map-gl";
 import type { FillLayer, VectorSourceRaw } from "react-map-gl";
+import GeocoderControl from './GeocoderControl';
+import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 const minZoom = 4;
 const getFeaturesZoom = 14;
@@ -63,6 +66,8 @@ const MapControls = () => (
     <FullscreenControl position="top-left" />
     <NavigationControl position="top-left" />
     <ScaleControl />
+    <AttributionControl />
+    <GeocoderControl mapboxAccessToken={mapboxAccessToken} position="top-right" />
   </>
 );
 
