@@ -17,7 +17,7 @@ const boundingBox = {
   minLon: -75.42842835904274,
   maxLon: -74.8545199004561,
 };
-const zoomLevels = { minZoom: 12, maxZoom: 13 };
+const zoomLevels = { minZoom: 12, maxZoom: 18 };
 
 // Calculate tile range for given lat/lon
 const long2tile = (lon, zoom) =>

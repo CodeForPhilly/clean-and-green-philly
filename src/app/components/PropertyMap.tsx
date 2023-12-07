@@ -7,7 +7,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import { Map as MapboxMap } from "mapbox-gl";
+import mapboxgl, { Map as MapboxMap } from "mapbox-gl";
 import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
@@ -21,10 +21,10 @@ import Map, {
   FullscreenControl,
   ScaleControl,
   GeolocateControl,
-  AttributionControl
+  AttributionControl,
 } from "react-map-gl";
 import type { FillLayer, VectorSourceRaw } from "react-map-gl";
-import GeocoderControl from './GeocoderControl';
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 const minZoom = 4;
@@ -67,7 +67,6 @@ const MapControls = () => (
     <NavigationControl position="top-left" />
     <ScaleControl />
     <AttributionControl />
-    <GeocoderControl mapboxAccessToken={mapboxAccessToken} position="top-right" />
   </>
 );
 
@@ -87,6 +86,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   const [propertyVectorTiles, setPropertyVectorTiles] =
     useState<VectorSourceRaw | null>(null);
   const legendRef = useRef<LegendControl | null>(null);
+  const geocoderContainerRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     const apiBaseUrl = window.location.origin;
@@ -101,6 +101,29 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
     setPropertyVectorTiles(vectorTiles);
   }, []);
+
+  useEffect(() => {
+    if (map) {
+      const center = map.getCenter();
+      const geocoder = new MapboxGeocoder({
+        accessToken: mapboxAccessToken,
+        mapboxgl: mapboxgl,
+        marker: false,
+        proximity: {
+          longitude: center.lng,
+          latitude: center.lat,
+        },
+      });
+      map.addControl(geocoder, "top-right");
+
+      geocoder.on("result", (e) => {
+        map.flyTo({
+          center: e.result.center,
+          zoom: 16,
+        });
+      });
+    }
+  }, [map]);
 
   // filter function
   const updateFilter = () => {
@@ -207,6 +230,29 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
   useEffect(() => {
     if (map) {
+      const center = map.getCenter();
+      const geocoder = new MapboxGeocoder({
+        accessToken: mapboxAccessToken,
+        mapboxgl: mapboxgl,
+        marker: false,
+        proximity: {
+          longitude: center.lng,
+          latitude: center.lat,
+        },
+      });
+      map.addControl(geocoder, "top-right");
+
+      geocoder.on("result", (e) => {
+        map.flyTo({
+          center: e.result.center,
+          zoom: 16,
+        });
+      });
+    }
+  }, [map]);
+
+  useEffect(() => {
+    if (map) {
       updateFilter();
     }
   }, [map, filter, updateFilter]);
@@ -239,7 +285,10 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         onMoveEnd={handleSetFeatures}
       >
         <MapControls />
-
+        {/* <div
+          ref={geocoderContainerRef}
+          className="z-1 relative top-20 right-2"
+        /> */}
         {popupInfo && (
           <Popup
             longitude={popupInfo.longitude}
