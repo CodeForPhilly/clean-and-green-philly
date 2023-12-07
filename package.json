@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.7.0",
     "@heroicons/react": "^2.0.18",
     "@nextui-org/react": "^2.1.10",
     "@types/node": "20.5.7",

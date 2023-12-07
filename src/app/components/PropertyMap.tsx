@@ -28,7 +28,7 @@ const getFeaturesZoom = 14;
 const VectorTiles: VectorSourceRaw = {
   id: "vacant_properties",
   type: "vector",
-  tiles: [`${apiBaseUrl}/api/generateTiles/{z}/{x}/{y}`],
+  tiles: [`${apiBaseUrl}/api/getTiles/{z}/{x}/{y}`],
   minzoom: minZoom,
   maxzoom: 23,
 };
