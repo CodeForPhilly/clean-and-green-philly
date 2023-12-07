@@ -1,3 +1,5 @@
+"use client";
+
 import React, {
   useEffect,
   useState,
@@ -6,7 +8,7 @@ import React, {
   SetStateAction,
 } from "react";
 import { Map as MapboxMap } from "mapbox-gl";
-import { mapboxAccessToken, apiBaseUrl } from "../../config/config";
+import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
 import "mapboxgl-legend/dist/style.css";
@@ -24,14 +26,6 @@ import type { FillLayer, VectorSourceRaw } from "react-map-gl";
 
 const minZoom = 4;
 const getFeaturesZoom = 14;
-
-const VectorTiles: VectorSourceRaw = {
-  id: "vacant_properties",
-  type: "vector",
-  tiles: [`${apiBaseUrl}/api/getTiles/{z}/{x}/{y}`],
-  minzoom: minZoom,
-  maxzoom: 23,
-};
 
 const layerStyle: FillLayer = {
   id: "vacant_properties",
@@ -85,7 +79,23 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
+  const [propertyVectorTiles, setPropertyVectorTiles] =
+    useState<VectorSourceRaw | null>(null);
   const legendRef = useRef<LegendControl | null>(null);
+
+  useEffect(() => {
+    const apiBaseUrl = window.location.origin;
+
+    const vectorTiles: VectorSourceRaw = {
+      id: "vacant_properties",
+      type: "vector",
+      tiles: [`${apiBaseUrl}/api/getTiles/{z}/{x}/{y}`],
+      minzoom: minZoom,
+      maxzoom: 23,
+    };
+
+    setPropertyVectorTiles(vectorTiles);
+  }, []);
 
   // filter function
   const updateFilter = () => {
@@ -239,9 +249,11 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             </div>
           </Popup>
         )}
-        <Source id="vacant_properties" {...VectorTiles}>
-          <Layer {...layerStyle} />
-        </Source>
+        {propertyVectorTiles && (
+          <Source id="vacant_properties" {...propertyVectorTiles}>
+            <Layer {...layerStyle} />
+          </Source>
+        )}
       </Map>
     </div>
   );

@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { apiBaseUrl } from "../../../config/config";
 import {
   useFilter,
   MeasureFilter as MeasureFilterType,
@@ -25,7 +24,7 @@ const MeasureFilter: React.FC<MeasureFilterProps> = ({ property, display }) => {
   useEffect(() => {
     const fetchMeasureBounds = async () => {
       const response = await fetch(
-        `${apiBaseUrl}/api/getMeasureBounds?p=${property}`
+        `${window.location.origin}/api/getMeasureBounds?p=${property}`
       );
       const data = await response.json();
       setDbMinValue(data.min);
@@ -64,7 +63,7 @@ const MeasureFilter: React.FC<MeasureFilterProps> = ({ property, display }) => {
         <div className="text-md">{display}</div>
       </div>
       <div className="space-x-2">
-      <MultiRangeSlider
+        <MultiRangeSlider
           min={dbMinValue}
           max={dbMaxValue}
           step={(dbMaxValue - dbMinValue) / 25}
@@ -74,11 +73,11 @@ const MeasureFilter: React.FC<MeasureFilterProps> = ({ property, display }) => {
             handleInput(e);
           }}
           style={{
-            border: 'none',
-            boxShadow: 'none',
-            padding: '15px 10px'
+            border: "none",
+            boxShadow: "none",
+            padding: "15px 10px",
           }}
-          ruler = 'false'
+          ruler="false"
           //barInnerColor = {green60}
         />
       </div>

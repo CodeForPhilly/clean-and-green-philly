@@ -1,13 +1,9 @@
 const { Pool } = require("pg");
 const fs = require("fs");
 const path = require("path");
-const { Storage } = require("@google-cloud/storage");
 
 const pgConnString = process.env.VACANT_LOTS_DB || EMPTY_STRING;
 const finalDataset = "vacant_properties_end";
-
-const storage = new Storage();
-const bucketName = "cleanandgreenphilly";
 
 // PostgreSQL connection settings
 const pool = new Pool({
@@ -22,19 +18,6 @@ const boundingBox = {
   maxLon: -74.8545199004561,
 };
 const zoomLevels = { minZoom: 12, maxZoom: 13 };
-
-const uploadTileToGCS = async (z, x, y, tileData) => {
-  const destination = `tiles/${z}/${x}/${y}.pbf`;
-  const file = storage.bucket(bucketName).file(destination);
-
-  try {
-    await file.save(tileData);
-    console.log(`Uploaded ${destination}`);
-  } catch (error) {
-    console.error(`Error uploading ${destination}:`, error);
-    throw error;
-  }
-};
 
 // Calculate tile range for given lat/lon
 const long2tile = (lon, zoom) =>
@@ -69,18 +52,11 @@ const queryAndSaveTile = async (z, x, y) => {
   try {
     const res = await client.query(query);
     const tileData = res.rows[0].st_asmvt;
-    const tilePath = path.join(
-      process.cwd(),
-      "public",
-      "tiles",
-      `${z}`,
-      `${x}`
-    );
+    const tilePath = path.join("..", "..", "public", "tiles", `${z}`, `${x}`);
     const fileName = `${y}.pbf`;
     const filePath = path.join(tilePath, fileName);
     fs.mkdirSync(tilePath, { recursive: true });
     fs.writeFileSync(filePath, tileData);
-    //await uploadTileToGCS(z, x, y, tileData);
   } catch (error) {
     console.error(error);
     throw error;
