@@ -73,9 +73,7 @@ Note for all OS: you can choose to write to local, remote, both, or neither in t
 All of the data scripting is in python and lives in the `data` folder. Everything below should be run in that folder.
 
 For all three OS, you'll first have to go into the `data` subdirectory and open the `docker-compose.yml` file. Change the filepath under `volumes` to the location of your repository. (Currently it is hardcoded to Brandon's filepath.)
-For example, if your repository is located at `user/Documents/vacant-lots-proj`, you would change the filepath to `user/Documents/vacant-lots-proj/data`. Save and close the file. Alternatively, yopu can
-
-Run the image in Docker following the steps below. If needed, it will build (this will take a few minutes). It should only need to build if it's your first time running or if major configuation changes are made. Changes to the python script should not trigger a re-build.
+For example, if your repository is located at `user/Documents/vacant-lots-proj`, you would change the filepath to `user/Documents/vacant-lots-proj/data`. Save and close the file. Alternatively, you can run the image in Docker following the steps below. If needed, it will build (this will take a few minutes). It should only need to build if it's your first time running or if major configuation changes are made. Changes to the python script should not trigger a re-build.
 
 #### Windows
 1. Make sure Docker is running by opening the Docker Desktop app. 
