@@ -89,14 +89,12 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
 
   useEffect(() => {
-    const apiBaseUrl = window.location.origin;
-
     const vectorTiles: VectorSourceRaw = {
       id: "vacant_properties",
       type: "vector",
-      tiles: [`${apiBaseUrl}/api/getTiles/{z}/{x}/{y}`],
-      minzoom: minZoom,
-      maxzoom: 23,
+      tiles: [`${window.location.origin}/api/getTiles/{z}/{x}/{y}`],
+      minzoom: 10,
+      maxzoom: 16,
     };
 
     setPropertyVectorTiles(vectorTiles);

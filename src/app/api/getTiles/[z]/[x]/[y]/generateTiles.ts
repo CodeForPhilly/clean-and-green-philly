@@ -1,10 +1,7 @@
-import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/app/api/db/db";
 import { finalDataset } from "@/config/config";
 
-export const GET = async (req: NextRequest, { params }: { params: any }) => {
-  const { z, x, y } = params;
-
+const generateTiles = async (z: number, x: number, y: number) => {
   try {
     const tileData = await db.one(
       `SELECT ST_AsMVT(tile, 'vacant_properties', 4096, 'geometry') FROM (
@@ -22,13 +19,11 @@ export const GET = async (req: NextRequest, { params }: { params: any }) => {
       ) AS tile;`,
       [z, x, y]
     );
-    return new NextResponse(tileData.st_asmvt, {
-      headers: {
-        "Content-Type": "application/vnd.mapbox-vector-tile",
-      },
-    });
+    return tileData.st_asmvt;
   } catch (error: any) {
     console.error(error);
-    return new NextResponse(error.message, { status: 500 });
+    throw new Error(error.message);
   }
 };
+
+export default generateTiles;
