@@ -1,3 +1,5 @@
+"use client";
+
 import React, {
   useEffect,
   useState,
@@ -5,8 +7,8 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import { Map as MapboxMap } from "mapbox-gl";
-import { mapboxAccessToken, apiBaseUrl } from "../../config/config";
+import mapboxgl, { Map as MapboxMap } from "mapbox-gl";
+import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
 import "mapboxgl-legend/dist/style.css";
@@ -19,22 +21,14 @@ import Map, {
   FullscreenControl,
   ScaleControl,
   GeolocateControl,
-  AttributionControl
+  AttributionControl,
 } from "react-map-gl";
 import type { FillLayer, VectorSourceRaw } from "react-map-gl";
-import GeocoderControl from './GeocoderControl';
+import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
 const minZoom = 4;
 const getFeaturesZoom = 14;
-
-const VectorTiles: VectorSourceRaw = {
-  id: "vacant_properties",
-  type: "vector",
-  tiles: [`${apiBaseUrl}/api/generateTiles/{z}/{x}/{y}`],
-  minzoom: minZoom,
-  maxzoom: 23,
-};
 
 const layerStyle: FillLayer = {
   id: "vacant_properties",
@@ -73,7 +67,6 @@ const MapControls = () => (
     <NavigationControl position="top-left" />
     <ScaleControl />
     <AttributionControl />
-    <GeocoderControl mapboxAccessToken={mapboxAccessToken} position="top-right" />
   </>
 );
 
@@ -90,7 +83,22 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
+  const [propertyVectorTiles, setPropertyVectorTiles] =
+    useState<VectorSourceRaw | null>(null);
   const legendRef = useRef<LegendControl | null>(null);
+  const geocoderRef = useRef<MapboxGeocoder | null>(null);
+
+  useEffect(() => {
+    const vectorTiles: VectorSourceRaw = {
+      id: "vacant_properties",
+      type: "vector",
+      tiles: [`${window.location.origin}/api/getTiles/{z}/{x}/{y}`],
+      minzoom: 10,
+      maxzoom: 16,
+    };
+
+    setPropertyVectorTiles(vectorTiles);
+  }, []);
 
   // filter function
   const updateFilter = () => {
@@ -197,6 +205,53 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
   useEffect(() => {
     if (map) {
+      // Add Legend Control
+      if (!legendRef.current) {
+        legendRef.current = new LegendControl();
+        map.addControl(legendRef.current, "bottom-left");
+      }
+
+      // Add Geocoder
+      if (!geocoderRef.current) {
+        const center = map.getCenter();
+        geocoderRef.current = new MapboxGeocoder({
+          accessToken: mapboxAccessToken,
+          mapboxgl: mapboxgl,
+          marker: false,
+          proximity: {
+            longitude: center.lng,
+            latitude: center.lat,
+          },
+        });
+
+        map.addControl(geocoderRef.current, "top-right");
+
+        geocoderRef.current.on("result", (e) => {
+          map.flyTo({
+            center: e.result.center,
+            zoom: 16,
+          });
+        });
+      }
+    }
+
+    return () => {
+      // Remove Legend Control
+      if (map && legendRef.current) {
+        map.removeControl(legendRef.current);
+        legendRef.current = null;
+      }
+
+      // Remove Geocoder
+      if (map && geocoderRef.current) {
+        map.removeControl(geocoderRef.current);
+        geocoderRef.current = null;
+      }
+    };
+  }, [map]);
+
+  useEffect(() => {
+    if (map) {
       updateFilter();
     }
   }, [map, filter, updateFilter]);
@@ -229,7 +284,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         onMoveEnd={handleSetFeatures}
       >
         <MapControls />
-
         {popupInfo && (
           <Popup
             longitude={popupInfo.longitude}
@@ -244,9 +298,11 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             </div>
           </Popup>
         )}
-        <Source id="vacant_properties" {...VectorTiles}>
-          <Layer {...layerStyle} />
-        </Source>
+        {propertyVectorTiles && (
+          <Source id="vacant_properties" {...propertyVectorTiles}>
+            <Layer {...layerStyle} />
+          </Source>
+        )}
       </Map>
     </div>
   );

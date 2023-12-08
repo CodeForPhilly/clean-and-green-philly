@@ -8,11 +8,7 @@ import {
   Button,
   DropdownSection,
 } from "@nextui-org/react";
-import { apiBaseUrl } from "../../../config/config";
-import {
-  useFilter,
-  DimensionFilter as DimensionFilterType,
-} from "@/context/FilterContext";
+import { useFilter } from "@/context/FilterContext";
 
 type DimensionFilterProps = {
   property: string;
@@ -34,7 +30,7 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
   useEffect(() => {
     const fetchDimensions = async () => {
       const response = await fetch(
-        `${apiBaseUrl}/api/getUniqueDimensionValues?p=${property}`
+        `${window.location.origin}/api/getUniqueDimensionValues?p=${property}`
       );
       const data = await response.json();
       setDimensions(data);
