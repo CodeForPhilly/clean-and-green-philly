@@ -6,6 +6,7 @@ from data_utils.phs_properties import phs_properties
 from data_utils.l_and_i import l_and_i
 from data_utils.rco_geoms import rco_geoms
 from data_utils.tree_canopy import tree_canopy
+from data_utils.nbhoods import nbhoods
 from data_utils.gun_crimes import gun_crimes
 from data_utils.deliquencies import deliquencies
 import sys
@@ -53,6 +54,10 @@ Load Tree Canopy Data
 """
 vacant_properties = tree_canopy(vacant_properties)
 
+"""
+Load Neighborhoods
+"""
+vacant_properties = nbhoods(vacant_properties)
 
 """
 Gun Crime Data
