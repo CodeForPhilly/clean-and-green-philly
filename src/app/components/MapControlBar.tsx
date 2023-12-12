@@ -1,11 +1,7 @@
-import React, { useState } from "react";
-import { Input, Button } from "@nextui-org/react";
+import React from "react";
+import { Button } from "@nextui-org/react";
 import { ArrowDownTrayIcon, ListBulletIcon } from "@heroicons/react/20/solid";
-import {
-  FunnelIcon,
-  MagnifyingGlassIcon,
-  TableCellsIcon,
-} from "@heroicons/react/24/outline";
+import { FunnelIcon, TableCellsIcon } from "@heroicons/react/24/outline";
 import { BarClickOptions } from "@/app/map/page";
 
 type MapControlBarProps = {
@@ -17,8 +13,6 @@ const SearchBarComponent: React.FC<MapControlBarProps> = ({
   currentView,
   setCurrentView,
 }) => {
-  const [searchTerm, setSearchTerm] = useState<string>("");
-
   const handleClick = (view: BarClickOptions) => {
     setCurrentView(view);
   };
@@ -36,13 +30,6 @@ const SearchBarComponent: React.FC<MapControlBarProps> = ({
           <TableCellsIcon className="h-6 w-6" />
         )}
       </Button>
-      <Input
-        value={searchTerm}
-        onValueChange={setSearchTerm}
-        placeholder="Search..."
-        startContent={<MagnifyingGlassIcon className="h-6 w-6" />}
-        className="w-1/2"
-      />
       <Button
         onClick={() => handleClick("filter")}
         startContent={<FunnelIcon className="h-6 w-6" />}
