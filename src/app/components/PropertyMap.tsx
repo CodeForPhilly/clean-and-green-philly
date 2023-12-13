@@ -23,7 +23,7 @@ import Map, {
   GeolocateControl,
   AttributionControl,
 } from "react-map-gl";
-import type { FillLayer, VectorSourceRaw } from "react-map-gl";
+import { FillLayer, VectorSourceRaw } from "react-map-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 

@@ -28,7 +28,8 @@ class FeatureLayer:
     ):
         self.name = name
         self.esri_rest_urls = (
-            [esri_rest_urls] if isinstance(esri_rest_urls, str) else esri_rest_urls
+            [esri_rest_urls] if isinstance(
+                esri_rest_urls, str) else esri_rest_urls
         )
         self.carto_sql_queries = (
             [carto_sql_queries]
@@ -83,7 +84,8 @@ class FeatureLayer:
             try:
                 if self.type == "esri":
                     if self.esri_rest_urls is None:
-                        raise ValueError("Must provide a URL to load data from Esri")
+                        raise ValueError(
+                            "Must provide a URL to load data from Esri")
 
                     gdfs = []
                     for url in self.esri_rest_urls:
@@ -160,12 +162,14 @@ class FeatureLayer:
                     "other_layer.gdf must be a GeoDataFrame or a DataFrame with x and y columns."
                 )
 
-        self.gdf = gpd.sjoin(self.gdf, other_layer.gdf, how=how, predicate=predicate)
+        self.gdf = gpd.sjoin(self.gdf, other_layer.gdf,
+                             how=how, predicate=predicate)
         self.gdf.drop(columns=["index_right"], inplace=True)
         self.gdf.drop_duplicates(inplace=True)
 
     def rebuild_gdf(self):
-        self.gdf = gpd.GeoDataFrame(self.gdf, geometry="geometry", crs=self.crs)
+        self.gdf = gpd.GeoDataFrame(
+            self.gdf, geometry="geometry", crs=self.crs)
 
     def upload_to_mapbox(self, tileset_id):
         """Upload GeoDataFrame to Mapbox as Tileset."""
@@ -176,6 +180,7 @@ class FeatureLayer:
 
         # Reproject
         self.gdf_wm = self.gdf.to_crs(epsg=4326)
+        print(self.gdf_wm.dtypes)
 
         # Convert to GeoJSON
         geojson_data = json.loads(self.gdf_wm.to_json())
