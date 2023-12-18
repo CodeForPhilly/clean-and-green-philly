@@ -8,8 +8,8 @@ interface PropertyCardProps {
 }
 
 const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
-  const { ADDRESS, guncrime_density, tree_canopy_gap } = feature.properties;
-
+  // Destructuring properties directly from feature if feature.properties is not present
+  const { ADDRESS, guncrime_density, tree_canopy_gap } = feature.properties || feature;
   const roundedCanopyGap = Math.round(tree_canopy_gap * 100);
   const randomImage = `/image1.jpg`;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import { FilterProvider } from "@/context/FilterContext";
 import {
@@ -9,10 +9,10 @@ import {
   PropertyDetailSection,
   SidePanel,
   MapControlBar,
-  FilterView,
+  FilterView
 } from "../components";
 
-export type BarClickOptions = "filter" | "download" | "detail" | "list";
+export type BarClickOptions = "filter" | "download" | "detail" | "list" | "saved";
 
 const propertyMapZoom = 14;
 
@@ -21,7 +21,41 @@ const Page: FC = () => {
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
   const [zoom, setZoom] = useState<number>(propertyMapZoom);
   const [loading, setLoading] = useState(false);
-
+  const [savedPropertiesList, setSavedPropertiesList] = useState([]);
+  useEffect(() => {
+    // Load saved properties from local storage when component mounts
+    const savedProperties = localStorage.getItem('savedProperties');
+    if (savedProperties) {
+      setSavedPropertiesList(JSON.parse(savedProperties));
+    }
+  }, []);
+  const handleSaveProperty = (property) => {
+    if (!property || !property.OPA_ID) {
+      console.error("Property or property.OPA_ID is undefined", property);
+      return;
+    }
+  
+    // Use the state instead of reading from local storage again
+    const propertyIndex = savedPropertiesList.findIndex(savedProperty => 
+      savedProperty.OPA_ID === property.OPA_ID);
+  
+    const updatedSavedProperties = [...savedPropertiesList];
+    if (propertyIndex > -1) {
+      updatedSavedProperties.splice(propertyIndex, 1);
+    } else {
+      updatedSavedProperties.push(property);
+    }
+  
+    // Update both local storage and state
+    localStorage.setItem('savedProperties', JSON.stringify(updatedSavedProperties));
+    setSavedPropertiesList(updatedSavedProperties);
+  };
+  
+  // Debugging statement
+  if (currentView === "saved") {
+    console.log('Saved properties:', savedPropertiesList);
+  }
+  
   return (
     <FilterProvider>
       <NextUIProvider>
@@ -33,6 +67,7 @@ const Page: FC = () => {
                 setFeaturesInView={setFeaturesInView}
                 setZoom={setZoom}
                 setLoading={setLoading}
+                handleSaveProperty={handleSaveProperty}
               />
             </div>
             <SidePanel>
@@ -41,24 +76,27 @@ const Page: FC = () => {
                 setCurrentView={setCurrentView}
               />
               {currentView === "filter" && <FilterView />}
-              {["detail", "list"].includes(currentView) && (
-                <PropertyDetailSection
-                  featuresInView={featuresInView}
-                  display={currentView as "detail" | "list"}
-                  loading={loading}
-                  propertyMapZoom={propertyMapZoom}
-                  zoom={zoom}
-                />
-              )}
-              {currentView === "download" && (
-                <div className="p-4 mt-8 text-center">
-                <h2 className="text-2xl font-bold mb-4">Access Our Data</h2>
-                <p>If you are interested in accessing the data behind this dashboard, please reach out to us at 
-                  <a href="mailto:cleangreenphilly@gmail.com" className="text-blue-600 hover:text-blue-800 underline"> cleangreenphilly@gmail.com</a>.
-                  Let us know who you are and why you want the data. We are happy to share the data with anyone with community-oriented interests!
-                </p>
-              </div>                                                 
-              )}
+                {["detail", "list"].includes(currentView) && (
+                  <PropertyDetailSection
+                    featuresInView={featuresInView}  // Use the properties in view
+                    display={currentView}
+                    loading={loading}
+                    propertyMapZoom={propertyMapZoom}
+                    zoom={zoom}
+                  />
+                )}
+                {currentView === "saved" && (
+                  <PropertyDetailSection
+                    featuresInView={savedPropertiesList.map(property => ({
+                      ...property,
+                      key: property.OPA_ID // Ensure each property has a unique key
+                    }))}
+                    display="detail" // or whichever format you wish to display saved properties
+                    loading={false}
+                    propertyMapZoom={propertyMapZoom}
+                    zoom={zoom}
+                  />
+                )}
             </SidePanel>
           </div>
         </div>

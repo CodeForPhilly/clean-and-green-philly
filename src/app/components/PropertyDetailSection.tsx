@@ -74,38 +74,31 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       <div className="flex flex-wrap overflow-y-auto max-h-[calc(100vh-110px)]">
         {display === "list" ? (
           <Table
-            aria-label="Property Details"
-            radius="none"
-            removeWrapper
-            classNames={{
-              th: "bg-white",
-            }}
-          >
-            <TableHeader>
-              {tableCols.map((column) => (
-                <TableColumn key={column.key}>{column.label}</TableColumn>
-              ))}
-            </TableHeader>
-            <TableBody items={items}>
-              {({ properties }) => (
-                <TableRow
-                  key={properties?.OPA_ID}
-                  onClick={() => {
-                    setSelectedProperty(
-                      items.find(
-                        (item) =>
-                          properties?.OPA_ID === item?.properties?.OPA_ID
-                      ) || null
-                    );
-                  }}
-                >
-                  {(columnKey) => (
-                    <TableCell>{getKeyValue(properties, columnKey)}</TableCell>
-                  )}
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
+          aria-label="Property Details"
+          radius="none"
+          removeWrapper
+          classNames={{
+            th: "bg-white",
+          }}
+        >
+          <TableHeader>
+            {tableCols.map((column) => (
+              <TableColumn key={column.key}>{column.label}</TableColumn>
+            ))}
+          </TableHeader>
+          <TableBody items={items}>
+            {(item) => (
+              <TableRow
+                key={item.OPA_ID} // Assuming OPA_ID is directly on the item
+                onClick={() => setSelectedProperty(item)}
+              >
+                {tableCols.map((column) => (
+                  <TableCell key={`${item.OPA_ID}-${column.key}`}>{item[column.key]}</TableCell>
+                ))}
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
         ) : (
           items.map((feature, index) => (
             <PropertyCard

@@ -3,9 +3,7 @@
 import React, {
   useEffect,
   useState,
-  useRef,
-  Dispatch,
-  SetStateAction,
+  useRef
 } from "react";
 import mapboxgl, { Map as MapboxMap } from "mapbox-gl";
 import { mapboxAccessToken } from "../../config/config";
@@ -26,6 +24,7 @@ import Map, {
 import type { FillLayer, VectorSourceRaw } from "react-map-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import { BookmarkSquareIcon } from "@heroicons/react/24/outline";
 
 const minZoom = 4;
 const getFeaturesZoom = 14;
@@ -71,15 +70,18 @@ const MapControls = () => (
 );
 
 interface PropertyMapProps {
-  setFeaturesInView: Dispatch<SetStateAction<any[]>>;
-  setZoom: Dispatch<SetStateAction<number>>;
-  setLoading: Dispatch<SetStateAction<boolean>>;
+  setFeaturesInView: (features: any[]) => void;
+  setZoom: (zoom: number) => void;
+  setLoading: (loading: boolean) => void;
+  handleSaveProperty: (property: any) => void;
 }
+
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
   setZoom,
   setLoading,
-}: any) => {
+  handleSaveProperty,
+}) => {
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
@@ -87,6 +89,8 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     useState<VectorSourceRaw | null>(null);
   const legendRef = useRef<LegendControl | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
+  const [isCurrentPropertySaved, setIsCurrentPropertySaved] = useState(false);
+
 
   useEffect(() => {
     const vectorTiles: VectorSourceRaw = {
@@ -100,6 +104,27 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     setPropertyVectorTiles(vectorTiles);
   }, []);
 
+  const isPropertySaved = (feature) => {
+    if (!feature || !feature.OPA_ID) {
+      console.error("Invalid feature data", feature);
+      return false;
+    }
+  
+    const savedProperties = JSON.parse(localStorage.getItem('savedProperties') || '[]');
+    return savedProperties.some(savedProperty => 
+      savedProperty.OPA_ID === feature.OPA_ID);
+  };
+  
+  const onSave = (property) => {
+    if (!property || !property.OPA_ID) {
+      console.error("Property or property.OPA_ID is undefined", property);
+      return;
+    }
+  
+    handleSaveProperty(property); // Call the method that handles saving a property
+    setIsCurrentPropertySaved(!isCurrentPropertySaved);
+  };  
+  
   // filter function
   const updateFilter = () => {
     if (!map) return;
@@ -142,18 +167,23 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       const features = map.queryRenderedFeatures(event.point, {
         layers: ["vacant_properties"],
       });
-
-      if (features.length > 0) {
+  
+      console.log("Queried Features:", features);
+      if (features.length > 0 && features[0].properties.OPA_ID) {
+        console.log("First Feature Properties:", features[0].properties);
+        const property = features[0];
+        setIsCurrentPropertySaved(isPropertySaved(property.properties)); // Pass the properties object
         setPopupInfo({
           longitude: event.lngLat.lng,
           latitude: event.lngLat.lat,
-          feature: features[0].properties,
+          feature: property,
         });
       } else {
         setPopupInfo(null);
       }
     }
   };
+  
 
   const handleSetFeatures = (event: any) => {
     if (event.type !== "moveend") return;
@@ -291,10 +321,17 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             closeOnClick={false}
           >
             <div>
-              <p className="font-bold">{popupInfo.feature.ADDRESS}</p>
-              <p>Owner: {popupInfo.feature.OWNER1}</p>
-              <p>Gun Crime Density: {popupInfo.feature.guncrime_density}</p>
-              <p>Tree Canopy Gap: {popupInfo.feature.tree_canopy_gap}</p>
+              <p className="font-bold">{popupInfo.feature.properties.ADDRESS}</p>
+              <p>Owner: {popupInfo.feature.properties.OWNER1}</p>
+              <p>Gun Crime Density: {popupInfo.feature.properties.guncrime_density}</p>
+              <p>Tree Canopy Gap: {popupInfo.feature.properties.tree_canopy_gap}</p>
+              <button
+                onClick={() => onSave(popupInfo.feature.properties)}
+                className={`flex items-center justify-center p-2 mx-auto my-3 rounded-md hover:bg-gray-200 ${isCurrentPropertySaved ? 'bg-green-500' : ''}`}
+              >
+                <BookmarkSquareIcon className="h-5 w-5" />
+                {isCurrentPropertySaved ? 'Saved!' : 'Save'}
+              </button>
             </div>
           </Popup>
         )}
