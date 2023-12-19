@@ -74,8 +74,8 @@ vacant_properties = deliquencies(vacant_properties)
 """
 Post to Mapbox
 """
-# vacant_properties.drop_columns()
-# vacant_properties.upload_to_mapbox("vacant_properties")
+vacant_properties.drop_columns()
+vacant_properties.upload_to_mapbox("vacant_properties")
 
 # # Clean up
 
