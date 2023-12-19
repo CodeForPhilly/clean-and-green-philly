@@ -7,7 +7,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import mapboxgl, { Map as MapboxMap } from "mapbox-gl";
+import mapboxgl, { Map as MapboxMap, Point, PointLike } from "mapbox-gl";
 import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
@@ -26,9 +26,6 @@ import Map, {
 import { FillLayer, VectorSourceRaw } from "react-map-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-
-const minZoom = 4;
-const getFeaturesZoom = 14;
 
 const layerStyle: FillLayer = {
   id: "vacant_properties",
@@ -83,22 +80,13 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
-  const [propertyVectorTiles, setPropertyVectorTiles] =
-    useState<VectorSourceRaw | null>(null);
   const legendRef = useRef<LegendControl | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
 
-  useEffect(() => {
-    const vectorTiles: VectorSourceRaw = {
-      id: "vacant_properties",
-      type: "vector",
-      tiles: [`${window.location.origin}/api/getTiles/{z}/{x}/{y}`],
-      minzoom: 10,
-      maxzoom: 16,
-    };
-
-    setPropertyVectorTiles(vectorTiles);
-  }, []);
+  const tileSource = {
+    type: "vector",
+    url: "mapbox://nlebovits.vacant_properties",
+  };
 
   // filter function
   const updateFilter = () => {
@@ -163,28 +151,29 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     const zoom = map.getZoom();
     setZoom(zoom);
 
-    if (map.getZoom() >= getFeaturesZoom) {
-      // use `undefined` to get all features
-      const features = map.queryRenderedFeatures(undefined, {
-        layers: ["vacant_properties"],
-      });
-
-      // Remove duplicate features (which can occur because of the way the tiles are generated)
-      const uniqueFeatures = features.reduce((acc: any[], feature: any) => {
-        if (
-          !acc.find((f) => f.properties.OPA_ID === feature.properties.OPA_ID)
-        ) {
-          acc.push(feature);
-        }
-        return acc;
-      }, []);
-
-      setFeaturesInView(uniqueFeatures);
-      setLoading(false);
-    } else {
-      setFeaturesInView([]);
-      setLoading(false);
+    let bbox: [PointLike, PointLike] | undefined = undefined;
+    if (zoom < 14) {
+      // get map size in pixels
+      const { height, width } = map.getCanvas();
+      bbox = [
+        [0.25 * width, 0.25 * height],
+        [0.75 * width, 0.75 * height],
+      ];
     }
+    const features = map.queryRenderedFeatures(bbox, {
+      layers: ["vacant_properties"],
+    });
+
+    // Remove duplicate features (which can occur because of the way the tiles are generated)
+    const uniqueFeatures = features.reduce((acc: any[], feature: any) => {
+      if (!acc.find((f) => f.properties.OPA_ID === feature.properties.OPA_ID)) {
+        acc.push(feature);
+      }
+      return acc;
+    }, []);
+
+    setFeaturesInView(uniqueFeatures);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -282,6 +271,8 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}
+        maxZoom={20}
+        minZoom={13}
       >
         <MapControls />
         {popupInfo && (
@@ -298,11 +289,13 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             </div>
           </Popup>
         )}
-        {propertyVectorTiles && (
-          <Source id="vacant_properties" {...propertyVectorTiles}>
-            <Layer {...layerStyle} />
-          </Source>
-        )}
+        <Source
+          id="vacant_properties"
+          type="vector"
+          url={"mapbox://nlebovits.vacant_properties"}
+        >
+          <Layer {...layerStyle} />
+        </Source>
       </Map>
     </div>
   );

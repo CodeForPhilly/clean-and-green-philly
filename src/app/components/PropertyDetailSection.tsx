@@ -33,16 +33,12 @@ interface PropertyDetailSectionProps {
   featuresInView: MapboxGeoJSONFeature[];
   display: "detail" | "list";
   loading: boolean;
-  propertyMapZoom: number;
-  zoom: number;
 }
 
 const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   featuresInView,
   display,
   loading,
-  propertyMapZoom,
-  zoom,
 }) => {
   const [page, setPage] = useState(1);
   const [selectedProperty, setSelectedProperty] =
@@ -60,10 +56,6 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
 
   return loading ? (
     <Spinner />
-  ) : zoom <= propertyMapZoom ? (
-    <div className="p-4 mt-8 text-center">
-      <p className="text-lg">Please zoom in to see property details.</p>
-    </div>
   ) : selectedProperty ? (
     <SinglePropertyDetail
       property={selectedProperty}

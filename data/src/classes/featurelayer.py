@@ -180,7 +180,6 @@ class FeatureLayer:
 
         # Reproject
         self.gdf_wm = self.gdf.to_crs(epsg=4326)
-        print(self.gdf_wm.dtypes)
 
         # Convert to GeoJSON
         geojson_data = json.loads(self.gdf_wm.to_json())
@@ -212,6 +211,16 @@ class FeatureLayer:
             "Shape__Area_right",
             "Shape__Length_right",
             "MAPREG_1",
+            "shape_leng",
+            "shape_area",
+            "cartodb_id",
+            "created_at",
+            "updated_at",
+            "name",
+            "listname",
+            "PIN",
+            "MAPREG_1",
+            "LOCATION",
         ]
 
         self.gdf.drop(columns=columns, inplace=True)
