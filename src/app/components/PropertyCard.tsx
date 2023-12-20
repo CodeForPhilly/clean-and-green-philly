@@ -12,6 +12,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
 
   const roundedCanopyGap = Math.round(tree_canopy_gap * 100);
   const randomImage = `/image1.jpg`;
+  const atlasUrl = `https://atlas.phila.gov/${ADDRESS}`;
 
   return (
     <div
