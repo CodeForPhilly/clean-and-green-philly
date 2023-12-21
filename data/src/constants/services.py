@@ -30,3 +30,5 @@ VIOLATIONS_SQL_QUERY = f"SELECT parcel_id_num, casenumber, casecreateddate, case
 GUNCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, point_x AS x, point_y AS y FROM incidents_part1_part2 WHERE dispatch_date_time >= '{one_year_ago}' AND text_general_code IN ('Aggravated Assault Firearm', 'Robbery Firearm') AND point_x IS NOT NULL;"
 
 DELINQUENCIES_QUERY = "SELECT * FROM real_estate_tax_delinquencies"
+
+OPA_PROPERTIES_QUERY = "SELECT market_value, sale_date, sale_price, parcel_number, the_geom FROM opa_properties_public"
