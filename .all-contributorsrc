@@ -25,6 +25,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "brandonfcohen1",
+      "name": "Brandon Cohen",
+      "avatar_url": "https://avatars.githubusercontent.com/u/2308834?v=4",
+      "profile": "https://github.com/brandonfcohen1",
+      "contributions": [
+        "code",
+        "doc",
+        "infra"
+      ]
     }
   ]
 }
