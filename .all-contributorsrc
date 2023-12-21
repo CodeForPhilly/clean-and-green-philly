@@ -1,4 +1,21 @@
 {
-  "projectName": "Clean & Green Philly",
-  "projectOwner": "A Code for Philly Project"
+  "projectName": "vacant-lots-proj",
+  "projectOwner": "CodeForPhilly",
+  "files": [
+    "README.md"
+  ],
+  "commitType": "docs",
+  "commitConvention": "angular",
+  "contributorsPerLine": 7,
+  "contributors": [
+    {
+      "login": "nlebovits",
+      "name": "Nissim Lebovits",
+      "avatar_url": "https://avatars.githubusercontent.com/u/111617674?v=4",
+      "profile": "https://github.com/nlebovits",
+      "contributions": [
+        "doc"
+      ]
+    }
+  ]
 }
