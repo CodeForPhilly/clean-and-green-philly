@@ -84,11 +84,11 @@ class FeatureLayer:
             try:
                 if self.type == "esri":
                     if self.esri_rest_urls is None:
-                        raise ValueError(
-                            "Must provide a URL to load data from Esri")
+                        raise ValueError("Must provide a URL to load data from Esri")
 
                     gdfs = []
                     for url in self.esri_rest_urls:
+                        parcel_type = "Land" if "Vacant_Indicators_Land" in url else "Building" if "Vacant_Indicators_Bldg" in url else None
                         self.dumper = EsriDumper(url)
                         features = [feature for feature in self.dumper]
 
@@ -101,15 +101,18 @@ class FeatureLayer:
                             geojson_features, crs=self.input_crs
                         )
                         this_gdf = this_gdf.to_crs(USE_CRS)
+                        
+                        # Assign the parcel_type to the GeoDataFrame
+                        if parcel_type:
+                            this_gdf['parcel_type'] = parcel_type
+
                         gdfs.append(this_gdf)
 
                     self.gdf = pd.concat(gdfs, ignore_index=True)
 
                 elif self.type == "carto":
                     if self.carto_sql_queries is None:
-                        raise ValueError(
-                            "Must provide a SQL query to load data from Carto"
-                        )
+                        raise ValueError("Must provide a SQL query to load data from Carto")
 
                     gdfs = []
                     for sql_query in self.carto_sql_queries:
@@ -144,6 +147,7 @@ class FeatureLayer:
                 print(f"Error loading data for {self.name}: {e}")
                 traceback.print_exc()
                 self.gdf = None
+
 
     def spatial_join(self, other_layer, how="left", predicate="intersects"):
         """
