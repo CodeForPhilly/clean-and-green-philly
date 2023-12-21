@@ -76,6 +76,7 @@ Please see [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj
   <tbody>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/nlebovits"><img src="https://avatars.githubusercontent.com/u/111617674?v=4?s=100" width="100px;" alt="Nissim Lebovits"/><br /><sub><b>Nissim Lebovits</b></sub></a><br /><a href="#doc-nlebovits" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://kedgard-cordero.netlify.app"><img src="https://avatars.githubusercontent.com/u/97119018?v=4?s=100" width="100px;" alt="Kedgard Cordero"/><br /><sub><b>Kedgard Cordero</b></sub></a><br /><a href="#code-Kenny4297" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
