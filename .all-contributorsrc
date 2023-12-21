@@ -14,7 +14,14 @@
       "avatar_url": "https://avatars.githubusercontent.com/u/111617674?v=4",
       "profile": "https://github.com/nlebovits",
       "contributions": [
-        "doc"
+        "doc",
+        "code",
+        "content",
+        "data",
+        "fundingFinding",
+        "maintenance",
+        "projectManagement",
+        "research"
       ]
     },
     {
