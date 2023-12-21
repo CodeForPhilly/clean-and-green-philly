@@ -67,6 +67,17 @@ This is a monorepo for both the nextjs app and the scripts which ETL and analyze
 
 Please see [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/CONTRIBUTING.md) for instructions on how to contribute, and [`SETUP.md`](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/SETUP.md) for instructions on how to install and work on the code.
 
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
 # License
 
 MIT © Code for Philly
