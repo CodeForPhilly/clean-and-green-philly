@@ -18,4 +18,20 @@ def city_owned_properties(primary_featurelayer):
             & (primary_featurelayer.gdf["OPA_ID"] != primary_featurelayer.gdf["OPABRT"])
         )
     ]
+
+    red_cols_to_keep = [
+        "AGENCY",
+        "SIDEYARDELIGIBLE",
+        "geometry"
+    ]
+
+    primary_featurelayer.gdf = primary_featurelayer.gdf[red_cols_to_keep]
+
+    rename_columns = {
+    "AGENCY": "city_owner_agency",
+    "SIDEYARDELIGIBLE": "side_yard_eligible"
+    }
+
+    primary_featurelayer.gdf.rename(columns=rename_columns, inplace=True)
+
     return primary_featurelayer
