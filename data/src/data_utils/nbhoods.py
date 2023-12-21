@@ -18,6 +18,13 @@ def nbhoods(primary_featurelayer):
     nbhoods = FeatureLayer("Neighborhoods")
     nbhoods.gdf = phl_nbhoods
 
+    red_cols_to_keep = [
+        "neighborhood", 
+        "geometry"
+    ]
+
+    nbhoods.gdf = nbhoods.gdf[red_cols_to_keep]
+
     primary_featurelayer.spatial_join(nbhoods)
 
     return primary_featurelayer
