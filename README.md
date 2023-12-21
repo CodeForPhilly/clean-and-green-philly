@@ -72,6 +72,13 @@ Please see [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
 <!-- markdownlint-disable -->
+<table>
+  <tbody>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/nlebovits"><img src="https://avatars.githubusercontent.com/u/111617674?v=4?s=100" width="100px;" alt="Nissim Lebovits"/><br /><sub><b>Nissim Lebovits</b></sub></a><br /><a href="#doc-nlebovits" title="Documentation">📖</a></td>
+    </tr>
+  </tbody>
+</table>
 
 <!-- markdownlint-restore -->
 <!-- prettier-ignore-end -->
