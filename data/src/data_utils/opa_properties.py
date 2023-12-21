@@ -21,4 +21,8 @@ def opa_properties(primary_featurelayer):
 
     primary_featurelayer.spatial_join(opa)
 
+<<<<<<< HEAD
     return primary_featurelayer
+=======
+    return primary_featurelayer
+>>>>>>> ab725eeb07a95c534d20dd661889cd8a6c84181a
