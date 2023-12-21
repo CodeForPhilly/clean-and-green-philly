@@ -70,6 +70,11 @@ Property Tax Delinquencies
 """
 vacant_properties = deliquencies(vacant_properties)
 
+"""
+OPA Properties
+"""
+vacant_properties = opa_properties(vacant_properties)
+
 
 """
 Post to Mapbox
