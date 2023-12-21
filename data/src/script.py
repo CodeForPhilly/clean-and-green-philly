@@ -9,6 +9,7 @@ from data_utils.tree_canopy import tree_canopy
 from data_utils.nbhoods import nbhoods
 from data_utils.gun_crimes import gun_crimes
 from data_utils.deliquencies import deliquencies
+from data_utils.opa_properties import opa_properties
 import sys
 
 # Ensure the directory containing awkde is in the Python path
