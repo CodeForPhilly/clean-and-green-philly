@@ -280,6 +280,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
             longitude={popupInfo.longitude}
             latitude={popupInfo.latitude}
             closeOnClick={false}
+            onClose={() => setPopupInfo(null)}
           >
             <div>
               <p className="font-bold">{popupInfo.feature.ADDRESS}</p>
