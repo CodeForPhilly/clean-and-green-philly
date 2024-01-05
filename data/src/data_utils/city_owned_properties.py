@@ -22,14 +22,16 @@ def city_owned_properties(primary_featurelayer):
     red_cols_to_keep = [
         "AGENCY",
         "SIDEYARDELIGIBLE",
+        'ADDRESS',
         "geometry"
     ]
 
     primary_featurelayer.gdf = primary_featurelayer.gdf[red_cols_to_keep]
 
     rename_columns = {
-    "AGENCY": "city_owner_agency",
-    "SIDEYARDELIGIBLE": "side_yard_eligible"
+        "AGENCY": "city_owner_agency",
+        "SIDEYARDELIGIBLE": "side_yard_eligible",
+        "ADDRESS": "address",
     }
 
     primary_featurelayer.gdf.rename(columns=rename_columns, inplace=True)

@@ -13,15 +13,8 @@ def phs_properties(primary_featurelayer):
     primary_featurelayer.spatial_join(phs_properties)
     primary_featurelayer.gdf["COMM_PARTN"].fillna("None", inplace=True)
 
-    red_cols_to_keep = [
-        "COMM_PARTN",
-        "geometry"
-    ]
-
-    primary_featurelayer.gdf = primary_featurelayer.gdf[red_cols_to_keep]
-
     rename_columns = {
-    "COMM_PARTN": "phs_partner_agency",
+        "COMM_PARTN": "phs_partner_agency",
     }
 
     primary_featurelayer.gdf.rename(columns=rename_columns, inplace=True)

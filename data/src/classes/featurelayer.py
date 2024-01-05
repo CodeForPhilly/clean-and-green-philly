@@ -84,7 +84,8 @@ class FeatureLayer:
             try:
                 if self.type == "esri":
                     if self.esri_rest_urls is None:
-                        raise ValueError("Must provide a URL to load data from Esri")
+                        raise ValueError(
+                            "Must provide a URL to load data from Esri")
 
                     gdfs = []
                     for url in self.esri_rest_urls:
@@ -101,7 +102,7 @@ class FeatureLayer:
                             geojson_features, crs=self.input_crs
                         )
                         this_gdf = this_gdf.to_crs(USE_CRS)
-                        
+
                         # Assign the parcel_type to the GeoDataFrame
                         if parcel_type:
                             this_gdf['parcel_type'] = parcel_type
@@ -112,7 +113,8 @@ class FeatureLayer:
 
                 elif self.type == "carto":
                     if self.carto_sql_queries is None:
-                        raise ValueError("Must provide a SQL query to load data from Carto")
+                        raise ValueError(
+                            "Must provide a SQL query to load data from Carto")
 
                     gdfs = []
                     for sql_query in self.carto_sql_queries:
@@ -147,7 +149,6 @@ class FeatureLayer:
                 print(f"Error loading data for {self.name}: {e}")
                 traceback.print_exc()
                 self.gdf = None
-
 
     def spatial_join(self, other_layer, how="left", predicate="intersects"):
         """
@@ -207,6 +208,7 @@ class FeatureLayer:
         Method to clean up the database by dropping columns that are not needed.
         Ideally we'll do this in each data_utils file, but for now we'll do it here.
         """
+        print(self.gdf.columns)
         columns = [
             "OBJECTID_left",
             "Shape__Area_left",
