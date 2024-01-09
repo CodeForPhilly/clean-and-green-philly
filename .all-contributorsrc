@@ -43,6 +43,15 @@
         "doc",
         "infra"
       ]
+    },
+    {
+      "login": "bri-ne",
+      "name": "bri-ne",
+      "avatar_url": "https://avatars.githubusercontent.com/u/89992561?v=4",
+      "profile": "https://bri-ne.github.io/",
+      "contributions": [
+        "doc"
+      ]
     }
   ]
 }
