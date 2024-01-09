@@ -166,7 +166,11 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
     // Remove duplicate features (which can occur because of the way the tiles are generated)
     const uniqueFeatures = features.reduce((acc: any[], feature: any) => {
-      if (!acc.find((f) => f.properties.OPA_ID === feature.properties.OPA_ID)) {
+      if (
+        !acc.find(
+          (f) => f.properties.opa_number === feature.properties.opa_number
+        )
+      ) {
         acc.push(feature);
       }
       return acc;
