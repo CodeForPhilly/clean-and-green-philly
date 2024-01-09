@@ -43,6 +43,15 @@
         "doc",
         "infra"
       ]
+    },
+    {
+      "login": "jroper-scottlogic",
+      "name": "Jack Roper",
+      "avatar_url": "https://avatars.githubusercontent.com/u/125047199?v=4",
+      "profile": "https://github.com/jroper-scottlogic",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
