@@ -60,6 +60,11 @@ export default function AboutPage() {
         <p className="text-lg">
           Lastly, we are grateful to Dr. Eugenia South and her colleagues, whose work this project depends on.
         </p>
+        <br></br>
+        <h2 className="text-3xl font-semibold mb-4">Feedback</h2>
+        <p className="text-lg mb-4">
+        If you find issues in this website or would like to offer us feedback, please reach out to us at <a href="mailto:cleangreenphilly@gmail.com" className="text-primary">cleangreenphilly@gmail.com</a>.
+        </p>
       </div>
     </div>
   );
