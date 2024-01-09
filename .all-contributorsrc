@@ -43,6 +43,16 @@
         "doc",
         "infra"
       ]
+    },
+    {
+      "login": "ylebovits",
+      "name": "Yakir Lebovits",
+      "avatar_url": "https://avatars.githubusercontent.com/u/43448526?v=4",
+      "profile": "https://github.com/ylebovits",
+      "contributions": [
+        "code",
+        "doc"
+      ]
     }
   ]
 }
