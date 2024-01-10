@@ -4,7 +4,7 @@
 # if "city_agency_owner" == "PLB" ~ "land bank"
 # elif "city_agency_owner" == NA ~ "private owner"
 # else "city, but too complicated"
-    
+
 # sold within last six months
 # sale_date <= 6 months ago
 
