@@ -52,6 +52,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "willonabike",
+      "name": "Will",
+      "avatar_url": "https://avatars.githubusercontent.com/u/1652510?v=4",
+      "profile": "http://coroflot.com/willonabike",
+      "contributions": [
+        "research",
+        "design"
+      ]
     }
   ]
 }
