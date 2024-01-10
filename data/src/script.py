@@ -34,8 +34,7 @@ dataset = priority_level(dataset)
 
 
 # Post to Mapbox
-
-# dataset.upload_to_mapbox("vacant_properties")
+dataset.upload_to_mapbox("vacant_properties")
 
 dataset.gdf.to_postgis(
     "vacant_properties_end", conn, if_exists="replace", index=False
