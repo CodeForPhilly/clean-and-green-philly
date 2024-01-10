@@ -1,29 +1,24 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import PHS_LAYERS_TO_LOAD
+import pandas as pd
+from config.psql import conn
 
 
 def phs_properties(primary_featurelayer):
     phs_properties = FeatureLayer(
-        name="PHS Properties", esri_rest_urls=PHS_LAYERS_TO_LOAD
+        name="PHS Properties", esri_rest_urls=PHS_LAYERS_TO_LOAD,
+        cols=["BRT_ID"]
     )
 
-    phs_properties.gdf["COMM_PARTN"] = "PHS"
-    phs_properties.gdf = phs_properties.gdf[["COMM_PARTN", "geometry"]]
+    phs_properties.gdf["phs_partner_agency"] = "PHS"
 
-    primary_featurelayer.spatial_join(phs_properties)
-    primary_featurelayer.gdf["COMM_PARTN"].fillna("None", inplace=True)
+    primary_featurelayer.opa_join(
+        phs_properties.gdf,
+        "BRT_ID",
+    )
 
-    red_cols_to_keep = [
-        "COMM_PARTN",
-        "geometry"
-    ]
+    primary_featurelayer.gdf["phs_partner_agency"].fillna("None", inplace=True)
 
-    primary_featurelayer.gdf = primary_featurelayer.gdf[red_cols_to_keep]
-
-    rename_columns = {
-    "COMM_PARTN": "phs_partner_agency",
-    }
-
-    primary_featurelayer.gdf.rename(columns=rename_columns, inplace=True)
+    primary_featurelayer.rebuild_gdf()
 
     return primary_featurelayer

@@ -5,7 +5,7 @@ import pandas as pd
 from esridump.dumper import EsriDumper
 import traceback
 from config.config import USE_CRS, FORCE_RELOAD, MAPBOX_TOKEN
-from config.psql import local_conn
+from config.psql import conn
 from mapbox import Uploader
 from shapely import wkb
 
@@ -25,6 +25,7 @@ class FeatureLayer:
         force_reload=FORCE_RELOAD,
         from_xy=False,
         use_wkb_geom_field=None,
+        cols=None
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -38,6 +39,7 @@ class FeatureLayer:
         )
         self.gdf = gdf
         self.crs = crs
+        self.cols = cols
         self.psql_table = name.lower().replace(" ", "_")
         self.input_crs = "EPSG:4326" if not from_xy else USE_CRS
         self.use_wkb_geom_field = use_wkb_geom_field
@@ -65,7 +67,7 @@ class FeatureLayer:
     def check_psql(self):
         try:
             psql_table = gpd.read_postgis(
-                f"SELECT * FROM {self.psql_table}", local_conn, geom_col="geometry"
+                f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
             )
             if len(psql_table) == 0:
                 return False
@@ -84,11 +86,18 @@ class FeatureLayer:
             try:
                 if self.type == "esri":
                     if self.esri_rest_urls is None:
-                        raise ValueError("Must provide a URL to load data from Esri")
+                        raise ValueError(
+                            "Must provide a URL to load data from Esri")
 
                     gdfs = []
                     for url in self.esri_rest_urls:
-                        parcel_type = "Land" if "Vacant_Indicators_Land" in url else "Building" if "Vacant_Indicators_Bldg" in url else None
+                        parcel_type = (
+                            "Land"
+                            if "Vacant_Indicators_Land" in url
+                            else "Building"
+                            if "Vacant_Indicators_Bldg" in url
+                            else None
+                        )
                         self.dumper = EsriDumper(url)
                         features = [feature for feature in self.dumper]
 
@@ -101,10 +110,10 @@ class FeatureLayer:
                             geojson_features, crs=self.input_crs
                         )
                         this_gdf = this_gdf.to_crs(USE_CRS)
-                        
+
                         # Assign the parcel_type to the GeoDataFrame
                         if parcel_type:
-                            this_gdf['parcel_type'] = parcel_type
+                            this_gdf["parcel_type"] = parcel_type
 
                         gdfs.append(this_gdf)
 
@@ -112,7 +121,9 @@ class FeatureLayer:
 
                 elif self.type == "carto":
                     if self.carto_sql_queries is None:
-                        raise ValueError("Must provide a SQL query to load data from Carto")
+                        raise ValueError(
+                            "Must provide a SQL query to load data from Carto"
+                        )
 
                     gdfs = []
                     for sql_query in self.carto_sql_queries:
@@ -138,16 +149,23 @@ class FeatureLayer:
                         gdfs.append(gdf)
                     self.gdf = pd.concat(gdfs, ignore_index=True)
 
+                # Drop columns
+                if self.cols:
+                    self.cols.append("geometry")
+                    self.gdf = self.gdf[self.cols]
+
                 # save self.gdf to psql
                 self.gdf.to_postgis(
-                    name=self.psql_table, con=local_conn, if_exists="replace", chunksize=1000
+                    name=self.psql_table,
+                    con=conn,
+                    if_exists="replace",
+                    chunksize=1000,
                 )
 
             except Exception as e:
                 print(f"Error loading data for {self.name}: {e}")
                 traceback.print_exc()
                 self.gdf = None
-
 
     def spatial_join(self, other_layer, how="left", predicate="intersects"):
         """
@@ -170,6 +188,39 @@ class FeatureLayer:
                              how=how, predicate=predicate)
         self.gdf.drop(columns=["index_right"], inplace=True)
         self.gdf.drop_duplicates(inplace=True)
+
+        # Coerce OPA_ID to integer and drop rows where OPA_ID is null or non-numeric
+        self.gdf['OPA_ID'] = pd.to_numeric(self.gdf['OPA_ID'], errors='coerce')
+        self.gdf = self.gdf.dropna(subset=['OPA_ID'])
+
+    def opa_join(self, other_df, opa_column):
+        """
+        Join 2 dataframes based on OPA_ID and keep the 'geometry' column from the left dataframe if it exists in both.
+        """
+
+        # Coerce opa_column to integer and drop rows where opa_column is null or non-numeric
+        other_df[opa_column] = pd.to_numeric(
+            other_df[opa_column], errors='coerce')
+        other_df = other_df.dropna(subset=[opa_column])
+
+        # Coerce OPA_ID to integer and drop rows where OPA_ID is null or non-numeric
+        self.gdf['OPA_ID'] = pd.to_numeric(self.gdf['OPA_ID'], errors='coerce')
+        self.gdf = self.gdf.dropna(subset=['OPA_ID'])
+
+        # Perform the merge
+        joined = self.gdf.merge(
+            other_df, how="left", right_on=opa_column, left_on="OPA_ID")
+
+        # Check if 'geometry' column exists in both dataframes and clean up
+        if 'geometry_x' in joined.columns and 'geometry_y' in joined.columns:
+            joined = joined.drop(columns=['geometry_y'])
+            joined = joined.rename(columns={'geometry_x': 'geometry'})
+
+        if opa_column != 'OPA_ID':
+            joined = joined.drop(columns=[opa_column])
+
+        self.gdf = joined
+        self.rebuild_gdf()
 
     def rebuild_gdf(self):
         self.gdf = gpd.GeoDataFrame(
@@ -201,30 +252,3 @@ class FeatureLayer:
         print("Uploaded gdf tileset to Mapbox.")
 
         return response
-
-    def drop_columns(self):
-        """
-        Method to clean up the database by dropping columns that are not needed.
-        Ideally we'll do this in each data_utils file, but for now we'll do it here.
-        """
-        columns = [
-            "OBJECTID_left",
-            "Shape__Area_left",
-            "Shape__Length_left",
-            "OBJECTID_right",
-            "Shape__Area_right",
-            "Shape__Length_right",
-            "MAPREG_1",
-            "shape_leng",
-            "shape_area",
-            "cartodb_id",
-            "created_at",
-            "updated_at",
-            "name",
-            "listname",
-            "PIN",
-            "MAPREG_1",
-            "LOCATION",
-        ]
-
-        self.gdf.drop(columns=columns, inplace=True)

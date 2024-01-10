@@ -1,9 +1,10 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import COMPLAINTS_SQL_QUERY, VIOLATIONS_SQL_QUERY
+import numpy as np
 
 
 def l_and_i(primary_featurelayer):
-    # Calculate one year ago from today's date
+    # Load complaints data from L&I
     l_and_i_complaints = FeatureLayer(
         name="LI Complaints", carto_sql_queries=COMPLAINTS_SQL_QUERY
     )
@@ -19,10 +20,8 @@ def l_and_i(primary_featurelayer):
         .apply(lambda x: "; ".join([val for val in x if val is not None]))
         .reset_index()
     )
-    l_and_i_complaints.rebuild_gdf()
 
-    # collapse complaints_gdf by address and concatenate the violationcodetitle values into a list with a semicolon separator
-    # l_and_i_complaints.gdf = l_and_i_complaints.gdf.groupby('address')['service_name'].apply(lambda x: '; '.join([val for val in x if val is not None])).reset_index()
+    l_and_i_complaints.rebuild_gdf()
 
     # rename the column to 'li_complaints'
     l_and_i_complaints.gdf.rename(
@@ -70,6 +69,8 @@ def l_and_i(primary_featurelayer):
     violations_count_gdf["open_violations_past_year"] = violations_count_gdf[
         "open_violations_past_year"
     ].astype(int)
+    violations_count_gdf = violations_count_gdf[[
+        'opa_account_num', 'all_violations_past_year', 'open_violations_past_year']]
 
     # collapse violations_gdf by address and concatenate the violationcodetitle values into a list with a semicolon separator
     l_and_i_violations.gdf = (
@@ -84,10 +85,28 @@ def l_and_i(primary_featurelayer):
         columns={"violationcodetitle": "li_code_violations"}, inplace=True
     )
 
-    # left join the complaints_gdf to the joined_gdf on address
-    primary_featurelayer.spatial_join(l_and_i_violations, predicate="contains")
+    # Violations can work with an OPA join
+    primary_featurelayer.opa_join(
+        violations_count_gdf,
+        "opa_account_num",
+    )
 
-    # left join the violations_gdf to the joined_gdf on opa_account_num
-    primary_featurelayer.spatial_join(l_and_i_complaints, predicate="contains")
+    # Complaints need a spatial join, but we need to take special care to merge on just the parcel geoms first to get OPA_ID
+    complaints_with_opa_id = primary_featurelayer.gdf.sjoin(
+        l_and_i_complaints.gdf, how="left", predicate="contains")
+    complaints_with_opa_id.drop(columns=["index_right"], inplace=True)
+
+    # Concatenate the complaints values into a list with a semicolon separator by OPA_ID
+    complaints_with_opa_id = (
+        complaints_with_opa_id.groupby("OPA_ID")["li_complaints"]
+        .apply(lambda x: "; ".join([str(val) for val in x if val is not None]))
+        .reset_index()[["OPA_ID", "li_complaints"]]
+    )
+
+    # Merge the complaints values back into the primary_featurelayer
+    primary_featurelayer.opa_join(
+        complaints_with_opa_id,
+        "OPA_ID",
+    )
 
     return primary_featurelayer

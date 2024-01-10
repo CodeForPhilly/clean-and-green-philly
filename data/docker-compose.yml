@@ -6,5 +6,6 @@ services:
       - CFP_MAPBOX_TOKEN_UPLOADER
       - VACANT_LOTS_DB
       - VACANT_LOTS_DB_REMOTE
+      - PYTHONUNBUFFERED=1
     volumes:
       - ./src:/usr/src/app

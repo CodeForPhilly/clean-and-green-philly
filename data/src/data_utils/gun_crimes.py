@@ -1,4 +1,3 @@
-
 from constants.services import GUNCRIME_SQL_QUERY
 from config.config import USE_CRS
 from classes.featurelayer import FeatureLayer
@@ -12,8 +11,7 @@ import mapclassify
 
 def gun_crimes(primary_featurelayer):
     # Initialize gun_crimes object
-    gun_crimes = FeatureLayer(
-        name="Gun Crimes", carto_sql_queries=GUNCRIME_SQL_QUERY)
+    gun_crimes = FeatureLayer(name="Gun Crimes", carto_sql_queries=GUNCRIME_SQL_QUERY)
 
     # Extract x, y coordinates from geometry
     x = np.array([])
@@ -80,8 +78,7 @@ def gun_crimes(primary_featurelayer):
         )
     ]
 
-    primary_featurelayer.gdf = primary_featurelayer.gdf.drop(columns=[
-                                                             "centroid"])
+    primary_featurelayer.gdf = primary_featurelayer.gdf.drop(columns=["centroid"])
 
     src = rasterio.open("tmp/output.tif")
     sampled_values = [x[0] for x in src.sample(coord_list)]
@@ -89,8 +86,7 @@ def gun_crimes(primary_featurelayer):
     primary_featurelayer.gdf["guncrime_density"] = sampled_values
 
     guncrime_classifier = mapclassify.Percentiles(
-        primary_featurelayer.gdf["guncrime_density"], pct=[
-            50, 75, 90, 95, 99, 100]
+        primary_featurelayer.gdf["guncrime_density"], pct=[50, 75, 90, 95, 99, 100]
     )
     primary_featurelayer.gdf["guncrime_density"] = primary_featurelayer.gdf[
         "guncrime_density"
