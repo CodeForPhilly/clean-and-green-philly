@@ -22,21 +22,23 @@ services = [
 ]
 
 
+# Load Vacant Property Data
 dataset = vacant_properties()
 
+# Load and join other datasets
 for service in services:
-    print(f"Running {service.__name__}")
     dataset = service(dataset)
 
+# Add Priority Level
+dataset = priority_level(dataset)
 
-"""
-Post to Mapbox
-"""
+
+# Post to Mapbox
 dataset.upload_to_mapbox("vacant_properties")
-
-# Clean up
 
 dataset.gdf.to_postgis(
     "vacant_properties_end", conn, if_exists="replace", index=False
 )
+print("Vacant Properties End Uploaded to Postgres")
+conn.commit()
 conn.close()
