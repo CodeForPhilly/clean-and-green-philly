@@ -1,6 +1,6 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import COMPLAINTS_SQL_QUERY, VIOLATIONS_SQL_QUERY
-import numpy as np
+import pandas as pd
 
 
 def l_and_i(primary_featurelayer):
@@ -103,10 +103,24 @@ def l_and_i(primary_featurelayer):
         .reset_index()[["OPA_ID", "li_complaints"]]
     )
 
+    # Clean up the NaN values in the li_complaints column
+    def remove_nan_strings(x):
+        if x == "nan" or ('nan;' in x):
+            return None
+        else:
+            return x
+
+    complaints_with_opa_id['li_complaints'] = complaints_with_opa_id['li_complaints'].apply(
+        remove_nan_strings)
+    complaints_with_opa_id.to_csv('complaints_with_opa_id.csv')
+
     # Merge the complaints values back into the primary_featurelayer
     primary_featurelayer.opa_join(
         complaints_with_opa_id,
         "OPA_ID",
     )
+
+    primary_featurelayer.gdf[['all_violations_past_year', 'open_violations_past_year']] = primary_featurelayer.gdf[[
+        'all_violations_past_year', 'open_violations_past_year']].apply(lambda x: pd.to_numeric(x, errors='coerce')).fillna(0).astype(int)
 
     return primary_featurelayer

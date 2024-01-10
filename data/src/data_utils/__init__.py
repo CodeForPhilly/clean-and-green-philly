@@ -8,3 +8,4 @@ from .gun_crimes import *
 from .deliquencies import *
 from .opa_properties import *
 from .vacant_properties import *
+from .priority_level import *
