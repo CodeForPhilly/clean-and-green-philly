@@ -9,3 +9,4 @@ from .deliquencies import *
 from .opa_properties import *
 from .vacant_properties import *
 from .priority_level import *
+from .access_process import *

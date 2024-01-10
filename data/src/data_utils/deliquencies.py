@@ -25,4 +25,6 @@ def deliquencies(primary_featurelayer):
         "opa_number",
     )
 
+    primary_featurelayer.gdf["sheriff_sale"].fillna("N", inplace=True)
+
     return primary_featurelayer
