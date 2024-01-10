@@ -32,6 +32,9 @@ for service in services:
 # Add Priority Level
 dataset = priority_level(dataset)
 
+# Add Access Process
+dataset = access_process(dataset)
+
 
 # Post to Mapbox
 dataset.upload_to_mapbox("vacant_properties")

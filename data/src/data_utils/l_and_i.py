@@ -112,7 +112,6 @@ def l_and_i(primary_featurelayer):
 
     complaints_with_opa_id['li_complaints'] = complaints_with_opa_id['li_complaints'].apply(
         remove_nan_strings)
-    complaints_with_opa_id.to_csv('complaints_with_opa_id.csv')
 
     # Merge the complaints values back into the primary_featurelayer
     primary_featurelayer.opa_join(
