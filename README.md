@@ -79,6 +79,7 @@ Please see [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj
       <td align="center" valign="top" width="14.28%"><a href="https://kedgard-cordero.netlify.app"><img src="https://avatars.githubusercontent.com/u/97119018?v=4?s=100" width="100px;" alt="Kedgard Cordero"/><br /><sub><b>Kedgard Cordero</b></sub></a><br /><a href="#code-Kenny4297" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/brandonfcohen1"><img src="https://avatars.githubusercontent.com/u/2308834?v=4?s=100" width="100px;" alt="Brandon Cohen"/><br /><sub><b>Brandon Cohen</b></sub></a><br /><a href="#code-brandonfcohen1" title="Code">💻</a> <a href="#doc-brandonfcohen1" title="Documentation">📖</a> <a href="#infra-brandonfcohen1" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jroper-scottlogic"><img src="https://avatars.githubusercontent.com/u/125047199?v=4?s=100" width="100px;" alt="Jack Roper"/><br /><sub><b>Jack Roper</b></sub></a><br /><a href="#code-jroper-scottlogic" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://coroflot.com/willonabike"><img src="https://avatars.githubusercontent.com/u/1652510?v=4?s=100" width="100px;" alt="Will"/><br /><sub><b>Will</b></sub></a><br /><a href="#research-willonabike" title="Research">🔬</a> <a href="#design-willonabike" title="Design">🎨</a></td>
     </tr>
   </tbody>
 </table>
