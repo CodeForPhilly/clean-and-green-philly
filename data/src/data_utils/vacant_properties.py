@@ -5,7 +5,7 @@ from config.psql import conn
 
 def vacant_properties():
     vacant_properties = FeatureLayer(
-        name="Vacant Properties", esri_rest_urls=VACANT_PROPS_LAYERS_TO_LOAD, cols=["ADDRESS", "OWNER1", "OWNER2", "BLDG_DESC", "COUNCILDISTRICT", "ZONINGBASEDISTRICT", "ZIPCODE", "OPA_ID"]
+        name="Vacant Properties", esri_rest_urls=VACANT_PROPS_LAYERS_TO_LOAD, cols=["ADDRESS", "OWNER1", "OWNER2", "BLDG_DESC", "COUNCILDISTRICT", "ZONINGBASEDISTRICT", "ZIPCODE", "OPA_ID", "parcel_type"]
     )
 
     vacant_properties.gdf.dropna(subset=["OPA_ID"], inplace=True)
