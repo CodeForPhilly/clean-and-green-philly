@@ -11,16 +11,8 @@ export interface DimensionFilter {
   values: string[];
 }
 
-export interface MeasureFilter {
-  type: "measure";
-  min: number;
-  max: number;
-}
-
-type FilterValue = DimensionFilter | MeasureFilter;
-
 interface FilterState {
-  [property: string]: FilterValue;
+  [property: string]: DimensionFilter;
 }
 
 interface FilterContextProps {
@@ -33,7 +25,10 @@ type FilterAction =
   | { type: "TOGGLE_DIMENSION"; property: string; dimension: string }
   | { type: "SET_MEASURES"; property: string; min: number; max: number };
 
-function filterReducer(state: FilterState, action: FilterAction): FilterState {
+const filterReducer = (
+  state: FilterState,
+  action: FilterAction
+): FilterState => {
   switch (action.type) {
     case "SET_DIMENSIONS":
       return {
@@ -53,19 +48,10 @@ function filterReducer(state: FilterState, action: FilterAction): FilterState {
       }
       return state;
     }
-    case "SET_MEASURES":
-      return {
-        ...state,
-        [action.property]: {
-          type: "measure",
-          min: action.min,
-          max: action.max,
-        },
-      };
     default:
       throw new Error("Unhandled action type");
   }
-}
+};
 
 export const FilterContext = createContext<FilterContextProps | undefined>(
   undefined

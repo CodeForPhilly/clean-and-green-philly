@@ -13,33 +13,24 @@ import { useFilter } from "@/context/FilterContext";
 type DimensionFilterProps = {
   property: string;
   display: string;
+  options: string[];
 };
 
 const DimensionFilter: React.FC<DimensionFilterProps> = ({
   property,
   display,
+  options,
 }) => {
-  const [dimensions, setDimensions] = useState<string[]>([]);
+  const [dimensions, setDimensions] = useState<string[]>(options);
   const { filter, dispatch } = useFilter();
   const filterValue = filter[property];
-  const isDimensionFilter = filterValue?.type === "dimension";
-  const [selectedKeys, setSelectedKeys] = useState<string[]>(
-    isDimensionFilter ? filterValue.values : []
-  );
+  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchDimensions = async () => {
-      const response = await fetch(
-        `${window.location.origin}/api/getUniqueDimensionValues?p=${property}`
-      );
-      const data = await response.json();
-      setDimensions(data);
-      dispatch({ type: "SET_DIMENSIONS", property, dimensions: data });
-      setSelectedKeys(data);
-    };
-
-    fetchDimensions();
-  }, [property, dispatch]);
+    setDimensions(options);
+    dispatch({ type: "SET_DIMENSIONS", property, dimensions });
+    setSelectedKeys(dimensions);
+  }, [property, dispatch, options]);
 
   const toggleDimension = (dimension: string) => {
     dispatch({ type: "TOGGLE_DIMENSION", property, dimension });
@@ -122,9 +113,7 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
               onClick={() => toggleDimension(dimension)}
               size="sm"
               color={
-                isDimensionFilter && filterValue.values.includes(dimension)
-                  ? "success"
-                  : "default"
+                filterValue?.values.includes(dimension) ? "success" : "default"
               }
               className="cursor-pointer mb-2 p-2"
             >

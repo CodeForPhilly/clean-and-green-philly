@@ -1,5 +1,6 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import DELINQUENCIES_QUERY
+import pandas as pd
 
 
 def deliquencies(primary_featurelayer):
@@ -7,22 +8,23 @@ def deliquencies(primary_featurelayer):
         name="Property Tax Delinquencies",
         carto_sql_queries=DELINQUENCIES_QUERY,
         use_wkb_geom_field="the_geom",
+        cols=[
+            "opa_number",
+            "total_due",
+            "is_actionable",
+            "payment_agreement",
+            "num_years_owed",
+            "most_recent_year_owed",
+            "total_assessment",
+            "sheriff_sale",
+        ]
     )
 
-    red_cols_to_keep = [
+    primary_featurelayer.opa_join(
+        tax_deliquencies.gdf,
         "opa_number",
-        "total_due",
-        "is_actionable",
-        "payment_agreement",
-        "num_years_owed",
-        "most_recent_year_owed",
-        "total_assessment",
-        "sheriff_sale",
-        "geometry",
-    ]
+    )
 
-    tax_deliquencies.gdf = tax_deliquencies.gdf[red_cols_to_keep]
-
-    primary_featurelayer.spatial_join(tax_deliquencies)
+    primary_featurelayer.gdf["sheriff_sale"].fillna("N", inplace=True)
 
     return primary_featurelayer

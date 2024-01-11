@@ -83,22 +83,12 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   const legendRef = useRef<LegendControl | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
 
-  const tileSource = {
-    type: "vector",
-    url: "mapbox://nlebovits.vacant_properties",
-  };
-
   // filter function
   const updateFilter = () => {
     if (!map) return;
 
     const isAnyFilterEmpty = Object.values(filter).some((filterItem) => {
-      if (filterItem.type === "dimension") {
-        return filterItem.values.length === 0;
-      } else if (filterItem.type === "measure") {
-        return filterItem.min === filterItem.max;
-      }
-      return true;
+      return filterItem.values.length === 0;
     });
 
     if (isAnyFilterEmpty) {
@@ -108,15 +98,10 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
     const mapFilter = Object.entries(filter).reduce(
       (acc, [property, filterItem]) => {
-        if (filterItem.type === "dimension" && filterItem.values.length) {
+        if (filterItem.values.length) {
           acc.push(["in", property, ...filterItem.values]);
-        } else if (
-          filterItem.type === "measure" &&
-          filterItem.min !== filterItem.max
-        ) {
-          acc.push([">=", property, filterItem.min]);
-          acc.push(["<=", property, filterItem.max]);
         }
+
         return acc;
       },
       [] as any[]
