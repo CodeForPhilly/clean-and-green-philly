@@ -39,39 +39,39 @@ const SinglePropertyDetail = ({
             <table>
             <tbody>
               <tr>
-                <th className="text-left font-normal">Neighborhood</th>
+                <th scope="row" className="text-left font-normal">Neighborhood</th>
                 <td>{neighborhood}</td>
               </tr>
               <tr>
-                <th className="text-left font-normal">Gun Crime Rate</th>
+                <th scope="row" className="text-left font-normal">Gun Crime Rate</th>
                 <td>{guncrime_density}</td>
               </tr>
               <tr>
-                <th className="text-left font-normal">Drug Crime</th>
+                <th scope="row" className="text-left font-normal">Drug Crime</th>
                 <td>???</td>
               </tr>
               <tr>
-                <th className="text-left font-normal">Tree Canopy Gap</th>
+                <th scope="row" className="text-left font-normal">Tree Canopy Gap</th>
                 <td>{Math.round(tree_canopy_gap * 100)}%</td>
               </tr>
               <tr>
-                <th className="text-left font-normal">Suggested Priority</th>
+                <th scope="row" className="text-left font-normal">Suggested Priority</th>
                 <td>{priority_level}</td>
               </tr>
               <tr>
-                <th className="text-left font-normal">L&I Violations</th>
+                <th scope="row" className="text-left font-normal">L&I Violations</th>
                 <td>???</td>
               </tr>
               <tr>
-                <th className="text-left font-normal">Tax delinquency</th>
+                <th scope="row" className="text-left font-normal">Tax delinquency</th>
                 <td>???</td>
               </tr>
               <tr>
-                <th className="text-left font-normal">Acquisition Process</th>
+                <th scope="row" className="text-left font-normal">Acquisition Process</th>
                 <td>{access_process}</td>
               </tr>
               <tr>
-                <th className="text-left font-normal">Zip Code</th>
+                <th scope="row" className="text-left font-normal">Zip Code</th>
                 <td>{zipcode}</td>
               </tr>
             </tbody>
