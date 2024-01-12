@@ -44,7 +44,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   const [selectedProperty, setSelectedProperty] =
     useState<MapboxGeoJSONFeature | null>(null);
 
-  const rowsPerPage = 20;
+  const rowsPerPage = 6;
   const pages = Math.ceil(featuresInView.length / rowsPerPage);
 
   const items = useMemo(() => {
