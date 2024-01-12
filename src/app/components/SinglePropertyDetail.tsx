@@ -35,7 +35,7 @@ const SinglePropertyDetail = ({
           <h2 className="font-bold text-2xl">{address}</h2>
         </div>
         <div className="flex">
-          <div className="p-2">
+          <div className="p-2 flex-grow">
             <table>
             <tbody>
               <tr>
@@ -52,7 +52,7 @@ const SinglePropertyDetail = ({
               </tr>
               <tr>
                 <th className="text-left font-normal">Tree Canopy Gap</th>
-                <td>{tree_canopy_gap}</td>
+                <td>{Math.round(tree_canopy_gap * 100)}%</td>
               </tr>
               <tr>
                 <th className="text-left font-normal">Suggested Priority</th>
@@ -77,14 +77,14 @@ const SinglePropertyDetail = ({
             </tbody>
             </table>
           </div>
-          <div className="p-2">
+          <div className="p-2 flex-grow">
             <h3 className="pb-1 font-bold text-lg">Owner</h3>
-            <div className="pb-2">
+            <div className="pb-3">
               <p>{owner_1}</p>
               <p>{owner_2}</p>
             </div>
             <h3 className="pb-1 font-bold text-lg">Relevant Info</h3>
-            <p className="pb-2">weeeee</p>
+            <p>????</p>
           </div>
         </div>
       </div>
