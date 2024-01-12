@@ -129,7 +129,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   };
 
   const handleSetFeatures = (event: any) => {
-    if (event.type !== "moveend") return;
+    if (!["moveend", "sourcedata"].includes(event.type)) return;
     if (!map) return;
     setLoading(true);
 
@@ -253,6 +253,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
           setMap(e.target);
         }}
         onSourceData={(e) => {
+          console.log(e);
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}

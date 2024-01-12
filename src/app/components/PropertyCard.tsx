@@ -8,11 +8,12 @@ interface PropertyCardProps {
 }
 
 const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
-  const { ADDRESS, guncrime_density, tree_canopy_gap } = feature.properties;
+  const { address, guncrime_density, tree_canopy_gap, priority_level, OPA_ID } =
+    feature.properties;
 
   const roundedCanopyGap = Math.round(tree_canopy_gap * 100);
-  const randomImage = `/image1.jpg`;
-  const atlasUrl = `https://atlas.phila.gov/${ADDRESS}`;
+  const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
+  const atlasUrl = `https://atlas.phila.gov/${address}`;
 
   return (
     <div
@@ -23,22 +24,24 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
         <div className="bg-white rounded-lg overflow-hidden">
           <div className="relative h-48 w-full rounded-lg overflow-hidden">
             <Image
-              src={randomImage}
-              alt={`Property at ${ADDRESS}`}
+              src={image}
+              alt={`Property at ${address}`}
               layout="fill"
               objectFit="cover"
             />
           </div>
           <div className="p-4">
-            <div className="font-bold text-xl">{ADDRESS}</div>
+            <div className="font-bold text-xl">{address}</div>
             <div className="text-gray-700 mb">
               {guncrime_density} Crime Rate, {roundedCanopyGap}% Canopy Gap
             </div>
-            <a href={atlasUrl} target="_blank" rel="noopener noreferrer">Click here for Atlas Info</a>
+            <a href={atlasUrl} target="_blank" rel="noopener noreferrer">
+              Click here for Atlas Info
+            </a>
           </div>
           <div className="px-4 pb-2">
             <Chip color="success" variant="solid" size="sm">
-              High Priority
+              {priority_level}
             </Chip>
           </div>
         </div>

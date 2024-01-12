@@ -42,3 +42,6 @@ next-env.d.ts
 
 # generated tiles
 */tiles/*
+
+y/
+cleanandgreenphilly_gcloud_bucket/

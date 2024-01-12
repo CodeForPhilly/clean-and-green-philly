@@ -20,6 +20,7 @@ sqlalchemy = "*"
 psycopg2-binary = "*"
 geoalchemy2 = "*"
 mapbox = "*"
+google-cloud-storage = "*"
 
 [dev-packages]
 
