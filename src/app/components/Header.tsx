@@ -3,6 +3,11 @@ import {
   NavbarContent,
   NavbarBrand,
   NavbarItem,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+  Button,
 } from "@nextui-org/react";
 import IconLink from "./IconLink";
 import Link from 'next/link';
@@ -25,17 +30,15 @@ const navbarButtons = [
     text: "Map",
     href: "/map",
   },
-  {
-    icon: <BoltIcon />,
-    text: "Take Action",
-    href: "/actions",
-  },
+  // Removed the Take Action button here since it will be replaced with a dropdown
   {
     icon: <InformationCircleIcon />,
     text: "About",
     href: "/about",
   },
 ];
+
+
 
 const Header = () => (
   <Navbar maxWidth="full" position="sticky">
@@ -62,6 +65,26 @@ const Header = () => (
           <IconLink icon={icon} text={text} href={href} />
         </NavbarItem>
       ))}
+
+      {/* Dropdown for Take Action */}
+      <Dropdown>
+        <DropdownTrigger>
+          <Button variant="light" size="sm">
+            <BoltIcon className="h-5 w-5" aria-hidden="true" />
+            Take Action
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu aria-label="Take Action">
+          <DropdownItem key="get-access">
+            <Link href="/get-access">Get Access</Link>
+          </DropdownItem>
+          <DropdownItem key="transform-property">
+            <Link href="/transform-property">Transform a Property</Link>
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+
+      {/* The rest of the navbar items */}
     </NavbarContent>
   </Navbar>
 );
