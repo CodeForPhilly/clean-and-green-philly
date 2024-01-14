@@ -70,7 +70,7 @@ const Header = () => (
       <Dropdown>
         <DropdownTrigger>
           <Button size="md" className="flex items-center hover:text-blue-500 hover:underline bg-white">
-            <BoltIcon className="h-5 w-5" aria-hidden="true" />
+            <BoltIcon className="h-6 w-6" aria-hidden="true" />
             Take Action
           </Button>
         </DropdownTrigger>
