@@ -8,7 +8,7 @@ import {
   PropertyMap,
   PropertyDetailSection,
   SidePanel,
-  MapControlBar,
+  SidePanelControlBar,
   FilterView,
 } from "../components";
 
@@ -17,7 +17,6 @@ export type BarClickOptions = "filter" | "download" | "detail" | "list";
 const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
-  const [zoom, setZoom] = useState<number>(13);
   const [loading, setLoading] = useState(false);
 
   return (
@@ -29,12 +28,11 @@ const Page: FC = () => {
             <div className="flex-grow h-full">
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
-                setZoom={setZoom}
                 setLoading={setLoading}
               />
             </div>
             <SidePanel>
-              <MapControlBar
+              <SidePanelControlBar
                 currentView={currentView}
                 setCurrentView={setCurrentView}
               />
