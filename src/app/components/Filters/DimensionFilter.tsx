@@ -9,6 +9,7 @@ import {
   DropdownSection,
 } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
+import { isEmpty } from "lodash";
 
 type DimensionFilterProps = {
   property: string;
@@ -21,16 +22,16 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
   display,
   options,
 }) => {
-  const [dimensions, setDimensions] = useState<string[]>(options);
   const { filter, dispatch } = useFilter();
-  const filterValue = filter[property];
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
 
+  const filterValue = filter[property];
+
   useEffect(() => {
-    setDimensions(options);
-    dispatch({ type: "SET_DIMENSIONS", property, dimensions });
-    setSelectedKeys(dimensions);
-  }, [property, dispatch, options]);
+    if (!isEmpty(filterValue)) return;
+    dispatch({ type: "SET_DIMENSIONS", property, dimensions: options });
+    setSelectedKeys(options);
+  }, [property, dispatch]);
 
   const toggleDimension = (dimension: string) => {
     dispatch({ type: "TOGGLE_DIMENSION", property, dimension });
@@ -52,15 +53,15 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
   };
 
   const toggleAllDimensions = () => {
-    if (selectedKeys.length === dimensions.length) {
+    if (selectedKeys.length === options.length) {
       setSelectedKeys([]);
       dispatch({ type: "SET_DIMENSIONS", property, dimensions: [] });
     } else {
-      setSelectedKeys(dimensions);
+      setSelectedKeys(options);
       dispatch({
         type: "SET_DIMENSIONS",
         property,
-        dimensions: dimensions,
+        dimensions: options,
       });
     }
   };
@@ -71,7 +72,7 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
         <div className="text-md">{display}</div>
       </div>
       <div className="space-x-2">
-        {dimensions.length > 10 ? (
+        {options.length > 10 ? (
           <>
             <Dropdown>
               <DropdownTrigger>
@@ -99,25 +100,25 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
                   </DropdownItem>
                 </DropdownSection>
                 <DropdownSection>
-                  {dimensions.map((dimension) => (
-                    <DropdownItem key={dimension}>{dimension}</DropdownItem>
+                  {options.map((option) => (
+                    <DropdownItem key={option}>{option}</DropdownItem>
                   ))}
                 </DropdownSection>
               </DropdownMenu>
             </Dropdown>
           </>
         ) : (
-          dimensions.map((dimension, index) => (
+          options.map((options, index) => (
             <Chip
               key={index}
-              onClick={() => toggleDimension(dimension)}
+              onClick={() => toggleDimension(options)}
               size="sm"
               color={
-                filterValue?.values.includes(dimension) ? "success" : "default"
+                filterValue?.values.includes(options) ? "success" : "default"
               }
               className="cursor-pointer mb-2 p-2"
             >
-              {dimension}
+              {options}
             </Chip>
           ))
         )}

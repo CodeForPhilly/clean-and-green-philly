@@ -69,12 +69,10 @@ const MapControls = () => (
 
 interface PropertyMapProps {
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
-  setZoom: Dispatch<SetStateAction<number>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
 }
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
-  setZoom,
   setLoading,
 }: any) => {
   const { filter } = useFilter();
@@ -134,7 +132,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     setLoading(true);
 
     const zoom = map.getZoom();
-    setZoom(zoom);
 
     let bbox: [PointLike, PointLike] | undefined = undefined;
     if (zoom < 14) {
@@ -253,7 +250,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
           setMap(e.target);
         }}
         onSourceData={(e) => {
-          console.log(e);
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}
