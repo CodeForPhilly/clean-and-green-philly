@@ -1,5 +1,5 @@
 import os
 
-FORCE_RELOAD = True
+FORCE_RELOAD = False
 USE_CRS = "EPSG:2272"
 MAPBOX_TOKEN = os.environ.get("CFP_MAPBOX_TOKEN_UPLOADER")
