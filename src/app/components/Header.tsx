@@ -43,7 +43,7 @@ const navbarButtons = [
 
 const Header = () => (
   <Navbar maxWidth="full" position="sticky">
-    <NavbarContent className="basis-1/5 sm:basis-full" justify="start" style={{ paddingTop: '16px' }}>
+    <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" style={{ paddingTop: '16px', paddingLeft: '32px'}} justify="start">
       <NavbarBrand>
         <Link href="/"> 
             <Image 
@@ -53,10 +53,6 @@ const Header = () => (
               height={67}
             />
         </Link>
-        <span className="text-sm text-gray-600 ml-4">
-          Clean and green vacant properties
-          <br /> to reduce gun crime.
-        </span>
       </NavbarBrand>
     </NavbarContent>
 
