@@ -2,7 +2,9 @@ from classes.featurelayer import FeatureLayer
 from config.psql import conn
 from constants.services import VACANT_PROPS_LAYERS_TO_LOAD
 from data_utils import *
+from data_utils.drug_crimes import drug_crimes
 import sys
+
 
 # Ensure the directory containing awkde is in the Python path
 awkde_path = "/usr/src/app"
@@ -17,6 +19,7 @@ services = [
     tree_canopy,
     nbhoods,
     gun_crimes,
+    drug_crimes,
     deliquencies,
     opa_properties,
 ]
