@@ -22,7 +22,9 @@ const SinglePropertyDetail = ({
 
   return (
     <div className="w-full p-4">
-      <Button onClick={() => setSelectedProperty(null)}> Back </Button>
+      <div className="pb-4">
+        <Button onClick={() => setSelectedProperty(null)}> Back </Button>
+      </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
           <Image
