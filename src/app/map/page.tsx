@@ -11,6 +11,7 @@ import {
   SidePanelControlBar,
   FilterView,
 } from "../components";
+import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
@@ -18,6 +19,7 @@ const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
   const [loading, setLoading] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState<MapboxGeoJSONFeature | null>(null);
 
   return (
     <FilterProvider>
@@ -29,6 +31,7 @@ const Page: FC = () => {
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
                 setLoading={setLoading}
+                setSelectedProperty={setSelectedProperty}
               />
             </div>
             <SidePanel>
@@ -42,6 +45,8 @@ const Page: FC = () => {
                   featuresInView={featuresInView}
                   display={currentView as "detail" | "list"}
                   loading={loading}
+                  selectedProperty={selectedProperty}
+                  setSelectedProperty={setSelectedProperty}
                 />
               )}
               {currentView === "download" && (
