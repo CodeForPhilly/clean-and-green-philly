@@ -90,6 +90,15 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "bacitracin",
+      "name": "Tracy Tran",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7329799?v=4",
+      "profile": "https://www.linkedin.com/in/tracyctran/",
+      "contributions": [
+        "a11y"
+      ]
     }
   ]
 }
