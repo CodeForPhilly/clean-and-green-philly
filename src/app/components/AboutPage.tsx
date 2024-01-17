@@ -47,7 +47,7 @@ export default function AboutPage() {
           We created the dataset based on the original research conducted by Dr. Eugenia South and her colleagues, as well as many conversations with stakeholders, including community residents, CDCs, City government offices, academic researchers, and more.
         </p>
         <p className="text-lg">
-          All of the code used to build this tool is <a href="https://github.com/CodeForPhilly/vacant-lots-proj" target="_blank" rel="noopener noreferrer" className="text-primary">available on our GitHub repository</a>. We hope to add data documentation in the near future. For further questions about our methods, feel free to reach out to us at <a href="mailto:cleangreenphilly@gmail.com" className="text-primary">cleangreenphilly@gmail.com</a>.
+          All of the code used to build this tool is <a href="https://github.com/CodeForPhilly/vacant-lots-proj" target="_blank" rel="noopener noreferrer" className="text-primary">available on our GitHub repository</a>. We hope to add data documentation in the near future. For further questions about our methods, feel free to reach out to us at <a href="mailto:cleanandgreenphl@gmail.com" className="text-primary">cleangreenphilly@gmail.com</a>.
         </p>
         <br></br>
         <h2 className="text-3xl font-semibold mb-4">Who built this?</h2>
@@ -63,7 +63,7 @@ export default function AboutPage() {
         <br></br>
         <h2 className="text-3xl font-semibold mb-4">Feedback</h2>
         <p className="text-lg mb-4">
-        If you find issues in this website or would like to offer us feedback, please reach out to us at <a href="mailto:cleangreenphilly@gmail.com" className="text-primary">cleangreenphilly@gmail.com</a>.
+        If you find issues in this website or would like to offer us feedback, please reach out to us at <a href="mailto:cleanandgreenphl@gmail.com" className="text-primary">cleangreenphilly@gmail.com</a>.
         </p>
       </div>
     </div>
