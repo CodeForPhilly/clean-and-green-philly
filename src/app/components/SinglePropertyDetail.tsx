@@ -16,7 +16,22 @@ const SinglePropertyDetail = ({
   const { properties } = property;
   if (!properties) return null;
 
-  const { access_process, address, tree_canopy_gap, market_value, neighborhood, open_violations_past_year, owner_1, owner_2, priority_level, guncrime_density, total_due, zipcode, OPA_ID } = properties;
+  const {
+    access_process,
+    address,
+    council_district,
+    guncrime_density,
+    market_value,
+    neighborhood,
+    open_violations_past_year,
+    owner_1,
+    owner_2,
+    priority_level,
+    total_due,
+    tree_canopy_gap,
+    zipcode,
+    OPA_ID,
+  } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
 
@@ -45,6 +60,10 @@ const SinglePropertyDetail = ({
                 <tr>
                   <th scope="row" className="table-cell">Neighborhood</th>
                   <td className="table-cell">{neighborhood}</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="table-cell">Council District</th>
+                  <td className="table-cell">{council_district}</td>
                 </tr>
                 <tr>
                   <th scope="row" className="table-cell">Gun Crime Rate</th>
