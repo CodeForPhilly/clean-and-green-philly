@@ -34,3 +34,7 @@ DRUGCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, point_x AS x, p
 DELINQUENCIES_QUERY = "SELECT * FROM real_estate_tax_delinquencies"
 
 OPA_PROPERTIES_QUERY = "SELECT market_value, sale_date, sale_price, parcel_number, the_geom FROM opa_properties_public"
+
+UNSAFE_BUILDINGS_QUERY = "SELECT * FROM unsafe"
+
+IMMINENT_DANGER_BUILDINGS_QUERY = "SELECT * FROM imm_dang"
