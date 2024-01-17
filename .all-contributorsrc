@@ -81,6 +81,15 @@
       "contributions": [
         "a11y"
       ]
+    },
+    {
+      "login": "markgoetz",
+      "name": "Mark Goetz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4121678?v=4",
+      "profile": "http://markandrewgoetz.com",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
