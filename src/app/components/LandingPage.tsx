@@ -4,59 +4,49 @@ import { ArrowRightIcon } from "@heroicons/react/20/solid";
 
 const images = [
   {
-    src: "/image1.jpg",
-    alt: "Vacant lot in Philadelphia",
-    captionTitle: "Search",
-    captionBody:
-      "Look up specific properties to find out information about them.",
+    src: "/dirtyLot.jpg",
+    alt: "Dirty lot in Philadelphia",
   },
   {
-    src: "/image2.jpg",
-    alt: "Vacant lot in Philadelphia",
-    captionTitle: "Filter",
-    captionBody:
-      "Filter by neighborhood to find which properties could be cleaned to make a big impact.",
+    src: "/cleaningLot.jpg",
+    alt: "Clean lot in Philadelphia",
   },
   {
-    src: "/image3.jpg",
-    alt: "Vacant lot in Philadelphia",
-    captionTitle: "Download",
-    captionBody: "Download this data to analyze with Excel or other tools.",
+    src: "/greenedLot.jpg",
+    alt: "Green lot in Philadelphia",
   },
 ];
 
 const LandingPage = () => (
-  <div className="container mx-auto pt-20">
-    <div className="text-left text-2xl my-10">
-      Research has shown that cleaning and greening vacant properties can reduce
-      gun violence by as much as 29%. This website can help you identify the properties where you can have the biggest impact.
+  <div className="flex flex-col mx-auto pt-20 pl-32">
+    <div className="md:text-5xl my-10 p-2">
+      <p className="font-bold">Cleaning and greening vacant <br /> properties can reduce gun violence in <br /> neighborhoods as much as 29%.</p>
     </div>
-    <div className="flex justify-between space-x-2.5">
-      {images.map(({ src, alt, captionTitle, captionBody }) => (
-        <LandingPageImage
-          key={src}
-          src={src}
-          alt={alt}
-          captionTitle={captionTitle}
-          captionBody={captionBody}
-        />
-      ))}
-    </div>
-    <div className="flex justify-center mt-20">
-      <Link href="/map">
-        <Button size="lg" className="bg-green-60">
-          Use the Map
+    <div className="relative">
+      <div className="md:absolute bottom-10 right-8">
+        <p className="">This tool can empower anyone to find properties that <br /> would make a significant impact in Philadelphia and <br /> take action.</p>
+        <Link href="/map">
+          <Button size="lg" className="bg-green-60">
+           Find properties
           <ArrowRightIcon className="w-5 h-5 ml-2" />
-        </Button>
-      </Link>
-      <div className="ml-4">
+          </Button>
+        </Link>
         <Link href="/about">
           <Button size="lg" color="default">
-            Learn More about the Project
+             Learn More 
             <ArrowRightIcon className="w-5 h-5 ml-2" />
           </Button>
         </Link>
       </div>
+    </div>
+    <div className="scale-150 relative flex justify-between space-x-2 p-10 h-32 ">
+      {images.map(({ src, alt,}) => (
+        <LandingPageImage
+          key={src}
+          src={src}
+          alt={alt}
+        />
+      ))}
     </div>
   </div>
 );

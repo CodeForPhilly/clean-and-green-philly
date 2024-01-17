@@ -13,22 +13,15 @@ import IconLink from "./IconLink";
 import Link from 'next/link';
 import Image from 'next/image'
 import {
-  HomeIcon,
-  MapIcon,
-  QuestionMarkCircleIcon,
+  MapPinIcon,
   InformationCircleIcon,
-  BoltIcon,
+  HandRaisedIcon,
 } from "@heroicons/react/20/solid";
 
 const navbarButtons = [
   {
-    icon: <HomeIcon />,
-    text: "Intro",
-    href: "/",
-  },
-  {
-    icon: <MapIcon />,
-    text: "Map",
+    icon: <MapPinIcon />,
+    text: "Find Properties",
     href: "/map",
   },
   // Removed the Take Action button here since it will be replaced with a dropdown
@@ -43,7 +36,7 @@ const navbarButtons = [
 
 const Header = () => (
   <Navbar maxWidth="full" position="sticky">
-    <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" style={{ paddingTop: '16px', paddingLeft: '32px'}} justify="start">
+    <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full " style={{ paddingTop: '16px', paddingLeft: '32px'}} justify="start">
       <NavbarBrand>
         <Link href="/"> 
             <Image 
@@ -70,7 +63,7 @@ const Header = () => (
       <Dropdown>
         <DropdownTrigger>
           <Button size="md" className="flex items-center hover:text-blue-500 hover:underline bg-white">
-            <BoltIcon className="h-6 w-6" aria-hidden="true" />
+            <HandRaisedIcon className="h-6 w-6" aria-hidden="true" />
             Take Action
           </Button>
         </DropdownTrigger>
