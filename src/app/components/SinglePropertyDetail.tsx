@@ -16,8 +16,9 @@ const SinglePropertyDetail = ({
   const { properties } = property;
   if (!properties) return null;
 
-  const { access_process, address, tree_canopy_gap, neighborhood, owner_1, owner_2, priority_level, guncrime_density, zipcode, OPA_ID } = properties;
+  const { access_process, address, tree_canopy_gap, market_value, neighborhood, open_violations_past_year, owner_1, owner_2, priority_level, guncrime_density, total_due, zipcode, OPA_ID } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
+  const atlasUrl = `https://atlas.phila.gov/${address}`;
 
   return (
     <div className="w-full p-4">
@@ -31,50 +32,51 @@ const SinglePropertyDetail = ({
             objectFit="cover"
           />
         </div>
-        <div className="p-4">
+        <div className="py-4 px-2">
           <h2 className="font-bold text-2xl">{address}</h2>
+          <a href={atlasUrl} target="_blank" rel="noopener noreferrer">Atlas Info</a>
         </div>
         <div className="flex">
           <div className="p-2 flex-grow">
             <table>
-            <tbody>
-              <tr>
-                <th scope="row" className="text-left font-normal">Neighborhood</th>
-                <td>{neighborhood}</td>
-              </tr>
-              <tr>
-                <th scope="row" className="text-left font-normal">Gun Crime Rate</th>
-                <td>{guncrime_density}</td>
-              </tr>
-              <tr>
-                <th scope="row" className="text-left font-normal">Drug Crime</th>
-                <td>???</td>
-              </tr>
-              <tr>
-                <th scope="row" className="text-left font-normal">Tree Canopy Gap</th>
-                <td>{Math.round(tree_canopy_gap * 100)}%</td>
-              </tr>
-              <tr>
-                <th scope="row" className="text-left font-normal">Suggested Priority</th>
-                <td>{priority_level}</td>
-              </tr>
-              <tr>
-                <th scope="row" className="text-left font-normal">L&I Violations</th>
-                <td>???</td>
-              </tr>
-              <tr>
-                <th scope="row" className="text-left font-normal">Tax delinquency</th>
-                <td>???</td>
-              </tr>
-              <tr>
-                <th scope="row" className="text-left font-normal">Acquisition Process</th>
-                <td>{access_process}</td>
-              </tr>
-              <tr>
-                <th scope="row" className="text-left font-normal">Zip Code</th>
-                <td>{zipcode}</td>
-              </tr>
-            </tbody>
+              <tbody>
+                <tr>
+                  <th scope="row" className="table-cell">Neighborhood</th>
+                  <td className="table-cell">{neighborhood}</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="table-cell">Gun Crime Rate</th>
+                  <td className="table-cell">{guncrime_density}</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="table-cell">Tree Canopy Gap</th>
+                  <td className="table-cell">{Math.round(tree_canopy_gap * 100)}%</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="table-cell">Suggested Priority</th>
+                  <td className="table-cell">{priority_level}</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="table-cell">L&I Violations</th>
+                  <td className="table-cell">{open_violations_past_year}</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="table-cell">Tax delinquency</th>
+                  <td className="table-cell">{total_due ? 'Yes' : 'No'}</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="table-cell">Access Process</th>
+                  <td className="table-cell">{access_process}</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="table-cell">Zip Code</th>
+                  <td className="table-cell">{zipcode}</td>
+                </tr>
+                <tr>
+                  <th scope="row" className="table-cell">Market Value</th>
+                  <td className="table-cell">${market_value.toLocaleString()}</td>
+                </tr>
+              </tbody>
             </table>
           </div>
           <div className="p-2 flex-grow">
@@ -83,8 +85,6 @@ const SinglePropertyDetail = ({
               <p>{owner_1}</p>
               <p>{owner_2}</p>
             </div>
-            <h3 className="pb-1 font-bold text-lg">Relevant Info</h3>
-            <p>????</p>
           </div>
         </div>
       </div>
