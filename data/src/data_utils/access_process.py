@@ -30,7 +30,9 @@ def access_process(dataset):
         access_process = ""
 
         # Decision Points
-        city_owner_agency_is_plb = row["city_owner_agency"] == 'PLB'
+        city_owner_agency = row["city_owner_agency"]
+        city_owner_agency_is_plb = city_owner_agency == 'PLB'
+        city_owner_agency_is_not_plb = city_owner_agency in ['PRA', 'PHDC', 'PLB']
         sheriff_sale = row["sheriff_sale"] == 'Y'
         market_value_over_1000 = row["market_value"] is not None and float(
             row["market_value"]) > 1000
@@ -48,6 +50,8 @@ def access_process(dataset):
 
         if city_owner_agency_is_plb:
             access_process = "Land Bank"
+        elif city_owner_agency_is_not_plb:
+            access_process = "Do Nothing (Too Complicated)"
         else:
             if sale_date_6_months_ago:
                 if sheriff_sale:
