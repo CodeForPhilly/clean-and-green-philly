@@ -24,6 +24,8 @@ import Map, {
   AttributionControl,
 } from "react-map-gl";
 import { FillLayer, VectorSourceRaw } from "react-map-gl";
+import { MapboxGeoJSONFeature } from "mapbox-gl";
+
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
@@ -70,10 +72,12 @@ const MapControls = () => (
 interface PropertyMapProps {
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
 }
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
   setLoading,
+  setSelectedProperty,
 }: any) => {
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
@@ -115,6 +119,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       });
 
       if (features.length > 0) {
+        setSelectedProperty(features[0]);
         setPopupInfo({
           longitude: event.lngLat.lng,
           latitude: event.lngLat.lat,
