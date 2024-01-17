@@ -126,6 +126,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
           feature: features[0].properties,
         });
       } else {
+        setSelectedProperty(null);
         setPopupInfo(null);
       }
     }
