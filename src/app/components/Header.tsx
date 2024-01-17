@@ -11,6 +11,7 @@ import {
 } from "@nextui-org/react";
 import IconLink from "./IconLink";
 import Link from 'next/link';
+import Image from 'next/image'
 import {
   HomeIcon,
   MapIcon,
@@ -42,12 +43,15 @@ const navbarButtons = [
 
 const Header = () => (
   <Navbar maxWidth="full" position="sticky">
-    <NavbarContent className="basis-1/5 sm:basis-full" justify="start">
+    <NavbarContent className="basis-1/5 sm:basis-full" justify="start" style={{ paddingTop: '16px' }}>
       <NavbarBrand>
         <Link href="/"> 
-          <span className="font-bold text-3xl">
-            Clean & Green Philly
-          </span>
+            <Image 
+              src="/logo.svg"
+              alt="Clean & Green Philly Logo"
+              width={112} 
+              height={67}
+            />
         </Link>
         <span className="text-sm text-gray-600 ml-4">
           Clean and green vacant properties
