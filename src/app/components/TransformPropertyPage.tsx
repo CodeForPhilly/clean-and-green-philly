@@ -4,7 +4,8 @@ import { get } from "http";
 
 export default function TransformPropertyPage() {
   return (
-    <div className="container mx-auto pt-20 h-screen">
+    <div className="flex flex-col min-h-screen">
+    <div className="flew-grow container mx-auto pt-20">
     <h1 className="text-4xl font-bold mb-6">Transform a Property</h1>
 
 
@@ -77,13 +78,7 @@ export default function TransformPropertyPage() {
 
     </p>
 
-    <h2 className="text-2xl font-bold mt-8">Disclaimer</h2>
-    <p>
-        This website is not legal advice. It is intended to provide general information in summary form on legal topics, current at the time of first publication. The contents do not constitute legal advice and should not be relied upon as such. Formal legal advice should be sought in particular matters.
-        <br /><br />
-        Clean & Green Philly is not responsible for the content of any third-party sites linked to from this website. Links are provided as a convenience only, and do not imply endorsement of the linked site by Clean & Green Philly.
-    </p>
-
+    </div>
     </div>
   );
 }
