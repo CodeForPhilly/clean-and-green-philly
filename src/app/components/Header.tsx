@@ -42,8 +42,8 @@ const navbarButtons = [
 
 
 const Header = () => (
-  <Navbar maxWidth="full" position="sticky">
-    <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" style={{ paddingTop: '16px', paddingLeft: '32px'}} justify="start">
+  <Navbar maxWidth="full" position="sticky" height="auto">
+    <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" style={{ paddingTop: '16px', paddingBottom: '16px', paddingLeft: '32px'}} justify="start">
       <NavbarBrand>
         <Link href="/"> 
             <Image 
