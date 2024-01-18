@@ -63,7 +63,7 @@ export default function AboutPage() {
         <br></br>
         <h2 className="text-3xl font-semibold mb-4">Feedback</h2>
         <p className="text-lg mb-4">
-        If you find issues in this website or would like to offer us feedback, please reach out to us at <a href="mailto:cleanandgreenphl@gmail.com" className="text-primary">cleangreenphilly@gmail.com</a>.
+        If you find issues in this website or would like to offer us feedback, please reach out to us at <a href="mailto:cleanandgreenphl@gmail.com" className="text-primary">cleanandgreenphl@gmail.com</a>.
         </p>
         <h2 className="text-3xl font-semibold mb-4">Removing Properties</h2>
         <p className="text-lg mb-4">
