@@ -4,7 +4,8 @@ import { get } from "http";
 
 export default function GetAccessPage() {
   return (
-    <div className="container mx-auto pt-20 h-screen">
+    <div className="flex flex-col min-h-screen">
+    <div className="container mx-auto pt-20">
     <h1 className="text-4xl font-bold mb-6">Request to Remove a Property Listing</h1>
 
     <p>
@@ -17,6 +18,7 @@ export default function GetAccessPage() {
     Our team reserves the right to make the final decision on whether a property will be removed from the dashboard. Please note that requests to remove properties solely for personal gain, such as protecting private parking spaces or assisting negligent property owners, will not be entertained. By submitting a request, you acknowledge and agree that the final decision rests with our team, and not all requests may result in the removal of a property listing.
     </p>
 
+    </div>
     </div>
   );
 }

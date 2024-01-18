@@ -4,7 +4,8 @@ import { get } from "http";
 
 export default function GetAccessPage() {
   return (
-    <div className="container mx-auto pt-20 h-screen">
+    <div className="flex flex-col min-h-screen">
+    <div className="container mx-auto pt-20">
     <h1 className="text-4xl font-bold mb-6">Legal Disclaimer</h1>
 
     <h2 className="text-2xl font-bold mt-8">Acceptance of Terms and Conditions of Use</h2>
@@ -40,6 +41,7 @@ export default function GetAccessPage() {
 
     </p>
 
+    </div>
     </div>
   );
 }
