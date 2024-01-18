@@ -65,6 +65,10 @@ export default function AboutPage() {
         <p className="text-lg mb-4">
         If you find issues in this website or would like to offer us feedback, please reach out to us at <a href="mailto:cleanandgreenphl@gmail.com" className="text-primary">cleangreenphilly@gmail.com</a>.
         </p>
+        <h2 className="text-3xl font-semibold mb-4">Removing Properties</h2>
+        <p className="text-lg mb-4">
+        If you would like to request that we remove a property from the dashboard, please see our <a href="/request-removal" className="text-primary">Request Removal page</a>.
+        </p>
       </div>
     </div>
   );
