@@ -21,9 +21,8 @@ import Map, {
   FullscreenControl,
   ScaleControl,
   GeolocateControl,
-  AttributionControl,
 } from "react-map-gl";
-import { FillLayer, VectorSourceRaw } from "react-map-gl";
+import { FillLayer } from "react-map-gl";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
@@ -61,11 +60,10 @@ const layerStyle: FillLayer = {
 
 const MapControls = () => (
   <>
-    <GeolocateControl position="top-left" />
-    <FullscreenControl position="top-left" />
-    <NavigationControl position="top-left" />
+    <GeolocateControl position="bottom-right" />
+    <FullscreenControl position="bottom-right" />
+    <NavigationControl showCompass={false} position="bottom-right" />
     <ScaleControl />
-    <AttributionControl />
   </>
 );
 
@@ -260,7 +258,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         }}
         onMoveEnd={handleSetFeatures}
         maxZoom={20}
-        minZoom={13}
+        minZoom={10}
       >
         <MapControls />
         {popupInfo && (

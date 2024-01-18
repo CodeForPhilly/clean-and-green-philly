@@ -24,10 +24,10 @@ const Page: FC = () => {
   return (
     <FilterProvider>
       <NextUIProvider>
-        <div className="h-screen overflow-hidden">
+        <div className="flex flex-col h-screen overflow-hidden">
           <Header />
-          <div className="flex h-full relative">
-            <div className="flex-grow h-full">
+          <div className="flex flex-grow overflow-hidden">
+            <div className="flex-grow overflow-auto">
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
                 setLoading={setLoading}
@@ -64,7 +64,7 @@ const Page: FC = () => {
                     </a>
                     . Let us know who you are and why you want the data. We are
                     happy to share the data with anyone with community-oriented
-                    interests!
+                    interests.
                   </p>
                 </div>
               )}

@@ -26,4 +26,5 @@ body {
 
 .mapboxgl-ctrl-legend {
   @apply p-5 w-full;
+  padding: 2px;
 }
