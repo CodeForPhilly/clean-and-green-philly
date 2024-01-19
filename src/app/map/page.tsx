@@ -11,6 +11,7 @@ import {
   SidePanelControlBar,
   FilterView,
 } from "../components";
+import Footer from "../components/Footer";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
@@ -24,7 +25,7 @@ const Page: FC = () => {
   return (
     <FilterProvider>
       <NextUIProvider>
-        <div className="flex flex-col h-screen overflow-hidden">
+        <div className="flex flex-col h-screen">
           <Header />
           <div className="flex flex-grow overflow-hidden">
             <div className="flex-grow overflow-auto">
@@ -35,10 +36,15 @@ const Page: FC = () => {
               />
             </div>
             <SidePanel>
+
+              <div className="pt-2 sticky top-0 z-10">
               <SidePanelControlBar
                 currentView={currentView}
                 setCurrentView={setCurrentView}
+                featuresInView={featuresInView}
               />
+              </div>
+
               {currentView === "filter" && <FilterView />}
               {["detail", "list"].includes(currentView) && (
                 <PropertyDetailSection
@@ -70,6 +76,7 @@ const Page: FC = () => {
               )}
             </SidePanel>
           </div>
+
         </div>
       </NextUIProvider>
     </FilterProvider>
