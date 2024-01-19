@@ -3,19 +3,19 @@
 import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import Header from "../components/Header";
-import AboutPage from "../components/AboutPage";
+import GetAccessPage from "../components/GetAccessPage";
 import Footer from "../components/Footer";
 
-const About: FC = () => {
+const GetAccess: FC = () => {
   return (
     <NextUIProvider>
       <div className="h-screen">
         <Header />
-        <AboutPage />
+        <GetAccessPage />
         <Footer />
       </div>
     </NextUIProvider>
   );
 };
 
-export default About;
+export default GetAccess;

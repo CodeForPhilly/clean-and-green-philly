@@ -3,17 +3,19 @@
 import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import Header from "../components/Header";
-import RecommendedActions from "../components/RecommendedActions";
+import RequestRemovalPage from "../components/RequestRemovalPage";
+import Footer from "../components/Footer";
 
-const Actions: FC = () => {
+const RequestRemoval: FC = () => {
   return (
     <NextUIProvider>
       <div className="h-screen">
         <Header />
-        <RecommendedActions />
+        <RequestRemovalPage />
+        <Footer />
       </div>
     </NextUIProvider>
   );
 };
 
-export default Actions;
+export default RequestRemoval;

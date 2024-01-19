@@ -8,33 +8,34 @@ import {
   PropertyMap,
   PropertyDetailSection,
   SidePanel,
-  MapControlBar,
+  SidePanelControlBar,
   FilterView,
 } from "../components";
+import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
 const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
-  const [zoom, setZoom] = useState<number>(13);
   const [loading, setLoading] = useState(false);
+  const [selectedProperty, setSelectedProperty] = useState<MapboxGeoJSONFeature | null>(null);
 
   return (
     <FilterProvider>
       <NextUIProvider>
-        <div className="h-screen overflow-hidden">
+        <div className="flex flex-col h-screen overflow-hidden">
           <Header />
-          <div className="flex h-full relative">
-            <div className="flex-grow h-full">
+          <div className="flex flex-grow overflow-hidden">
+            <div className="flex-grow overflow-auto">
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
-                setZoom={setZoom}
                 setLoading={setLoading}
+                setSelectedProperty={setSelectedProperty}
               />
             </div>
             <SidePanel>
-              <MapControlBar
+              <SidePanelControlBar
                 currentView={currentView}
                 setCurrentView={setCurrentView}
               />
@@ -44,6 +45,8 @@ const Page: FC = () => {
                   featuresInView={featuresInView}
                   display={currentView as "detail" | "list"}
                   loading={loading}
+                  selectedProperty={selectedProperty}
+                  setSelectedProperty={setSelectedProperty}
                 />
               )}
               {currentView === "download" && (
@@ -61,7 +64,7 @@ const Page: FC = () => {
                     </a>
                     . Let us know who you are and why you want the data. We are
                     happy to share the data with anyone with community-oriented
-                    interests!
+                    interests.
                   </p>
                 </div>
               )}

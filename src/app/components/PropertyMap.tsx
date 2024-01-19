@@ -21,9 +21,10 @@ import Map, {
   FullscreenControl,
   ScaleControl,
   GeolocateControl,
-  AttributionControl,
 } from "react-map-gl";
-import { FillLayer, VectorSourceRaw } from "react-map-gl";
+import { FillLayer } from "react-map-gl";
+import { MapboxGeoJSONFeature } from "mapbox-gl";
+
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
@@ -35,47 +36,46 @@ const layerStyle: FillLayer = {
   paint: {
     "fill-color": [
       "match",
-      ["get", "guncrime_density"], // get the value of the guncrime_density property
-      "Bottom 50%",
+      ["get", "priority_level"], // get the value of the guncrime_density property
+      "Low Priority",
       "#B0E57C", // Light Green
-      "Top 50%",
+      "Medium Priority",
       "#FFD700", // Gold
-      "Top 25%",
-      "#FF8C00", // Dark Orange
-      "Top 10%",
+      //"Medium Priority",
+      //"#FF8C00", // Dark Orange
+      "High Priority",
       "#FF4500", // Orange Red
-      "Top 5%",
-      "#B22222", // FireBrick
-      "Top 1%",
-      "#8B0000", // Dark Rednp
+      //"High Priority",
+      //"#B22222", // FireBrick
+      //"Top 1%",
+      //"#8B0000", // Dark Rednp
       "#0000FF", // default color if none of the categories match
     ],
     "fill-opacity": 0.7,
   },
   metadata: {
-    name: "Guncrime Density",
+    name: "Priority Level",
   },
 };
 
 const MapControls = () => (
   <>
-    <GeolocateControl position="top-left" />
-    <FullscreenControl position="top-left" />
-    <NavigationControl position="top-left" />
+    <GeolocateControl position="bottom-right" />
+    <FullscreenControl position="bottom-right" />
+    <NavigationControl showCompass={false} position="bottom-right" />
     <ScaleControl />
-    <AttributionControl />
   </>
 );
 
 interface PropertyMapProps {
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
-  setZoom: Dispatch<SetStateAction<number>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
 }
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
-  setZoom,
   setLoading,
+  setSelectedProperty,
 }: any) => {
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
@@ -117,12 +117,14 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       });
 
       if (features.length > 0) {
+        setSelectedProperty(features[0]);
         setPopupInfo({
           longitude: event.lngLat.lng,
           latitude: event.lngLat.lat,
           feature: features[0].properties,
         });
       } else {
+        setSelectedProperty(null);
         setPopupInfo(null);
       }
     }
@@ -134,7 +136,6 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     setLoading(true);
 
     const zoom = map.getZoom();
-    setZoom(zoom);
 
     let bbox: [PointLike, PointLike] | undefined = undefined;
     if (zoom < 14) {
@@ -253,12 +254,11 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
           setMap(e.target);
         }}
         onSourceData={(e) => {
-          console.log(e);
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}
         maxZoom={20}
-        minZoom={13}
+        minZoom={10}
       >
         <MapControls />
         {popupInfo && (

@@ -33,16 +33,18 @@ interface PropertyDetailSectionProps {
   featuresInView: MapboxGeoJSONFeature[];
   display: "detail" | "list";
   loading: boolean;
+  selectedProperty: MapboxGeoJSONFeature | null;
+  setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
 }
 
 const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   featuresInView,
   display,
   loading,
+  selectedProperty,
+  setSelectedProperty,
 }) => {
   const [page, setPage] = useState(1);
-  const [selectedProperty, setSelectedProperty] =
-    useState<MapboxGeoJSONFeature | null>(null);
 
   const rowsPerPage = 6;
   const pages = Math.ceil(featuresInView.length / rowsPerPage);
