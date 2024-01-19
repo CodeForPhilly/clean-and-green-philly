@@ -20,27 +20,6 @@ import {
   BoltIcon,
 } from "@heroicons/react/20/solid";
 
-const navbarButtons = [
-  {
-    icon: <HomeIcon />,
-    text: "Intro",
-    href: "/",
-  },
-  {
-    icon: <MapIcon />,
-    text: "Map",
-    href: "/map",
-  },
-  // Removed the Take Action button here since it will be replaced with a dropdown
-  {
-    icon: <InformationCircleIcon />,
-    text: "About",
-    href: "/about",
-  },
-];
-
-
-
 const Header = () => (
   <Navbar maxWidth="full" position="sticky" height="auto" isBordered>
     <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full" style={{ paddingTop: '16px', paddingBottom: '16px', paddingLeft: '32px'}} justify="start">
@@ -60,11 +39,10 @@ const Header = () => (
       className="hidden sm:flex basis-1/5 sm:basis-full"
       justify="end"
     >
-      {navbarButtons.map(({ icon, text, href }) => (
-        <NavbarItem key={text}>
-          <IconLink icon={icon} text={text} href={href} />
-        </NavbarItem>
-      ))}
+      {/* Find Properties */}
+      <NavbarItem key="Find Properties">
+        <IconLink icon={<MapIcon />} text="Find Properties" href="/map" />
+      </NavbarItem>
 
       {/* Dropdown for Take Action */}
       <Dropdown>
@@ -84,7 +62,10 @@ const Header = () => (
         </DropdownMenu>
       </Dropdown>
 
-      {/* The rest of the navbar items */}
+      {/* About */}
+      <NavbarItem key="About">
+        <IconLink icon={<InformationCircleIcon />} text="About" href="/about" />
+      </NavbarItem>
     </NavbarContent>
   </Navbar>
 );
