@@ -8,6 +8,7 @@ import React, {
   SetStateAction,
 } from "react";
 import mapboxgl, { Map as MapboxMap, PointLike } from "mapbox-gl";
+import { Polygon } from 'geojson';
 import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
@@ -241,10 +242,35 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         layers: ["vacant_properties"],
       });
       const mapItem = features.find(feature => feature.properties?.OPA_ID === id);
-      console.log({ mapItem });
-      // TODO: Focus the map on the given lat/long.
+
+      if (mapItem != null) {
+        const coordinates = (mapItem.geometry as Polygon).coordinates[0];
+        // Perform a simple average of the polygon coordinates, consider a more complicated algorithm
+        const totalPoint = coordinates.reduce(
+          (prevSum, position) => [prevSum[0] + position[0], prevSum[1] + position[1]],
+          [0, 0],
+        );
+        const averagePoint = [totalPoint[0] / coordinates.length, totalPoint[1] / coordinates.length] as [number, number];
+        map.flyTo({
+          center: averagePoint,
+        });
+        setPopupInfo({
+          longitude: averagePoint[0],
+          latitude: averagePoint[1],
+          feature: selectedProperty?.properties,
+        });
+      }
     }
   }, [id]);
+
+  useEffect(
+    () => {
+      if (id == null) {
+        setPopupInfo(null);
+      }
+    },
+    [id]
+  );
 
   const changeCursor = (e: any, cursorType: "pointer" | "default") => {
     e.target.getCanvas().style.cursor = cursorType;
