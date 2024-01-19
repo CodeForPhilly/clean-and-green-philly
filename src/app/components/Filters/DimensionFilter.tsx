@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Chip } from "@nextui-org/react";
+import { Chip, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
-import { Tooltip } from "@nextui-org/react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 type DimensionFilterProps = {
@@ -27,6 +26,7 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
     setSelectedKeys(newSelectedKeys);
     dispatch({ type: "SET_DIMENSIONS", property, dimensions: newSelectedKeys });
   };
+
 
   return (
     <div className="pb-6">
