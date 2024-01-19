@@ -22,11 +22,15 @@ const filters = [
       "Conservatorship",
     ],
   },
+
+  /*
   {
     property: "tactical_urbanism",
     display: "Tactical Urbanism",
     options: ["Y", "N"],
   },
+*/
+
 ];
 
 const FilterView: FC = () => {
