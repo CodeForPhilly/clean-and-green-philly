@@ -16,12 +16,30 @@ const SinglePropertyDetail = ({
   const { properties } = property;
   if (!properties) return null;
 
-  const { address, priority_level, guncrime_density, OPA_ID } = properties;
+  const {
+    access_process,
+    address,
+    council_district,
+    guncrime_density,
+    market_value,
+    neighborhood,
+    open_violations_past_year,
+    owner_1,
+    owner_2,
+    priority_level,
+    total_due,
+    tree_canopy_gap,
+    zipcode,
+    OPA_ID,
+  } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
+  const atlasUrl = `https://atlas.phila.gov/${address}`;
 
   return (
-    <div className="max-w-sm w-full md:w-1/2 p-4">
-      <Button onClick={() => setSelectedProperty(null)}> Back </Button>
+    <div className="w-full p-4">
+      <div className="pb-4">
+        <Button onClick={() => setSelectedProperty(null)}> Back </Button>
+      </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
           <Image
@@ -31,16 +49,64 @@ const SinglePropertyDetail = ({
             objectFit="cover"
           />
         </div>
-        <div className="p-4">
-          <div className="font-bold text-xl">{address}</div>
-          <div className="text-gray-700 mb">{`Guncrime Density: ${guncrime_density}`}</div>
-        </div>
-        <div className="px-4 pb-2">
-          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">
-            {priority_level}
-          </span>
+      </div>
+      <div className="py-4 px-2">
+        <div className="flex justify-between content-center">
+          <h2 className="font-bold text-2xl">{address}</h2>
+          <a href={atlasUrl} target="_blank" rel="noopener noreferrer">Atlas Info</a>
         </div>
       </div>
+      <table className="w-full">
+        <tbody>
+          <tr>
+            <th scope="row" className="table-cell">Suggested Priority</th>
+            <td className="table-cell">{priority_level}</td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">Gun Crime Rate</th>
+            <td className="table-cell">{guncrime_density}</td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">Tree Canopy Gap</th>
+            <td className="table-cell">{Math.round(tree_canopy_gap * 100)}%</td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">Access Process</th>
+            <td className="table-cell">{access_process}</td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">Owner</th>
+            <td className="table-cell">
+              <p>{owner_1}</p>
+              {owner_2 && (<p>{owner_2}</p>)}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">Zip Code</th>
+            <td className="table-cell">{zipcode}</td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">Neighborhood</th>
+            <td className="table-cell">{neighborhood}</td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">Council District</th>
+            <td className="table-cell">{council_district}</td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">Market Value</th>
+            <td className="table-cell">${market_value.toLocaleString()}</td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">Tax delinquency</th>
+            <td className="table-cell">{total_due ? 'Yes' : 'No'}</td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">L&I Violations</th>
+            <td className="table-cell">{open_violations_past_year}</td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 };

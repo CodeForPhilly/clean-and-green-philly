@@ -28,3 +28,7 @@ body {
   @apply p-5 w-full;
   padding: 2px;
 }
+
+.table-cell {
+  @apply p-2 border border-gray-300 text-left font-normal;
+}
