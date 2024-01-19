@@ -8,4 +8,4 @@ services:
       - VACANT_LOTS_DB_REMOTE
       - PYTHONUNBUFFERED=1
     volumes:
-      - .user/Documents/vacant-lots-proj/data
+      - ./src:/usr/src/app

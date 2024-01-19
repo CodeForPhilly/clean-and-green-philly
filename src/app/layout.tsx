@@ -8,7 +8,7 @@ export const metadata: Metadata = {
   title: "Clean Green Philly",
   description: "Vacant Properties App",
   icons: {
-    icon: "/favicon/favicon.ico",
+    icon: "/favicon.ico",
   },
 };
 
