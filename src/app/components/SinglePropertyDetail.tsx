@@ -53,8 +53,18 @@ const SinglePropertyDetail = ({
       <div className="py-4 px-2">
         <div className="flex justify-between content-center">
           <h2 className="font-bold text-2xl">{address}</h2>
-          <a href={atlasUrl} target="_blank" rel="noopener noreferrer">Atlas Info</a>
         </div>
+        <div style={{ textAlign: 'left', marginTop: '1em' }}>
+        <Button
+          as="a"
+          href={atlasUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          color="primary"
+        >
+          View this property on Atlas
+        </Button>
+      </div>
       </div>
       <table className="w-full">
         <tbody>
