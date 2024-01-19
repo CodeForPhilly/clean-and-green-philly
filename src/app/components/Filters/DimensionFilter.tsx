@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Chip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
+import { Tooltip } from "@nextui-org/react";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 type DimensionFilterProps = {
   property: string;
   display: string;
   options: string[];
+  tooltip: string;
 };
 
 const DimensionFilter: React.FC<DimensionFilterProps> = ({
   property,
   display,
   options,
+  tooltip
 }) => {
   const { filter, dispatch } = useFilter();
   const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
@@ -26,8 +30,13 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
 
   return (
     <div className="pb-6">
-      <div className="flex items-center justify-between mb-2">
-        <div className="text-md">{display}</div>
+      <div className="flex items-center mb-2">
+        <div className="text-md flex items-center">
+          {display}
+          <Tooltip content={tooltip} placement="top" showArrow color="primary">
+            <InformationCircleIcon className="h-5 w-5 text-gray-500 ml-2 cursor-pointer" />
+          </Tooltip>
+        </div>
       </div>
       <div className="space-x-2">
         {options.map((option, index) => (
