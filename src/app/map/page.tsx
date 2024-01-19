@@ -51,11 +51,11 @@ const Page: FC = () => {
                     If you are interested in accessing the data behind this
                     dashboard, please reach out to us at
                     <a
-                      href="mailto:cleangreenphilly@gmail.com"
+                      href="mailto:cleanandgreenphl@gmail.com"
                       className="text-blue-600 hover:text-blue-800 underline"
                     >
                       {" "}
-                      cleangreenphilly@gmail.com
+                      cleanandgreenphl@gmail.com
                     </a>
                     . Let us know who you are and why you want the data. We are
                     happy to share the data with anyone with community-oriented
