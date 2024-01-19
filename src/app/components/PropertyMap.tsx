@@ -242,26 +242,47 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         layers: ["vacant_properties"],
       });
       const mapItem = features.find(feature => feature.properties?.OPA_ID === id);
-
+  
       if (mapItem != null) {
         const coordinates = (mapItem.geometry as Polygon).coordinates[0];
-        // Perform a simple average of the polygon coordinates, consider a more complicated algorithm
-        const totalPoint = coordinates.reduce(
-          (prevSum, position) => [prevSum[0] + position[0], prevSum[1] + position[1]],
-          [0, 0],
-        );
-        const averagePoint = [totalPoint[0] / coordinates.length, totalPoint[1] / coordinates.length] as [number, number];
-        map.flyTo({
-          center: averagePoint,
-        });
-        setPopupInfo({
-          longitude: averagePoint[0],
-          latitude: averagePoint[1],
-          feature: selectedProperty?.properties,
-        });
+  
+        if (coordinates.length > 0) {
+          // Filter out coordinates that are not available
+          const validCoordinates = coordinates.filter(([x, y]) => !isNaN(x) && !isNaN(y));
+  
+          if (validCoordinates.length > 0) {
+            const totalPoint = validCoordinates.reduce(
+              (prevSum, position) => [prevSum[0] + position[0], prevSum[1] + position[1]],
+              [0, 0],
+            );
+  
+            let finalPoint = [totalPoint[0] / validCoordinates.length, totalPoint[1] / validCoordinates.length];
+  
+            // Check if the finalPoint is valid
+            if (isNaN(finalPoint[0]) || isNaN(finalPoint[1])) {
+              // Fallback to first coordinate of the polygon if finalPoint is invalid
+              finalPoint = validCoordinates[0];
+            }
+  
+            const pointForMap = { lng: finalPoint[0], lat: finalPoint[1] };
+  
+            map.flyTo({
+              center: pointForMap,
+            });
+  
+            setPopupInfo({
+              longitude: finalPoint[0],
+              latitude: finalPoint[1],
+              feature: selectedProperty?.properties,
+            });
+          }
+        }
       }
     }
   }, [id]);
+  
+  
+  
 
   useEffect(
     () => {
