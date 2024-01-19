@@ -5,12 +5,12 @@ def tactical_urbanism(dataset):
     tactical_urbanism_values = []
 
     for idx, row in dataset.gdf.iterrows():
-        tactical_urbanism = "N"
+        tactical_urbanism = "No"
 
-        if (row["parcel_type"] == "Land" and 
-            row["unsafe_building"] == "N" and 
-            row["imm_dang_building"] == "N"):
-            tactical_urbanism = "Y"
+        if (row["parcel_type"] == "Land" and
+            row["unsafe_building"] == "N" and
+                row["imm_dang_building"] == "N"):
+            tactical_urbanism = "Yes"
 
         tactical_urbanism_values.append(tactical_urbanism)
 
