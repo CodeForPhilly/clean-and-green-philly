@@ -7,7 +7,8 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import mapboxgl, { Map as MapboxMap, Point, PointLike } from "mapbox-gl";
+import mapboxgl, { Map as MapboxMap, PointLike } from "mapbox-gl";
+import { Polygon } from 'geojson';
 import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
@@ -70,13 +71,15 @@ const MapControls = () => (
 interface PropertyMapProps {
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  selectedProperty: MapboxGeoJSONFeature | null;
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
 }
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
   setLoading,
+  selectedProperty,
   setSelectedProperty,
-}: any) => {
+}) => {
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
@@ -230,6 +233,44 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       updateFilter();
     }
   }, [map, filter, updateFilter]);
+
+  const id = selectedProperty?.properties?.OPA_ID ?? null;
+  useEffect(() => {
+    /** Ticket #87 - focus on map when a property is selected */
+    if (id && map != null) {
+      const features = map.queryRenderedFeatures(undefined, {
+        layers: ["vacant_properties"],
+      });
+      const mapItem = features.find(feature => feature.properties?.OPA_ID === id);
+
+      if (mapItem != null) {
+        const coordinates = (mapItem.geometry as Polygon).coordinates[0];
+        // Perform a simple average of the polygon coordinates, consider a more complicated algorithm
+        const totalPoint = coordinates.reduce(
+          (prevSum, position) => [prevSum[0] + position[0], prevSum[1] + position[1]],
+          [0, 0],
+        );
+        const averagePoint = [totalPoint[0] / coordinates.length, totalPoint[1] / coordinates.length] as [number, number];
+        map.flyTo({
+          center: averagePoint,
+        });
+        setPopupInfo({
+          longitude: averagePoint[0],
+          latitude: averagePoint[1],
+          feature: selectedProperty?.properties,
+        });
+      }
+    }
+  }, [id]);
+
+  useEffect(
+    () => {
+      if (id == null) {
+        setPopupInfo(null);
+      }
+    },
+    [id]
+  );
 
   const changeCursor = (e: any, cursorType: "pointer" | "default") => {
     e.target.getCanvas().style.cursor = cursorType;
