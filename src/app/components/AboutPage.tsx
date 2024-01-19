@@ -1,8 +1,9 @@
-import { Accordion, AccordionItem, Button, Link, Image } from "@nextui-org/react";
-import { get } from "http";
-
+import React from "react";
+import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, useDisclosure, Image, Tooltip } from "@nextui-org/react";
 
 export default function AboutPage() {
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow grid grid-cols-2 gap-4 py-8 px-24">
@@ -20,7 +21,7 @@ export default function AboutPage() {
           Clean & Green Philly was built to respond to Philadelphia’s historic gun violence problem. With homicides trending up since 2013, and a record high of 562 gun deaths in 2021, community members need concrete solutions.
           </p>
           <div className="mt-1 flex items-center justify-center">
-            <Image src="/annual_guncrimes_plot.png" alt="A graph of gun crimes in Philadelphia since 2013" width={600} height={400} />
+            <Image src="/annual_guncrimes_plot.png" alt="A graph of gun crimes in Philadelphia since 2013" height={500} />
           </div>
           <p className="text-lg mb-4">
             Many solutions focus on long-term impact, including <a href="https://controller.phila.gov/philadelphia-audits/fy23-anti-violence-budget/#/" target="_blank" rel="noopener noreferrer" className="text-primary">nearly 80% of the City of Philadelphia’s anti-violence spending</a>. But immediate, actionable approaches are also needed. Clean & Green Philly helps to fill that gap by promoting interventions in vacant properties. Our goal is to make it as easy as possible for everyday Philadelphians to take action to reduce gun violence in our city.
@@ -30,8 +31,32 @@ export default function AboutPage() {
           <a href="https://www.pnas.org/doi/10.1073/pnas.1718503115" target="_blank" rel="noopener noreferrer" className="text-primary"> greening vacant lots</a> in Philadelphia reduced gun violence by as much as 29% in the surrounding area.
           </p>
           <div className="mt-4 flex items-center justify-center">
-            <Image src="/main_article_summary.png" alt="Excerpts from research on reducing gun violence with vacant lot interventions" width={600} height={400} />
-          </div>
+
+          <Tooltip content="Click image to expand" color={"primary"} offset={-150}>
+          <Image 
+            src="/main_article_summary.png" 
+            alt="Excerpts from research on reducing gun violence with vacant lot interventions" 
+            width={300} 
+            onClick={onOpen} // using the onOpen function from useDisclosure
+            title="Click to expand"
+            className="cursor-pointer mx-auto" // Center the image and change cursor on hover
+          />
+          </Tooltip>
+
+          <Modal size='3xl' isOpen={isOpen} onClose={() => onOpenChange()} shadow="lg">
+            <ModalContent>
+              <ModalBody className="flex flex-col items-center justify-center"> {/* Centering content in the modal */}
+                <Image 
+                  src="/main_article_summary.png" 
+                  alt="Excerpts from research on reducing gun violence with vacant lot interventions" 
+                  className="max-w-full h-auto" // Responsive width, maintain aspect ratio
+                  width={600}
+                />
+              </ModalBody>
+            </ModalContent>
+          </Modal>
+
+         </div>
           <p className="text-lg">
             Transforming Philadelphia’s vacant lots should be a key strategy to combating gun violence here. But in a city with nearly 40,000 vacant properties, the main obstacle is figuring out which properties to prioritize and how to get access to them. Clean & Green Philly helps solve this problem by using public data to identify high-priority properties, filter them based on the possible ways of intervening, and connect users to resources that can support these interventions.
           </p>
