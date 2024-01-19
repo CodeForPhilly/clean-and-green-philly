@@ -107,6 +107,13 @@ const SinglePropertyDetail = ({
           </tr>
         </tbody>
       </table>
+      <p className="font-bold mt-4 py-2">
+      Remove This Property
+      </p>
+      <p>
+      If you would like to request that we remove this property from the dashboard, please see our{" "}
+      <a href="/request-removal" className="text-primary">Request Removal page</a>.
+    </p>
     </div>
   );
 };
