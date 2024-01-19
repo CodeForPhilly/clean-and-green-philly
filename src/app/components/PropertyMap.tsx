@@ -262,19 +262,16 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       >
         <MapControls />
         {popupInfo && (
-          <Popup
-            longitude={popupInfo.longitude}
-            latitude={popupInfo.latitude}
-            closeOnClick={false}
-            onClose={() => setPopupInfo(null)}
-          >
-            <div>
-              <p className="font-bold">{popupInfo.feature.ADDRESS}</p>
-              <p>Owner: {popupInfo.feature.OWNER1}</p>
-              <p>Gun Crime Density: {popupInfo.feature.guncrime_density}</p>
-              <p>Tree Canopy Gap: {popupInfo.feature.tree_canopy_gap}</p>
-            </div>
-          </Popup>
+         <Popup
+         longitude={popupInfo.longitude}
+         latitude={popupInfo.latitude}
+         closeOnClick={false}
+         onClose={() => setPopupInfo(null)}
+       >
+         <div>
+           <p className="font-semibold text-md p-1">{popupInfo.feature.address}</p>
+         </div>
+       </Popup>
         )}
         <Source
           id="vacant_properties"
