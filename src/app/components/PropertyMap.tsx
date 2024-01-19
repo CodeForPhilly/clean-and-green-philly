@@ -7,7 +7,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import mapboxgl, { Map as MapboxMap, Point, PointLike } from "mapbox-gl";
+import mapboxgl, { Map as MapboxMap, PointLike } from "mapbox-gl";
 import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
@@ -70,13 +70,15 @@ const MapControls = () => (
 interface PropertyMapProps {
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  selectedProperty: MapboxGeoJSONFeature | null;
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
 }
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
   setLoading,
+  selectedProperty,
   setSelectedProperty,
-}: any) => {
+}) => {
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
@@ -230,6 +232,19 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       updateFilter();
     }
   }, [map, filter, updateFilter]);
+
+  const id = selectedProperty?.properties?.OPA_ID ?? null;
+  useEffect(() => {
+    /** Ticket #87 - focus on map when a property is selected */
+    if (id && map != null) {
+      const features = map.queryRenderedFeatures(undefined, {
+        layers: ["vacant_properties"],
+      });
+      const mapItem = features.find(feature => feature.properties?.OPA_ID === id);
+      console.log({ mapItem });
+      // TODO: Focus the map on the given lat/long.
+    }
+  }, [id]);
 
   const changeCursor = (e: any, cursorType: "pointer" | "default") => {
     e.target.getCanvas().style.cursor = cursorType;

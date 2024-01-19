@@ -31,6 +31,7 @@ const Page: FC = () => {
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
                 setLoading={setLoading}
+                selectedProperty={selectedProperty}
                 setSelectedProperty={setSelectedProperty}
               />
             </div>
