@@ -6,11 +6,13 @@ const filters = [
     property: "priority_level",
     display: "Priority Level",
     options: ["Low Priority", "Medium Priority", "High Priority"],
+    tooltip: "For information on how this is calculated, see the About page"
   },
   {
     property: "parcel_type",
     display: "Parcel Type",
     options: ["Land", "Building"],
+    tooltip: "Parcel type from City of Philadelphia data"
   },
   {
     property: "access_process",
@@ -19,8 +21,9 @@ const filters = [
       "Buy Property",
       "Land Bank",
       "Private Land Use Agreement",
-      "Conservatorship",
+      "Conservatorship"
     ],
+    tooltip: "For information on what these mean, see the Get Access page"
   },
 
   /*
@@ -37,13 +40,13 @@ const FilterView: FC = () => {
   return (
     <div className="p-6">
       <div className="font-semibold text-xl mb-2">Filters</div>
-
-      {filters.map(({ property, display, options }) => (
+      {filters.map(({ property, display, options, tooltip }) => (
         <DimensionFilter
           key={property}
           property={property}
           options={options}
           display={display}
+          tooltip={tooltip}
         />
       ))}
     </div>
