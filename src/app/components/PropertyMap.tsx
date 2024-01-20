@@ -7,7 +7,8 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import mapboxgl, { Map as MapboxMap, Point, PointLike } from "mapbox-gl";
+import mapboxgl, { Map as MapboxMap, PointLike } from "mapbox-gl";
+import { Polygon } from 'geojson';
 import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
@@ -70,13 +71,15 @@ const MapControls = () => (
 interface PropertyMapProps {
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  selectedProperty: MapboxGeoJSONFeature | null;
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
 }
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
   setLoading,
+  selectedProperty,
   setSelectedProperty,
-}: any) => {
+}) => {
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
@@ -230,6 +233,65 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       updateFilter();
     }
   }, [map, filter, updateFilter]);
+
+  const id = selectedProperty?.properties?.OPA_ID ?? null;
+  useEffect(() => {
+    /** Ticket #87 - focus on map when a property is selected */
+    if (id && map != null) {
+      const features = map.queryRenderedFeatures(undefined, {
+        layers: ["vacant_properties"],
+      });
+      const mapItem = features.find(feature => feature.properties?.OPA_ID === id);
+  
+      if (mapItem != null) {
+        const coordinates = (mapItem.geometry as Polygon).coordinates[0];
+  
+        if (coordinates.length > 0) {
+          // Filter out coordinates that are not available
+          const validCoordinates = coordinates.filter(([x, y]) => !isNaN(x) && !isNaN(y));
+  
+          if (validCoordinates.length > 0) {
+            const totalPoint = validCoordinates.reduce(
+              (prevSum, position) => [prevSum[0] + position[0], prevSum[1] + position[1]],
+              [0, 0],
+            );
+  
+            let finalPoint = [totalPoint[0] / validCoordinates.length, totalPoint[1] / validCoordinates.length];
+  
+            // Check if the finalPoint is valid
+            if (isNaN(finalPoint[0]) || isNaN(finalPoint[1])) {
+              // Fallback to first coordinate of the polygon if finalPoint is invalid
+              finalPoint = validCoordinates[0];
+            }
+  
+            const pointForMap = { lng: finalPoint[0], lat: finalPoint[1] };
+  
+            map.flyTo({
+              center: pointForMap,
+            });
+  
+            setPopupInfo({
+              longitude: finalPoint[0],
+              latitude: finalPoint[1],
+              feature: selectedProperty?.properties,
+            });
+          }
+        }
+      }
+    }
+  }, [id]);
+  
+  
+  
+
+  useEffect(
+    () => {
+      if (id == null) {
+        setPopupInfo(null);
+      }
+    },
+    [id]
+  );
 
   const changeCursor = (e: any, cursorType: "pointer" | "default") => {
     e.target.getCanvas().style.cursor = cursorType;
