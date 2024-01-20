@@ -28,6 +28,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
               alt={`Property at ${address}`}
               layout="fill"
               objectFit="cover"
+              unoptimized
             />
           </div>
           <div className="p-4">
