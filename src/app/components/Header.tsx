@@ -62,12 +62,26 @@ const Header = () => (
         </DropdownMenu>
       </Dropdown>
 
-      {/* About */}
-      <NavbarItem key="About">
-        <IconLink icon={<InformationCircleIcon />} text="About" href="/about" />
-      </NavbarItem>
+      {/* Dropdown for About */}
+            <Dropdown>
+        <DropdownTrigger>
+          <Button size="md" className="flex items-center hover:text-blue-500 hover:underline bg-white">
+            <InformationCircleIcon className="h-6 w-6" aria-hidden="true" />
+            About
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu aria-label="Overview">
+          <DropdownItem key="about">
+            <Link href="/about">Overview</Link>
+          </DropdownItem>
+          <DropdownItem key="methodology">
+            <Link href="/methodology">Methodology</Link>
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     </NavbarContent>
   </Navbar>
 );
 
 export default Header;
+
