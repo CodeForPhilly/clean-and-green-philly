@@ -1,19 +1,16 @@
-"use client";
+'use client';
 
 import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
-import Header from "../components/Header";
+import Layout from "../components/Layout";
 import TransformPropertyPage from "../components/TransformPropertyPage";
-import Footer from "../components/Footer";
 
 const TransformProperty: FC = () => {
   return (
     <NextUIProvider>
-      <div className="h-screen">
-        <Header />
+      <Layout>
         <TransformPropertyPage />
-        <Footer />
-      </div>
+      </Layout>
     </NextUIProvider>
   );
 };

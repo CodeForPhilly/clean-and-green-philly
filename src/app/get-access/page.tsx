@@ -1,19 +1,16 @@
-"use client";
+'use client';
 
 import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
-import Header from "../components/Header";
+import Layout from "../components/Layout";
 import GetAccessPage from "../components/GetAccessPage";
-import Footer from "../components/Footer";
 
 const GetAccess: FC = () => {
   return (
     <NextUIProvider>
-      <div className="h-screen">
-        <Header />
+      <Layout>
         <GetAccessPage />
-        <Footer />
-      </div>
+      </Layout>
     </NextUIProvider>
   );
 };

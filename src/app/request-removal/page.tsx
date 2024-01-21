@@ -1,19 +1,16 @@
-"use client";
+'use client';
 
 import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
-import Header from "../components/Header";
+import Layout from "../components/Layout";
 import RequestRemovalPage from "../components/RequestRemovalPage";
-import Footer from "../components/Footer";
 
 const RequestRemoval: FC = () => {
   return (
     <NextUIProvider>
-      <div className="h-screen">
-        <Header />
+      <Layout>
         <RequestRemovalPage />
-        <Footer />
-      </div>
+      </Layout>
     </NextUIProvider>
   );
 };
