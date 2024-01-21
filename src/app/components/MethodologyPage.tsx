@@ -56,8 +56,16 @@ export default function AboutPage() {
           </p>
 
           <div className="mt-1 flex items-center justify-center">
-          <Image src="/kde_map.png" alt="A map of gun crime density in Philadelphia in March of 2023" width={700} height={700} layout="responsive" />
+          <Image src="/kde_map.png" alt="A map of gun crime density in Philadelphia in March of 2023" width={700} height={700} />
           </div>
+
+          <br></br>
+
+          <h2 className="text-3xl font-semibold mb-4">Protecting Community Gardens</h2>
+
+          <p className="text-lg mb-4">
+          To protect community gardens from potential predatory development, we have excluded all properties listed by the Pennsylvania Horticultural Society and Neighborhoods Garden Trust as community gardens. If you believe that a property listed on Clean & Green Philly is a community garden, or should be removed from the site for another reason, please see our <a href="/request-removal" className="text-primary">Request Removal page</a>.
+          </p>
 
           <br></br>
 
