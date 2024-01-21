@@ -38,6 +38,15 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
   
       {/* Right-aligned content: Buttons */}
       <div className="flex items-center space-x-2">
+
+         <Button
+          onClick={() => handleClick("filter")}
+          startContent={<FunnelIcon className="h-6 w-6" />}
+          className="bg-white"
+        >
+          Filter
+        </Button>
+
         <Tooltip content="View" showArrow color="primary">
           <Button className="bg-white" onClick={toggleDetailView}>
             {currentView === "detail" ? (
@@ -47,13 +56,7 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
             )}
           </Button>
         </Tooltip>
-        <Button
-          onClick={() => handleClick("filter")}
-          startContent={<FunnelIcon className="h-6 w-6" />}
-          className="bg-white"
-        >
-          Filter
-        </Button>
+
         <Tooltip content="Download" showArrow color="primary">
           <Button
             onClick={() => handleClick("download")}
@@ -62,6 +65,7 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
           >
           </Button>
         </Tooltip>
+
       </div>
     </div>
   );
