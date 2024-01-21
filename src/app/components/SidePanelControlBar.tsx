@@ -1,5 +1,5 @@
 import React, { FC, useState } from "react";
-import { Button } from "@nextui-org/react";
+import { Button, Tooltip } from "@nextui-org/react";
 import { ArrowDownTrayIcon, ListBulletIcon } from "@heroicons/react/20/solid";
 import { FunnelIcon, TableCellsIcon } from "@heroicons/react/24/outline";
 import { BarClickOptions } from "@/app/map/page";
@@ -32,19 +32,21 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
       {/* Left-aligned content: Total Properties in View */}
       <div className="px-4 py-2">
         <p className="text-md">
-          Total Properties in View: <span className="font-bold text-green-100">{featuresInView.length}</span>
+          <span className="font-bold">{featuresInView.length.toLocaleString()}</span> Properties in View 
         </p>
       </div>
   
       {/* Right-aligned content: Buttons */}
       <div className="flex items-center space-x-2">
-        <Button className="bg-white" onClick={toggleDetailView}>
-          {currentView === "detail" ? (
-            <TableCellsIcon className="h-6 w-6" />
-          ) : (
-            <ListBulletIcon className="h-6 w-6" />
-          )}
-        </Button>
+        <Tooltip content="View" showArrow color="primary">
+          <Button className="bg-white" onClick={toggleDetailView}>
+            {currentView === "detail" ? (
+              <TableCellsIcon className="h-6 w-6" />
+            ) : (
+              <ListBulletIcon className="h-6 w-6" />
+            )}
+          </Button>
+        </Tooltip>
         <Button
           onClick={() => handleClick("filter")}
           startContent={<FunnelIcon className="h-6 w-6" />}
@@ -52,13 +54,14 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
         >
           Filter
         </Button>
-        <Button
-          onClick={() => handleClick("download")}
-          startContent={<ArrowDownTrayIcon className="h-6 w-6" />}
-          className="bg-white"
-        >
-          Download
-        </Button>
+        <Tooltip content="Download" showArrow color="primary">
+          <Button
+            onClick={() => handleClick("download")}
+            startContent={<ArrowDownTrayIcon className="h-6 w-6" />}
+            className="bg-white"
+          >
+          </Button>
+        </Tooltip>
       </div>
     </div>
   );
