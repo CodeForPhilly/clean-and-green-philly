@@ -1,21 +1,18 @@
-"use client";
+'use client';
 
 import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
-import Header from "../components/Header";
+import Layout from "../components/Layout";
 import LegalDisclaimerPage from "../components/LegalDisclaimerPage";
-import Footer from "../components/Footer";
 
-const GetAccess: FC = () => {
+const LegalDisclaimer: FC = () => {
   return (
     <NextUIProvider>
-      <div className="h-screen">
-        <Header />
+      <Layout>
         <LegalDisclaimerPage />
-        <Footer />
-      </div>
+      </Layout>
     </NextUIProvider>
   );
 };
 
-export default GetAccess;
+export default LegalDisclaimer;
