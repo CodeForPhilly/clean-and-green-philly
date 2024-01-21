@@ -1,56 +1,62 @@
-import { Button, Link } from "@nextui-org/react";
-import LandingPageImage from "./LandingPageImage";
+import { Button, Link, Image } from "@nextui-org/react";
 import { ArrowRightIcon } from "@heroicons/react/20/solid";
 
 const images = [
   {
     src: "/dirtyLot.jpg",
     alt: "Dirty lot in Philadelphia",
-    size:"",
   },
   {
     src: "/cleaningLot.jpg",
-    alt: "Clean lot in Philadelphia",
-    size:"",
+    alt: "Cleaning lot in Philadelphia",
   },
   {
     src: "/greenedLot.jpg",
     alt: "Green lot in Philadelphia",
-    size:"",
   },
 ];
 
 const LandingPage = () => (
-  <div className="flex flex-col mx-auto pl-32">
-    <div className="">
-      <div className="text-green-600 md:text-5xl my-10 p-2">
-      <p className="leading-normal">Cleaning and greening vacant properties can <br /> <span className="font-bold leading-normal">reduce gun violence</span> in neighborhoods as <br />  much as <span className="font-bold leading-normal">29%.</span></p>
-    </div>
-    <div className="relative">
-      <div className="md:absolute bottom-10 right-6">
-        <p className="">This tool can empower anyone to find properties that <br /> would make a significant impact in Philadelphia and <br /> take action.</p>
-        <Link href="/map">
-          <Button size="lg" className="bg-green-60">
-          <ArrowRightIcon className="w-5 h-5 ml-2" />
-          Find properties
-          </Button>
-        </Link>
-        <Link href="/about">
-          <Button size="lg" color="default">
-            <ArrowRightIcon className="w-5 h-5 ml-2" />
-            Learn More 
-          </Button>
-        </Link>
+  <div className="container mx-auto px-4 py-8">
+    <div className="flex flex-col md:flex-row justify-between items-start md:items-center">
+      <div className="text-left space-y-4">
+      <h1 className="font-light text-green-600 text-5xl">
+      Cleaning and greening vacant properties can 
+      <br></br>
+      <span className="font-semibold"> reduce gun violence </span> 
+      in neighborhoods 
+      <br></br>
+      <span className="font-semibold"> as much as 29%</span>.
+      </h1>
+
+        <p className="text-gray-700">This tool can empower you to find the highest impact properties in Philadelphia and take action.</p>
+        <div className="flex space-x-4">
+          <Link href="/map">
+            <Button size="lg" className="bg-green-600 text-white">
+              <ArrowRightIcon className="w-5 h-5 mr-2" />
+              Find properties
+            </Button>
+          </Link>
+          <Link href="/about">
+            <Button size="lg" className="bg-transparent border border-green-600 text-green-600">
+              <ArrowRightIcon className="w-5 h-5 mr-2" />
+              Learn more
+            </Button>
+          </Link>
+        </div>
+      </div>
+      <div className="flex flex-row space-x-4 mt-4 md:mt-0">
+        {/* Add any additional navigation or informational elements here */}
       </div>
     </div>
-    </div>
-    <div className="scale-x-125 flex space-x-1">
-      {images.map(({ src, alt,}) => (
-        <LandingPageImage
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-8">
+      {images.map(({ src, alt }) => (
+        <Image
           key={src}
           src={src}
           alt={alt}
-
+          width="100%"
+          height="auto"
         />
       ))}
     </div>
