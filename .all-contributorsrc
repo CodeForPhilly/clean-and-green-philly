@@ -72,6 +72,33 @@
         "design",
         "research"
       ]
+    },
+    {
+      "login": "marvieqa",
+      "name": "Marvie Mulder",
+      "avatar_url": "https://avatars.githubusercontent.com/u/102739972?v=4",
+      "profile": "https://github.com/marvieqa",
+      "contributions": [
+        "a11y"
+      ]
+    },
+    {
+      "login": "markgoetz",
+      "name": "Mark Goetz",
+      "avatar_url": "https://avatars.githubusercontent.com/u/4121678?v=4",
+      "profile": "http://markandrewgoetz.com",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "bacitracin",
+      "name": "Tracy Tran",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7329799?v=4",
+      "profile": "https://www.linkedin.com/in/tracyctran/",
+      "contributions": [
+        "a11y"
+      ]
     }
   ]
 }

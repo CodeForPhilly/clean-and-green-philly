@@ -1,8 +1,7 @@
-import { Navbar, NavbarContent, NavbarBrand, NavbarItem } from "@nextui-org/react";
+import { Navbar, NavbarContent, NavbarItem } from "@nextui-org/react";
 
 const Footer = () => (
-  <div className="flex flex-col min-h-screen">
-    <div className="flex-grow"></div>
+  <div className="flex flex-col">
     <Navbar maxWidth="full">
       <NavbarContent className="flex justify-between items-center w-full">
         <NavbarItem>

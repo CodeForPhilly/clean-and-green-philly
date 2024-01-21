@@ -81,6 +81,11 @@ Please see [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jroper-scottlogic"><img src="https://avatars.githubusercontent.com/u/125047199?v=4?s=100" width="100px;" alt="Jack Roper"/><br /><sub><b>Jack Roper</b></sub></a><br /><a href="#code-jroper-scottlogic" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://coroflot.com/willonabike"><img src="https://avatars.githubusercontent.com/u/1652510?v=4?s=100" width="100px;" alt="Will"/><br /><sub><b>Will</b></sub></a><br /><a href="#research-willonabike" title="Research">🔬</a> <a href="#design-willonabike" title="Design">🎨</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/thansidwell"><img src="https://avatars.githubusercontent.com/u/1965986?v=4?s=100" width="100px;" alt="Nathaniel Sidwell"/><br /><sub><b>Nathaniel Sidwell</b></sub></a><br /><a href="#design-thansidwell" title="Design">🎨</a> <a href="#research-thansidwell" title="Research">🔬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/marvieqa"><img src="https://avatars.githubusercontent.com/u/102739972?v=4?s=100" width="100px;" alt="Marvie Mulder"/><br /><sub><b>Marvie Mulder</b></sub></a><br /><a href="#a11y-marvieqa" title="Accessibility">️️️️♿️</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="http://markandrewgoetz.com"><img src="https://avatars.githubusercontent.com/u/4121678?v=4?s=100" width="100px;" alt="Mark Goetz"/><br /><sub><b>Mark Goetz</b></sub></a><br /><a href="#code-markgoetz" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/tracyctran/"><img src="https://avatars.githubusercontent.com/u/7329799?v=4?s=100" width="100px;" alt="Tracy Tran"/><br /><sub><b>Tracy Tran</b></sub></a><br /><a href="#a11y-bacitracin" title="Accessibility">️️️️♿️</a></td>
     </tr>
   </tbody>
 </table>

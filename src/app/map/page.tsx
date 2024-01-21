@@ -11,6 +11,7 @@ import {
   SidePanelControlBar,
   FilterView,
 } from "../components";
+import Footer from "../components/Footer";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
@@ -24,21 +25,27 @@ const Page: FC = () => {
   return (
     <FilterProvider>
       <NextUIProvider>
-        <div className="h-screen overflow-hidden">
+        <div className="flex flex-col h-screen">
           <Header />
-          <div className="flex h-full relative">
-            <div className="flex-grow h-full">
+          <div className="flex flex-grow overflow-hidden">
+            <div className="flex-grow overflow-auto">
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
                 setLoading={setLoading}
+                selectedProperty={selectedProperty}
                 setSelectedProperty={setSelectedProperty}
               />
             </div>
             <SidePanel>
+
+              <div className="pt-2 sticky top-0 z-10">
               <SidePanelControlBar
                 currentView={currentView}
                 setCurrentView={setCurrentView}
+                featuresInView={featuresInView}
               />
+              </div>
+
               {currentView === "filter" && <FilterView />}
               {["detail", "list"].includes(currentView) && (
                 <PropertyDetailSection
@@ -56,20 +63,21 @@ const Page: FC = () => {
                     If you are interested in accessing the data behind this
                     dashboard, please reach out to us at
                     <a
-                      href="mailto:cleangreenphilly@gmail.com"
+                      href="mailto:cleanandgreenphl@gmail.com"
                       className="text-blue-600 hover:text-blue-800 underline"
                     >
                       {" "}
-                      cleangreenphilly@gmail.com
+                      cleanandgreenphl@gmail.com
                     </a>
                     . Let us know who you are and why you want the data. We are
                     happy to share the data with anyone with community-oriented
-                    interests!
+                    interests.
                   </p>
                 </div>
               )}
             </SidePanel>
           </div>
+
         </div>
       </NextUIProvider>
     </FilterProvider>

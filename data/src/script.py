@@ -3,6 +3,9 @@ from config.psql import conn
 from constants.services import VACANT_PROPS_LAYERS_TO_LOAD
 from data_utils import *
 from data_utils.drug_crimes import drug_crimes
+from data_utils.unsafe_buildings import unsafe_buildings
+from data_utils.imm_dang_buildings import imm_dang_buildings
+from data_utils.tactical_urbanism import tactical_urbanism
 import sys
 
 
@@ -22,6 +25,9 @@ services = [
     drug_crimes,
     deliquencies,
     opa_properties,
+    unsafe_buildings,
+    imm_dang_buildings,
+    tactical_urbanism,
 ]
 
 

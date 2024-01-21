@@ -32,8 +32,6 @@ const navbarButtons = [
   },
 ];
 
-
-
 const Header = () => (
   <Navbar maxWidth="full" position="sticky">
     <NavbarContent className="hidden sm:flex basis-1/5 sm:basis-full " style={{ paddingTop: '16px', paddingLeft: '32px'}} justify="start">
@@ -53,11 +51,10 @@ const Header = () => (
       className="hidden sm:flex basis-1/5 sm:basis-full"
       justify="end"
     >
-      {navbarButtons.map(({ icon, text, href }) => (
-        <NavbarItem key={text}>
-          <IconLink icon={icon} text={text} href={href} />
-        </NavbarItem>
-      ))}
+      {/* Find Properties */}
+      <NavbarItem key="Find Properties">
+        <IconLink icon={<MapIcon />} text="Find Properties" href="/map" />
+      </NavbarItem>
 
       {/* Dropdown for Take Action */}
       <Dropdown>
@@ -77,9 +74,26 @@ const Header = () => (
         </DropdownMenu>
       </Dropdown>
 
-      {/* The rest of the navbar items */}
+      {/* Dropdown for About */}
+            <Dropdown>
+        <DropdownTrigger>
+          <Button size="md" className="flex items-center hover:text-blue-500 hover:underline bg-white">
+            <InformationCircleIcon className="h-6 w-6" aria-hidden="true" />
+            About
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu aria-label="Overview">
+          <DropdownItem key="about">
+            <Link href="/about">Overview</Link>
+          </DropdownItem>
+          <DropdownItem key="methodology">
+            <Link href="/methodology">Methodology</Link>
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     </NavbarContent>
   </Navbar>
 );
 
 export default Header;
+

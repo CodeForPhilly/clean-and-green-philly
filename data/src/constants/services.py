@@ -18,6 +18,10 @@ RCOS_LAYERS_TO_LOAD = [
     "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Zoning_RCO/FeatureServer/0/"
 ]
 
+COMMUNITY_GARDENS_TO_LOAD = [
+    "https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/rest/services/PHS_NGT_Supported_Current_view/FeatureServer/0/"
+]
+
 one_year_ago = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime(
     "%Y-%m-%d"
 )
@@ -34,3 +38,7 @@ DRUGCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, point_x AS x, p
 DELINQUENCIES_QUERY = "SELECT * FROM real_estate_tax_delinquencies"
 
 OPA_PROPERTIES_QUERY = "SELECT market_value, sale_date, sale_price, parcel_number, the_geom FROM opa_properties_public"
+
+UNSAFE_BUILDINGS_QUERY = "SELECT * FROM unsafe"
+
+IMMINENT_DANGER_BUILDINGS_QUERY = "SELECT * FROM imm_dang"

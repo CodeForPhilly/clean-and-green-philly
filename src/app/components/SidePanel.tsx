@@ -11,7 +11,7 @@ const SidePanel: FC<SidePanelProps> = ({ children }) => {
     <div
       className={`h-full transition-all duration-300 ${
         expanded ? "w-5/12" : "w-0"
-      } bg-white overflow-hidden`}
+      } bg-white overflow-auto`}
     >
       {children}
     </div>

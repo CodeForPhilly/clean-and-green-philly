@@ -7,7 +7,8 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import mapboxgl, { Map as MapboxMap, Point, PointLike } from "mapbox-gl";
+import mapboxgl, { Map as MapboxMap, PointLike } from "mapbox-gl";
+import { Polygon } from 'geojson';
 import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
@@ -21,9 +22,8 @@ import Map, {
   FullscreenControl,
   ScaleControl,
   GeolocateControl,
-  AttributionControl,
 } from "react-map-gl";
-import { FillLayer, VectorSourceRaw } from "react-map-gl";
+import { FillLayer } from "react-map-gl";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
@@ -61,24 +61,25 @@ const layerStyle: FillLayer = {
 
 const MapControls = () => (
   <>
-    <GeolocateControl position="top-left" />
-    <FullscreenControl position="top-left" />
-    <NavigationControl position="top-left" />
+    <GeolocateControl position="bottom-right" />
+    <FullscreenControl position="bottom-right" />
+    <NavigationControl showCompass={false} position="bottom-right" />
     <ScaleControl />
-    <AttributionControl />
   </>
 );
 
 interface PropertyMapProps {
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  selectedProperty: MapboxGeoJSONFeature | null;
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
 }
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
   setLoading,
+  selectedProperty,
   setSelectedProperty,
-}: any) => {
+}) => {
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
@@ -233,6 +234,65 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     }
   }, [map, filter, updateFilter]);
 
+  const id = selectedProperty?.properties?.OPA_ID ?? null;
+  useEffect(() => {
+    /** Ticket #87 - focus on map when a property is selected */
+    if (id && map != null) {
+      const features = map.queryRenderedFeatures(undefined, {
+        layers: ["vacant_properties"],
+      });
+      const mapItem = features.find(feature => feature.properties?.OPA_ID === id);
+  
+      if (mapItem != null) {
+        const coordinates = (mapItem.geometry as Polygon).coordinates[0];
+  
+        if (coordinates.length > 0) {
+          // Filter out coordinates that are not available
+          const validCoordinates = coordinates.filter(([x, y]) => !isNaN(x) && !isNaN(y));
+  
+          if (validCoordinates.length > 0) {
+            const totalPoint = validCoordinates.reduce(
+              (prevSum, position) => [prevSum[0] + position[0], prevSum[1] + position[1]],
+              [0, 0],
+            );
+  
+            let finalPoint = [totalPoint[0] / validCoordinates.length, totalPoint[1] / validCoordinates.length];
+  
+            // Check if the finalPoint is valid
+            if (isNaN(finalPoint[0]) || isNaN(finalPoint[1])) {
+              // Fallback to first coordinate of the polygon if finalPoint is invalid
+              finalPoint = validCoordinates[0];
+            }
+  
+            const pointForMap = { lng: finalPoint[0], lat: finalPoint[1] };
+  
+            map.flyTo({
+              center: pointForMap,
+            });
+  
+            setPopupInfo({
+              longitude: finalPoint[0],
+              latitude: finalPoint[1],
+              feature: selectedProperty?.properties,
+            });
+          }
+        }
+      }
+    }
+  }, [id]);
+  
+  
+  
+
+  useEffect(
+    () => {
+      if (id == null) {
+        setPopupInfo(null);
+      }
+    },
+    [id]
+  );
+
   const changeCursor = (e: any, cursorType: "pointer" | "default") => {
     e.target.getCanvas().style.cursor = cursorType;
   };
@@ -260,23 +320,20 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         }}
         onMoveEnd={handleSetFeatures}
         maxZoom={20}
-        minZoom={13}
+        minZoom={10}
       >
         <MapControls />
         {popupInfo && (
-          <Popup
-            longitude={popupInfo.longitude}
-            latitude={popupInfo.latitude}
-            closeOnClick={false}
-            onClose={() => setPopupInfo(null)}
-          >
-            <div>
-              <p className="font-bold">{popupInfo.feature.ADDRESS}</p>
-              <p>Owner: {popupInfo.feature.OWNER1}</p>
-              <p>Gun Crime Density: {popupInfo.feature.guncrime_density}</p>
-              <p>Tree Canopy Gap: {popupInfo.feature.tree_canopy_gap}</p>
-            </div>
-          </Popup>
+         <Popup
+         longitude={popupInfo.longitude}
+         latitude={popupInfo.latitude}
+         closeOnClick={false}
+         onClose={() => setPopupInfo(null)}
+       >
+         <div>
+           <p className="font-semibold text-md p-1">{popupInfo.feature.address}</p>
+         </div>
+       </Popup>
         )}
         <Source
           id="vacant_properties"
