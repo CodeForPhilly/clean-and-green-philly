@@ -11,7 +11,7 @@ const LandingPageImage: FC<LandingPageImageProps> = ({
   alt,
 }) => {
   return (
-      <div className="w-full h-80 relative">
+      <div className="w-screen h-screen relative">
         <Image src={src} alt={alt} fill={true} />
       </div>
   );
