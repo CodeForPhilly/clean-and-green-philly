@@ -55,7 +55,7 @@ const layerStyle: FillLayer = {
       //"#B22222", // FireBrick
       //"Top 1%",
       //"#8B0000", // Dark Rednp
-      "#0000FF", // default color if none of the categories match
+      "#000000", // default color if none of the categories match
     ],
     "fill-opacity": 0.7,
   },
