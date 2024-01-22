@@ -7,6 +7,7 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
+import { Tooltip } from "@nextui-org/react";
 import mapboxgl, { Map as MapboxMap, PointLike } from "mapbox-gl";
 import { Polygon } from 'geojson';
 import { mapboxAccessToken } from "../../config/config";
@@ -29,6 +30,10 @@ import { MapboxGeoJSONFeature } from "mapbox-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
+
+
+
 const layerStyle: FillLayer = {
   id: "vacant_properties",
   type: "fill",
@@ -38,24 +43,24 @@ const layerStyle: FillLayer = {
     "fill-color": [
       "match",
       ["get", "priority_level"], // get the value of the guncrime_density property
-      "Low Priority",
-      "#B0E57C", // Light Green
-      "Medium Priority",
-      "#FFD700", // Gold
-      //"Medium Priority",
-      //"#FF8C00", // Dark Orange
       "High Priority",
       "#FF4500", // Orange Red
+      "Medium Priority",
+      "#FFD700", // Gold
+      "Low Priority",
+      "#B0E57C", // Light Green
+      //"Medium Priority",
+      //"#FF8C00", // Dark Orange
       //"High Priority",
       //"#B22222", // FireBrick
       //"Top 1%",
       //"#8B0000", // Dark Rednp
-      "#0000FF", // default color if none of the categories match
+      "#000000", // default color if none of the categories match
     ],
     "fill-opacity": 0.7,
   },
   metadata: {
-    name: "Priority Level",
+    name: "Priority",
   },
 };
 
