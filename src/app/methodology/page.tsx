@@ -3,16 +3,16 @@
 import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import Layout from "../components/Layout";
-import LegalDisclaimerPage from "../components/LegalDisclaimerPage";
+import MethodologyPage from "../components/MethodologyPage";
 
-const LegalDisclaimer: FC = () => {
+const Methodology: FC = () => {
   return (
     <NextUIProvider>
       <Layout>
-        <LegalDisclaimerPage />
+        <MethodologyPage />
       </Layout>
     </NextUIProvider>
   );
 };
 
-export default LegalDisclaimer;
+export default Methodology;

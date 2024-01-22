@@ -106,9 +106,14 @@ class FeatureLayer:
                             "features": features,
                         }
 
-                        this_gdf = gpd.GeoDataFrame.from_features(
-                            geojson_features, crs=self.input_crs
-                        )
+                        this_gdf = gpd.GeoDataFrame.from_features(geojson_features, crs=self.input_crs)
+
+                        # Check if 'X' and 'Y' columns exist and create geometry if necessary
+                        if 'X' in this_gdf.columns and 'Y' in this_gdf.columns:
+                            this_gdf['geometry'] = this_gdf.apply(lambda row: Point(row['X'], row['Y']), axis=1)
+                        elif 'geometry' not in this_gdf.columns:
+                            raise ValueError("No geometry information found in the data.")
+
                         this_gdf = this_gdf.to_crs(USE_CRS)
 
                         # Assign the parcel_type to the GeoDataFrame

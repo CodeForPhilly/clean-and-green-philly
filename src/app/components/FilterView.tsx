@@ -5,7 +5,7 @@ const filters = [
   {
     property: "priority_level",
     display: "Priority Level",
-    options: ["Low Priority", "Medium Priority", "High Priority"],
+    options: ["Low", "Medium", "High"],
     tooltip: "For information on how this is calculated, see the About page"
   },
   {
@@ -25,15 +25,23 @@ const filters = [
     ],
     tooltip: "For information on what these mean, see the Get Access page"
   },
-
-  /*
   {
     property: "tactical_urbanism",
     display: "Tactical Urbanism",
-    options: ["Y", "N"],
+    options: [
+      "Yes", 
+      "No"
+    ],
+    tooltip: "For an explanation of this, see the Get Access page"
   },
-*/
-
+  /*
+  {
+    property: "side_yard_eligible",
+    display: "Side Yard Eligible",
+    options: ["Yes", "No"],
+    tooltip: "For an explanation of this, see the Get Access page"
+  },
+  */
 ];
 
 const FilterView: FC = () => {

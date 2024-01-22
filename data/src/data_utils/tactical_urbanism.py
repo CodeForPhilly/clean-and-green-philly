@@ -1,16 +1,24 @@
 import pandas as pd
 
+unsafe_words = [
+    'dangerous',
+]
 
 def tactical_urbanism(dataset):
     tactical_urbanism_values = []
 
     for idx, row in dataset.gdf.iterrows():
-        tactical_urbanism = "N"
+        li_complaints_lower = str(row["li_complaints"]).lower().split(" ")
+        contains_unsafe_word = any(
+            word in li_complaints_lower for word in unsafe_words)
 
-        if (row["parcel_type"] == "Land" and 
-            row["unsafe_building"] == "N" and 
-            row["imm_dang_building"] == "N"):
-            tactical_urbanism = "Y"
+        if (row["parcel_type"] == "Land" and
+                row["unsafe_building"] == "N" and
+                row["imm_dang_building"] == "N" and
+                not contains_unsafe_word):
+            tactical_urbanism = "Yes"
+        else:
+            tactical_urbanism = "No"
 
         tactical_urbanism_values.append(tactical_urbanism)
 

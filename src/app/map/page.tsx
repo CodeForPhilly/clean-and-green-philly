@@ -11,6 +11,7 @@ import {
   SidePanelControlBar,
   FilterView,
 } from "../components";
+import Hotjar from "../components/Hotjar";
 import Footer from "../components/Footer";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
@@ -32,6 +33,7 @@ const Page: FC = () => {
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
                 setLoading={setLoading}
+                selectedProperty={selectedProperty}
                 setSelectedProperty={setSelectedProperty}
               />
             </div>
@@ -76,7 +78,7 @@ const Page: FC = () => {
               )}
             </SidePanel>
           </div>
-
+          <Hotjar />
         </div>
       </NextUIProvider>
     </FilterProvider>
