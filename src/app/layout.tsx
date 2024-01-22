@@ -5,8 +5,9 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Clean Green Philly",
-  description: "Vacant Properties App",
+  title: "Clean & Green Philly",
+  description:
+    "Reduce the gun violence in Philadelphia by finding vacant properties to clean and green them.",
   icons: {
     icon: "/favicon.ico",
   },
