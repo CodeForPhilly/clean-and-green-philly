@@ -5,7 +5,7 @@ const filters = [
   {
     property: "priority_level",
     display: "Priority Level",
-    options: ["Low Priority", "Medium Priority", "High Priority"],
+    options: ["Low", "Medium", "High"],
     tooltip: "For information on how this is calculated, see the About page"
   },
   {

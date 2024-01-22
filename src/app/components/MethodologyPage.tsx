@@ -55,6 +55,18 @@ export default function AboutPage() {
             It is impossible to reduce the impact of a shooting to a single statistic, and Clean & Green Philly applauds the organizations throughout our city who work to give voice to the profound effect of this epidemic on individuals, families, and communities. With this in mind, we have done our best to estimate the spatial intensity of gun violence in Philadelphia in a way that is 1) statistically rigorous and 2) as sensitive to local experience as possible. Following Dr. South’s original research, we use a kernel density estimate to calculate the intensity of gun crime at any given point in Philadelphia. Specifically, we use an adaptive bandwidth to better capture the local nuances of gun crime at small spatial scales. (For more on this, please see this memo from the data analysis team at the District Attorney’s Office [link].)
           </p>
 
+          <div className="mt-1 flex items-center justify-center">
+          <Image src="/kde_map.png" alt="A map of gun crime density in Philadelphia in March of 2023" width={700} height={700} />
+          </div>
+
+          <br></br>
+
+          <h2 className="text-3xl font-semibold mb-4">Protecting Community Gardens</h2>
+
+          <p className="text-lg mb-4">
+          To protect community gardens from potential predatory development, we have excluded all properties listed by the Pennsylvania Horticultural Society and Neighborhoods Garden Trust as community gardens. If you believe that a property listed on Clean & Green Philly is a community garden, or should be removed from the site for another reason, please see our <a href="/request-removal" className="text-primary">Request Removal page</a>.
+          </p>
+
           <br></br>
 
           <h2 className="text-3xl font-semibold mb-4">Our Code</h2>

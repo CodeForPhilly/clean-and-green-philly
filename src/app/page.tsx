@@ -5,6 +5,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import Header from "./components/Header";
 import LandingPage from "./components/LandingPage";
 import Footer from "./components/Footer";
+import Hotjar from "./components/Hotjar";
 
 const Page: FC = () => {
   return (
@@ -15,6 +16,7 @@ const Page: FC = () => {
           <LandingPage />
         </div>
         <Footer />
+        <Hotjar />
       </div>
     </NextUIProvider>
   );

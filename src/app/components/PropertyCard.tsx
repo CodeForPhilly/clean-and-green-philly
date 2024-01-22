@@ -7,41 +7,63 @@ interface PropertyCardProps {
   setSelectedProperty: (feature: any) => void;
 }
 
+function toTitleCase(str: string) {
+  return str.toLowerCase().split(' ').map(function(word) {
+    return (word.charAt(0).toUpperCase() + word.slice(1));
+  }).join(' ');
+}
+
+function getPriorityClass(priorityLevel: string) {
+  switch (priorityLevel) {
+    case "High Priority":
+      return "bg-red-500 border-red-700"; // Style for High Priority
+    case "Medium Priority":
+      return "bg-yellow-500 border-yellow-700"; // Style for Medium Priority
+    case "Low Priority":
+      return "bg-green-500 border-green-700"; // Style for Low Priority
+    default:
+      return "bg-gray-500 border-gray-700"; // Default style
+  }
+}
+
+
 const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
   const { address, guncrime_density, tree_canopy_gap, priority_level, OPA_ID } =
     feature.properties;
 
-  const roundedCanopyGap = Math.round(tree_canopy_gap * 100);
   const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
-  const atlasUrl = `https://atlas.phila.gov/${address}`;
+  const formattedAddress = toTitleCase(address);
+  const priorityClass = getPriorityClass(priority_level);
 
   return (
     <div
-      className="max-w-sm w-full md:w-1/2 p-4 cursor-pointer"
+      className="max-w-sm w-full md:w-1/2 p-2 cursor-pointer"
       onClick={() => setSelectedProperty(feature)}
     >
       <div className="max-w-sm w-full p-4">
-        <div className="bg-white rounded-lg overflow-hidden">
-          <div className="relative h-48 w-full rounded-lg overflow-hidden">
+        <div className="bg-white rounded-md overflow-hidden">
+          <div className="relative w-full rounded-lg overflow-hidden" style={{ height: '160px', width: 'auto' }}>
             <Image
               src={image}
-              alt={`Property at ${address}`}
+              alt={`Property at ${formattedAddress}`}
               layout="fill"
               objectFit="cover"
               unoptimized
             />
           </div>
-          <div className="p-4">
-            <div className="font-bold text-xl">{address}</div>
+          <div className="p-2">
+            <div className="font-bold text-lg">{formattedAddress}</div>
             <div className="text-gray-700 mb">
-              {guncrime_density} Crime Rate, {roundedCanopyGap}% Canopy Gap
+              {guncrime_density} Gun Crime Rate
             </div>
-            <a href={atlasUrl} target="_blank" rel="noopener noreferrer">
-              Click here for Atlas Info
-            </a>
           </div>
-          <div className="px-4 pb-2">
-            <Chip color="success" variant="solid" size="sm">
+          <div className="px-1">
+            <Chip
+              classNames={{
+                base: `${priorityClass} border-small border-white/50`,
+                content: "text-white mb",
+                      }}
+                    >
               {priority_level}
             </Chip>
           </div>
