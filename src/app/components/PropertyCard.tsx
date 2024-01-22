@@ -32,13 +32,10 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
             />
           </div>
           <div className="p-4">
-            <div className="font-bold text-xl">{address}</div>
+            <div className="font-bold text-l">{address}</div>
             <div className="text-gray-700 mb">
-              {guncrime_density} Crime Rate, {roundedCanopyGap}% Canopy Gap
+              {guncrime_density} Crime Rate
             </div>
-            <a href={atlasUrl} target="_blank" rel="noopener noreferrer">
-              Click here for Atlas Info
-            </a>
           </div>
           <div className="px-4 pb-2">
             <Chip color="success" variant="solid" size="sm">

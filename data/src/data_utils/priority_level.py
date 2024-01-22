@@ -18,28 +18,28 @@ def priority_level(dataset):
             # High Gun Crime Density
 
             if has_li_complaint_or_violation:
-                priority_level = "High Priority"
+                priority_level = "High"
             else:
                 if in_phs_landcare:
                     if very_low_tree_canopy:
-                        priority_level = "High Priority"
+                        priority_level = "High"
                     else:
-                        priority_level = "Medium Priority"
+                        priority_level = "Medium"
                 else:
-                    priority_level = 'High Priority'
+                    priority_level = 'High'
 
         else:
             # Medium Gun Crime Density
             if has_li_complaint_or_violation:
                 if in_phs_landcare:
-                    priority_level = "Medium Priority"
+                    priority_level = "Medium"
                 else:
                     if very_low_tree_canopy:
-                        priority_level = "High Priority"
+                        priority_level = "High"
                     else:
-                        priority_level = "Medium Priority"
+                        priority_level = "Medium"
             else:
-                priority_level = "Low Priority"
+                priority_level = "Low"
 
         priority_levels.append(priority_level)
 
