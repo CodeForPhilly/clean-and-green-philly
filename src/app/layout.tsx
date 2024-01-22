@@ -7,6 +7,9 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Clean Green Philly",
   description: "Vacant Properties App",
+  icons: {
+    icon: "/favicon.ico",
+  },
 };
 
 export default function RootLayout({
