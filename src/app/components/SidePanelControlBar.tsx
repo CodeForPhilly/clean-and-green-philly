@@ -54,13 +54,12 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
         </Button>
 
         <Tooltip content="View" showArrow color="primary">
-          <Button className="bg-white" onClick={toggleDetailView}>
-            {currentView === "detail" ? (
-              <Table className="h-6 w-6" />
-            ) : (
-              <ListBullets className="h-6 w-6" />
-            )}
-          </Button>
+        <Button
+          onClick={() => handleClick("detail")}
+          startContent={<Table className="h-6 w-6" />}
+          className="bg-white"
+        >
+        </Button>
         </Tooltip>
 
         <Tooltip content="Download" showArrow color="primary">
