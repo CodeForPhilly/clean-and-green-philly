@@ -13,12 +13,11 @@ import IconLink from "./IconLink";
 import Link from 'next/link';
 import Image from 'next/image'
 import {
-  HomeIcon,
-  MapIcon,
-  QuestionMarkCircleIcon,
-  InformationCircleIcon,
-  BoltIcon,
-} from "@heroicons/react/20/solid";
+  MapPin,
+  Hand,
+  Info
+}
+from "@phosphor-icons/react"
 
 const Header = () => (
   <Navbar maxWidth="full" position="sticky" height="auto" isBordered>
@@ -39,16 +38,15 @@ const Header = () => (
       className="hidden sm:flex basis-1/5 sm:basis-full"
       justify="end"
     >
-      {/* Find Properties */}
       <NavbarItem key="Find Properties">
-        <IconLink icon={<MapIcon />} text="Find Properties" href="/map" />
+        <IconLink icon={<MapPin className="h-6 w-6" />} text="Find Properties" href="/map" />
       </NavbarItem>
 
       {/* Dropdown for Take Action */}
       <Dropdown>
         <DropdownTrigger>
           <Button size="md" className="flex items-center hover:text-blue-500 hover:underline bg-white">
-            <BoltIcon className="h-6 w-6" aria-hidden="true" />
+            <Hand className="h-6 w-6" aria-hidden="true" />
             Take Action
           </Button>
         </DropdownTrigger>
@@ -66,7 +64,7 @@ const Header = () => (
             <Dropdown>
         <DropdownTrigger>
           <Button size="md" className="flex items-center hover:text-blue-500 hover:underline bg-white">
-            <InformationCircleIcon className="h-6 w-6" aria-hidden="true" />
+            <Info className="h-6 w-6" aria-hidden="true" />
             About
           </Button>
         </DropdownTrigger>

@@ -1,8 +1,14 @@
 import React, { FC, useState } from "react";
 import { Button, Tooltip } from "@nextui-org/react";
-import { ArrowDownTrayIcon, ListBulletIcon } from "@heroicons/react/20/solid";
-import { FunnelIcon, TableCellsIcon } from "@heroicons/react/24/outline";
 import { BarClickOptions } from "@/app/map/page";
+import {
+  DownloadSimple,
+  ListBullets,
+  Funnel,
+  Table,
+}
+from "@phosphor-icons/react"
+
 
 type SidePanelControlBarProps = {
   currentView: BarClickOptions;
@@ -41,7 +47,7 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
 
          <Button
           onClick={() => handleClick("filter")}
-          startContent={<FunnelIcon className="h-6 w-6" />}
+          startContent={<Funnel className="h-6 w-6" />}
           className="bg-white"
         >
           Filter
@@ -50,9 +56,9 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
         <Tooltip content="View" showArrow color="primary">
           <Button className="bg-white" onClick={toggleDetailView}>
             {currentView === "detail" ? (
-              <TableCellsIcon className="h-6 w-6" />
+              <Table className="h-6 w-6" />
             ) : (
-              <ListBulletIcon className="h-6 w-6" />
+              <ListBullets className="h-6 w-6" />
             )}
           </Button>
         </Tooltip>
@@ -60,7 +66,7 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
         <Tooltip content="Download" showArrow color="primary">
           <Button
             onClick={() => handleClick("download")}
-            startContent={<ArrowDownTrayIcon className="h-6 w-6" />}
+            startContent={<DownloadSimple className="h-6 w-6" />}
             className="bg-white"
           >
           </Button>
