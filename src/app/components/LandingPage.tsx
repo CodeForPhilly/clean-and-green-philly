@@ -21,7 +21,7 @@ const LandingPage = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center my-10">
       <div className="text-left">
       <h1 className="text-green-600 text-5xl font-thin">
-        Cleaning and greening vacant properties can 
+        Testing and greening vacant properties can 
         <span className="font-semibold"> reduce gun violence </span>
         in neighborhoods
         <div className="font-semibold">by as much as 29%</div>
