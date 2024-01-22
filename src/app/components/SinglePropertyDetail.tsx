@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@nextui-org/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import Image from "next/image";
+import { ArrowLeft, ArrowSquareOut } from "@phosphor-icons/react";
 
 interface PropertyDetailProps {
   property: MapboxGeoJSONFeature | null;
@@ -34,11 +35,35 @@ const SinglePropertyDetail = ({
   } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
+  function toTitleCase(str: string) {
+    return str
+      .toLowerCase()
+      .split(" ")
+      .map(function (word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+      })
+      .join(" ");
+  }
+  const addressTitle = toTitleCase(address);
 
   return (
-    <div className="w-full p-4">
+    <div
+      className="w-full p-4"
+      style={{
+        paddingRight: "24px",
+        paddingBottom: "24px",
+        paddingLeft: "24px",
+      }}
+    >
       <div className="pb-4">
-        <Button onClick={() => setSelectedProperty(null)}> Back </Button>
+        <Button
+          style={{
+            backgroundColor: "white",
+          }}
+          onClick={() => setSelectedProperty(null)}
+        >
+          <ArrowLeft color="#3D3D3D" size={24} /> Back{" "}
+        </Button>
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
@@ -53,22 +78,32 @@ const SinglePropertyDetail = ({
       </div>
       <div className="py-4 px-2">
         <div className="flex justify-between content-center">
-          <h2 className="font-bold text-2xl">{address}</h2>
-        </div>
-        <div style={{ textAlign: "left", marginTop: "1em" }}>
-          <Button
-            as="a"
-            href={atlasUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            color="primary"
+          <h2 className="font-bold text-2xl">{addressTitle}</h2>
+          <div
+            className="flex items-center space-x-2"
+            style={{ textAlign: "left" }}
           >
-            View this property on Atlas
-          </Button>
+            <Button
+              as="a"
+              href={atlasUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{
+                backgroundColor: "white",
+              }}
+            >
+              Atlas
+              <ArrowSquareOut color="#3D3D3D" size={24} />
+            </Button>
+          </div>
         </div>
       </div>
       <table className="w-full">
-        <tbody>
+        <tbody
+          style={{
+            fontSize: "16px",
+          }}
+        >
           <tr>
             <th scope="row" className="table-cell">
               Suggested Priority
