@@ -15,11 +15,11 @@ function toTitleCase(str: string) {
 
 function getPriorityClass(priorityLevel: string) {
   switch (priorityLevel) {
-    case "High Priority":
+    case "High":
       return "bg-red-500 border-red-700"; // Style for High Priority
-    case "Medium Priority":
+    case "Medium":
       return "bg-yellow-500 border-yellow-700"; // Style for Medium Priority
-    case "Low Priority":
+    case "Low":
       return "bg-green-500 border-green-700"; // Style for Low Priority
     default:
       return "bg-gray-500 border-gray-700"; // Default style
@@ -64,7 +64,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
                 content: "text-white mb",
                       }}
                     >
-              {priority_level}
+              {priority_level + " Priority"}
             </Chip>
           </div>
         </div>

@@ -14,7 +14,7 @@ def priority_level(dataset):
 
         if guncrime_density == "Bottom 50%":
             # Low Gun Crime Density
-            priority_level = "Low Priority"
+            priority_level = "Low"
 
         elif guncrime_density in ["Top 25%", "Top 10%", "Top 5%", "Top 1%"]:
             # High Gun Crime Density
