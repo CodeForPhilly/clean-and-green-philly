@@ -30,7 +30,6 @@ If you do not find your bug in our issues list, file a bug report. When reportin
 - Include screenshots and animated GIFs if possible, which show you following the described steps and clearly demonstrate the problem.
 - If the problem wasn't triggered by a specific action, describe what you were doing before the problem happened.
 
-
 ### Suggest an Enhancement
 
 If you don't have specific language or code to submit but would like to suggest a change, request a feature, or have something addressed, you can open an issue in this repository.
@@ -38,7 +37,6 @@ If you don't have specific language or code to submit but would like to suggest 
 Please open an issue of type `Feature request` [here](https://github.com/CodeForPhilly/vacant-lots-proj/issues/new?assignees=&labels=&projects=&template=feature_request.md&title=).
 
 In this issue, please describe the feature you would like to see, why you need it, and how it should work. Team members will respond to the Feature request as soon as possible.
-
 
 ### Contribute to the Code
 
@@ -55,13 +53,23 @@ If there is significant dissent within the team, a meeting will be held to discu
 
 Changes to our codebase should always address an [issue](https://github.com/CodeForPhilly/vacant-lots-proj/issues) and need to be requested to be merged by submitting a pull request that will be reviewed by at least the team lead or tech lead.
 
+#### Formatting
+
+For js/ts, install [Prettier](https://prettier.io/) and enable it for your [editor](https://prettier.io/docs/en/editors.html). For VSCode, enable [Format on Save](https://www.robinwieruch.de/how-to-use-prettier-vscode/) for best experience.
+
+For Python, `black` will run automatically in `docker-compose` when the main script is run. If you want to just format the files, you can run:
+
+```
+docker-compose run formatter
+```
+
 #### Choose an issue
 
 Look through the [issues page](https://github.com/CodeForPhilly/vacant-lots-proj/issues) in the repo.
 
 Find a task that has no current assignees and sounds like a task that either you can confidently take on yourself or involves a new language, framework, or design that you want learn.
 
-For the latter it is best to pair on this with a team member experienced with that thing you want to learn. 
+For the latter it is best to pair on this with a team member experienced with that thing you want to learn.
 
 #### Commit your work
 
@@ -98,6 +106,7 @@ Please also make sure you tag the issue you are addressing. You can do this when
 
 ```md
 <!-- For example, for a PR addressing issue #13 -->
+
 Closes #13
 ```
 
@@ -129,11 +138,9 @@ Please also delete the branch from Github (you'll be prompted).
 We keep a changelog following the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format. In the unreleased section add the following line to one of the sections within unreleased:
 
 ```md
-
 ### Added
 
 - Add your PR title [#1](https://github.com/CodeForPhilly/vacant-lots-proj/pull/1)
-
 ```
 
 You would use your PR's title, the number of your PR, and the link to that PR. There are a few sections: `Added, Changed, Deprecated, Removed, Fixed, Security`, and you should add your line to the section that best matches what your PR is contributing.

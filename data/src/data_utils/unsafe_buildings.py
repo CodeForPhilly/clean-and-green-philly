@@ -8,9 +8,7 @@ def unsafe_buildings(primary_featurelayer):
         name="Unsafe Buildings",
         carto_sql_queries=UNSAFE_BUILDINGS_QUERY,
         use_wkb_geom_field="the_geom",
-        cols=[
-            "opa_account_num"
-        ]
+        cols=["opa_account_num"],
     )
 
     unsafe_buildings.gdf["unsafe_building"] = "Y"

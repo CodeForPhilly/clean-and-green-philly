@@ -6,8 +6,7 @@ from config.psql import conn
 
 def phs_properties(primary_featurelayer):
     phs_properties = FeatureLayer(
-        name="PHS Properties", esri_rest_urls=PHS_LAYERS_TO_LOAD,
-        cols=["BRT_ID"]
+        name="PHS Properties", esri_rest_urls=PHS_LAYERS_TO_LOAD, cols=["BRT_ID"]
     )
 
     phs_properties.gdf["phs_partner_agency"] = "PHS"

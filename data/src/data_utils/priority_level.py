@@ -5,12 +5,14 @@ def priority_level(dataset):
 
         # Decision Points
         guncrime_density = row["guncrime_density"]
-        in_phs_landcare = row["phs_partner_agency"] == 'PHS'
-        has_li_complaint_or_violation = row["li_complaints"] is not None and float(
-            row["all_violations_past_year"]) > 0
+        in_phs_landcare = row["phs_partner_agency"] == "PHS"
+        has_li_complaint_or_violation = (
+            row["li_complaints"] is not None
+            and float(row["all_violations_past_year"]) > 0
+        )
         very_low_tree_canopy = row["tree_canopy_gap"] >= 0.3
 
-        if guncrime_density == 'Bottom 50%':
+        if guncrime_density == "Bottom 50%":
             # Low Gun Crime Density
             priority_level = "Low Priority"
 
@@ -26,7 +28,7 @@ def priority_level(dataset):
                     else:
                         priority_level = "Medium"
                 else:
-                    priority_level = 'High'
+                    priority_level = "High"
 
         else:
             # Medium Gun Crime Density

@@ -11,7 +11,9 @@ import mapclassify
 
 def drug_crimes(primary_featurelayer):
     # Initialize gun_crimes object
-    drug_crimes = FeatureLayer(name="Drug Crimes", carto_sql_queries=DRUGCRIME_SQL_QUERY)
+    drug_crimes = FeatureLayer(
+        name="Drug Crimes", carto_sql_queries=DRUGCRIME_SQL_QUERY
+    )
 
     # Extract x, y coordinates from geometry
     x = np.array([])
