@@ -8,15 +8,14 @@ def imm_dang_buildings(primary_featurelayer):
         name="Imminently Dangerous Buildings",
         use_wkb_geom_field="the_geom",
         carto_sql_queries=IMMINENT_DANGER_BUILDINGS_QUERY,
-        
-        cols=[
-            "opa_account_num"
-        ]
+        cols=["opa_account_num"],
     )
 
     imm_dang_buildings.gdf["imm_dang_building"] = "Y"
 
-    imm_dang_buildings.gdf.rename(columns={"opa_account_num": "opa_number"}, inplace=True)
+    imm_dang_buildings.gdf.rename(
+        columns={"opa_account_num": "opa_number"}, inplace=True
+    )
 
     primary_featurelayer.opa_join(
         imm_dang_buildings.gdf,

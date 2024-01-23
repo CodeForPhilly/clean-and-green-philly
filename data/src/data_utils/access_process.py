@@ -3,25 +3,27 @@ import datetime
 from dateutil.parser import parse
 import pytz
 
-est = pytz.timezone('US/Eastern')
-six_months_ago = (datetime.datetime.now() -
-                  datetime.timedelta(days=180)).astimezone(est)
+est = pytz.timezone("US/Eastern")
+six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astimezone(
+    est
+)
 
-blight_words = ['weed',
-                'rubbish',
-                'garbage',
-                'tire',
-                'debris',
-                'clean',
-                'waste',
-                'vegetation',
-                'dumping',
-                'scrap',
-                'auto',
-                'vehicle',
-                'graffiti',
-                'dangerous',
-                ]
+blight_words = [
+    "weed",
+    "rubbish",
+    "garbage",
+    "tire",
+    "debris",
+    "clean",
+    "waste",
+    "vegetation",
+    "dumping",
+    "scrap",
+    "auto",
+    "vehicle",
+    "graffiti",
+    "dangerous",
+]
 
 
 def access_process(dataset):
@@ -31,14 +33,14 @@ def access_process(dataset):
 
         # Decision Points
         city_owner_agency = row["city_owner_agency"]
-        city_owner_agency_is_plb = city_owner_agency == 'PLB'
-        city_owner_agency_is_not_plb = city_owner_agency in ['PRA', 'PHDC', 'PLB']
-        sheriff_sale = row["sheriff_sale"] == 'Y'
-        market_value_over_1000 = row["market_value"] is not None and float(
-            row["market_value"]) > 1000
+        city_owner_agency_is_plb = city_owner_agency == "PLB"
+        city_owner_agency_is_not_plb = city_owner_agency in ["PRA", "PHDC", "PLB"]
+        sheriff_sale = row["sheriff_sale"] == "Y"
+        market_value_over_1000 = (
+            row["market_value"] is not None and float(row["market_value"]) > 1000
+        )
         li_complaints_lower = str(row["li_complaints"]).lower().split(" ")
-        contains_blight_word = any(
-            word in li_complaints_lower for word in blight_words)
+        contains_blight_word = any(word in li_complaints_lower for word in blight_words)
 
         try:
             sale_date = parse(row["sale_date"])

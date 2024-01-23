@@ -9,3 +9,9 @@ services:
       - PYTHONUNBUFFERED=1
     volumes:
       - ./src:/usr/src/app
+
+  formatter:
+    build: .
+    volumes:
+      - ./src:/usr/src/app
+    command: sh -c "pipenv run black /usr/src/app"

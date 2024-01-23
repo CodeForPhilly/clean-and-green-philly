@@ -6,7 +6,7 @@ def city_owned_properties(primary_featurelayer):
     city_owned_properties = FeatureLayer(
         name="City Owned Properties",
         esri_rest_urls=CITY_OWNED_PROPERTIES_TO_LOAD,
-        cols=['OPABRT', 'AGENCY', 'SIDEYARDELIGIBLE']
+        cols=["OPABRT", "AGENCY", "SIDEYARDELIGIBLE"],
     )
 
     city_owned_properties.gdf.dropna(subset=["OPABRT"], inplace=True)

@@ -25,12 +25,11 @@ class FeatureLayer:
         force_reload=FORCE_RELOAD,
         from_xy=False,
         use_wkb_geom_field=None,
-        cols=None
+        cols=None,
     ):
         self.name = name
         self.esri_rest_urls = (
-            [esri_rest_urls] if isinstance(
-                esri_rest_urls, str) else esri_rest_urls
+            [esri_rest_urls] if isinstance(esri_rest_urls, str) else esri_rest_urls
         )
         self.carto_sql_queries = (
             [carto_sql_queries]
@@ -86,8 +85,7 @@ class FeatureLayer:
             try:
                 if self.type == "esri":
                     if self.esri_rest_urls is None:
-                        raise ValueError(
-                            "Must provide a URL to load data from Esri")
+                        raise ValueError("Must provide a URL to load data from Esri")
 
                     gdfs = []
                     for url in self.esri_rest_urls:
@@ -106,13 +104,19 @@ class FeatureLayer:
                             "features": features,
                         }
 
-                        this_gdf = gpd.GeoDataFrame.from_features(geojson_features, crs=self.input_crs)
+                        this_gdf = gpd.GeoDataFrame.from_features(
+                            geojson_features, crs=self.input_crs
+                        )
 
                         # Check if 'X' and 'Y' columns exist and create geometry if necessary
-                        if 'X' in this_gdf.columns and 'Y' in this_gdf.columns:
-                            this_gdf['geometry'] = this_gdf.apply(lambda row: Point(row['X'], row['Y']), axis=1)
-                        elif 'geometry' not in this_gdf.columns:
-                            raise ValueError("No geometry information found in the data.")
+                        if "X" in this_gdf.columns and "Y" in this_gdf.columns:
+                            this_gdf["geometry"] = this_gdf.apply(
+                                lambda row: Point(row["X"], row["Y"]), axis=1
+                            )
+                        elif "geometry" not in this_gdf.columns:
+                            raise ValueError(
+                                "No geometry information found in the data."
+                            )
 
                         this_gdf = this_gdf.to_crs(USE_CRS)
 
@@ -189,14 +193,13 @@ class FeatureLayer:
                     "other_layer.gdf must be a GeoDataFrame or a DataFrame with x and y columns."
                 )
 
-        self.gdf = gpd.sjoin(self.gdf, other_layer.gdf,
-                             how=how, predicate=predicate)
+        self.gdf = gpd.sjoin(self.gdf, other_layer.gdf, how=how, predicate=predicate)
         self.gdf.drop(columns=["index_right"], inplace=True)
         self.gdf.drop_duplicates(inplace=True)
 
         # Coerce OPA_ID to integer and drop rows where OPA_ID is null or non-numeric
-        self.gdf['OPA_ID'] = pd.to_numeric(self.gdf['OPA_ID'], errors='coerce')
-        self.gdf = self.gdf.dropna(subset=['OPA_ID'])
+        self.gdf["OPA_ID"] = pd.to_numeric(self.gdf["OPA_ID"], errors="coerce")
+        self.gdf = self.gdf.dropna(subset=["OPA_ID"])
 
     def opa_join(self, other_df, opa_column):
         """
@@ -204,32 +207,31 @@ class FeatureLayer:
         """
 
         # Coerce opa_column to integer and drop rows where opa_column is null or non-numeric
-        other_df[opa_column] = pd.to_numeric(
-            other_df[opa_column], errors='coerce')
+        other_df[opa_column] = pd.to_numeric(other_df[opa_column], errors="coerce")
         other_df = other_df.dropna(subset=[opa_column])
 
         # Coerce OPA_ID to integer and drop rows where OPA_ID is null or non-numeric
-        self.gdf['OPA_ID'] = pd.to_numeric(self.gdf['OPA_ID'], errors='coerce')
-        self.gdf = self.gdf.dropna(subset=['OPA_ID'])
+        self.gdf["OPA_ID"] = pd.to_numeric(self.gdf["OPA_ID"], errors="coerce")
+        self.gdf = self.gdf.dropna(subset=["OPA_ID"])
 
         # Perform the merge
         joined = self.gdf.merge(
-            other_df, how="left", right_on=opa_column, left_on="OPA_ID")
+            other_df, how="left", right_on=opa_column, left_on="OPA_ID"
+        )
 
         # Check if 'geometry' column exists in both dataframes and clean up
-        if 'geometry_x' in joined.columns and 'geometry_y' in joined.columns:
-            joined = joined.drop(columns=['geometry_y'])
-            joined = joined.rename(columns={'geometry_x': 'geometry'})
+        if "geometry_x" in joined.columns and "geometry_y" in joined.columns:
+            joined = joined.drop(columns=["geometry_y"])
+            joined = joined.rename(columns={"geometry_x": "geometry"})
 
-        if opa_column != 'OPA_ID':
+        if opa_column != "OPA_ID":
             joined = joined.drop(columns=[opa_column])
 
         self.gdf = joined
         self.rebuild_gdf()
 
     def rebuild_gdf(self):
-        self.gdf = gpd.GeoDataFrame(
-            self.gdf, geometry="geometry", crs=self.crs)
+        self.gdf = gpd.GeoDataFrame(self.gdf, geometry="geometry", crs=self.crs)
 
     def upload_to_mapbox(self, tileset_id):
         """Upload GeoDataFrame to Mapbox as Tileset."""

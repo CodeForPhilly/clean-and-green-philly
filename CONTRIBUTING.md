@@ -53,6 +53,16 @@ If there is significant dissent within the team, a meeting will be held to discu
 
 Changes to our codebase should always address an [issue](https://github.com/CodeForPhilly/vacant-lots-proj/issues) and need to be requested to be merged by submitting a pull request that will be reviewed by at least the team lead or tech lead.
 
+#### Formatting
+
+For js/ts, install [Prettier](https://prettier.io/) and enable it for your [editor](https://prettier.io/docs/en/editors.html). For VSCode, enable [Format on Save](https://www.robinwieruch.de/how-to-use-prettier-vscode/) for best experience.
+
+For Python, `black` will run automatically in `docker-compose` when the main script is run. If you want to just format the files, you can run:
+
+```
+docker-compose run formatter
+```
+
 #### Choose an issue
 
 Look through the [issues page](https://github.com/CodeForPhilly/vacant-lots-proj/issues) in the repo.
