@@ -43,11 +43,11 @@ const layerStyle: FillLayer = {
     "fill-color": [
       "match",
       ["get", "priority_level"], // get the value of the guncrime_density property
-      "High Priority",
+      "High",
       "#FF4500", // Orange Red
-      "Medium Priority",
+      "Medium",
       "#FFD700", // Gold
-      "Low Priority",
+      "Low",
       "#B0E57C", // Light Green
       //"Medium Priority",
       //"#FF8C00", // Dark Orange
@@ -55,7 +55,7 @@ const layerStyle: FillLayer = {
       //"#B22222", // FireBrick
       //"Top 1%",
       //"#8B0000", // Dark Rednp
-      "#000000", // default color if none of the categories match
+      "#D3D3D3", // default color if none of the categories match
     ],
     "fill-opacity": 0.7,
   },
