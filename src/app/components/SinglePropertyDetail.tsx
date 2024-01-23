@@ -37,6 +37,10 @@ const SinglePropertyDetail = ({
   const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
 
+  const priorityBgClassName = priority_level.includes('High') ? 'bg-priority-high'
+    : priority_level.includes('Medium') ? 'bg-priority-medium'
+    : priority_level.includes('Low') ? 'bg-priority-low' : '';
+
   return (
     <div className="w-full p-4">
       <div className="pb-4">
@@ -77,7 +81,12 @@ const SinglePropertyDetail = ({
             <th scope="row" className="table-cell w-3/12">
               Suggested Priority
             </th>
-            <td className="table-cell">{priority_level}</td>
+            <td className="table-cell">
+              <div className="flex gap-1 items-center">
+                <span className={`inline-block w-4 h-4 ${priorityBgClassName}`} />
+                {priority_level}
+              </div>
+            </td>
           </tr>
           <tr>
             <th scope="row" className="table-cell">

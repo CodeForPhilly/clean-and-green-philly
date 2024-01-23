@@ -35,7 +35,12 @@ const config: Config = {
           60: '#E56535',
           40: '#FBB57D',
           20: '#F4E4D4',
-        }
+        },
+        priority: {
+          high: '#ff4500',
+          medium: '#ffd700',
+          low: '#b0e57c',
+        },
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
