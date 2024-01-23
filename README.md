@@ -18,10 +18,9 @@ You can view [the current build of the website here](https://vacant-lots-proj.ve
 
 ![User prototype map](https://github.com/CodeForPhilly/vacant-lots-proj/assets/111617674/8cbf0b06-b299-49cd-8f9f-bbb714e55b44)
 
-An older proptotype is also [available here](https://nlebovits.github.io/dashboard_demo_website/more_info.html), although it is now significantly out of date. 
+An older proptotype is also [available here](https://nlebovits.github.io/dashboard_demo_website/more_info.html), although it is now significantly out of date.
 
 Likewise, you can view the [very first iteration as an ArcGIS Storymap here](https://storymaps.arcgis.com/stories/551f77d85a584705b97c41db7711ba1b).
-
 
 # Project Updates
 
@@ -99,3 +98,5 @@ Please see [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj
 # License
 
 MIT © Code for Philly
+
+staging test
