@@ -98,5 +98,3 @@ Please see [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj
 # License
 
 MIT © Code for Philly
-
-staging test
