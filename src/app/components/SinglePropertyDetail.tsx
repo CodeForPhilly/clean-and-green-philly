@@ -2,7 +2,7 @@ import React from "react";
 import { Button } from "@nextui-org/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import Image from "next/image";
-import { Broom, HandWaving, Handshake, Money, PottedPlant, Tree } from "@phosphor-icons/react";
+import { ArrowSquareOut, Broom, HandWaving, Handshake, Money, PottedPlant, Tree } from "@phosphor-icons/react";
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 
 interface PropertyDetailProps {
@@ -62,8 +62,10 @@ const SinglePropertyDetail = ({
               target="_blank"
               rel="noopener noreferrer"
               color="primary"
+              className="flex p-2 items-center gap-1"
             >
               Atlas Link
+              <ArrowSquareOut className="inline h-6 w-6" aria-hidden="true" />
             </a>
           </div>
         </div>
