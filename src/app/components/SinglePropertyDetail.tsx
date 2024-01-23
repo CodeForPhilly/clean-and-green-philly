@@ -54,23 +54,23 @@ const SinglePropertyDetail = ({
       <div className="py-4 px-2">
         <div className="flex justify-between content-center">
           <h2 className="font-bold text-2xl">{address}</h2>
-        </div>
-        <div style={{ textAlign: "left", marginTop: "1em" }}>
-          <Button
-            as="a"
-            href={atlasUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            color="primary"
-          >
-            View this property on Atlas
-          </Button>
+          <div>
+            <a
+              href={atlasUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              color="primary"
+            >
+              Atlas Link
+            </a>
+          </div>
         </div>
       </div>
-      <table className="w-full">
+
+      <table className="w-full mb-3">
         <tbody>
           <tr>
-            <th scope="row" className="table-cell">
+            <th scope="row" className="table-cell w-3/12">
               Suggested Priority
             </th>
             <td className="table-cell">{priority_level}</td>
@@ -87,8 +87,13 @@ const SinglePropertyDetail = ({
             </th>
             <td className="table-cell">{Math.round(tree_canopy_gap * 100)}%</td>
           </tr>
+        </tbody>
+      </table>
+
+      <table className="w-full mb-4">
+        <tbody>
           <tr>
-            <th scope="row" className="table-cell">
+            <th scope="row" className="table-cell w-3/12">
               Access Process
             </th>
             <td className="table-cell">{access_process}</td>
@@ -110,7 +115,7 @@ const SinglePropertyDetail = ({
           </tr>
           <tr>
             <th scope="row" className="table-cell">
-              Neighborhood
+              RCO
             </th>
             <td className="table-cell">{neighborhood}</td>
           </tr>
@@ -128,7 +133,7 @@ const SinglePropertyDetail = ({
           </tr>
           <tr>
             <th scope="row" className="table-cell">
-              Tax delinquency
+              Tax Delinquency
             </th>
             <td className="table-cell">{total_due ? "Yes" : "No"}</td>
           </tr>
@@ -140,7 +145,19 @@ const SinglePropertyDetail = ({
           </tr>
         </tbody>
       </table>
-      <p className="font-bold mt-4 py-2">Remove This Property</p>
+
+      <h3 className="font-bold mb-2 py-2">Ways to transform the lot</h3>
+      <p className="mb-4">
+        How do you envision transforming the lot?  The type of change you want to make will guide the access you need.  Here are a couple of possible options for this lot.  Learn more.&nbsp;
+        <a href="/transform-property">Transform a Property</a>
+      </p>
+
+      <h3 className="font-bold mb-2 py-2">Getting Access</h3>
+      <p className="mb-4">
+        Based on the information about this property we'd recommend these actions.  Learn more at <a href="/get-access">Gain Access</a>
+      </p>
+
+      <h3 className="font-bold mb-2 py-2">Remove This Property</h3>
       <p>
         If you would like to request that we remove this property from the
         dashboard, please see our{" "}
