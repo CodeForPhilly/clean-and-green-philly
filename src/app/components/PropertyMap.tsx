@@ -304,7 +304,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
 
   // map load
   return (
-    <div className="relative h-full w-full">
+    <div className="customized-map relative h-full w-full">
       <Map
         mapboxAccessToken={mapboxAccessToken}
         initialViewState={{

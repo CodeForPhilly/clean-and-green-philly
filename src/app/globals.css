@@ -10,7 +10,6 @@
        url('/fonts/hkgrotesk-bold-webfont.woff') format('woff');
   font-weight: bold;
   font-style: normal;
-
 }
 
 @font-face {
@@ -19,7 +18,6 @@
        url('/fonts/hkgrotesk-extrabold-webfont.woff') format('woff');
   font-weight: 800;
   font-style: normal;
-
 }
 
 @font-face {
@@ -28,7 +26,6 @@
        url('/fonts/hkgrotesk-regular-webfont.woff') format('woff');
   font-weight: normal;
   font-style: normal;
-
 }
 
 :root {
@@ -47,8 +44,12 @@
 
 @layer base {
   html {
-    font-family: "HK Grotesk", system-ui, sans-serif;
+    @apply font-body;
   }
+}
+
+.customized-map * {
+  @apply font-body;
 }
 
 .mapboxgl-ctrl-legend {
