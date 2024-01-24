@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-const { nextui } = require("@nextui-org/react");
+import { nextui } from "@nextui-org/react";
 
 const config: Config = {
   content: [
@@ -11,7 +11,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        'nunito': ['Nunito', 'sans-serif'],
+        body: ['"HK Grotesk"', 'sans-serif'],
+        display: ['"HK Grotesk"', 'sans-serif'],
       },
       colors: {
         gray: {
