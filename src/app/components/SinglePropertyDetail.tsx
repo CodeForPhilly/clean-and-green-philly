@@ -2,7 +2,17 @@ import React from "react";
 import { Button } from "@nextui-org/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import Image from "next/image";
-import { ArrowSquareOut, Broom, HandWaving, Handshake, Money, PottedPlant, Tree } from "@phosphor-icons/react";
+import 
+{ ArrowSquareOut, 
+  Broom, 
+  HandWaving, 
+  Handshake, 
+  Money, 
+  PottedPlant, 
+  Tree,
+  ProhibitInset,
+  PiggyBank
+ } from "@phosphor-icons/react";
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 
 interface PropertyDetailProps {
@@ -106,12 +116,12 @@ const SinglePropertyDetail = ({
 
       <table className="w-full mb-4">
         <tbody>
-          <tr>
-            <th scope="row" className="table-cell w-3/12">
-              Access Process
-            </th>
-            <td className="table-cell">{access_process}</td>
-          </tr>
+        <tr style={{ display: 'none' }}>
+          <th scope="row" className="table-cell w-3/12">
+            Access Process
+          </th>
+          <td className="table-cell">{access_process}</td>
+        </tr>
           <tr>
             <th scope="row" className="table-cell">
               Owner
@@ -168,12 +178,51 @@ const SinglePropertyDetail = ({
         </tbody>
       </table>
 
-      <h3 className="font-bold mb-2 py-2 text-xl">Ways to transform the lot</h3>
+      <h3 className="font-bold mb-2 py-2 text-xl">Getting Access</h3>
       <p className="mb-4">
-        How do you envision transforming the lot?  The type of change you want to make will guide the access you need.  Here are a couple of possible options for this lot.  Learn more.&nbsp;
-        <a href="/transform-property"><Tree className="inline h-6 w-6" aria-hidden="true" />Transform a Property</a>
+        Based on the information about this property, we believe that you can get access to this property through:
       </p>
 
+      <div className="flex mb-4 px-2 gap-4">
+        {access_process === "Private Land Use Agreement" && (
+          <SinglePropertyInfoCard
+            title="Private Land Use Agreement"
+            body="Given the price and ownership of this property, we believe the easiest way to get access to this property is through a land use agreement with its owner."
+            icon={<Handshake className="h-12 w-12" aria-hidden="true" />}
+          />
+        )}
+        {access_process === "Buy Property" && (
+          <SinglePropertyInfoCard
+            title="Buying a Property"
+            body="This property is cheap enough that we believe you can buy it outright."
+            icon={<Money className="h-12 w-12" aria-hidden="true" />}
+          />
+        )}
+        {access_process === "Do Nothing (Too Complicated)" && (
+          <SinglePropertyInfoCard
+            title="Do Nothing (Too Complicated)"
+            body="We believe access this property legally is too complicated to justify the effort."
+            icon={<ProhibitInset className="h-12 w-12" aria-hidden="true" />}
+          />
+        )}
+        {access_process === "Land Bank" && (
+          <SinglePropertyInfoCard
+            title="Land Bank"
+            body="You may be able to acquire this property for a nominal or discounted price from the Land Bank."
+            icon={<PiggyBank className="h-12 w-12" aria-hidden="true" />}
+          />
+        )}
+      </div>
+
+      <p> To learn more about what this means, visit <a href="/get-access" target="_blank" rel="noopener noreferrer" className="text-primary">our <HandWaving className="inline h-6 w-6" aria-hidden="true" /> Get Access page.</a></p>
+
+      <h3 className="font-bold mb-2 py-2 text-xl">Ways to transform the lot</h3>
+      <p className="mb-4">
+        To see different ways in which you might transform this property, see
+        <a href="/transform-property" target="_blank" rel="noopener noreferrer" className="text-primary"> our <Tree className="inline h-6 w-6" aria-hidden="true" /> Transform a Property page.</a>
+      </p>
+
+      {/*
       <div className="flex mb-4 px-2 gap-4">
         <SinglePropertyInfoCard
           title="Lot Cleanup"
@@ -186,24 +235,7 @@ const SinglePropertyDetail = ({
           icon={<PottedPlant className="h-12 w-12" aria-hidden="true" />}
         />
       </div>
-
-      <h3 className="font-bold mb-2 py-2 text-xl">Getting Access</h3>
-      <p className="mb-4">
-        Based on the information about this property we'd recommend these actions.  Learn more at <a href="/get-access"><HandWaving className="inline h-6 w-6" aria-hidden="true" />Gain Access</a>
-      </p>
-
-      <div className="flex mb-4 px-2 gap-4">
-        <SinglePropertyInfoCard
-          title="Private Use Agreement"
-          body="Make an agreement with the property owner."
-          icon={<Handshake className="h-12 w-12" aria-hidden="true" />}
-        />
-        <SinglePropertyInfoCard
-          title="Buying a Property"
-          body="Buying a property outright can be the simplest way."
-          icon={<Money className="h-12 w-12" aria-hidden="true" />}
-        />
-      </div>
+      */}
 
       <h3 className="font-bold mb-2 py-2 text-xl">Remove This Property</h3>
       <p>
