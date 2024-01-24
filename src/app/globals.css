@@ -4,6 +4,29 @@
 
 @import '~mapbox-gl/dist/mapbox-gl.css';
 
+@font-face {
+  font-family: 'HK Grotesk';
+  src: url('/fonts/hkgrotesk-bold-webfont.woff2') format('woff2'),
+       url('/fonts/hkgrotesk-bold-webfont.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'HK Grotesk';
+  src: url('/fonts/hkgrotesk-extrabold-webfont.woff2') format('woff2'),
+       url('/fonts/hkgrotesk-extrabold-webfont.woff') format('woff');
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'HK Grotesk';
+  src: url('/fonts/hkgrotesk-regular-webfont.woff2') format('woff2'),
+       url('/fonts/hkgrotesk-regular-webfont.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -19,9 +42,14 @@
   }
 }
 
-body {
-  background-color: white;
-  font-family: 'DIN 1451', sans-serif; 
+@layer base {
+  html {
+    @apply font-body;
+  }
+}
+
+.customized-map * {
+  @apply font-body;
 }
 
 .mapboxgl-ctrl-legend {
