@@ -28,6 +28,7 @@ const SinglePropertyDetail = ({
     open_violations_past_year,
     owner_1,
     owner_2,
+    parcel_type,
     priority_level,
     total_due,
     tree_canopy_gap,
@@ -118,6 +119,14 @@ const SinglePropertyDetail = ({
             <td className="table-cell">
               <p>{owner_1}</p>
               {owner_2 && <p>{owner_2}</p>}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">
+              Parcel Type
+            </th>
+            <td className="table-cell">
+              <p>{parcel_type}</p>
             </td>
           </tr>
           <tr>
