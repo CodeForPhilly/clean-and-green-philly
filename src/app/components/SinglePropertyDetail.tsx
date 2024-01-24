@@ -2,6 +2,8 @@ import React from "react";
 import { Button } from "@nextui-org/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import Image from "next/image";
+import { ArrowSquareOut, Broom, HandWaving, Handshake, Money, PottedPlant, Tree } from "@phosphor-icons/react";
+import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 
 interface PropertyDetailProps {
   property: MapboxGeoJSONFeature | null;
@@ -35,6 +37,10 @@ const SinglePropertyDetail = ({
   const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
 
+  const priorityBgClassName = priority_level.includes('High') ? 'bg-priority-high'
+    : priority_level.includes('Medium') ? 'bg-priority-medium'
+    : priority_level.includes('Low') ? 'bg-priority-low' : '';
+
   return (
     <div className="w-full p-4">
       <div className="pb-4">
@@ -54,26 +60,33 @@ const SinglePropertyDetail = ({
       <div className="py-4 px-2">
         <div className="flex justify-between content-center">
           <h2 className="font-bold text-2xl">{address}</h2>
-        </div>
-        <div style={{ textAlign: "left", marginTop: "1em" }}>
-          <Button
-            as="a"
-            href={atlasUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            color="primary"
-          >
-            View this property on Atlas
-          </Button>
+          <div>
+            <a
+              href={atlasUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              color="primary"
+              className="flex p-2 items-center gap-1"
+            >
+              Atlas Link
+              <ArrowSquareOut className="inline h-6 w-6" aria-hidden="true" />
+            </a>
+          </div>
         </div>
       </div>
-      <table className="w-full">
+
+      <table className="w-full mb-3">
         <tbody>
           <tr>
-            <th scope="row" className="table-cell">
+            <th scope="row" className="table-cell w-3/12">
               Suggested Priority
             </th>
-            <td className="table-cell">{priority_level}</td>
+            <td className="table-cell">
+              <div className="flex gap-1 items-center">
+                <span className={`inline-block w-4 h-4 ${priorityBgClassName}`} />
+                {priority_level}
+              </div>
+            </td>
           </tr>
           <tr>
             <th scope="row" className="table-cell">
@@ -87,8 +100,13 @@ const SinglePropertyDetail = ({
             </th>
             <td className="table-cell">{Math.round(tree_canopy_gap * 100)}%</td>
           </tr>
+        </tbody>
+      </table>
+
+      <table className="w-full mb-4">
+        <tbody>
           <tr>
-            <th scope="row" className="table-cell">
+            <th scope="row" className="table-cell w-3/12">
               Access Process
             </th>
             <td className="table-cell">{access_process}</td>
@@ -110,7 +128,7 @@ const SinglePropertyDetail = ({
           </tr>
           <tr>
             <th scope="row" className="table-cell">
-              Neighborhood
+              RCO
             </th>
             <td className="table-cell">{neighborhood}</td>
           </tr>
@@ -128,7 +146,7 @@ const SinglePropertyDetail = ({
           </tr>
           <tr>
             <th scope="row" className="table-cell">
-              Tax delinquency
+              Tax Delinquency
             </th>
             <td className="table-cell">{total_due ? "Yes" : "No"}</td>
           </tr>
@@ -140,7 +158,45 @@ const SinglePropertyDetail = ({
           </tr>
         </tbody>
       </table>
-      <p className="font-bold mt-4 py-2">Remove This Property</p>
+
+      <h3 className="font-bold mb-2 py-2 text-xl">Ways to transform the lot</h3>
+      <p className="mb-4">
+        How do you envision transforming the lot?  The type of change you want to make will guide the access you need.  Here are a couple of possible options for this lot.  Learn more.&nbsp;
+        <a href="/transform-property"><Tree className="inline h-6 w-6" aria-hidden="true" />Transform a Property</a>
+      </p>
+
+      <div className="flex mb-4 px-2 gap-4">
+        <SinglePropertyInfoCard
+          title="Lot Cleanup"
+          body="In a day, clean up with a street crew and PHS!"
+          icon={<Broom className="h-12 w-12" aria-hidden="true" />}
+        />
+        <SinglePropertyInfoCard
+          title="Community Garden"
+          body="Set up a longer term, sustainable green space."
+          icon={<PottedPlant className="h-12 w-12" aria-hidden="true" />}
+        />
+      </div>
+
+      <h3 className="font-bold mb-2 py-2 text-xl">Getting Access</h3>
+      <p className="mb-4">
+        Based on the information about this property we'd recommend these actions.  Learn more at <a href="/get-access"><HandWaving className="inline h-6 w-6" aria-hidden="true" />Gain Access</a>
+      </p>
+
+      <div className="flex mb-4 px-2 gap-4">
+        <SinglePropertyInfoCard
+          title="Private Use Agreement"
+          body="Make an agreement with the property owner."
+          icon={<Handshake className="h-12 w-12" aria-hidden="true" />}
+        />
+        <SinglePropertyInfoCard
+          title="Buying a Property"
+          body="Buying a property outright can be the simplest way."
+          icon={<Money className="h-12 w-12" aria-hidden="true" />}
+        />
+      </div>
+
+      <h3 className="font-bold mb-2 py-2 text-xl">Remove This Property</h3>
       <p>
         If you would like to request that we remove this property from the
         dashboard, please see our{" "}
