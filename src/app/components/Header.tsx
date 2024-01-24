@@ -51,6 +51,9 @@ const Header = () => (
           </Button>
         </DropdownTrigger>
         <DropdownMenu aria-label="Take Action">
+          <DropdownItem key="overview">
+            <Link href="/take-action-overview">Overview</Link>
+          </DropdownItem>
           <DropdownItem key="get-access">
             <Link href="/get-access">Get Access</Link>
           </DropdownItem>

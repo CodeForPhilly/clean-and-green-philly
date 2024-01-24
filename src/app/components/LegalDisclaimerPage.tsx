@@ -7,6 +7,7 @@ import {
 } from "@nextui-org/react";
 import { get } from "http";
 
+<<<<<<< Updated upstream
 export default function GetAccessPage() {
   return (
     <div className="flex flex-col min-h-screen">
@@ -115,6 +116,49 @@ export default function GetAccessPage() {
           your own that go beyond fair use, you must obtain permission from the
           copyright owner.
         </p>
+=======
+export default function TakeActionOverviewPage() {
+  return (
+    <div className="flex flex-col min-h-screen">
+      <div className="flex-grow container mx-auto pt-20">
+        <h1 className="text-4xl font-bold mb-6">Overview</h1>
+
+        <p>
+          Clean & Green Philly can help you prioritize vacant properties to return to productive use. We encourage cleaning and greening interventions, but also recognize that there is no one-size-fits-all solution. To address gun violence and vacancy in Philadelphia, we will need a range of interventions, each tailored to local context. Below, we lay out ways that you can use this site to identify a property, understand how to get legal access to it, and think about the ways in which you might best return it to productive use—whether through cleaning and greening or otherwise.
+        </p>
+
+        <h2 className="text-2xl font-bold mt-8">What can I do?</h2>
+        <p>
+          Using this site, you can identify a high impact property, figure out how to get legal access to it, and decide on your preferred intervention to return the lot to productive use. 
+        </p>
+
+        <p>At a minimum, we encourage cleaning and greening. This involves:</p>
+        <ul className="list-disc pl-6 mb-4">
+          <li>Removing trash and debris</li>
+          <li>Grading the land</li>
+          <li>Planting trees</li>
+          <li>Installing low fences</li>
+          <li>Regular maintenance</li>
+        </ul>
+
+        <p>
+          The cost for these kinds of projects is usually low, about $5 per square yard, with maintenance around $0.50 per square yard. Even if you can't do everything, small steps like putting up a fence, planting some trees, or just keeping the area clean can make a big difference.
+        </p>
+
+        <h2 className="text-2xl font-bold mt-8">How can Clean & Green Philly help me take action?</h2>
+
+        <p>Basic use of Clean & Green Philly is simple:</p>
+        <ol className="list-decimal pl-6 mb-4">
+          <li>Identify a high-impact property</li>
+          <li>Figure out how to get legal access to it</li>
+          <li>Decide on your preferred intervention</li>
+        </ol>
+
+        <p>
+          In the future, we hope to add more specific information on things like applying for small grants, navigating the legal system, and more.
+        </p>
+
+>>>>>>> Stashed changes
       </div>
     </div>
   );
