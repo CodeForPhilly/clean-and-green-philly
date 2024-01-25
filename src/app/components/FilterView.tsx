@@ -20,8 +20,7 @@ const filters = [
     options: [
       "Buy Property",
       "Land Bank",
-      "Private Land Use Agreement",
-      "Conservatorship"
+      "Private Land Use Agreement"
     ],
     tooltip: "For information on what these mean, see the Get Access page"
   },
@@ -35,8 +34,20 @@ const filters = [
     tooltip: "For an explanation of this, see the Get Access page"
   },
   {
+    property: "conservatorship",
+    display: "Conservatorship Eligible",
+    options: ["Yes", "No"],
+    tooltip: "For an explanation of this, see the Get Access page"
+  },
+  {
     property: "side_yard_eligible",
     display: "Side Yard Eligible",
+    options: ["Yes", "No"],
+    tooltip: "For an explanation of this, see the Get Access page"
+  },
+  {
+    property: "llc_owner",
+    display: "LLC Owner",
     options: ["Yes", "No"],
     tooltip: "For an explanation of this, see the Get Access page"
   },
