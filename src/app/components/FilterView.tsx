@@ -34,14 +34,13 @@ const filters = [
     ],
     tooltip: "For an explanation of this, see the Get Access page"
   },
-  /*
   {
     property: "side_yard_eligible",
     display: "Side Yard Eligible",
     options: ["Yes", "No"],
     tooltip: "For an explanation of this, see the Get Access page"
   },
-  */
+
 ];
 
 const FilterView: FC = () => {

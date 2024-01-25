@@ -23,4 +23,6 @@ def city_owned_properties(primary_featurelayer):
 
     primary_featurelayer.gdf.rename(columns=rename_columns, inplace=True)
 
+    primary_featurelayer.gdf["side_yard_eligible"].fillna("No", inplace=True)
+
     return primary_featurelayer
