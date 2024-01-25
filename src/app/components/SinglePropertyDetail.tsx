@@ -123,7 +123,7 @@ const SinglePropertyDetail = ({
           <td className="table-cell">{access_process}</td>
         </tr>
           <tr>
-            <th scope="row" className="table-cell">
+            <th scope="row" className="table-cell w-3/12">
               Owner
             </th>
             <td className="table-cell">
