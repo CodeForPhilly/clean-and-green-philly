@@ -7,11 +7,11 @@ import {
 } from "@nextui-org/react";
 import { get } from "http";
 
-export default function GetAccessPage() {
+export default function LegalDisclaimerPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="container mx-auto pt-20">
-        <h1 className="text-4xl font-bold mb-6">Legal Disclaimer (Staging)</h1>
+        <h1 className="text-4xl font-bold mb-6">Legal Disclaimer</h1>
 
         <h2 className="text-2xl font-bold mt-8">
           Acceptance of Terms and Conditions of Use

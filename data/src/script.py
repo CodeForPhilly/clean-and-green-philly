@@ -6,6 +6,8 @@ from data_utils.drug_crimes import drug_crimes
 from data_utils.unsafe_buildings import unsafe_buildings
 from data_utils.imm_dang_buildings import imm_dang_buildings
 from data_utils.tactical_urbanism import tactical_urbanism
+from data_utils.conservatorship import conservatorship
+from data_utils.llc_owner import llc_owner
 import sys
 
 
@@ -28,6 +30,8 @@ services = [
     unsafe_buildings,
     imm_dang_buildings,
     tactical_urbanism,
+    conservatorship,
+    llc_owner,
 ]
 
 
