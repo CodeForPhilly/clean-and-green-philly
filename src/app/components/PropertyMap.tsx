@@ -7,9 +7,8 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import { Tooltip } from "@nextui-org/react";
 import mapboxgl, { Map as MapboxMap, PointLike } from "mapbox-gl";
-import { Polygon } from 'geojson';
+import { Polygon } from "geojson";
 import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
@@ -29,16 +28,13 @@ import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
-
-
+import ZoomModal from "./ZoomModal";
 
 const layerStyle: FillLayer = {
-  id: "vacant_properties",
+  id: "vacant_properties_tiles",
   type: "fill",
-  source: "vacant_properties",
-  "source-layer": "vacant_properties",
+  source: "vacant_properties_tiles",
+  "source-layer": "vacant_properties_tiles",
   paint: {
     "fill-color": [
       "match",
@@ -78,16 +74,19 @@ interface PropertyMapProps {
   setLoading: Dispatch<SetStateAction<boolean>>;
   selectedProperty: MapboxGeoJSONFeature | null;
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
+  setFeatureCount: Dispatch<SetStateAction<number>>;
 }
 const PropertyMap: React.FC<PropertyMapProps> = ({
   setFeaturesInView,
   setLoading,
   selectedProperty,
   setSelectedProperty,
+  setFeatureCount,
 }) => {
   const { filter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
+  const [zoom, setZoom] = useState<number>(13);
   const legendRef = useRef<LegendControl | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
 
@@ -100,7 +99,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     });
 
     if (isAnyFilterEmpty) {
-      map.setFilter("vacant_properties", ["==", ["id"], ""]);
+      map.setFilter("vacant_properties_tiles", ["==", ["id"], ""]);
       return;
     }
 
@@ -115,13 +114,13 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       [] as any[]
     );
 
-    map.setFilter("vacant_properties", ["all", ...mapFilter]);
+    map.setFilter("vacant_properties_tiles", ["all", ...mapFilter]);
   };
 
   const onMapClick = (event: any) => {
     if (map) {
       const features = map.queryRenderedFeatures(event.point, {
-        layers: ["vacant_properties"],
+        layers: ["vacant_properties_tiles"],
       });
 
       if (features.length > 0) {
@@ -143,30 +142,18 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     if (!map) return;
     setLoading(true);
 
-    const zoom = map.getZoom();
+    const zoom_ = map.getZoom();
+    setZoom(zoom_);
 
     let bbox: [PointLike, PointLike] | undefined = undefined;
-    if (zoom < 14) {
-      // get map size in pixels
-      const { height, width } = map.getCanvas();
-      bbox = [
-        [0.25 * width, 0.25 * height],
-        [0.75 * width, 0.75 * height],
-      ];
-    }
     const features = map.queryRenderedFeatures(bbox, {
-      layers: ["vacant_properties"],
+      layers: ["vacant_properties_tiles"],
     });
 
-    // Remove duplicate features (which can occur because of the way the tiles are generated)
-    const uniqueFeatures = features.reduce((acc: any[], feature: any) => {
-      if (!acc.find((f) => f.properties.OPA_ID === feature.properties.OPA_ID)) {
-        acc.push(feature);
-      }
-      return acc;
-    }, []);
+    setFeatureCount(features.length);
 
-    setFeaturesInView(uniqueFeatures);
+    // only set the first 100 properties in state
+    setFeaturesInView(features.slice(0, 100));
     setLoading(false);
   };
 
@@ -244,37 +231,47 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     /** Ticket #87 - focus on map when a property is selected */
     if (id && map != null) {
       const features = map.queryRenderedFeatures(undefined, {
-        layers: ["vacant_properties"],
+        layers: ["vacant_properties_tiles"],
       });
-      const mapItem = features.find(feature => feature.properties?.OPA_ID === id);
-  
+      const mapItem = features.find(
+        (feature) => feature.properties?.OPA_ID === id
+      );
+
       if (mapItem != null) {
         const coordinates = (mapItem.geometry as Polygon).coordinates[0];
-  
+
         if (coordinates.length > 0) {
           // Filter out coordinates that are not available
-          const validCoordinates = coordinates.filter(([x, y]) => !isNaN(x) && !isNaN(y));
-  
+          const validCoordinates = coordinates.filter(
+            ([x, y]) => !isNaN(x) && !isNaN(y)
+          );
+
           if (validCoordinates.length > 0) {
             const totalPoint = validCoordinates.reduce(
-              (prevSum, position) => [prevSum[0] + position[0], prevSum[1] + position[1]],
-              [0, 0],
+              (prevSum, position) => [
+                prevSum[0] + position[0],
+                prevSum[1] + position[1],
+              ],
+              [0, 0]
             );
-  
-            let finalPoint = [totalPoint[0] / validCoordinates.length, totalPoint[1] / validCoordinates.length];
-  
+
+            let finalPoint = [
+              totalPoint[0] / validCoordinates.length,
+              totalPoint[1] / validCoordinates.length,
+            ];
+
             // Check if the finalPoint is valid
             if (isNaN(finalPoint[0]) || isNaN(finalPoint[1])) {
               // Fallback to first coordinate of the polygon if finalPoint is invalid
               finalPoint = validCoordinates[0];
             }
-  
+
             const pointForMap = { lng: finalPoint[0], lat: finalPoint[1] };
-  
+
             map.flyTo({
               center: pointForMap,
             });
-  
+
             setPopupInfo({
               longitude: finalPoint[0],
               latitude: finalPoint[1],
@@ -285,18 +282,12 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       }
     }
   }, [id]);
-  
-  
-  
 
-  useEffect(
-    () => {
-      if (id == null) {
-        setPopupInfo(null);
-      }
-    },
-    [id]
-  );
+  useEffect(() => {
+    if (id == null) {
+      setPopupInfo(null);
+    }
+  }, [id]);
 
   const changeCursor = (e: any, cursorType: "pointer" | "default") => {
     e.target.getCanvas().style.cursor = cursorType;
@@ -308,15 +299,15 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       <Map
         mapboxAccessToken={mapboxAccessToken}
         initialViewState={{
-          longitude: -75.1652,
-          latitude: 39.9526,
-          zoom: 13,
+          longitude: -75.15975924194129,
+          latitude: 39.9910071520824,
+          zoom,
         }}
         mapStyle="mapbox://styles/mapbox/light-v10"
         onMouseEnter={(e) => changeCursor(e, "pointer")}
         onMouseLeave={(e) => changeCursor(e, "default")}
         onClick={onMapClick}
-        interactiveLayerIds={["vacant_properties"]}
+        interactiveLayerIds={["vacant_properties_tiles"]}
         onLoad={(e) => {
           setMap(e.target);
         }}
@@ -327,23 +318,26 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
         maxZoom={20}
         minZoom={10}
       >
+        {zoom < 13 && <ZoomModal />}
         <MapControls />
         {popupInfo && (
-         <Popup
-         longitude={popupInfo.longitude}
-         latitude={popupInfo.latitude}
-         closeOnClick={false}
-         onClose={() => setPopupInfo(null)}
-       >
-         <div>
-           <p className="font-semibold text-md p-1">{popupInfo.feature.address}</p>
-         </div>
-       </Popup>
+          <Popup
+            longitude={popupInfo.longitude}
+            latitude={popupInfo.latitude}
+            closeOnClick={false}
+            onClose={() => setPopupInfo(null)}
+          >
+            <div>
+              <p className="font-semibold text-md p-1">
+                {popupInfo.feature.address}
+              </p>
+            </div>
+          </Popup>
         )}
         <Source
-          id="vacant_properties"
+          id="vacant_properties_tiles"
           type="vector"
-          url={"mapbox://nlebovits.vacant_properties"}
+          url={"mapbox://nlebovits.vacant_properties_tiles"}
         >
           <Layer {...layerStyle} />
         </Source>

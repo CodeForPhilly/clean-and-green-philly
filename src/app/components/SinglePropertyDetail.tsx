@@ -1,18 +1,15 @@
-import React from "react";
 import { Button } from "@nextui-org/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import Image from "next/image";
-import 
-{ ArrowSquareOut, 
-  Broom, 
-  HandWaving, 
-  Handshake, 
-  Money, 
-  PottedPlant, 
+import {
+  ArrowSquareOut,
+  HandWaving,
+  Handshake,
+  Money,
   Tree,
   ProhibitInset,
-  PiggyBank
- } from "@phosphor-icons/react";
+  PiggyBank,
+} from "@phosphor-icons/react";
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 
 interface PropertyDetailProps {
@@ -48,9 +45,13 @@ const SinglePropertyDetail = ({
   const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
 
-  const priorityBgClassName = priority_level.includes('High') ? 'bg-priority-high'
-    : priority_level.includes('Medium') ? 'bg-priority-medium'
-    : priority_level.includes('Low') ? 'bg-priority-low' : '';
+  const priorityBgClassName = priority_level.includes("High")
+    ? "bg-priority-high"
+    : priority_level.includes("Medium")
+    ? "bg-priority-medium"
+    : priority_level.includes("Low")
+    ? "bg-priority-low"
+    : "";
 
   return (
     <div className="w-full p-4">
@@ -94,7 +95,9 @@ const SinglePropertyDetail = ({
             </th>
             <td className="table-cell">
               <div className="flex gap-1 items-center">
-                <span className={`inline-block w-4 h-4 ${priorityBgClassName}`} />
+                <span
+                  className={`inline-block w-4 h-4 ${priorityBgClassName}`}
+                />
                 {priority_level}
               </div>
             </td>
@@ -116,12 +119,12 @@ const SinglePropertyDetail = ({
 
       <table className="w-full mb-4">
         <tbody>
-        <tr style={{ display: 'none' }}>
-          <th scope="row" className="table-cell w-3/12">
-            Access Process
-          </th>
-          <td className="table-cell">{access_process}</td>
-        </tr>
+          <tr style={{ display: "none" }}>
+            <th scope="row" className="table-cell w-3/12">
+              Access Process
+            </th>
+            <td className="table-cell">{access_process}</td>
+          </tr>
           <tr>
             <th scope="row" className="table-cell w-3/12">
               Owner
@@ -180,7 +183,8 @@ const SinglePropertyDetail = ({
 
       <h3 className="font-bold mb-2 py-2 text-xl">Getting Access</h3>
       <p className="mb-4">
-        Based on the information about this property, we believe that you can get access to this property through:
+        Based on the information about this property, we believe that you can
+        get access to this property through:
       </p>
 
       <div className="flex mb-4 px-2 gap-4">
@@ -214,12 +218,33 @@ const SinglePropertyDetail = ({
         )}
       </div>
 
-      <p> To learn more about what this means, visit <a href="/get-access" target="_blank" rel="noopener noreferrer" className="text-primary">our <HandWaving className="inline h-6 w-6" aria-hidden="true" /> Get Access page.</a></p>
+      <p>
+        {" "}
+        To learn more about what this means, visit{" "}
+        <a
+          href="/get-access"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary"
+        >
+          our <HandWaving className="inline h-6 w-6" aria-hidden="true" /> Get
+          Access page.
+        </a>
+      </p>
 
       <h3 className="font-bold mb-2 py-2 text-xl">Ways to transform the lot</h3>
       <p className="mb-4">
         To see different ways in which you might transform this property, see
-        <a href="/transform-property" target="_blank" rel="noopener noreferrer" className="text-primary"> our <Tree className="inline h-6 w-6" aria-hidden="true" /> Transform a Property page.</a>
+        <a
+          href="/transform-property"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary"
+        >
+          {" "}
+          our <Tree className="inline h-6 w-6" aria-hidden="true" /> Transform a
+          Property page.
+        </a>
       </p>
 
       {/*

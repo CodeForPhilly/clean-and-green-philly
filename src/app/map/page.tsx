@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import { FC, useState } from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import { FilterProvider } from "@/context/FilterContext";
 import {
@@ -12,16 +12,17 @@ import {
   FilterView,
 } from "../components";
 import Hotjar from "../components/Hotjar";
-import Footer from "../components/Footer";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
 const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
+  const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
   const [loading, setLoading] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<MapboxGeoJSONFeature | null>(null);
+  const [selectedProperty, setSelectedProperty] =
+    useState<MapboxGeoJSONFeature | null>(null);
 
   return (
     <FilterProvider>
@@ -35,16 +36,16 @@ const Page: FC = () => {
                 setLoading={setLoading}
                 selectedProperty={selectedProperty}
                 setSelectedProperty={setSelectedProperty}
+                setFeatureCount={setFeatureCount}
               />
             </div>
             <SidePanel>
-
               <div className="sticky top-0 z-10">
-              <SidePanelControlBar
-                currentView={currentView}
-                setCurrentView={setCurrentView}
-                featuresInView={featuresInView}
-              />
+                <SidePanelControlBar
+                  currentView={currentView}
+                  setCurrentView={setCurrentView}
+                  featureCount={featureCount}
+                />
               </div>
 
               {currentView === "filter" && <FilterView />}
