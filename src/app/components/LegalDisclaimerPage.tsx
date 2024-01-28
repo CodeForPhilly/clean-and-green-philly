@@ -1,12 +1,3 @@
-import {
-  Accordion,
-  AccordionItem,
-  Button,
-  Link,
-  Image,
-} from "@nextui-org/react";
-import { get } from "http";
-
 export default function LegalDisclaimerPage() {
   return (
     <div className="flex flex-col min-h-screen">

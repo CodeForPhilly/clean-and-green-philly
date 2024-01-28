@@ -1,4 +1,4 @@
-import React, { FC, ReactNode } from 'react';
+import { FC, ReactNode } from "react";
 
 type SinglePropertyInfoCardProps = {
   title: string;
@@ -6,7 +6,11 @@ type SinglePropertyInfoCardProps = {
   icon: ReactNode;
 };
 
-const SinglePropertyInfoCard: FC<SinglePropertyInfoCardProps> = ({ title, body, icon }) => {
+const SinglePropertyInfoCard: FC<SinglePropertyInfoCardProps> = ({
+  title,
+  body,
+  icon,
+}) => {
   return (
     <div className="flex-grow p-3 border border-gray-300 rounded-md">
       <div className="flex gap-4 items-center">
