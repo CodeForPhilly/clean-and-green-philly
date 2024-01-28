@@ -7,7 +7,7 @@ import traceback
 from config.config import USE_CRS, FORCE_RELOAD, MAPBOX_TOKEN
 from config.psql import conn
 from mapbox import Uploader
-from shapely import wkb
+from shapely import wkb, Point
 
 
 class FeatureLayer:

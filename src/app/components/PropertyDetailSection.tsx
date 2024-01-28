@@ -1,4 +1,4 @@
-import React, { FC, useState, useMemo, useEffect } from "react";
+import { FC, useState, useMemo } from "react";
 import {
   Table,
   TableHeader,
@@ -109,17 +109,27 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             />
           ))
         )}
-        <div className="flex w-full justify-center">
-          <Pagination
-            isCompact
-            showControls
-            showShadow
-            color="secondary"
-            page={page}
-            total={pages}
-            onChange={(newPage) => setPage(newPage)}
-          />
-        </div>
+        {featuresInView?.length > 0 && (
+          <div>
+            <div className="flex w-full justify-center">
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color="secondary"
+                page={page}
+                total={pages}
+                onChange={(newPage) => setPage(newPage)}
+              />
+            </div>
+            <div className="flex w-full justify-center p-2">
+              <p className="text-sm text-gray-500">
+                Note: only the first 100 properties can be viewed in list.
+                Filter or zoom in to a smaller area to see more detail.{" "}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

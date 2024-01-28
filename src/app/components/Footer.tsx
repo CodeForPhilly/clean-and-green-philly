@@ -17,7 +17,10 @@ const Footer = () => (
         </NavbarItem>
 
         <NavbarItem>
-          <a href="mailto:cleanandgreenphl@gmail.com" className="text-sm underline text-gray-600 hover:text-gray-800">
+          <a
+            href="mailto:cleanandgreenphl@gmail.com"
+            className="text-sm underline text-gray-600 hover:text-gray-800"
+          >
             Contact Us
           </a>
         </NavbarItem>
