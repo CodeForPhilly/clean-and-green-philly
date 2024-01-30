@@ -18,7 +18,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
 }) => {
   const { dispatch, appFilter } = useFilter();
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
-    appFilter?.active[property]?.values || []
+    appFilter[property]?.values || []
   );
 
   const toggleDimension = (dimension: string) => {
@@ -27,7 +27,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       : [...selectedKeys, dimension];
     setSelectedKeys(newSelectedKeys);
     dispatch({
-      type: "SET_STAGED_DIMENSIONS",
+      type: "SET_DIMENSIONS",
       property,
       dimensions: newSelectedKeys,
     });

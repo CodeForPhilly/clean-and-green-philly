@@ -12,8 +12,7 @@ export interface DimensionFilter {
 }
 
 interface FilterState {
-  active: { [property: string]: DimensionFilter };
-  staged: { [property: string]: DimensionFilter };
+  [property: string]: DimensionFilter;
 }
 
 interface FilterContextProps {
@@ -21,51 +20,28 @@ interface FilterContextProps {
   dispatch: React.Dispatch<FilterAction>;
 }
 
-type FilterAction =
-  | {
-      type: "SET_STAGED_DIMENSIONS";
-      property: string;
-      dimensions: string[];
-    }
-  | {
-      type: "PROMOTE_STAGED_DIMENSIONS";
-    }
-  | {
-      type: "CLEAR_STAGED_DIMENSIONS";
-    };
+type FilterAction = {
+  type: "SET_DIMENSIONS";
+  property: string;
+  dimensions: string[];
+};
 
 const filterReducer = (
   state: FilterState,
   action: FilterAction
 ): FilterState => {
   switch (action.type) {
-    case "SET_STAGED_DIMENSIONS":
+    case "SET_DIMENSIONS":
       if (action.dimensions.length === 0) {
-        const { [action.property]: _, ...rest } = state.staged;
-        return {
-          ...state,
-          staged: rest,
-        };
+        const { [action.property]: _, ...rest } = state;
+        return rest;
       }
       return {
         ...state,
-        staged: {
-          ...state.active,
-          [action.property]: {
-            type: "dimension",
-            values: action.dimensions,
-          },
+        [action.property]: {
+          type: "dimension",
+          values: action.dimensions,
         },
-      };
-    case "PROMOTE_STAGED_DIMENSIONS":
-      return {
-        ...state,
-        active: state.staged,
-      };
-    case "CLEAR_STAGED_DIMENSIONS":
-      return {
-        ...state,
-        staged: {},
       };
     default:
       throw new Error("Unhandled action type");
@@ -89,11 +65,7 @@ interface FilterProviderProps {
 }
 
 export const FilterProvider: FC<FilterProviderProps> = ({ children }) => {
-  const initialState: FilterState = {
-    active: {},
-    staged: {},
-  };
-  const [appFilter, dispatch] = useReducer(filterReducer, initialState);
+  const [appFilter, dispatch] = useReducer(filterReducer, {});
 
   return (
     <FilterContext.Provider value={{ appFilter, dispatch }}>

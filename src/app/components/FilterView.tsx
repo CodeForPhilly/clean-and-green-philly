@@ -1,5 +1,4 @@
-import React, { FC } from "react";
-import { useFilter } from "@/context/FilterContext";
+import { FC } from "react";
 import DimensionFilter from "./Filters/DimensionFilter";
 import { Button } from "@nextui-org/react";
 import { Check } from "@phosphor-icons/react";
@@ -55,15 +54,6 @@ type FilterViewProps = {
 };
 
 const FilterView: FC<FilterViewProps> = ({ setCurrentView }) => {
-  const { dispatch } = useFilter();
-
-  const applyFilters = () => {
-    dispatch({
-      type: "PROMOTE_STAGED_DIMENSIONS",
-    });
-    setCurrentView("detail");
-  };
-
   return (
     <div className="p-6">
       <div className="flex justify-between items-center">
@@ -71,7 +61,7 @@ const FilterView: FC<FilterViewProps> = ({ setCurrentView }) => {
         <Button
           size="sm"
           className="bg-green-60 text-white"
-          onClick={applyFilters}
+          onClick={() => setCurrentView("detail")}
         >
           <Check className="h-4 w-4" />
           Done

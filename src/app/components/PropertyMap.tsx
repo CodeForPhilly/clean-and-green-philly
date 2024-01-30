@@ -95,18 +95,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const updateFilter = () => {
     if (!map) return;
 
-    const isAnyFilterEmpty = Object.values(appFilter.active).some(
-      (filterItem) => {
-        return filterItem.values.length === 0;
-      }
-    );
+    const isAnyFilterEmpty = Object.values(appFilter).some((filterItem) => {
+      return filterItem.values.length === 0;
+    });
 
     if (isAnyFilterEmpty) {
       map.setFilter("vacant_properties_tiles", ["==", ["id"], ""]);
       return;
     }
 
-    const mapFilter = Object.entries(appFilter.active).reduce(
+    const mapFilter = Object.entries(appFilter).reduce(
       (acc, [property, filterItem]) => {
         if (filterItem.values.length) {
           acc.push(["in", property, ...filterItem.values]);
