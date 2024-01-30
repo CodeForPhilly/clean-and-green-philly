@@ -40,13 +40,17 @@ const Page: FC = () => {
               />
             </div>
             <SidePanel>
-              <div className="sticky top-0 z-10">
-                <SidePanelControlBar
-                  currentView={currentView}
-                  setCurrentView={setCurrentView}
-                  featureCount={featureCount}
-                />
-              </div>
+              {!selectedProperty ? (
+                <div className="pt-2 sticky top-0 z-10">
+                  <SidePanelControlBar
+                    currentView={currentView}
+                    setCurrentView={setCurrentView}
+                    featureCount={featureCount}
+                  />
+                </div>
+              ) : (
+                <div></div>
+              )}
 
               {currentView === "filter" && <FilterView />}
               {["detail", "list"].includes(currentView) && (
