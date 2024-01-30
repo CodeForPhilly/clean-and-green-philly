@@ -51,6 +51,15 @@ const Page: FC = () => {
                       featureCount={featureCount}
                     />
                   </div>
+                  {!selectedProperty && (
+                    <div className="pt-2 sticky top-0 z-10">
+                      <SidePanelControlBar
+                        currentView={currentView}
+                        setCurrentView={setCurrentView}
+                        featureCount={featureCount}
+                      />
+                    </div>
+                  )}
                   {currentView === "download" ? (
                     <div className="p-4 mt-8 text-center">
                       <h2 className="text-2xl font-bold mb-4">
