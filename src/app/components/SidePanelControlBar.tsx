@@ -32,14 +32,16 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
       {/* Left-aligned content: Total Properties in View */}
       <div className="px-4 py-2">
         <p className="text-md">
-          <span className="font-bold">{featuresInView.length.toLocaleString()}</span> Properties in View 
+          <span className="font-bold">
+            {featuresInView.length.toLocaleString()}
+          </span>{" "}
+          Properties in View
         </p>
       </div>
-  
+
       {/* Right-aligned content: Buttons */}
       <div className="flex items-center space-x-2">
-
-         <Button
+        <Button
           onClick={() => handleClick("filter")}
           startContent={<FunnelIcon className="h-6 w-6" />}
           className="bg-white"
@@ -62,14 +64,11 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
             onClick={() => handleClick("download")}
             startContent={<ArrowDownTrayIcon className="h-6 w-6" />}
             className="bg-white"
-          >
-          </Button>
+          ></Button>
         </Tooltip>
-
       </div>
     </div>
   );
-  
 };
 
 export default SearchBarComponent;

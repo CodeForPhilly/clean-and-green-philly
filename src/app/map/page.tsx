@@ -21,7 +21,8 @@ const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
   const [loading, setLoading] = useState(false);
-  const [selectedProperty, setSelectedProperty] = useState<MapboxGeoJSONFeature | null>(null);
+  const [selectedProperty, setSelectedProperty] =
+    useState<MapboxGeoJSONFeature | null>(null);
 
   return (
     <FilterProvider>
@@ -38,13 +39,23 @@ const Page: FC = () => {
               />
             </div>
             <SidePanel>
-
+              {/* {!selectedProperty ? (
+                <div className="pt-2 sticky top-0 z-10">
+                  <SidePanelControlBar
+                    currentView={currentView}
+                    setCurrentView={setCurrentView}
+                    featuresInView={featuresInView}
+                  />
+                </div>
+              ) : (
+                <div></div>
+              )} */}
               <div className="pt-2 sticky top-0 z-10">
-              <SidePanelControlBar
-                currentView={currentView}
-                setCurrentView={setCurrentView}
-                featuresInView={featuresInView}
-              />
+                <SidePanelControlBar
+                  currentView={currentView}
+                  setCurrentView={setCurrentView}
+                  featuresInView={featuresInView}
+                />
               </div>
 
               {currentView === "filter" && <FilterView />}
