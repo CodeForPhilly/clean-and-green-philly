@@ -40,6 +40,13 @@ const filterReducer = (
 ): FilterState => {
   switch (action.type) {
     case "SET_STAGED_DIMENSIONS":
+      if (action.dimensions.length === 0) {
+        const { [action.property]: _, ...rest } = state.staged;
+        return {
+          ...state,
+          staged: rest,
+        };
+      }
       return {
         ...state,
         staged: {
