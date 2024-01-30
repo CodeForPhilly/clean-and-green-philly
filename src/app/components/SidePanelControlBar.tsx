@@ -1,4 +1,4 @@
-import React from "react";
+import React, { FC } from "react";
 import { Button, Tooltip } from "@nextui-org/react";
 import { BarClickOptions } from "@/app/map/page";
 import { DownloadSimple, Funnel, Table } from "@phosphor-icons/react";
@@ -9,7 +9,7 @@ type SidePanelControlBarProps = {
   featureCount: number;
 };
 
-const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
+const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   currentView,
   setCurrentView,
   featureCount,

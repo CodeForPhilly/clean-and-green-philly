@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, FC } from "react";
 import { Chip, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
-import {
-  Info
-}
-from "@phosphor-icons/react"
+import { Info } from "@phosphor-icons/react";
 
 type DimensionFilterProps = {
   property: string;
@@ -13,23 +10,28 @@ type DimensionFilterProps = {
   tooltip: string;
 };
 
-const DimensionFilter: React.FC<DimensionFilterProps> = ({
+const DimensionFilter: FC<DimensionFilterProps> = ({
   property,
   display,
   options,
-  tooltip
+  tooltip,
 }) => {
-  const { filter, dispatch } = useFilter();
-  const [selectedKeys, setSelectedKeys] = useState<string[]>([]);
+  const { dispatch, appFilter } = useFilter();
+  const [selectedKeys, setSelectedKeys] = useState<string[]>(
+    appFilter[property]?.values || []
+  );
 
   const toggleDimension = (dimension: string) => {
     const newSelectedKeys = selectedKeys.includes(dimension)
-      ? selectedKeys.filter(key => key !== dimension)
+      ? selectedKeys.filter((key) => key !== dimension)
       : [...selectedKeys, dimension];
     setSelectedKeys(newSelectedKeys);
-    dispatch({ type: "SET_DIMENSIONS", property, dimensions: newSelectedKeys });
+    dispatch({
+      type: "SET_DIMENSIONS",
+      property,
+      dimensions: newSelectedKeys,
+    });
   };
-
 
   return (
     <div className="pb-6">

@@ -1,6 +1,7 @@
 "use client";
 
 import React, {
+  FC,
   useEffect,
   useState,
   useRef,
@@ -76,14 +77,14 @@ interface PropertyMapProps {
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
 }
-const PropertyMap: React.FC<PropertyMapProps> = ({
+const PropertyMap: FC<PropertyMapProps> = ({
   setFeaturesInView,
   setLoading,
   selectedProperty,
   setSelectedProperty,
   setFeatureCount,
 }) => {
-  const { filter } = useFilter();
+  const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
   const [zoom, setZoom] = useState<number>(13);
@@ -94,7 +95,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
   const updateFilter = () => {
     if (!map) return;
 
-    const isAnyFilterEmpty = Object.values(filter).some((filterItem) => {
+    const isAnyFilterEmpty = Object.values(appFilter).some((filterItem) => {
       return filterItem.values.length === 0;
     });
 
@@ -103,7 +104,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
       return;
     }
 
-    const mapFilter = Object.entries(filter).reduce(
+    const mapFilter = Object.entries(appFilter).reduce(
       (acc, [property, filterItem]) => {
         if (filterItem.values.length) {
           acc.push(["in", property, ...filterItem.values]);
@@ -224,7 +225,7 @@ const PropertyMap: React.FC<PropertyMapProps> = ({
     if (map) {
       updateFilter();
     }
-  }, [map, filter, updateFilter]);
+  }, [map, appFilter]);
 
   const id = selectedProperty?.properties?.OPA_ID ?? null;
   useEffect(() => {

@@ -16,14 +16,15 @@ interface FilterState {
 }
 
 interface FilterContextProps {
-  filter: FilterState;
+  appFilter: FilterState;
   dispatch: React.Dispatch<FilterAction>;
 }
 
-type FilterAction =
-  | { type: "SET_DIMENSIONS"; property: string; dimensions: string[] }
-  | { type: "TOGGLE_DIMENSION"; property: string; dimension: string }
-  | { type: "SET_MEASURES"; property: string; min: number; max: number };
+type FilterAction = {
+  type: "SET_DIMENSIONS";
+  property: string;
+  dimensions: string[];
+};
 
 const filterReducer = (
   state: FilterState,
@@ -31,23 +32,17 @@ const filterReducer = (
 ): FilterState => {
   switch (action.type) {
     case "SET_DIMENSIONS":
+      if (action.dimensions.length === 0) {
+        const { [action.property]: _, ...rest } = state;
+        return rest;
+      }
       return {
         ...state,
-        [action.property]: { type: "dimension", values: action.dimensions },
+        [action.property]: {
+          type: "dimension",
+          values: action.dimensions,
+        },
       };
-    case "TOGGLE_DIMENSION": {
-      const filterValue = state[action.property];
-      if (filterValue?.type === "dimension") {
-        const updatedDimensions = filterValue.values.includes(action.dimension)
-          ? filterValue.values.filter((d) => d !== action.dimension)
-          : [...filterValue.values, action.dimension];
-        return {
-          ...state,
-          [action.property]: { type: "dimension", values: updatedDimensions },
-        };
-      }
-      return state;
-    }
     default:
       throw new Error("Unhandled action type");
   }
@@ -70,10 +65,10 @@ interface FilterProviderProps {
 }
 
 export const FilterProvider: FC<FilterProviderProps> = ({ children }) => {
-  const [filter, dispatch] = useReducer(filterReducer, {});
+  const [appFilter, dispatch] = useReducer(filterReducer, {});
 
   return (
-    <FilterContext.Provider value={{ filter, dispatch }}>
+    <FilterContext.Provider value={{ appFilter, dispatch }}>
       {children}
     </FilterContext.Provider>
   );
