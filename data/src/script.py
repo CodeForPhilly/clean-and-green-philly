@@ -6,6 +6,8 @@ from data_utils.drug_crimes import drug_crimes
 from data_utils.unsafe_buildings import unsafe_buildings
 from data_utils.imm_dang_buildings import imm_dang_buildings
 from data_utils.tactical_urbanism import tactical_urbanism
+from data_utils.conservatorship import conservatorship
+from data_utils.llc_owner import llc_owner
 import sys
 
 
@@ -28,6 +30,8 @@ services = [
     unsafe_buildings,
     imm_dang_buildings,
     tactical_urbanism,
+    conservatorship,
+    llc_owner,
 ]
 
 
@@ -46,11 +50,9 @@ dataset = access_process(dataset)
 
 
 # Post to Mapbox
-dataset.upload_to_mapbox("vacant_properties")
+dataset.upload_to_mapbox("vacant_properties_tiles")
 
-dataset.gdf.to_postgis(
-    "vacant_properties_end", conn, if_exists="replace", index=False
-)
+dataset.gdf.to_postgis("vacant_properties_end", conn, if_exists="replace", index=False)
 print("Vacant Properties End Uploaded to Postgres")
 conn.commit()
 conn.close()

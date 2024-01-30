@@ -30,7 +30,6 @@ If you do not find your bug in our issues list, file a bug report. When reportin
 - Include screenshots and animated GIFs if possible, which show you following the described steps and clearly demonstrate the problem.
 - If the problem wasn't triggered by a specific action, describe what you were doing before the problem happened.
 
-
 ### Suggest an Enhancement
 
 If you don't have specific language or code to submit but would like to suggest a change, request a feature, or have something addressed, you can open an issue in this repository.
@@ -39,14 +38,13 @@ Please open an issue of type `Feature request` [here](https://github.com/CodeFor
 
 In this issue, please describe the feature you would like to see, why you need it, and how it should work. Team members will respond to the Feature request as soon as possible.
 
-
 ### Contribute to the Code
 
 If you would like to contribute to any part of the codebase, please fork the repository [following the Github forking methodology](https://docs.github.com/en/github/getting-started-with-github/quickstart/fork-a-repo). Make changes to the code in your own copy of the repository – including tests if applicable – and [submit a pull request against the upstream repo.](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request-from-a-fork) In order for us to merge a pull request, the following checks are enabled within this repo:
 
 - Merges to `main` are prohibited - please open a pull request from a branch
 - Please create a branch name in the format of `<github-username>`/`<issue-number>`-`<kebab-case-description>`. For example vimusds/1069-fix-territory-on-mobile
-- At least one required reviewer must approve the commit (see [CODEOWNERS](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/.github/CODEOWNERS)) for the most up-to-date list of these members)
+- At least one required reviewer must approve the commit (see [CODEOWNERS](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/.github/CODEOWNERS)) for the most up-to-date list of these members
 - All required status checks must pass
 
 If there is significant dissent within the team, a meeting will be held to discuss a plan of action for the pull request.
@@ -55,13 +53,23 @@ If there is significant dissent within the team, a meeting will be held to discu
 
 Changes to our codebase should always address an [issue](https://github.com/CodeForPhilly/vacant-lots-proj/issues) and need to be requested to be merged by submitting a pull request that will be reviewed by at least the team lead or tech lead.
 
+#### Formatting
+
+For js/ts, install [Prettier](https://prettier.io/) and enable it for your [editor](https://prettier.io/docs/en/editors.html). For VSCode, enable [Format on Save](https://www.robinwieruch.de/how-to-use-prettier-vscode/) for best experience.
+
+For Python, `black` will run automatically in `docker-compose` when the main script is run. If you want to just format the files, you can run:
+
+```
+docker-compose run formatter
+```
+
 #### Choose an issue
 
 Look through the [issues page](https://github.com/CodeForPhilly/vacant-lots-proj/issues) in the repo.
 
 Find a task that has no current assignees and sounds like a task that either you can confidently take on yourself or involves a new language, framework, or design that you want learn.
 
-For the latter it is best to pair on this with a team member experienced with that thing you want to learn. 
+For the latter it is best to pair on this with a team member experienced with that thing you want to learn.
 
 #### Commit your work
 
@@ -86,7 +94,7 @@ git push
 
 #### Create a pull request
 
-In order to merge your work to the `develop` branch you must create a pull request.
+In order to merge your work to the `staging` branch you must create a pull request.
 
 Often Github will put up a notification that a new branch has been pushed and give a green "Make a PR" button on any page of the repo. If you don't see this you can go to the [pull requests tab](https://github.com/CodeForPhilly/vacant-lots-proj/pulls) and hit the big green `New` button.
 
@@ -98,6 +106,7 @@ Please also make sure you tag the issue you are addressing. You can do this when
 
 ```md
 <!-- For example, for a PR addressing issue #13 -->
+
 Closes #13
 ```
 
@@ -105,35 +114,18 @@ To make sure reviewers know to review it, finish up by assigning either the team
 
 #### Reviewed work
 
-The reviewer(s) will either ask for changes or approve the PR.
+Currently, either @brandonfcohen1 @nlebovits will review all PRs and merge changes once approved. The reviewer(s) will either ask for changes or approve the PR. All changes will merged to the `staging` branch, which will be instantly deployed to https://staging.cleanandgreenphilly.org.
 
-If changes are requested, please make the changes in your branch and push them up to Github when ready.
-
-```bash
-# Tip: If you are fixing something from a particular commit, you can create a !fixup commit with
-git commit --fixup <sha-for-commit>
-
-# Then, when approved, before you merge you can use:
-git rebase -i --autosquash develop
-# to squash your !fixup commits into their corresponding commits and make sure your branch is up to date with develop
-```
-
-Once you have pushed up your fixes, let your reviewer know and they will follow up and look again. This may loop a few times.
-
-Once your changes are approved, you can hit the `merge` button to merge to the `develop` branch (unless specified otherwise).
-
-Please also delete the branch from Github (you'll be prompted).
+Either @brandonfcohen1 or @nlebovits can deploy to production by merging the `staging` branch to `main`.
 
 #### Update changelog
 
 We keep a changelog following the [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format. In the unreleased section add the following line to one of the sections within unreleased:
 
 ```md
-
 ### Added
 
 - Add your PR title [#1](https://github.com/CodeForPhilly/vacant-lots-proj/pull/1)
-
 ```
 
 You would use your PR's title, the number of your PR, and the link to that PR. There are a few sections: `Added, Changed, Deprecated, Removed, Fixed, Security`, and you should add your line to the section that best matches what your PR is contributing.

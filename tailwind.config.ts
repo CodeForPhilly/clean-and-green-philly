@@ -1,5 +1,5 @@
 import type { Config } from "tailwindcss";
-const { nextui } = require("@nextui-org/react");
+import { nextui } from "@nextui-org/react";
 
 const config: Config = {
   content: [
@@ -11,7 +11,8 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        'nunito': ['Nunito', 'sans-serif'],
+        body: ['"HK Grotesk"', 'sans-serif'],
+        display: ['"HK Grotesk"', 'sans-serif'],
       },
       colors: {
         gray: {
@@ -35,7 +36,12 @@ const config: Config = {
           60: '#E56535',
           40: '#FBB57D',
           20: '#F4E4D4',
-        }
+        },
+        priority: {
+          high: '#ff4500',
+          medium: '#ffd700',
+          low: '#b0e57c',
+        },
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",

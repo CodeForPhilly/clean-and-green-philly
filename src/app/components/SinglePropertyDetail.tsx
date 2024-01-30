@@ -1,8 +1,17 @@
-import React from "react";
 import { Button } from "@nextui-org/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import Image from "next/image";
 import { ArrowLeft, ArrowSquareOut } from "@phosphor-icons/react";
+import {
+  ArrowSquareOut,
+  HandWaving,
+  Handshake,
+  Money,
+  Tree,
+  ProhibitInset,
+  PiggyBank,
+} from "@phosphor-icons/react";
+import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 
 interface PropertyDetailProps {
   property: MapboxGeoJSONFeature | null;
@@ -27,6 +36,7 @@ const SinglePropertyDetail = ({
     open_violations_past_year,
     owner_1,
     owner_2,
+    parcel_type,
     priority_level,
     total_due,
     tree_canopy_gap,
@@ -45,6 +55,14 @@ const SinglePropertyDetail = ({
       .join(" ");
   }
   const addressTitle = toTitleCase(address);
+
+  const priorityBgClassName = priority_level.includes("High")
+    ? "bg-priority-high"
+    : priority_level.includes("Medium")
+    ? "bg-priority-medium"
+    : priority_level.includes("Low")
+    ? "bg-priority-low"
+    : "";
 
   return (
     <div
@@ -78,37 +96,36 @@ const SinglePropertyDetail = ({
       </div>
       <div className="py-4 px-2">
         <div className="flex justify-between content-center">
-          <h2 className="font-bold text-2xl">{addressTitle}</h2>
-          <div
-            className="flex items-center space-x-2"
-            style={{ textAlign: "left" }}
-          >
-            <Button
-              as="a"
+          <h2 className="font-bold text-2xl">{address}</h2>
+          <div>
+            <a
               href={atlasUrl}
               target="_blank"
               rel="noopener noreferrer"
-              style={{
-                backgroundColor: "white",
-              }}
+              color="primary"
+              className="flex p-2 items-center gap-1"
             >
-              Atlas
-              <ArrowSquareOut color="#3D3D3D" size={24} />
-            </Button>
+              Atlas Link
+              <ArrowSquareOut className="inline h-6 w-6" aria-hidden="true" />
+            </a>
           </div>
         </div>
       </div>
-      <table className="w-full">
-        <tbody
-          style={{
-            fontSize: "16px",
-          }}
-        >
+
+      <table className="w-full mb-3">
+        <tbody>
           <tr>
-            <th scope="row" className="table-cell">
+            <th scope="row" className="table-cell w-3/12">
               Suggested Priority
             </th>
-            <td className="table-cell">{priority_level}</td>
+            <td className="table-cell">
+              <div className="flex gap-1 items-center">
+                <span
+                  className={`inline-block w-4 h-4 ${priorityBgClassName}`}
+                />
+                {priority_level}
+              </div>
+            </td>
           </tr>
           <tr>
             <th scope="row" className="table-cell">
@@ -122,19 +139,32 @@ const SinglePropertyDetail = ({
             </th>
             <td className="table-cell">{Math.round(tree_canopy_gap * 100)}%</td>
           </tr>
-          <tr>
-            <th scope="row" className="table-cell">
+        </tbody>
+      </table>
+
+      <table className="w-full mb-4">
+        <tbody>
+          <tr style={{ display: "none" }}>
+            <th scope="row" className="table-cell w-3/12">
               Access Process
             </th>
             <td className="table-cell">{access_process}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
+            <th scope="row" className="table-cell w-3/12">
               Owner
             </th>
             <td className="table-cell">
               <p>{owner_1}</p>
               {owner_2 && <p>{owner_2}</p>}
+            </td>
+          </tr>
+          <tr>
+            <th scope="row" className="table-cell">
+              Parcel Type
+            </th>
+            <td className="table-cell">
+              <p>{parcel_type}</p>
             </td>
           </tr>
           <tr>
@@ -145,7 +175,7 @@ const SinglePropertyDetail = ({
           </tr>
           <tr>
             <th scope="row" className="table-cell">
-              Neighborhood
+              RCO
             </th>
             <td className="table-cell">{neighborhood}</td>
           </tr>
@@ -163,7 +193,7 @@ const SinglePropertyDetail = ({
           </tr>
           <tr>
             <th scope="row" className="table-cell">
-              Tax delinquency
+              Tax Delinquency
             </th>
             <td className="table-cell">{total_due ? "Yes" : "No"}</td>
           </tr>
@@ -175,7 +205,89 @@ const SinglePropertyDetail = ({
           </tr>
         </tbody>
       </table>
-      <p className="font-bold mt-4 py-2">Remove This Property</p>
+
+      <h3 className="font-bold mb-2 py-2 text-xl">Getting Access</h3>
+      <p className="mb-4">
+        Based on the information about this property, we believe that you can
+        get access to this property through:
+      </p>
+
+      <div className="flex mb-4 px-2 gap-4">
+        {access_process === "Private Land Use Agreement" && (
+          <SinglePropertyInfoCard
+            title="Private Land Use Agreement"
+            body="Given the price and ownership of this property, we believe the easiest way to get access to this property is through a land use agreement with its owner."
+            icon={<Handshake className="h-12 w-12" aria-hidden="true" />}
+          />
+        )}
+        {access_process === "Buy Property" && (
+          <SinglePropertyInfoCard
+            title="Buying a Property"
+            body="This property is cheap enough that we believe you can buy it outright."
+            icon={<Money className="h-12 w-12" aria-hidden="true" />}
+          />
+        )}
+        {access_process === "Do Nothing (Too Complicated)" && (
+          <SinglePropertyInfoCard
+            title="Do Nothing (Too Complicated)"
+            body="We believe access this property legally is too complicated to justify the effort."
+            icon={<ProhibitInset className="h-12 w-12" aria-hidden="true" />}
+          />
+        )}
+        {access_process === "Land Bank" && (
+          <SinglePropertyInfoCard
+            title="Land Bank"
+            body="You may be able to acquire this property for a nominal or discounted price from the Land Bank."
+            icon={<PiggyBank className="h-12 w-12" aria-hidden="true" />}
+          />
+        )}
+      </div>
+
+      <p>
+        {" "}
+        To learn more about what this means, visit{" "}
+        <a
+          href="/get-access"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary"
+        >
+          our <HandWaving className="inline h-6 w-6" aria-hidden="true" /> Get
+          Access page.
+        </a>
+      </p>
+
+      <h3 className="font-bold mb-2 py-2 text-xl">Ways to transform the lot</h3>
+      <p className="mb-4">
+        To see different ways in which you might transform this property, see
+        <a
+          href="/transform-property"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-primary"
+        >
+          {" "}
+          our <Tree className="inline h-6 w-6" aria-hidden="true" /> Transform a
+          Property page.
+        </a>
+      </p>
+
+      {/*
+      <div className="flex mb-4 px-2 gap-4">
+        <SinglePropertyInfoCard
+          title="Lot Cleanup"
+          body="In a day, clean up with a street crew and PHS!"
+          icon={<Broom className="h-12 w-12" aria-hidden="true" />}
+        />
+        <SinglePropertyInfoCard
+          title="Community Garden"
+          body="Set up a longer term, sustainable green space."
+          icon={<PottedPlant className="h-12 w-12" aria-hidden="true" />}
+        />
+      </div>
+      */}
+
+      <h3 className="font-bold mb-2 py-2 text-xl">Remove This Property</h3>
       <p>
         If you would like to request that we remove this property from the
         dashboard, please see our{" "}

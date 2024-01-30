@@ -3,16 +3,16 @@
 import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
 import Layout from "../components/Layout";
-import RequestRemovalPage from "../components/RequestRemovalPage";
+import TakeActionOverviewPage from "../components/TakeActionOverviewPage";
 
-const RequestRemoval: FC = () => {
+const TakeActionOverview: FC = () => {
   return (
     <NextUIProvider>
       <Layout>
-        <RequestRemovalPage />
+        <TakeActionOverviewPage />
       </Layout>
     </NextUIProvider>
   );
 };
 
-export default RequestRemoval;
+export default TakeActionOverview;

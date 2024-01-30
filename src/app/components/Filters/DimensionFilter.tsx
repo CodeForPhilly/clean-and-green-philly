@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Chip, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import {
+  Info
+}
+from "@phosphor-icons/react"
 
 type DimensionFilterProps = {
   property: string;
@@ -34,7 +37,7 @@ const DimensionFilter: React.FC<DimensionFilterProps> = ({
         <div className="text-md flex items-center">
           {display}
           <Tooltip content={tooltip} placement="top" showArrow color="primary">
-            <InformationCircleIcon className="h-5 w-5 text-gray-500 ml-2 cursor-pointer" />
+            <Info className="h-5 w-5 text-gray-500 ml-2 cursor-pointer" />
           </Tooltip>
         </div>
       </div>

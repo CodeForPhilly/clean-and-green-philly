@@ -6,14 +6,11 @@ interface LandingPageImageProps {
   alt: string;
 }
 
-const LandingPageImage: FC<LandingPageImageProps> = ({
-  src,
-  alt,
-}) => {
+const LandingPageImage: FC<LandingPageImageProps> = ({ src, alt }) => {
   return (
-      <div className="w-screen h-screen relative">
-        <Image src={src} alt={alt} fill={true} />
-      </div>
+    <div className="w-screen h-screen relative">
+      <Image src={src} alt={alt} fill={true} />
+    </div>
   );
 };
 

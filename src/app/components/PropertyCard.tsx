@@ -1,4 +1,3 @@
-import React from "react";
 import Image from "next/image";
 import { Chip } from "@nextui-org/react";
 
@@ -8,24 +7,27 @@ interface PropertyCardProps {
 }
 
 function toTitleCase(str: string) {
-  return str.toLowerCase().split(' ').map(function(word) {
-    return (word.charAt(0).toUpperCase() + word.slice(1));
-  }).join(' ');
+  return str
+    .toLowerCase()
+    .split(" ")
+    .map(function (word) {
+      return word.charAt(0).toUpperCase() + word.slice(1);
+    })
+    .join(" ");
 }
 
 function getPriorityClass(priorityLevel: string) {
   switch (priorityLevel) {
-    case "High Priority":
+    case "High":
       return "bg-red-500 border-red-700"; // Style for High Priority
-    case "Medium Priority":
+    case "Medium":
       return "bg-yellow-500 border-yellow-700"; // Style for Medium Priority
-    case "Low Priority":
+    case "Low":
       return "bg-green-500 border-green-700"; // Style for Low Priority
     default:
       return "bg-gray-500 border-gray-700"; // Default style
   }
 }
-
 
 const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
   const { address, guncrime_density, tree_canopy_gap, priority_level, OPA_ID } =
@@ -42,7 +44,10 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
     >
       <div className="max-w-sm w-full p-4">
         <div className="bg-white rounded-md overflow-hidden">
-          <div className="relative w-full rounded-lg overflow-hidden" style={{ height: '160px', width: 'auto' }}>
+          <div
+            className="relative w-full rounded-lg overflow-hidden"
+            style={{ height: "160px", width: "auto" }}
+          >
             <Image
               src={image}
               alt={`Property at ${formattedAddress}`}
@@ -62,9 +67,9 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
               classNames={{
                 base: `${priorityClass} border-small border-white/50`,
                 content: "text-white mb",
-                      }}
-                    >
-              {priority_level}
+              }}
+            >
+              {priority_level + " Priority"}
             </Chip>
           </div>
         </div>

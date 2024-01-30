@@ -1,19 +1,18 @@
-import React, { FC, useState } from "react";
+import React from "react";
 import { Button, Tooltip } from "@nextui-org/react";
-import { ArrowDownTrayIcon, ListBulletIcon } from "@heroicons/react/20/solid";
-import { FunnelIcon, TableCellsIcon } from "@heroicons/react/24/outline";
 import { BarClickOptions } from "@/app/map/page";
+import { DownloadSimple, Funnel, Table } from "@phosphor-icons/react";
 
 type SidePanelControlBarProps = {
   currentView: BarClickOptions;
   setCurrentView: (view: BarClickOptions) => void;
-  featuresInView: any[]; // Add this line
+  featureCount: number;
 };
 
 const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
   currentView,
   setCurrentView,
-  featuresInView,
+  featureCount,
 }) => {
   const handleClick = (view: BarClickOptions) => {
     if (view === currentView) {
@@ -32,10 +31,7 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
       {/* Left-aligned content: Total Properties in View */}
       <div className="px-4 py-2">
         <p className="text-md">
-          <span className="font-bold">
-            {featuresInView.length.toLocaleString()}
-          </span>{" "}
-          Properties in View
+          <span className="font-bold">{featureCount}</span> Properties in View
         </p>
       </div>
 
@@ -43,26 +39,24 @@ const SearchBarComponent: React.FC<SidePanelControlBarProps> = ({
       <div className="flex items-center space-x-2">
         <Button
           onClick={() => handleClick("filter")}
-          startContent={<FunnelIcon className="h-6 w-6" />}
+          startContent={<Funnel className="h-6 w-6" />}
           className="bg-white"
         >
           Filter
         </Button>
 
         <Tooltip content="View" showArrow color="primary">
-          <Button className="bg-white" onClick={toggleDetailView}>
-            {currentView === "detail" ? (
-              <TableCellsIcon className="h-6 w-6" />
-            ) : (
-              <ListBulletIcon className="h-6 w-6" />
-            )}
-          </Button>
+          <Button
+            onClick={() => handleClick("detail")}
+            startContent={<Table className="h-6 w-6" />}
+            className="bg-white"
+          ></Button>
         </Tooltip>
 
         <Tooltip content="Download" showArrow color="primary">
           <Button
             onClick={() => handleClick("download")}
-            startContent={<ArrowDownTrayIcon className="h-6 w-6" />}
+            startContent={<DownloadSimple className="h-6 w-6" />}
             className="bg-white"
           ></Button>
         </Tooltip>

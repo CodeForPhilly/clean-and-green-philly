@@ -69,8 +69,9 @@ def l_and_i(primary_featurelayer):
     violations_count_gdf["open_violations_past_year"] = violations_count_gdf[
         "open_violations_past_year"
     ].astype(int)
-    violations_count_gdf = violations_count_gdf[[
-        'opa_account_num', 'all_violations_past_year', 'open_violations_past_year']]
+    violations_count_gdf = violations_count_gdf[
+        ["opa_account_num", "all_violations_past_year", "open_violations_past_year"]
+    ]
 
     # collapse violations_gdf by address and concatenate the violationcodetitle values into a list with a semicolon separator
     l_and_i_violations.gdf = (
@@ -93,7 +94,8 @@ def l_and_i(primary_featurelayer):
 
     # Complaints need a spatial join, but we need to take special care to merge on just the parcel geoms first to get OPA_ID
     complaints_with_opa_id = primary_featurelayer.gdf.sjoin(
-        l_and_i_complaints.gdf, how="left", predicate="contains")
+        l_and_i_complaints.gdf, how="left", predicate="contains"
+    )
     complaints_with_opa_id.drop(columns=["index_right"], inplace=True)
 
     # Concatenate the complaints values into a list with a semicolon separator by OPA_ID
@@ -105,13 +107,14 @@ def l_and_i(primary_featurelayer):
 
     # Clean up the NaN values in the li_complaints column
     def remove_nan_strings(x):
-        if x == "nan" or ('nan;' in x):
+        if x == "nan" or ("nan;" in x):
             return None
         else:
             return x
 
-    complaints_with_opa_id['li_complaints'] = complaints_with_opa_id['li_complaints'].apply(
-        remove_nan_strings)
+    complaints_with_opa_id["li_complaints"] = complaints_with_opa_id[
+        "li_complaints"
+    ].apply(remove_nan_strings)
 
     # Merge the complaints values back into the primary_featurelayer
     primary_featurelayer.opa_join(
@@ -119,7 +122,15 @@ def l_and_i(primary_featurelayer):
         "OPA_ID",
     )
 
-    primary_featurelayer.gdf[['all_violations_past_year', 'open_violations_past_year']] = primary_featurelayer.gdf[[
-        'all_violations_past_year', 'open_violations_past_year']].apply(lambda x: pd.to_numeric(x, errors='coerce')).fillna(0).astype(int)
+    primary_featurelayer.gdf[
+        ["all_violations_past_year", "open_violations_past_year"]
+    ] = (
+        primary_featurelayer.gdf[
+            ["all_violations_past_year", "open_violations_past_year"]
+        ]
+        .apply(lambda x: pd.to_numeric(x, errors="coerce"))
+        .fillna(0)
+        .astype(int)
+    )
 
     return primary_featurelayer
