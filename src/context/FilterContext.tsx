@@ -12,42 +12,54 @@ export interface DimensionFilter {
 }
 
 interface FilterState {
-  [property: string]: DimensionFilter;
+  active: { [property: string]: DimensionFilter };
+  staged: { [property: string]: DimensionFilter };
 }
 
 interface FilterContextProps {
-  filter: FilterState;
+  appFilter: FilterState;
   dispatch: React.Dispatch<FilterAction>;
 }
 
 type FilterAction =
-  | { type: "SET_DIMENSIONS"; property: string; dimensions: string[] }
-  | { type: "TOGGLE_DIMENSION"; property: string; dimension: string }
-  | { type: "SET_MEASURES"; property: string; min: number; max: number };
+  | {
+      type: "SET_STAGED_DIMENSIONS";
+      property: string;
+      dimensions: string[];
+    }
+  | {
+      type: "PROMOTE_STAGED_DIMENSIONS";
+    }
+  | {
+      type: "CLEAR_STAGED_DIMENSIONS";
+    };
 
 const filterReducer = (
   state: FilterState,
   action: FilterAction
 ): FilterState => {
   switch (action.type) {
-    case "SET_DIMENSIONS":
+    case "SET_STAGED_DIMENSIONS":
       return {
         ...state,
-        [action.property]: { type: "dimension", values: action.dimensions },
+        staged: {
+          ...state.active,
+          [action.property]: {
+            type: "dimension",
+            values: action.dimensions,
+          },
+        },
       };
-    case "TOGGLE_DIMENSION": {
-      const filterValue = state[action.property];
-      if (filterValue?.type === "dimension") {
-        const updatedDimensions = filterValue.values.includes(action.dimension)
-          ? filterValue.values.filter((d) => d !== action.dimension)
-          : [...filterValue.values, action.dimension];
-        return {
-          ...state,
-          [action.property]: { type: "dimension", values: updatedDimensions },
-        };
-      }
-      return state;
-    }
+    case "PROMOTE_STAGED_DIMENSIONS":
+      return {
+        ...state,
+        active: state.staged,
+      };
+    case "CLEAR_STAGED_DIMENSIONS":
+      return {
+        ...state,
+        staged: {},
+      };
     default:
       throw new Error("Unhandled action type");
   }
@@ -70,10 +82,14 @@ interface FilterProviderProps {
 }
 
 export const FilterProvider: FC<FilterProviderProps> = ({ children }) => {
-  const [filter, dispatch] = useReducer(filterReducer, {});
+  const initialState: FilterState = {
+    active: {},
+    staged: {},
+  };
+  const [appFilter, dispatch] = useReducer(filterReducer, initialState);
 
   return (
-    <FilterContext.Provider value={{ filter, dispatch }}>
+    <FilterContext.Provider value={{ appFilter, dispatch }}>
       {children}
     </FilterContext.Provider>
   );

@@ -40,42 +40,47 @@ const Page: FC = () => {
               />
             </div>
             <SidePanel>
-              <div className="sticky top-0 z-10">
-                <SidePanelControlBar
-                  currentView={currentView}
-                  setCurrentView={setCurrentView}
-                  featureCount={featureCount}
-                />
-              </div>
-
-              {currentView === "filter" && <FilterView />}
-              {["detail", "list"].includes(currentView) && (
-                <PropertyDetailSection
-                  featuresInView={featuresInView}
-                  display={currentView as "detail" | "list"}
-                  loading={loading}
-                  selectedProperty={selectedProperty}
-                  setSelectedProperty={setSelectedProperty}
-                />
-              )}
-              {currentView === "download" && (
-                <div className="p-4 mt-8 text-center">
-                  <h2 className="text-2xl font-bold mb-4">Access Our Data</h2>
-                  <p>
-                    If you are interested in accessing the data behind this
-                    dashboard, please reach out to us at
-                    <a
-                      href="mailto:cleanandgreenphl@gmail.com"
-                      className="text-blue-600 hover:text-blue-800 underline"
-                    >
-                      {" "}
-                      cleanandgreenphl@gmail.com
-                    </a>
-                    . Let us know who you are and why you want the data. We are
-                    happy to share the data with anyone with community-oriented
-                    interests.
-                  </p>
-                </div>
+              {currentView === "filter" ? (
+                <FilterView setCurrentView={setCurrentView} />
+              ) : (
+                <>
+                  <div className="sticky top-0 z-10">
+                    <SidePanelControlBar
+                      currentView={currentView}
+                      setCurrentView={setCurrentView}
+                      featureCount={featureCount}
+                    />
+                  </div>
+                  {currentView === "download" ? (
+                    <div className="p-4 mt-8 text-center">
+                      <h2 className="text-2xl font-bold mb-4">
+                        Access Our Data
+                      </h2>
+                      <p>
+                        If you are interested in accessing the data behind this
+                        dashboard, please reach out to us at
+                        <a
+                          href="mailto:cleanandgreenphl@gmail.com"
+                          className="text-blue-600 hover:text-blue-800 underline"
+                        >
+                          {" "}
+                          cleanandgreenphl@gmail.com
+                        </a>
+                        . Let us know who you are and why you want the data. We
+                        are happy to share the data with anyone with
+                        community-oriented interests.
+                      </p>
+                    </div>
+                  ) : (
+                    <PropertyDetailSection
+                      featuresInView={featuresInView}
+                      display={currentView as "detail" | "list"}
+                      loading={loading}
+                      selectedProperty={selectedProperty}
+                      setSelectedProperty={setSelectedProperty}
+                    />
+                  )}
+                </>
               )}
             </SidePanel>
           </div>

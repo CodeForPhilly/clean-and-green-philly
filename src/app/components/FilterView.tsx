@@ -1,5 +1,9 @@
 import React, { FC } from "react";
+import { useFilter } from "@/context/FilterContext";
 import DimensionFilter from "./Filters/DimensionFilter";
+import { Button } from "@nextui-org/react";
+import { Check } from "@phosphor-icons/react";
+import { BarClickOptions } from "@/app/map/page";
 
 const filters = [
   {
@@ -46,10 +50,33 @@ const filters = [
   },
 ];
 
-const FilterView: FC = () => {
+type FilterViewProps = {
+  setCurrentView: (view: BarClickOptions) => void;
+};
+
+const FilterView: FC<FilterViewProps> = ({ setCurrentView }) => {
+  const { dispatch } = useFilter();
+
+  const applyFilters = () => {
+    dispatch({
+      type: "PROMOTE_STAGED_DIMENSIONS",
+    });
+    setCurrentView("detail");
+  };
+
   return (
     <div className="p-6">
-      <div className="font-semibold text-xl mb-2">Filters</div>
+      <div className="flex justify-between items-center">
+        <div className="font-semibold text-xl">Filter</div>
+        <Button
+          size="sm"
+          className="bg-green-60 text-white"
+          onClick={applyFilters}
+        >
+          <Check className="h-4 w-4" />
+          Done
+        </Button>
+      </div>
       {filters.map(({ property, display, options, tooltip }) => (
         <DimensionFilter
           key={property}
