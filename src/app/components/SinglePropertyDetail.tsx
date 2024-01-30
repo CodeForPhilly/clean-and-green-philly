@@ -1,9 +1,9 @@
 import { Button } from "@nextui-org/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import Image from "next/image";
-import { ArrowLeft, ArrowSquareOut } from "@phosphor-icons/react";
 import {
   ArrowSquareOut,
+  ArrowLeft,
   HandWaving,
   Handshake,
   Money,
@@ -45,16 +45,6 @@ const SinglePropertyDetail = ({
   } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
-  function toTitleCase(str: string) {
-    return str
-      .toLowerCase()
-      .split(" ")
-      .map(function (word) {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-      })
-      .join(" ");
-  }
-  const addressTitle = toTitleCase(address);
 
   const priorityBgClassName = priority_level.includes("High")
     ? "bg-priority-high"
@@ -96,7 +86,14 @@ const SinglePropertyDetail = ({
       </div>
       <div className="py-4 px-2">
         <div className="flex justify-between content-center">
-          <h2 className="font-bold text-2xl">{address}</h2>
+          <h2
+            className="font-bold text-2xl"
+            style={{
+              textTransform: "capitalize",
+            }}
+          >
+            {address.toLowerCase()}
+          </h2>
           <div>
             <a
               href={atlasUrl}
@@ -113,7 +110,11 @@ const SinglePropertyDetail = ({
       </div>
 
       <table className="w-full mb-3">
-        <tbody>
+        <tbody
+          style={{
+            fontSize: "16px",
+          }}
+        >
           <tr>
             <th scope="row" className="table-cell w-3/12">
               Suggested Priority
