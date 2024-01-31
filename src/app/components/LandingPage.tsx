@@ -19,15 +19,12 @@ const images = [
 const LandingPage = () => (
   <div className="container mx-auto px-4">
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center my-10">
-      <div className="text-left">
+      <div className="text-left pr-10">
         <h1 className="text-green-600 text-xl md:text-2xl lg:text-5xl font-thin leading-tight md:leading-[3rem]">
-          <span className="block">Cleaning and greening vacant properties</span>
           <span className="block">
-            can <span className="font-extrabold">reduce gun violence</span> in
-            neighborhoods
-          </span>
-          <span className="block">
-            <span className="font-extrabold">by as much as 29%.</span>
+            Cleaning and greening vacant properties can{" "}
+            <span className="font-extrabold">reduce gun violence</span> in
+            neighborhoods by as much as 29%.
           </span>
         </h1>
       </div>
@@ -35,12 +32,6 @@ const LandingPage = () => (
         <div className="text-gray-700 mb-4">
           {/* Responsive paragraphs */}
           <p className="hidden md:block">
-            This tool can empower you to find the highest-impact
-          </p>
-          <p className="hidden md:block">
-            properties in Philadelphia and take action.
-          </p>
-          <p className="md:hidden">
             This tool can empower you to find the highest-impact properties in
             Philadelphia and take action.
           </p>

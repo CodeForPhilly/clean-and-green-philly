@@ -3,6 +3,7 @@ import { MapboxGeoJSONFeature } from "mapbox-gl";
 import Image from "next/image";
 import {
   ArrowSquareOut,
+  ArrowLeft,
   HandWaving,
   Handshake,
   Money,
@@ -54,9 +55,23 @@ const SinglePropertyDetail = ({
     : "";
 
   return (
-    <div className="w-full p-4">
+    <div
+      className="w-full p-4"
+      style={{
+        paddingRight: "24px",
+        paddingBottom: "24px",
+        paddingLeft: "24px",
+      }}
+    >
       <div className="pb-4">
-        <Button onClick={() => setSelectedProperty(null)}> Back </Button>
+        <Button
+          style={{
+            backgroundColor: "white",
+          }}
+          onClick={() => setSelectedProperty(null)}
+        >
+          <ArrowLeft color="#3D3D3D" size={24} /> Back{" "}
+        </Button>
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
@@ -71,7 +86,14 @@ const SinglePropertyDetail = ({
       </div>
       <div className="py-4 px-2">
         <div className="flex justify-between content-center">
-          <h2 className="font-bold text-2xl">{address}</h2>
+          <h2
+            className="font-bold text-2xl"
+            style={{
+              textTransform: "capitalize",
+            }}
+          >
+            {address.toLowerCase()}
+          </h2>
           <div>
             <a
               href={atlasUrl}
@@ -88,7 +110,11 @@ const SinglePropertyDetail = ({
       </div>
 
       <table className="w-full mb-3">
-        <tbody>
+        <tbody
+          style={{
+            fontSize: "16px",
+          }}
+        >
           <tr>
             <th scope="row" className="table-cell w-3/12">
               Suggested Priority
