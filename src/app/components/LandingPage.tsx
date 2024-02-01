@@ -17,38 +17,34 @@ const images = [
 ];
 
 const LandingPage = () => (
-  <div className="container mx-auto px-4">
+  <div className=" mx-auto px-4">
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center my-10">
       <div className="text-left pr-10">
-        <h1 className="text-green-600 text-xl md:text-2xl lg:text-5xl font-thin leading-tight md:leading-[3rem]">
-          <span className="block">
+        <h1 className="text-green-600 text-xl md:text-2xl lg:text-5xl font-thin  md:leading-[3rem]">
+          <span className="block leading-tight">
             Cleaning and greening vacant <br/> properties can{" "}
-            <span className="font-extrabold">reduce gun violence</span> in
-            neighborhoods <span className="font-extrabold">by as much as 29%.</span>
+            <span className="font-extrabold">reduce gun violence</span> in <br/> neighborhoods <span className="font-extrabold">by as much as 29%.</span>
           </span>
         </h1>
       </div>
-      <div className="flex flex-col justify-between items-end">
+      <div className="flex flex-col justify-between items-end px-8">
         <div className="text-gray-700 mb-4">
           {/* Responsive paragraphs */}
-          <p className="hidden md:block">
-            This tool can empower you to find the highest-impact properties in
-            Philadelphia and take action.
+          <p className="hidden md:block text-2xl">
+            This tool can empower anyone to <br /> find properties that would make a <br /> significant impact in Philadelphia <br /> and take action.
           </p>
         </div>
-        <div className="inline-flex space-x-2">
+        <div className="px-16 space-x-2">
           <Link href="/map">
-            <Button size="lg" className="bg-green-600 text-white">
-              <ArrowRightIcon className="w-5 h-5 mr-2" />
+            <Button size="md" className="bg-green-600 text-white">
+              <ArrowRightIcon className="w-5 h-5" />
               Find properties
             </Button>
           </Link>
           <Link href="/about">
-            <Button
-              size="lg"
-              className="bg-transparent border border-green-600 text-green-600"
+            <Button size="md"className="bg-transparent border border-green-600 text-green-600"
             >
-              <ArrowRightIcon className="w-5 h-5 mr-2" />
+              <ArrowRightIcon className="w-5 h-5" />
               Learn more
             </Button>
           </Link>
