@@ -22,9 +22,9 @@ const LandingPage = () => (
       <div className="text-left pr-10">
         <h1 className="text-green-600 text-xl md:text-2xl lg:text-5xl font-thin leading-tight md:leading-[3rem]">
           <span className="block">
-            Cleaning and greening vacant properties can{" "}
+            Cleaning and greening vacant <br/> properties can{" "}
             <span className="font-extrabold">reduce gun violence</span> in
-            neighborhoods by as much as 29%.
+            neighborhoods <span className="font-extrabold">by as much as 29%.</span>
           </span>
         </h1>
       </div>
