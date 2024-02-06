@@ -97,8 +97,14 @@ export default function TransformPropertyPage() {
           </a>{" "}
           supports community gardens and urban farms, offering free legal help,
           policy research, and community education. They work with coalitions
-          like <a href="https://soilgeneration.org/">Soil Generation</a> to
-          empower residents to use vacant land for gardens and farming,
+          like{" "}
+          <a
+            href="https://soilgeneration.org/"
+            className="text-blue-500 hover:underline"
+          >
+            Soil Generation
+          </a>{" "}
+          to empower residents to use vacant land for gardens and farming,
           providing tools and information through training sessions and their
           online resource,{" "}
           <a
