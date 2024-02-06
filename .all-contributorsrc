@@ -108,6 +108,16 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "AZBL",
+      "name": "Alex Byrd-Leitner",
+      "avatar_url": "https://avatars.githubusercontent.com/u/111008425?v=4",
+      "profile": "https://alexbyrdleitner-portfolio.netlify.app/",
+      "contributions": [
+        "code",
+        "a11y"
+      ]
     }
   ]
 }
