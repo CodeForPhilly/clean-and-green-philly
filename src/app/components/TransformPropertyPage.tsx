@@ -53,18 +53,13 @@ export default function TransformPropertyPage() {
           but not for a playground. Likewise, you wouldn’t want to start a
           community garden in a vacant lot that doesn’t get any sun. To better
           understand what your options are for a specific property, try filling
-          out the{" "}
-          <a
-            href="https://detroitfuturecity.com/whatwedo/land-use/DFC-lots/"
-            className="text-blue-500 hover:underline"
-          >
-            Detroit Future City vacant property quiz
-          </a>
-          . It’s meant to help users understand the best options for their
-          specific properties. Although it was built for users in Detroit, it’s
-          still helpful here in Philadelphia. Also, remember to think about
-          other constraints, like how much funding you have, and how much
-          maintenance you’re willing or able to do.
+          out the Detroit Future City vacant property quiz
+          [https://detroitfuturecity.com/whatwedo/land-use/DFC-lots/]. It’s
+          meant to help users understand the best options for their specific
+          properties. Although it was built for users in Detroit, it’s still
+          helpful here in Philadelphia. Also, remember to think about other
+          constraints, like how much funding you have, and how much maintenance
+          you’re willing or able to do.
         </p>
 
         <h2 className="text-2xl font-bold mt-8">Where can I get help?</h2>
