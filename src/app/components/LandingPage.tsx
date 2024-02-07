@@ -38,19 +38,22 @@ const LandingPage = () => (
         </div>
         <div className="inline-flex space-x-2">
           <Link href="/map">
-            <Button size="lg" className="bg-green-600 text-white">
-              <ArrowRightIcon className="w-5 h-5 mr-2" />
-              Find properties
-            </Button>
+          <button type="button" className="text-white bg-green-600 hover:bg-green-900 focus:ring-4 focus:outline-none focus:ring-green-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center dark:bg-green-600 dark:hover:bg-green-600 dark:focus:ring-green-600">
+          <svg className="rtl:rotate-180 w-4 h-4 m-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+            </svg>
+            <text>
+            Find properties
+            </text>
+          </button>
           </Link>
           <Link href="/about">
-            <Button
-              size="lg"
-              className="bg-transparent border border-green-600 text-green-600"
-            >
-              <ArrowRightIcon className="w-5 h-5 mr-2" />
-              Learn more
-            </Button>
+          <button type="button" className="border bg-slate-200  hover:bg-slate-400 focus:ring-4 focus:outline-none focus:ring-slate-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center">
+          <svg className="rtl:rotate-180 w-4 h-4 m-2" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="grey" viewBox="0 0 14 10">
+          <path stroke="grey" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 5h12m0 0L9 1m4 4L9 9"/>
+          </svg>
+          <text className="text-slate-500">Learn more</text>
+          </button>
           </Link>
         </div>
       </div>

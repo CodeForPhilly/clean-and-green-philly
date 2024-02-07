@@ -39,7 +39,7 @@ const Header = () => (
     >
       <NavbarItem key="Find Properties">
         <IconLink
-          icon={<MapPin className="h-6 w-6" />}
+          icon={<MapPin className="h-6 w-6 " />}
           text="Find Properties"
           href="/map"
         />
@@ -50,7 +50,7 @@ const Header = () => (
         <DropdownTrigger>
           <Button
             size="md"
-            className="flex items-center hover:text-blue-500 hover:underline bg-white"
+            className="flex items-center hover:text-grey-500 hover:bg-slate-300 bg-white"
           >
             <Hand className="h-6 w-6" aria-hidden="true" />
             Take Action
@@ -74,7 +74,7 @@ const Header = () => (
         <DropdownTrigger>
           <Button
             size="md"
-            className="flex items-center hover:text-blue-500 hover:underline bg-white"
+            className="flex items-center hover:text-grey-500 hover:bg-slate-300 bg-white"
           >
             <Info className="h-6 w-6" aria-hidden="true" />
             About
