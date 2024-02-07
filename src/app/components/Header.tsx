@@ -62,13 +62,13 @@ const Header = () => (
           </Button>
         </DropdownTrigger>
         <DropdownMenu aria-label="Take Action">
-          <DropdownItem key="overview">
+          <DropdownItem key="overview " className="rounded-lg">
             <Link href="/take-action-overview">Overview</Link>
           </DropdownItem>
-          <DropdownItem key="get-access">
+          <DropdownItem key="get-access" className="rounded-lg">
             <Link href="/get-access">Get Access</Link>
           </DropdownItem>
-          <DropdownItem key="transform-property">
+          <DropdownItem key="transform-property" className="rounded-lg">
             <Link href="/transform-property">Transform a Property</Link>
           </DropdownItem>
         </DropdownMenu>
@@ -86,11 +86,11 @@ const Header = () => (
           </text>
           </Button>
         </DropdownTrigger>
-        <DropdownMenu aria-label="Overview">
-          <DropdownItem key="about">
+        <DropdownMenu aria-label="Overview ">
+          <DropdownItem key="about" className="rounded-lg">
             <Link href="/about">Overview</Link>
           </DropdownItem>
-          <DropdownItem key="methodology">
+          <DropdownItem key="methodology" className="rounded-lg">
             <Link href="/methodology">Methodology</Link>
           </DropdownItem>
         </DropdownMenu>
