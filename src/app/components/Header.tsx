@@ -34,15 +34,21 @@ const Header = () => (
     </NavbarContent>
 
     <NavbarContent
-      className="hidden sm:flex basis-1/5 sm:basis-full"
+      className="hidden sm:flex  sm:basis-full md:w-16"
       justify="end"
     >
       <NavbarItem key="Find Properties">
-        <IconLink
-          icon={<MapPin className="h-6 w-6 " />}
-          text="Find Properties"
-          href="/map"
-        />
+        <Link href="/map">
+          <Button size="md" className="mb-2 text-grey bg-white hover:bg-slate-300  focus:outline-none  font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+            </svg>
+            <text>
+            Find properties
+            </text>
+          </Button>
+        </Link>
       </NavbarItem>
 
       {/* Dropdown for Take Action */}
