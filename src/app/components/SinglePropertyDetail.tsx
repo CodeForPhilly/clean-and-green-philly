@@ -251,7 +251,7 @@ const SinglePropertyDetail = ({
           href="/get-access"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary"
+          className="link"
         >
           our <HandWaving className="inline h-6 w-6" aria-hidden="true" /> Get
           Access page.
@@ -265,7 +265,7 @@ const SinglePropertyDetail = ({
           href="/transform-property"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-primary"
+          className="link"
         >
           {" "}
           our <Tree className="inline h-6 w-6" aria-hidden="true" /> Transform a
@@ -292,7 +292,7 @@ const SinglePropertyDetail = ({
       <p>
         If you would like to request that we remove this property from the
         dashboard, please see our{" "}
-        <a href="/request-removal" className="text-primary">
+        <a href="/request-removal" className="link">
           Request Removal page
         </a>
         .
