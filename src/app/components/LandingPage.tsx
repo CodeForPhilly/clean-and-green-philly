@@ -37,21 +37,19 @@ const LandingPage = () => (
           </p>
         </div>
         <div className="inline-flex space-x-2">
-          <Link href="/map">
-            <Button size="lg" className="bg-green-600 text-white">
-              <ArrowRightIcon className="w-5 h-5 mr-2" />
-              Find properties
-            </Button>
-          </Link>
-          <Link href="/about">
-            <Button
-              size="lg"
-              className="bg-transparent border border-green-600 text-green-600"
-            >
-              <ArrowRightIcon className="w-5 h-5 mr-2" />
-              Learn more
-            </Button>
-          </Link>
+          <Button href="/map" as={Link} size="lg" className="bg-green-600 text-white">
+            <ArrowRightIcon className="w-5 h-5 mr-2" />
+            Find properties
+          </Button>
+          <Button
+            href="about"
+            as={Link}
+            size="lg"
+            className="bg-transparent border border-green-600 text-green-600"
+          >
+            <ArrowRightIcon className="w-5 h-5 mr-2" />
+            Learn more
+          </Button>
         </div>
       </div>
     </div>
