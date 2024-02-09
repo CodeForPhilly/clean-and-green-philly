@@ -56,7 +56,7 @@ export default function TransformPropertyPage() {
           out the{" "}
           <a
             href="https://detroitfuturecity.com/whatwedo/land-use/DFC-lots/"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             Detroit Future City vacant property quiz
           </a>
@@ -91,7 +91,7 @@ export default function TransformPropertyPage() {
           The{" "}
           <a
             href="https://pubintlaw.org/cases-and-projects/garden-justice-legal-initiative-gjli/"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             Garden Justice Legal Initiative
           </a>{" "}
@@ -100,7 +100,7 @@ export default function TransformPropertyPage() {
           like{" "}
           <a
             href="https://soilgeneration.org/"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             Soil Generation
           </a>{" "}
@@ -109,7 +109,7 @@ export default function TransformPropertyPage() {
           online resource,{" "}
           <a
             href="https://groundedinphilly.org/"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             Grounded in Philly
           </a>
@@ -120,7 +120,7 @@ export default function TransformPropertyPage() {
         <p>
           <a
             href="https://streetboxphl.com/"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             StreetBoxPHL
           </a>{" "}
@@ -135,7 +135,7 @@ export default function TransformPropertyPage() {
         <p>
           <a
             href="https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             Park in a Truck
           </a>{" "}
@@ -143,7 +143,7 @@ export default function TransformPropertyPage() {
           developed{" "}
           <a
             href="https://www.jefferson.edu/content/dam/academic/cabe/landscape-architecture/park-in-a-truck/toolkit/PiaT-toolkit-2022.pdf"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             a toolkit
           </a>{" "}

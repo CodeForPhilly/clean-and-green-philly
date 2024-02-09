@@ -47,7 +47,7 @@ export default function AboutPage() {
               href="https://controller.phila.gov/philadelphia-audits/fy23-anti-violence-budget/#/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               nearly 80% of the City of Philadelphia’s anti-violence spending
             </a>
@@ -66,7 +66,7 @@ export default function AboutPage() {
               href="https://www.pnas.org/doi/10.1073/pnas.1718503115"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               {" "}
               greening vacant lots
@@ -148,7 +148,7 @@ export default function AboutPage() {
               href="https://github.com/CodeForPhilly/vacant-lots-proj"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               available on our GitHub repository
             </a>
@@ -156,7 +156,7 @@ export default function AboutPage() {
             questions about our methods, feel free to reach out to us at{" "}
             <a
               href="mailto:cleanandgreenphl@gmail.com"
-              className="text-primary"
+              className="link"
             >
               cleangreenphilly@gmail.com
             </a>
@@ -171,7 +171,7 @@ export default function AboutPage() {
               href="https://www.nlebovits.github.io"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               Nissim Lebovits
             </a>
@@ -180,7 +180,7 @@ export default function AboutPage() {
               href="https://www.willonabike.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               Will Budreau
             </a>{" "}
@@ -189,7 +189,7 @@ export default function AboutPage() {
               href="https://wwww.brandonfcohen.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               Brandon Cohen
             </a>{" "}
@@ -198,7 +198,7 @@ export default function AboutPage() {
               href="https://www.nathanielsidwell.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               {" "}
               Nathaniel Sidwell
@@ -224,7 +224,7 @@ export default function AboutPage() {
             feedback, please reach out to us at{" "}
             <a
               href="mailto:cleanandgreenphl@gmail.com"
-              className="text-primary"
+              className="link"
             >
               cleanandgreenphl@gmail.com
             </a>
@@ -234,7 +234,7 @@ export default function AboutPage() {
           <p className="text-lg mb-4">
             If you would like to request that we remove a property from the
             dashboard, please see our{" "}
-            <a href="/request-removal" className="text-primary">
+            <a href="/request-removal" className="link">
               Request Removal page
             </a>
             .
