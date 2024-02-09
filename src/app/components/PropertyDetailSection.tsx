@@ -113,6 +113,8 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
           <div>
             <div className="flex w-full justify-center">
               <Pagination
+                role={undefined}
+                aria-label="pagination"
                 isCompact
                 showControls
                 showShadow
