@@ -12,8 +12,8 @@ export default function AboutPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 py-8 px-24">
-        <div className="container mx-auto">
+      <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 py-8 px-4 md:px-24">
+        <div className="container mx-auto px-4 md:px-8">
           <h2 className="text-3xl font-semibold mb-4">What is this?</h2>
           <p className="text-lg mb-4">
             Philadelphia has a gun violence problem. Clean & Green Philly
@@ -128,7 +128,7 @@ export default function AboutPage() {
             />
           </div>
         </div>
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4 md:px-8">
           <h2 className="text-3xl font-semibold mb-4">How was this built?</h2>
           <p className="text-lg mb-4">
             Clean & Green Philly combines several public datasets in order to
