@@ -12,7 +12,7 @@ export default function AboutPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-grow grid grid-cols-2 gap-4 py-8 px-24">
+      <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 py-8 px-24">
         <div className="container mx-auto">
           <h2 className="text-3xl font-semibold mb-4">What is this?</h2>
           <p className="text-lg mb-4">
