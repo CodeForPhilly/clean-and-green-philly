@@ -60,3 +60,7 @@
 .table-cell {
   @apply p-2 border border-gray-300 text-left font-normal;
 }
+
+.link {
+  @apply text-primary underline;
+}

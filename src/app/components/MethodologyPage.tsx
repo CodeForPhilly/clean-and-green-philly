@@ -18,7 +18,7 @@ export default function AboutPage() {
               href="https://www.pnas.org/doi/10.1073/pnas.1718503115"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               the original research conducted by Dr. Eugenia South and her
               colleagues
@@ -35,7 +35,7 @@ export default function AboutPage() {
             reach out to us at{" "}
             <a
               href="mailto:cleanandgreenphl@gmail.com"
-              className="text-primary"
+              className="link"
             >
               cleangreenphilly@gmail.com
             </a>
@@ -59,7 +59,7 @@ export default function AboutPage() {
               href="https://phsonline.org/programs/transforming-vacant-land"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               the Pennsylvania Horticultural Society’s LandCare Program
             </a>
@@ -75,7 +75,7 @@ export default function AboutPage() {
               href="https://www.treeequityscore.org/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               Tree Equity Score data
             </a>{" "}
@@ -107,7 +107,7 @@ export default function AboutPage() {
               href="https://groundedinphilly.org/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               Grounded in Philly’s work
             </a>{" "}
@@ -116,7 +116,7 @@ export default function AboutPage() {
               href="https://k05f3c.p3cdn1.secureserver.net/wp-content/uploads/Resources/Philadelphia-Land-Bank-Disposition-Policies-2020.pdf"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               the Philadelphia Land Bank’s disposition policies
             </a>
@@ -129,7 +129,7 @@ export default function AboutPage() {
             information we have provided before acting on it. When applicable,
             we encourage users to seek legal advice to ensure that they are in
             compliance with relevant laws. Please see{" "}
-            <a href="/legal-disclaimer" className="text-primary">
+            <a href="/legal-disclaimer" className="link">
               our legal disclaimer
             </a>{" "}
             for more detail.
@@ -179,7 +179,7 @@ export default function AboutPage() {
             gardens. If you believe that a property listed on Clean & Green
             Philly is a community garden, or should be removed from the site for
             another reason, please see our{" "}
-            <a href="/request-removal" className="text-primary">
+            <a href="/request-removal" className="link">
               Request Removal page
             </a>
             .
@@ -197,7 +197,7 @@ export default function AboutPage() {
               href="https://github.com/CodeForPhilly/vacant-lots-proj"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               our GitHub repository
             </a>
@@ -215,7 +215,7 @@ export default function AboutPage() {
               href="https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/DATASETS.md"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               our GitHub repository
             </a>
