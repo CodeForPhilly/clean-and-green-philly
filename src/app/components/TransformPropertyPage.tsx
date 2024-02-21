@@ -53,13 +53,18 @@ export default function TransformPropertyPage() {
           but not for a playground. Likewise, you wouldn’t want to start a
           community garden in a vacant lot that doesn’t get any sun. To better
           understand what your options are for a specific property, try filling
-          out the Detroit Future City vacant property quiz
-          [https://detroitfuturecity.com/whatwedo/land-use/DFC-lots/]. It’s
-          meant to help users understand the best options for their specific
-          properties. Although it was built for users in Detroit, it’s still
-          helpful here in Philadelphia. Also, remember to think about other
-          constraints, like how much funding you have, and how much maintenance
-          you’re willing or able to do.
+          out the{" "}
+          <a
+            href="https://detroitfuturecity.com/whatwedo/land-use/DFC-lots/"
+            className="link"
+          >
+            Detroit Future City vacant property quiz
+          </a>
+          . It’s meant to help users understand the best options for their
+          specific properties. Although it was built for users in Detroit, it’s
+          still helpful here in Philadelphia. Also, remember to think about
+          other constraints, like how much funding you have, and how much
+          maintenance you’re willing or able to do.
         </p>
 
         <h2 className="text-2xl font-bold mt-8">Where can I get help?</h2>
@@ -86,7 +91,7 @@ export default function TransformPropertyPage() {
           The{" "}
           <a
             href="https://pubintlaw.org/cases-and-projects/garden-justice-legal-initiative-gjli/"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             Garden Justice Legal Initiative
           </a>{" "}
@@ -95,7 +100,7 @@ export default function TransformPropertyPage() {
           like{" "}
           <a
             href="https://soilgeneration.org/"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             Soil Generation
           </a>{" "}
@@ -104,7 +109,7 @@ export default function TransformPropertyPage() {
           online resource,{" "}
           <a
             href="https://groundedinphilly.org/"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             Grounded in Philly
           </a>
@@ -115,7 +120,7 @@ export default function TransformPropertyPage() {
         <p>
           <a
             href="https://streetboxphl.com/"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             StreetBoxPHL
           </a>{" "}
@@ -130,7 +135,7 @@ export default function TransformPropertyPage() {
         <p>
           <a
             href="https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             Park in a Truck
           </a>{" "}
@@ -138,7 +143,7 @@ export default function TransformPropertyPage() {
           developed{" "}
           <a
             href="https://www.jefferson.edu/content/dam/academic/cabe/landscape-architecture/park-in-a-truck/toolkit/PiaT-toolkit-2022.pdf"
-            className="text-blue-500 hover:underline"
+            className="link"
           >
             a toolkit
           </a>{" "}

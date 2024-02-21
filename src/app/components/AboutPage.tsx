@@ -12,8 +12,8 @@ export default function AboutPage() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-grow grid grid-cols-2 gap-4 py-8 px-24">
-        <div className="container mx-auto">
+      <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 py-8 px-4 md:px-6 lg:px-24">
+        <div className="container mx-auto px-4 md:px-8">
           <h2 className="text-3xl font-semibold mb-4">What is this?</h2>
           <p className="text-lg mb-4">
             Philadelphia has a gun violence problem. Clean & Green Philly
@@ -47,7 +47,7 @@ export default function AboutPage() {
               href="https://controller.phila.gov/philadelphia-audits/fy23-anti-violence-budget/#/"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               nearly 80% of the City of Philadelphia’s anti-violence spending
             </a>
@@ -66,7 +66,7 @@ export default function AboutPage() {
               href="https://www.pnas.org/doi/10.1073/pnas.1718503115"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               {" "}
               greening vacant lots
@@ -89,7 +89,6 @@ export default function AboutPage() {
                 className="cursor-pointer mx-auto" // Center the image and change cursor on hover
               />
             </Tooltip>
-
             <Modal
               size="3xl"
               isOpen={isOpen}
@@ -128,7 +127,7 @@ export default function AboutPage() {
             />
           </div>
         </div>
-        <div className="container mx-auto">
+        <div className="container mx-auto px-4 md:px-8">
           <h2 className="text-3xl font-semibold mb-4">How was this built?</h2>
           <p className="text-lg mb-4">
             Clean & Green Philly combines several public datasets in order to
@@ -148,7 +147,7 @@ export default function AboutPage() {
               href="https://github.com/CodeForPhilly/vacant-lots-proj"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               available on our GitHub repository
             </a>
@@ -156,7 +155,7 @@ export default function AboutPage() {
             questions about our methods, feel free to reach out to us at{" "}
             <a
               href="mailto:cleanandgreenphl@gmail.com"
-              className="text-primary"
+              className="link"
             >
               cleangreenphilly@gmail.com
             </a>
@@ -171,7 +170,7 @@ export default function AboutPage() {
               href="https://www.nlebovits.github.io"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               Nissim Lebovits
             </a>
@@ -180,7 +179,7 @@ export default function AboutPage() {
               href="https://www.willonabike.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               Will Budreau
             </a>{" "}
@@ -189,7 +188,7 @@ export default function AboutPage() {
               href="https://wwww.brandonfcohen.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               Brandon Cohen
             </a>{" "}
@@ -198,7 +197,7 @@ export default function AboutPage() {
               href="https://www.nathanielsidwell.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-primary"
+              className="link"
             >
               {" "}
               Nathaniel Sidwell
@@ -224,7 +223,7 @@ export default function AboutPage() {
             feedback, please reach out to us at{" "}
             <a
               href="mailto:cleanandgreenphl@gmail.com"
-              className="text-primary"
+              className="link"
             >
               cleanandgreenphl@gmail.com
             </a>
@@ -234,7 +233,7 @@ export default function AboutPage() {
           <p className="text-lg mb-4">
             If you would like to request that we remove a property from the
             dashboard, please see our{" "}
-            <a href="/request-removal" className="text-primary">
+            <a href="/request-removal" className="link">
               Request Removal page
             </a>
             .

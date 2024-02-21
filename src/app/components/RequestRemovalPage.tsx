@@ -10,7 +10,7 @@ export default function GetAccessPage() {
           If you represent a community organization or other stakeholder with a
           legitimate interest in a property listed on our dashboard, you may
           request its removal by{" "}
-          <a href="mailto:cleanandgreenphl@gmail.com" className="text-primary">
+          <a href="mailto:cleanandgreenphl@gmail.com" className="link">
             contacting us
           </a>
           . This option is intended to support community-driven initiatives,
@@ -18,7 +18,7 @@ export default function GetAccessPage() {
           <br></br>
           <br></br>
           In order to do this, please email us at{" "}
-          <a href="mailto:cleanandgreenphl@gmail.com" className="text-primary">
+          <a href="mailto:cleanandgreenphl@gmail.com" className="link">
             cleanandgreenphl@gmail.com
           </a>
           . Submit a detailed request for removal, including the specific
