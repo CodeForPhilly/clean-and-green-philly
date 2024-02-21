@@ -86,6 +86,7 @@ Please see [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj
       <td align="center" valign="top" width="14.28%"><a href="http://markandrewgoetz.com"><img src="https://avatars.githubusercontent.com/u/4121678?v=4?s=100" width="100px;" alt="Mark Goetz"/><br /><sub><b>Mark Goetz</b></sub></a><br /><a href="#code-markgoetz" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/tracyctran/"><img src="https://avatars.githubusercontent.com/u/7329799?v=4?s=100" width="100px;" alt="Tracy Tran"/><br /><sub><b>Tracy Tran</b></sub></a><br /><a href="#a11y-bacitracin" title="Accessibility">️️️️♿️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://elizabethwalker.site"><img src="https://avatars.githubusercontent.com/u/44076192?v=4?s=100" width="100px;" alt="Elizabeth Walker"/><br /><sub><b>Elizabeth Walker</b></sub></a><br /><a href="#code-19ewalker" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://alexbyrdleitner-portfolio.netlify.app/"><img src="https://avatars.githubusercontent.com/u/111008425?v=4?s=100" width="100px;" alt="Alex Byrd-Leitner"/><br /><sub><b>Alex Byrd-Leitner</b></sub></a><br /><a href="#code-AZBL" title="Code">💻</a> <a href="#a11y-AZBL" title="Accessibility">️️️️♿️</a></td>
     </tr>
   </tbody>
 </table>
