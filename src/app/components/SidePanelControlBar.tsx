@@ -38,7 +38,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       {/* Right-aligned content: Buttons */}
       <div className="flex items-center space-x-2">
         <Button
-          onClick={() => handleClick("filter")}
+          onPress={() => handleClick("filter")}
           startContent={<Funnel className="h-6 w-6" />}
           className="bg-white"
         >
@@ -47,7 +47,8 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
 
         <Tooltip content="View" showArrow color="primary">
           <Button
-            onClick={() => handleClick("detail")}
+            aria-label="View"
+            onPress={() => handleClick("detail")}
             startContent={<Table className="h-6 w-6" />}
             className="bg-white"
           ></Button>
@@ -55,7 +56,8 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
 
         <Tooltip content="Download" showArrow color="primary">
           <Button
-            onClick={() => handleClick("download")}
+            aria-label="Download"
+            onPress={() => handleClick("download")}
             startContent={<DownloadSimple className="h-6 w-6" />}
             className="bg-white"
           ></Button>

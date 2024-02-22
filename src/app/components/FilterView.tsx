@@ -61,7 +61,7 @@ const FilterView: FC<FilterViewProps> = ({ setCurrentView }) => {
         <Button
           size="sm"
           className="bg-green-60 text-white"
-          onClick={() => setCurrentView("detail")}
+          onPress={() => setCurrentView("detail")}
         >
           <Check className="h-4 w-4" />
           Done
