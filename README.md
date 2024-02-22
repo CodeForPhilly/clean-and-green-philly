@@ -2,7 +2,7 @@
 
 Philadelphia has a gun violence problem. This dashboard aims to help solve it by empowering community groups to carry out cleaning and greening interventions in the vacant properties where they can have the biggest impact.
 
-# Motivation
+## Motivation
 
 Philadelphia has a gun violence problem. Homicides have been on the rise since 2013. The past three years—2020, 2021, and 2022—have been the deadliest on record, with a high of 562 homicides in 2021. Community members need solutions, but many city-run initiatives are frustratingly slow or inadequate. Nearly 80% of the city’s anti-violence spending focuses on long-term violence reduction without any clear, immediate impact.
 
@@ -10,9 +10,9 @@ Research shows that greening and cleaning vacant and abandoned parcels is one of
 
 There are roughly 40,000 vaccant properties in Philadelphia. Identifying the highest-priority vacant properties will allow community groups to invest their limited resources where they will have the biggest impact. Combining various public data, this dashboard helps users identify the properties that are ideal for them to intervene in. It also offers additional information about each property to facilitate interventions and indicates the best possible route to cleaning up the property.
 
-# Current Draft
+## Current Draft
 
-You can view [the current build of the website here](https://vacant-lots-proj.vercel.app/). We are building based off of a prototype which looks like this:
+You can view [the current build of the website here](www.cleanandgreenphilly.org/). We are building based off of a prototype which looks like this:
 
 ![User prototype landing page](https://github.com/CodeForPhilly/vacant-lots-proj/assets/111617674/0776acde-9fe0-42a5-b8ab-6680525a31d7)
 
@@ -22,7 +22,9 @@ An older proptotype is also [available here](https://nlebovits.github.io/dashboa
 
 Likewise, you can view the [very first iteration as an ArcGIS Storymap here](https://storymaps.arcgis.com/stories/551f77d85a584705b97c41db7711ba1b).
 
-# Project Updates
+## Project Updates
+
+**Feb. 1, 2024:** We have soft launched a minimum viable product! The website is functional at [www.cleanandgreenphilly.org](www.cleanandgreenphilly.org).
 
 **Nov. 15, 2023:** The Center for Philadelphia's Urban Future has officially voted to be a fiscal sponsor for our project and maintain it long-term. We are working with them to assemble a steering committee that will help inform future development of the web tool.
 
@@ -32,41 +34,44 @@ Likewise, you can view the [very first iteration as an ArcGIS Storymap here](htt
 
 **Sept. 27, 2023** Nissim spoke with a reporter from WHYY who may be including our project in a longer piece about Philadelphians working on solutions to the gun violence crisis.
 
-# Current Tasks
+## Current Tasks
 
 At the moment, we are working on:
 
-- User testing with the prototype
-- Finishing the Python script that creates the underlying dataset
-- Building out the UI using Next.js and mapbox-gl in React
-- Research and writing content for our Recommended Actions and About sections
+- Organizing a steering committee of stakeholders to guide future project development
+- Improving the accessibility and responsiveness of our MVP
+- Improving the content and design of our Take Action pages
+- Laying groundwork to apply for a grant to support our work
 
-Current tasks for the are visible under the Issues section.
+Current tasks for the are visible under the [Issues](https://github.com/CodeForPhilly/vacant-lots-proj/issues) section.
 
-# Looking For
+## Looking For
 
-- Front end engineer w/mapping experience
-- Python data engineer
-- Non-technical support with research and writing
-- Ditigal design support creating additional website graphics
-- Support for project documentation
+- An experienced developer to lead our front-end work and coordinate with our UX team
+- A graphic designer to work on content for the website
+- Someone with grant-writing expertise
 
-# Languages/Frameworks
+## Languages/Frameworks
 
 - React
-- Next.js
+- NextJS
 - Tailwind CSS
 - Python (data engineering)
 
-# Codebase
+## Codebase
 
-This is a monorepo for both the nextjs app and the scripts which ETL and analyze the data.
+This is a single repository for both the React app and the Python pipeline to ETL the data.
 
-# Contribution
+## Contribution
 
-Please see [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/CONTRIBUTING.md) for instructions on how to contribute, and [`SETUP.md`](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/SETUP.md) for instructions on how to install and work on the code.
+Please see the documents in our [DOCS](/DOCS) folder for background on the project and instructions on how to contribute. At a minimum, please read:
 
-## Contributors
+1) The [guide to contributing](/DOCS/CONTRIBUTING.md)
+2) The [code of conduct](/DOCS/CODE_OF_CONDUCT.md)
+3) The appropriate installation setup instructions ([front end](/DOCS/FONT_END.md), [back end](/DOCS/BACK_END.md), or [full stack](/DOCS/FULL_SETUP.md))
+
+
+### Contributors
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
@@ -96,8 +101,7 @@ Please see [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
-# License
+## License
 
 MIT © Code for Philly
 
-staging test

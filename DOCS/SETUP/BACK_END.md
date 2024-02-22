@@ -2,7 +2,7 @@
 
 ## Overview
 
-To get started with contributing to Clean & Green Philly, follow the installation and setup instructions below.
+If you are planning to contribute to the data wrangling and database management on this project and will need to run the Python script, follow the installation and setup instructions below.
 
 ## Installation
 
@@ -14,18 +14,12 @@ Docker is a platform that allows you to containerize and run applications in iso
 
 PostgreSQL is an open-source relational database management system. We use it to store and our data. Make sure you have the latest version of PostgreSQL installed on your computer. You can download it [here](https://www.postgresql.org/download/). As part of that setup, you will also need to install PostGIS; this should be done through the setup wizard, [as detailed here](https://postgis.net/workshops/postgis-intro/installation.html).
 
-### NVM (Windows Only)
-
-If you are running Windows, you will need to [install NVM for Windows](https://github.com/coreybutler/nvm-windows/blob/master/README.md). Under 'Assets', [nvm-setup.exe](https://github.com/coreybutler/nvm-windows/releases) is straightforward. Node.js and nvm ship with Linux and macOS and therefore do not need to be installed for people using those OS.
-
 ## Setup
 
-### Fork the Repository
+### Clone the Repository
 
 1. Navigate to [our GitHub repository](https://github.com/CodeForPhilly/vacant-lots-proj).
-2. Click the "Fork" button at the top right corner of the repository's page. This action will create a copy (fork) of the repository in your GitHub account.
-3. To work on the forked repository locally on your computer, click the "Code" button on your fork's repository page and copy the URL. On your local machine, navigate to the directory where you want to store the cloned repo, e.g., `user/Documents/`, and then run `git clone <your_fork_url>`. This will give you a local copy connected to your fork of the GitHub repo, which you can pull from and commit and push to.
-4. Once you've pushed changes that are ready to be merged to the main repo, you can create a pull request. See the [`CONTRIBUTING.md`](https://github.com/CodeForPhilly/vacant-lots-proj) for more info.
+2. Clone the repository to your local machine using `git clone`.
 
 ### Create a New Database
 
@@ -103,12 +97,4 @@ For example, if your repository is located at `user/Documents/vacant-lots-proj`,
 
 #### macOS
 
-In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker-compose up`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker-compose down`.
-
-##### awkde
-
-We are using the [awkde package](https://github.com/mennthor/awkde) to create the Adaptive Width KDE. It is not available through pip, but is handled as a part of the Docker build.
-
-### Nextjs App
-
-Finally, it's time to run the Nextjs app. Navigate to the root directory of the repository. Install dependencies by running `npm i`. Then, run the development server with `npm run dev`. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Congrats! You're all set up.
+In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker-compose up`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker-compose down`.S
