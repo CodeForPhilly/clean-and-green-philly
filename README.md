@@ -12,7 +12,7 @@ There are roughly 40,000 vaccant properties in Philadelphia. Identifying the hig
 
 ## Current Draft
 
-You can view [the current build of the website here](www.cleanandgreenphilly.org/). We are building based off of a prototype which looks like this:
+You can view [the current build of the website here](https://www.cleanandgreenphilly.org/). We are building based off of a prototype which looks like this:
 
 ![User prototype landing page](https://github.com/CodeForPhilly/vacant-lots-proj/assets/111617674/0776acde-9fe0-42a5-b8ab-6680525a31d7)
 
@@ -24,7 +24,7 @@ Likewise, you can view the [very first iteration as an ArcGIS Storymap here](htt
 
 ## Project Updates
 
-**Feb. 1, 2024:** We have soft launched a minimum viable product! The website is functional at [www.cleanandgreenphilly.org](www.cleanandgreenphilly.org).
+**Feb. 1, 2024:** We have soft launched a minimum viable product! The website is functional at [www.cleanandgreenphilly.org](https://www.cleanandgreenphilly.org/).
 
 **Nov. 15, 2023:** The Center for Philadelphia's Urban Future has officially voted to be a fiscal sponsor for our project and maintain it long-term. We are working with them to assemble a steering committee that will help inform future development of the web tool.
 
@@ -68,7 +68,7 @@ Please see the documents in our [DOCS](/DOCS) folder for background on the proje
 
 1) The [guide to contributing](/DOCS/CONTRIBUTING.md)
 2) The [code of conduct](/DOCS/CODE_OF_CONDUCT.md)
-3) The appropriate installation setup instructions ([front end](/DOCS/FONT_END.md), [back end](/DOCS/BACK_END.md), or [full stack](/DOCS/FULL_SETUP.md))
+3) The appropriate installation setup instructions ([front end](/DOCS/SETUP/FRONT_END.md), [back end](/DOCS/SETUP/BACK_END.md), or [full stack](/DOCS/SETUP/FULL_SETUP.md))
 
 
 ### Contributors
