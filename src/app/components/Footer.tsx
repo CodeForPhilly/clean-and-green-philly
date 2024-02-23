@@ -1,31 +1,31 @@
-import { Navbar, NavbarContent, NavbarItem } from "@nextui-org/react";
-
 const Footer = () => (
   <div className="flex flex-col">
-    <Navbar maxWidth="full">
-      <NavbarContent className="flex justify-between items-center w-full">
-        <NavbarItem>
-          <span className="text-sm text-gray-600">
-            © 2024 Clean & Green Philly
-          </span>
-        </NavbarItem>
+    <footer className="px-6 h-16 flex flex-grow w-full items-center">
+      <nav className="w-full" aria-label="content info">
+        <ul className="flex justify-between items-center w-full backdrop-saturate-150 bg-background/70">
+          <li>
+            <span className="text-sm text-gray-600">
+              © 2024 Clean & Green Philly
+            </span>
+          </li>
 
-        <NavbarItem className="text-sm underline text-gray-600 mx-auto">
-          <a href="/legal-disclaimer" className="hover:text-gray-800">
-            Legal Disclaimer
-          </a>
-        </NavbarItem>
+          <li className="text-sm underline text-gray-600 mx-auto">
+            <a href="/legal-disclaimer" className="hover:text-gray-800">
+              Legal Disclaimer
+            </a>
+          </li>
 
-        <NavbarItem>
-          <a
-            href="mailto:cleanandgreenphl@gmail.com"
-            className="text-sm underline text-gray-600 hover:text-gray-800"
-          >
-            Contact Us
-          </a>
-        </NavbarItem>
-      </NavbarContent>
-    </Navbar>
+          <li>
+            <a
+              href="mailto:cleanandgreenphl@gmail.com"
+              className="text-sm underline text-gray-600 hover:text-gray-800"
+            >
+              Contact Us
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </footer>
   </div>
 );
 
