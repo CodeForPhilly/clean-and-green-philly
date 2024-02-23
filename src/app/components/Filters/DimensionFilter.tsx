@@ -1,7 +1,7 @@
 import React, { useState, FC } from "react";
-import { Chip, Tooltip } from "@nextui-org/react";
+import { Button, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
-import { Info } from "@phosphor-icons/react";
+import { Check, Info } from "@phosphor-icons/react";
 
 type DimensionFilterProps = {
   property: string;
@@ -37,23 +37,27 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     <div className="pb-6">
       <div className="flex items-center mb-2">
         <div className="text-md flex items-center">
-          {display}
+          <h2>{display}</h2>
           <Tooltip content={tooltip} placement="top" showArrow color="primary">
             <Info className="h-5 w-5 text-gray-500 ml-2 cursor-pointer" />
           </Tooltip>
         </div>
       </div>
-      <div className="space-x-2">
+      <div className="space-x-2 min-h-[33.5px]">
         {options.map((option, index) => (
-          <Chip
+          <Button
             key={index}
-            onClick={() => toggleDimension(option)}
+            disableAnimation
+            onPress={() => toggleDimension(option)}
             size="sm"
             color={selectedKeys.includes(option) ? "success" : "default"}
-            className="cursor-pointer mb-2 p-2"
+            className="mb-2 p-2 h-6"
+            radius="full"
+            aria-pressed={selectedKeys.includes(option)}
+            startContent={selectedKeys.includes(option) ? <Check className="h-3 w-3" /> : undefined}
           >
             {option}
-          </Chip>
+          </Button>
         ))}
       </div>
     </div>
