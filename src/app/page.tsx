@@ -12,9 +12,9 @@ const Page: FC = () => {
     <NextUIProvider>
       <div className="flex flex-col min-h-screen overflow-hidden">
         <Header />
-        <div className="flex-grow">
+        <main className="flex-grow" id="main">
           <LandingPage />
-        </div>
+        </main>
         <Footer />
         <Hotjar />
       </div>

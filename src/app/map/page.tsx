@@ -27,9 +27,10 @@ const Page: FC = () => {
   return (
     <FilterProvider>
       <NextUIProvider>
+      <a href="#main" tabIndex={0}>Skip to maiMAPt</a>
         <div className="flex flex-col h-screen">
           <Header />
-          <div className="flex flex-grow overflow-hidden">
+          <main className="flex flex-grow overflow-hidden" id="main">
             <div className="flex-grow overflow-auto">
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
@@ -85,7 +86,7 @@ const Page: FC = () => {
                 </>
               )}
             </SidePanel>
-          </div>
+          </main>
           <Hotjar />
         </div>
       </NextUIProvider>

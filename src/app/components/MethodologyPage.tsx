@@ -2,7 +2,7 @@ import { useDisclosure, Image } from "@nextui-org/react";
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <main className="flex flex-col min-h-screen" id="main">
       <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 py-8 px-4 md:px-6 lg:px-24">
         <div className="container mx-auto px-4 md:px-8">
           <h1 className="text-4xl font-bold mb-6">Methodology</h1>
@@ -223,6 +223,6 @@ export default function AboutPage() {
           </p>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -1,6 +1,6 @@
 export default function TakeActionOverviewPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <main className="flex flex-col min-h-screen" id="main">
       <div className="flex-grow container mx-auto pt-20">
         <h1 className="text-4xl font-bold mb-6">Overview</h1>
 
@@ -66,6 +66,6 @@ export default function TakeActionOverviewPage() {
           applying for small grants, navigating the legal system, and more.
         </p>
       </div>
-    </div>
+    </main>
   );
 }

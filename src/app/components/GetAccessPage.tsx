@@ -2,7 +2,7 @@ import { Accordion, AccordionItem } from "@nextui-org/react";
 
 export default function GetAccessPage() {
   return (
-    <div className="flex flex-col min-h-screen">
+    <main className="flex flex-col min-h-screen" id="main">
       <div className="flew-grow container mx-auto pt-20">
         <h1 className="text-4xl font-bold mb-6">Get Access</h1>
 
@@ -258,6 +258,6 @@ export default function GetAccessPage() {
           </Accordion>
         </p>
       </div>
-    </div>
+    </main>
   );
 }
