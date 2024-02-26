@@ -118,6 +118,15 @@
         "code",
         "a11y"
       ]
+    },
+    {
+      "login": "gturmel",
+      "name": "Greg Turmel",
+      "avatar_url": "https://avatars.githubusercontent.com/u/16137908?v=4",
+      "profile": "https://github.com/gturmel",
+      "contributions": [
+        "code"
+      ]
     }
   ]
 }
