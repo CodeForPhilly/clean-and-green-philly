@@ -11,10 +11,11 @@ const Page: FC = () => {
   return (
     <NextUIProvider>
       <div className="flex flex-col min-h-screen overflow-hidden">
+      <a className="font-bold border-solid border-black bg-white transition left-0 absolute p-3 m-3 -translate-y-16 focus:translate-y-0 z-50" href="#main" tabIndex={0}>Skip to main content</a>
         <Header />
-        <div className="flex-grow">
+        <main id="main" className="flex-grow">
           <LandingPage />
-        </div>
+        </main>
         <Footer />
         <Hotjar />
       </div>
