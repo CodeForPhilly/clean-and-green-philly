@@ -39,7 +39,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
         <div className="text-md flex items-center">
           <h2>{display}</h2>
           <Tooltip content={tooltip} placement="top" showArrow color="primary">
-            <Info className="h-5 w-5 text-gray-500 ml-2 cursor-pointer" />
+            <Info alt="More Info" className="h-5 w-9 text-gray-500 pl-2 pr-2 cursor-pointer" tabIndex={0} />
           </Tooltip>
         </div>
       </div>
