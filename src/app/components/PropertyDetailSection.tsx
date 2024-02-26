@@ -53,6 +53,10 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
 
+    if (start > featuresInView.length) {
+      setPage(1);
+    }
+
     return featuresInView.slice(start, end);
   }, [page, featuresInView]);
 
