@@ -30,9 +30,9 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
     <div className="flex justify-between items-center bg-white p-2 h-12">
       {/* Left-aligned content: Total Properties in View */}
       <div className="px-4 py-2">
-        <p className="text-md">
+        <h1 className="text-md">
           <span className="font-bold">{featureCount}</span> Properties in View
-        </p>
+        </h1>
       </div>
 
       {/* Right-aligned content: Buttons */}
