@@ -1,6 +1,6 @@
-import { Button } from "@nextui-org/react";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
-import Image from "next/image";
+import { Button } from '@nextui-org/react';
+import { MapboxGeoJSONFeature } from 'mapbox-gl';
+import Image from 'next/image';
 import {
   ArrowSquareOut,
   ArrowLeft,
@@ -10,8 +10,8 @@ import {
   Tree,
   ProhibitInset,
   PiggyBank,
-} from "@phosphor-icons/react";
-import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
+} from '@phosphor-icons/react';
+import SinglePropertyInfoCard from './SinglePropertyInfoCard';
 
 interface PropertyDetailProps {
   property: MapboxGeoJSONFeature | null;
@@ -46,31 +46,31 @@ const SinglePropertyDetail = ({
   const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
 
-  const priorityBgClassName = priority_level.includes("High")
-    ? "bg-priority-high"
-    : priority_level.includes("Medium")
-    ? "bg-priority-medium"
-    : priority_level.includes("Low")
-    ? "bg-priority-low"
-    : "";
+  const priorityBgClassName = priority_level.includes('High')
+    ? 'bg-priority-high'
+    : priority_level.includes('Medium')
+    ? 'bg-priority-medium'
+    : priority_level.includes('Low')
+    ? 'bg-priority-low'
+    : '';
 
   return (
     <div
       className="w-full p-4"
       style={{
-        paddingRight: "24px",
-        paddingBottom: "24px",
-        paddingLeft: "24px",
+        paddingRight: '24px',
+        paddingBottom: '24px',
+        paddingLeft: '24px',
       }}
     >
       <div className="pb-4">
         <Button
           style={{
-            backgroundColor: "white",
+            backgroundColor: 'white',
           }}
           onClick={() => setSelectedProperty(null)}
         >
-          <ArrowLeft color="#3D3D3D" size={24} /> Back{" "}
+          <ArrowLeft color="#3D3D3D" size={24} /> Back{' '}
         </Button>
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
@@ -89,7 +89,7 @@ const SinglePropertyDetail = ({
           <h2
             className="font-bold text-2xl"
             style={{
-              textTransform: "capitalize",
+              textTransform: 'capitalize',
             }}
           >
             {address.toLowerCase()}
@@ -112,11 +112,11 @@ const SinglePropertyDetail = ({
       <table className="w-full mb-3">
         <tbody
           style={{
-            fontSize: "16px",
+            fontSize: '16px',
           }}
         >
           <tr>
-            <th scope="row" className="table-cell w-3/12">
+            <th scope="row" className="table-cell w-4/12">
               Suggested Priority
             </th>
             <td className="table-cell">
@@ -145,14 +145,14 @@ const SinglePropertyDetail = ({
 
       <table className="w-full mb-4">
         <tbody>
-          <tr style={{ display: "none" }}>
-            <th scope="row" className="table-cell w-3/12">
+          <tr style={{ display: 'none' }}>
+            <th scope="row" className="table-cell w-4/12">
               Access Process
             </th>
             <td className="table-cell">{access_process}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell w-3/12">
+            <th scope="row" className="table-cell w-4/12">
               Owner
             </th>
             <td className="table-cell">
@@ -196,7 +196,7 @@ const SinglePropertyDetail = ({
             <th scope="row" className="table-cell">
               Tax Delinquency
             </th>
-            <td className="table-cell">{total_due ? "Yes" : "No"}</td>
+            <td className="table-cell">{total_due ? 'Yes' : 'No'}</td>
           </tr>
           <tr>
             <th scope="row" className="table-cell">
@@ -214,28 +214,28 @@ const SinglePropertyDetail = ({
       </p>
 
       <div className="flex mb-4 px-2 gap-4">
-        {access_process === "Private Land Use Agreement" && (
+        {access_process === 'Private Land Use Agreement' && (
           <SinglePropertyInfoCard
             title="Private Land Use Agreement"
             body="Given the price and ownership of this property, we believe the easiest way to get access to this property is through a land use agreement with its owner."
             icon={<Handshake className="h-12 w-12" aria-hidden="true" />}
           />
         )}
-        {access_process === "Buy Property" && (
+        {access_process === 'Buy Property' && (
           <SinglePropertyInfoCard
             title="Buying a Property"
             body="This property is cheap enough that we believe you can buy it outright."
             icon={<Money className="h-12 w-12" aria-hidden="true" />}
           />
         )}
-        {access_process === "Do Nothing (Too Complicated)" && (
+        {access_process === 'Do Nothing (Too Complicated)' && (
           <SinglePropertyInfoCard
             title="Do Nothing (Too Complicated)"
             body="We believe access this property legally is too complicated to justify the effort."
             icon={<ProhibitInset className="h-12 w-12" aria-hidden="true" />}
           />
         )}
-        {access_process === "Land Bank" && (
+        {access_process === 'Land Bank' && (
           <SinglePropertyInfoCard
             title="Land Bank"
             body="You may be able to acquire this property for a nominal or discounted price from the Land Bank."
@@ -245,8 +245,8 @@ const SinglePropertyDetail = ({
       </div>
 
       <p>
-        {" "}
-        To learn more about what this means, visit{" "}
+        {' '}
+        To learn more about what this means, visit{' '}
         <a
           href="/get-access"
           target="_blank"
@@ -267,7 +267,7 @@ const SinglePropertyDetail = ({
           rel="noopener noreferrer"
           className="text-primary"
         >
-          {" "}
+          {' '}
           our <Tree className="inline h-6 w-6" aria-hidden="true" /> Transform a
           Property page.
         </a>
@@ -291,7 +291,7 @@ const SinglePropertyDetail = ({
       <h3 className="font-bold mb-2 py-2 text-xl">Remove This Property</h3>
       <p>
         If you would like to request that we remove this property from the
-        dashboard, please see our{" "}
+        dashboard, please see our{' '}
         <a href="/request-removal" className="text-primary">
           Request Removal page
         </a>
