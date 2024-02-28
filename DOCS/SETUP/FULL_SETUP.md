@@ -106,3 +106,13 @@ In the terminal, use the `cd` command to navigate to your repository location, a
 ### Nextjs App
 
 Finally, it's time to run the Nextjs app. Navigate to the root directory of the repository. Install dependencies by running `npm i`. Then, run the development server with `npm run dev`. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Congrats! You're all set up.
+
+#### Formatting
+
+For js/ts, install [Prettier](https://prettier.io/) and enable it for your [editor](https://prettier.io/docs/en/editors.html). For VSCode, enable [Format on Save](https://www.robinwieruch.de/how-to-use-prettier-vscode/) for best experience.
+
+For Python, `black` will run automatically in `docker-compose` when the main script is run. If you want to just format the files, you can run:
+
+```
+docker-compose run formatter
+```

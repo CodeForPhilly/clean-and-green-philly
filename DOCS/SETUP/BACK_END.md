@@ -98,3 +98,16 @@ For example, if your repository is located at `user/Documents/vacant-lots-proj`,
 #### macOS
 
 In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker-compose up`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker-compose down`.S
+
+
+#### Making code changes
+
+Changes to our codebase should always address an [issue](https://github.com/CodeForPhilly/vacant-lots-proj/issues) and need to be requested to be merged by submitting a pull request that will be reviewed by at least the team lead or tech lead.
+
+#### Formatting
+
+For Python, `black` will run automatically in `docker-compose` when the main script is run. If you want to just format the files, you can run:
+
+```
+docker-compose run formatter
+```
