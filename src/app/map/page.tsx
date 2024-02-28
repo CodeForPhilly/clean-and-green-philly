@@ -28,8 +28,9 @@ const Page: FC = () => {
     <FilterProvider>
       <NextUIProvider>
         <div className="flex flex-col h-screen">
+          <a className="font-bold border-solid border-black bg-white transition left-0 absolute p-3 m-3 -translate-y-16 focus:translate-y-0 z-50" href="#main" tabIndex={0}>Skip to main content</a>
           <Header />
-          <div className="flex flex-grow overflow-hidden">
+          <main className="flex flex-grow overflow-hidden" id="main">
             <div className="flex-grow overflow-auto">
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
@@ -85,7 +86,7 @@ const Page: FC = () => {
                 </>
               )}
             </SidePanel>
-          </div>
+          </main>
           <Hotjar />
         </div>
       </NextUIProvider>

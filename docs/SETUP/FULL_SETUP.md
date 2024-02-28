@@ -2,7 +2,7 @@
 
 ## Overview
 
-If you are planning to contribute to the data wrangling and database management on this project and will need to run the Python script, follow the installation and setup instructions below.
+If you plan to contribute to both front and back end development for Clean & Green Philly, follow the installation and setup instructions below.
 
 ## Installation
 
@@ -13,6 +13,10 @@ Docker is a platform that allows you to containerize and run applications in iso
 ### PostgreSQL
 
 PostgreSQL is an open-source relational database management system. We use it to store and our data. Make sure you have the latest version of PostgreSQL installed on your computer. You can download it [here](https://www.postgresql.org/download/). As part of that setup, you will also need to install PostGIS; this should be done through the setup wizard, [as detailed here](https://postgis.net/workshops/postgis-intro/installation.html).
+
+### NVM (Windows Only)
+
+If you are running Windows, you will need to [install NVM for Windows](https://github.com/coreybutler/nvm-windows/blob/master/README.md). Under 'Assets', [nvm-setup.exe](https://github.com/coreybutler/nvm-windows/releases) is straightforward. Node.js and nvm ship with Linux and macOS and therefore do not need to be installed for people using those OS.
 
 ## Setup
 
@@ -98,3 +102,17 @@ For example, if your repository is located at `user/Documents/vacant-lots-proj`,
 #### macOS
 
 In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker-compose up`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker-compose down`.S
+
+### Nextjs App
+
+Finally, it's time to run the Nextjs app. Navigate to the root directory of the repository. Install dependencies by running `npm i`. Then, run the development server with `npm run dev`. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Congrats! You're all set up.
+
+#### Formatting
+
+For js/ts, install [Prettier](https://prettier.io/) and enable it for your [editor](https://prettier.io/docs/en/editors.html). For VSCode, enable [Format on Save](https://www.robinwieruch.de/how-to-use-prettier-vscode/) for best experience.
+
+For Python, `black` will run automatically in `docker-compose` when the main script is run. If you want to just format the files, you can run:
+
+```
+docker-compose run formatter
+```
