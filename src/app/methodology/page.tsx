@@ -9,6 +9,7 @@ const Methodology: FC = () => {
   return (
     <NextUIProvider>
       <Layout>
+      <title>Methodology - Clean and Green Philly</title>
         <MethodologyPage />
       </Layout>
     </NextUIProvider>
