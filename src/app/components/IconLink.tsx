@@ -8,15 +8,15 @@ interface IconLinkProps {
 }
 
 const IconLink: FC<IconLinkProps> = ({ icon, text, href }) => (
-  <Link href={href}>
-    <Button
-      aria-label={text}
-      className="flex items-center focus:text-blue-500 focus:underline hover:text-blue-500 hover:underline bg-white"
-      startContent={<div className="w-5">{icon}</div>}
-    >
-      {text}
-    </Button>
-  </Link>
+  <Button
+    as={Link}
+    href={href}
+    aria-label={text}
+    className="flex items-center focus:text-blue-500 focus:underline hover:text-blue-500 hover:underline bg-white"
+    startContent={<div className="w-5">{icon}</div>}
+  >
+    {text}
+  </Button>
 );
 
 export default IconLink;
