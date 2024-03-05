@@ -4,12 +4,12 @@ const Footer = () => (
       <nav className="w-full" aria-label="content info">
         <ul className="flex justify-between items-center w-full backdrop-saturate-150 bg-background/70">
           <li>
-            <span className="text-sm text-gray-600">
+            <span className="base-sm text-gray-600">
               © 2024 Clean & Green Philly
             </span>
           </li>
 
-          <li className="text-sm underline text-gray-600 mx-auto">
+          <li className="base-sm underline text-gray-600 mx-auto">
             <a href="/legal-disclaimer" className="hover:text-gray-800">
               Legal Disclaimer
             </a>
@@ -18,7 +18,7 @@ const Footer = () => (
           <li>
             <a
               href="mailto:cleanandgreenphl@gmail.com"
-              className="text-sm underline text-gray-600 hover:text-gray-800"
+              className="base-sm underline text-gray-600 hover:text-gray-800"
             >
               Contact Us
             </a>

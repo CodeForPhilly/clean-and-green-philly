@@ -14,7 +14,7 @@ const IconLink: FC<IconLinkProps> = ({ icon, text, href }) => (
       className="flex items-center hover:text-blue-500 hover:underline bg-white"
       startContent={<div className="w-5">{icon}</div>}
     >
-      {text}
+      <span className="body-md">{text}</span>
     </Button>
   </Link>
 );

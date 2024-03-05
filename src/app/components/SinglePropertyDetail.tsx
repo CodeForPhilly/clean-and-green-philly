@@ -70,7 +70,8 @@ const SinglePropertyDetail = ({
           }}
           onClick={() => setSelectedProperty(null)}
         >
-          <ArrowLeft color="#3D3D3D" size={24} /> Back{" "}
+          <ArrowLeft color="#3D3D3D" size={24} />{" "}
+          <span className="body-md">Back</span>{" "}
         </Button>
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
@@ -87,7 +88,7 @@ const SinglePropertyDetail = ({
       <div className="py-4 px-2">
         <div className="flex justify-between content-center">
           <h2
-            className="font-bold text-2xl"
+            className="font-bold heading-2xl"
             style={{
               textTransform: "capitalize",
             }}
@@ -100,7 +101,7 @@ const SinglePropertyDetail = ({
               target="_blank"
               rel="noopener noreferrer"
               color="primary"
-              className="flex p-2 items-center gap-1"
+              className="flex p-2 items-center gap-1 body-md"
             >
               Atlas Link
               <ArrowSquareOut className="inline h-6 w-6" aria-hidden="true" />
@@ -207,7 +208,7 @@ const SinglePropertyDetail = ({
         </tbody>
       </table>
 
-      <h3 className="font-bold mb-2 py-2 text-xl">Getting Access</h3>
+      <h3 className="font-bold mb-2 py-2 heading-xl">Getting Access</h3>
       <p className="mb-4">
         Based on the information about this property, we believe that you can
         get access to this property through:
@@ -258,7 +259,9 @@ const SinglePropertyDetail = ({
         </a>
       </p>
 
-      <h3 className="font-bold mb-2 py-2 text-xl">Ways to transform the lot</h3>
+      <h3 className="font-bold mb-2 py-2 heading-xl">
+        Ways to transform the lot
+      </h3>
       <p className="mb-4">
         To see different ways in which you might transform this property, see
         <a
@@ -288,7 +291,7 @@ const SinglePropertyDetail = ({
       </div>
       */}
 
-      <h3 className="font-bold mb-2 py-2 text-xl">Remove This Property</h3>
+      <h3 className="font-bold mb-2 py-2 heading-xl">Remove This Property</h3>
       <p>
         If you would like to request that we remove this property from the
         dashboard, please see our{" "}

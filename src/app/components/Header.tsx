@@ -53,16 +53,12 @@ const Header = () => (
             className="flex items-center hover:text-blue-500 hover:underline bg-white"
           >
             <Hand className="h-6 w-6" aria-hidden="true" />
-            Take Action
+            <span className="body-md">Take Action</span>
           </Button>
         </DropdownTrigger>
         <DropdownMenu aria-label="Take Action">
-          <DropdownItem href="/take-action-overview">
-            Overview
-          </DropdownItem>
-          <DropdownItem href="/get-access">
-            Get Access
-          </DropdownItem>
+          <DropdownItem href="/take-action-overview">Overview</DropdownItem>
+          <DropdownItem href="/get-access">Get Access</DropdownItem>
           <DropdownItem href="/transform-property">
             Transform a Property
           </DropdownItem>
@@ -77,16 +73,12 @@ const Header = () => (
             className="flex items-center hover:text-blue-500 hover:underline bg-white"
           >
             <Info className="h-6 w-6" aria-hidden="true" />
-            About
+            <span className="body-md">About</span>
           </Button>
         </DropdownTrigger>
         <DropdownMenu aria-label="Overview">
-          <DropdownItem href="/about">
-            Overview
-          </DropdownItem>
-          <DropdownItem href="/methodology">
-            Methodology
-          </DropdownItem>
+          <DropdownItem href="/about">Overview</DropdownItem>
+          <DropdownItem href="/methodology">Methodology</DropdownItem>
         </DropdownMenu>
       </Dropdown>
     </NavbarContent>
