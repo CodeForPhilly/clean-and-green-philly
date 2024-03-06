@@ -54,6 +54,12 @@ const SinglePropertyDetail = ({
     ? "bg-priority-low"
     : "";
 
+  const Th = ({ children }: { children: React.ReactNode }) => (
+    <th scope="row" className="table-cell whitespace-nowrap w-1/3">
+      {children}
+    </th>
+  );
+
   return (
     <div
       className="w-full p-4"
@@ -117,9 +123,7 @@ const SinglePropertyDetail = ({
           }}
         >
           <tr>
-            <th scope="row" className="table-cell w-3/12">
-              Suggested Priority
-            </th>
+            <Th>Suggested Priority</Th>
             <td className="table-cell">
               <div className="flex gap-1 items-center">
                 <span
@@ -130,15 +134,11 @@ const SinglePropertyDetail = ({
             </td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Gun Crime Rate
-            </th>
+            <Th>Gun Crime Rate</Th>
             <td className="table-cell">{guncrime_density}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Tree Canopy Gap
-            </th>
+            <Th>Tree Canopy Gap</Th>
             <td className="table-cell">{Math.round(tree_canopy_gap * 100)}%</td>
           </tr>
         </tbody>
@@ -147,62 +147,44 @@ const SinglePropertyDetail = ({
       <table className="w-full mb-4">
         <tbody>
           <tr style={{ display: "none" }}>
-            <th scope="row" className="table-cell w-3/12">
-              Access Process
-            </th>
+            <Th>Access Process</Th>
             <td className="table-cell">{access_process}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell w-3/12">
-              Owner
-            </th>
+            <Th>Owner</Th>
             <td className="table-cell">
               <p>{owner_1}</p>
               {owner_2 && <p>{owner_2}</p>}
             </td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Parcel Type
-            </th>
+            <Th>Parcel Type</Th>
             <td className="table-cell">
               <p>{parcel_type}</p>
             </td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Zip Code
-            </th>
+            <Th>Zip Code</Th>
             <td className="table-cell">{zipcode}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              RCO
-            </th>
+            <Th>RCO</Th>
             <td className="table-cell">{neighborhood}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Council District
-            </th>
+            <Th>Council District</Th>
             <td className="table-cell">{council_district}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Market Value
-            </th>
+            <Th>Market Value</Th>
             <td className="table-cell">${market_value.toLocaleString()}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Tax Delinquency
-            </th>
+            <Th>Tax Delinquency</Th>
             <td className="table-cell">{total_due ? "Yes" : "No"}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              L&I Violations
-            </th>
+            <Th>L&I Violations</Th>
             <td className="table-cell">{open_violations_past_year}</td>
           </tr>
         </tbody>
