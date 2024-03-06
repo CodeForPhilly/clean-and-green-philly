@@ -138,3 +138,18 @@
 .link {
   @apply text-primary underline;
 }
+
+/* Styles for the mapbox legend pane. */
+.mapboxgl-ctrl-legend-pane summary {
+  text-transform: capitalize;
+}
+
+.mapboxgl-ctrl-legend-pane ul.list li {
+  text-transform: capitalize;
+  color: #173009;
+}
+
+/* Crude way to hide the last "Other" legend item. */
+.mapboxgl-ctrl-legend-pane ul.list li:last-child {
+  display: none;
+}
