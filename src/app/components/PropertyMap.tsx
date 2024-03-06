@@ -153,8 +153,23 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
     setFeatureCount(features.length);
 
+    const priorities: { [key: string]: number } = {
+      High: 1,
+      Medium: 2,
+      Low: 3,
+    };
+
+    const sortedFeatures = features
+      .sort((a, b) => {
+        return (
+          priorities[a?.properties?.priority_level || ""] -
+          priorities[b?.properties?.priority_level || ""]
+        );
+      })
+      .slice(0, 100);
+
     // only set the first 100 properties in state
-    setFeaturesInView(features.slice(0, 100));
+    setFeaturesInView(sortedFeatures);
     setLoading(false);
   };
 
