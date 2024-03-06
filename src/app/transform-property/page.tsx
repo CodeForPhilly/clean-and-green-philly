@@ -9,6 +9,7 @@ const TransformProperty: FC = () => {
   return (
     <NextUIProvider>
       <Layout>
+      <title>Transform a Property - Clean and Green Philly</title>
         <TransformPropertyPage />
       </Layout>
     </NextUIProvider>

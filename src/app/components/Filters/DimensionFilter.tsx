@@ -18,7 +18,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
 }) => {
   const { dispatch, appFilter } = useFilter();
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
-    appFilter[property]?.values || []
+    appFilter[property]?.values || [],
   );
 
   const toggleDimension = (dimension: string) => {
@@ -36,10 +36,14 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   return (
     <div className="pb-6">
       <div className="flex items-center mb-2">
-        <div className="text-md flex items-center">
-          <h2>{display}</h2>
+        <div className="flex items-center">
+          <h2 className="heading-lg">{display}</h2>
           <Tooltip content={tooltip} placement="top" showArrow color="primary">
-            <Info alt="More Info" className="h-5 w-9 text-gray-500 pl-2 pr-2 cursor-pointer" tabIndex={0} />
+            <Info
+              alt="More Info"
+              className="h-5 w-9 text-gray-500 pl-2 pr-2 cursor-pointer"
+              tabIndex={0}
+            />
           </Tooltip>
         </div>
       </div>
@@ -51,10 +55,14 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             onPress={() => toggleDimension(option)}
             size="sm"
             color={selectedKeys.includes(option) ? "success" : "default"}
-            className="mb-2 p-2 h-6"
+            className="mb-2 p-2 h-6 body-sm"
             radius="full"
             aria-pressed={selectedKeys.includes(option)}
-            startContent={selectedKeys.includes(option) ? <Check className="h-3 w-3" /> : undefined}
+            startContent={
+              selectedKeys.includes(option) ? (
+                <Check className="h-3 w-3" />
+              ) : undefined
+            }
           >
             {option}
           </Button>
