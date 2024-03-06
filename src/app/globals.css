@@ -136,7 +136,7 @@
 }
 
 .link {
-  @apply text-primary underline;
+  @apply text-[#0070F0] underline;
 }
 
 /* Styles for the mapbox legend pane. */
