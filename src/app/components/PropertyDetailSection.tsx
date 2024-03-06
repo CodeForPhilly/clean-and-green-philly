@@ -92,8 +92,8 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                     setSelectedProperty(
                       items.find(
                         (item) =>
-                          properties?.OPA_ID === item?.properties?.OPA_ID
-                      ) || null
+                          properties?.OPA_ID === item?.properties?.OPA_ID,
+                      ) || null,
                     );
                   }}
                 >
@@ -129,7 +129,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
               />
             </div>
             <div className="flex w-full justify-center p-2">
-              <p className="text-sm text-gray-500">
+              <p className="body-sm text-gray-500">
                 Note: only the first 100 properties can be viewed in list.
                 Filter or zoom in to a smaller area to see more detail.{" "}
               </p>

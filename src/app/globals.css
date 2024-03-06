@@ -46,10 +46,84 @@
   html {
     @apply font-body;
   }
+
+  /* Fallback variables for browsers that don't support clamp */
+  @supports (font-size: clamp(1rem, 1vw, 1rem)) {
+    :root {
+      --font-size-sm: clamp(0.89rem, -0.22vw + 0.94rem, 0.77rem);
+      --font-size-md: clamp(1rem, 0vw + 1rem, 1rem);
+      --font-size-lg: clamp(1.13rem, 0.32vw + 1.05rem, 1.3rem);
+      --font-size-xl: clamp(1.27rem, 0.77vw + 1.07rem, 1.69rem);
+      --font-size-2xl: clamp(1.42rem, 1.41vw + 1.07rem, 2.2rem);
+      --font-size-3xl: clamp(1.6rem, 2.28vw + 1.03rem, 2.86rem);
+    }
+  }
+  /* Fallback variables for browsers that don't support clamp */
+  @supports not (font-size: clamp(1rem, 1vw, 1rem)) {
+    :root {
+      --font-size-sm: 0.89rem;
+      --font-size-md: 1rem;
+      --font-size-lg: 1.13rem;
+      --font-size-xl: 1.27rem;
+      --font-size-2xl: 1.42rem;
+      --font-size-3xl: 1.6rem;
+    }
+    @media screen and (min-width: 1280px) {
+      :root {
+        --font-size-sm: 0.77rem;
+        --font-size-md: 1rem;
+        --font-size-lg: 1.3rem;
+        --font-size-xl: 1.69rem;
+        --font-size-2xl: 2.2rem;
+        --font-size-3xl: 2.86rem;
+      }
+    }
+  }
+  .heading-3xl {
+    font-size: var(--font-size-3xl);
+    font-family: var(--font-family);
+    font-weight: 800;
+  }
+  .heading-2xl {
+    font-size: var(--font-size-2xl);
+    font-family: var(--font-family);
+    font-weight: 800;
+  }
+  .heading-xl {
+    font-size: var(--font-size-xl);
+    font-family: var(--font-family);
+    font-weight: bold;
+  }
+  .heading-lg {
+    font-size: var(--font-size-lg);
+    font-family: var(--font-family);
+    font-weight: bold;
+  }
+  .heading-md {
+    font-size: var(--font-size-md);
+    font-family: var(--font-family);
+    font-weight: bold;
+  }
+  .body-lg {
+    font-size: var(--font-size-lg);
+    font-family: var(--font-family);
+    font-weight: regular;
+  }
+  .body-md {
+    font-size: var(--font-size-md);
+    font-family: var(--font-family);
+    font-weight: regular;
+  }
+  .body-sm {
+    font-size: var(--font-size-sm);
+    font-family: var(--font-family);
+    font-weight: regular;
+  }
 }
 
-.customized-map *, .customized-map .mapboxgl-ctrl-geocoder--input {
-  @apply font-body;
+.customized-map *,
+.customized-map .mapboxgl-ctrl-geocoder--input {
+  @apply font-body body-md;
 }
 
 .mapboxgl-ctrl-legend {

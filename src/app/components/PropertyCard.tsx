@@ -57,8 +57,8 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
             />
           </div>
           <div className="p-2">
-            <div className="font-bold text-lg">{formattedAddress}</div>
-            <div className="text-gray-700 mb">
+            <div className="font-bold heading-lg">{formattedAddress}</div>
+            <div className="text-gray-700 body-sm">
               {guncrime_density} Gun Crime Rate
             </div>
           </div>
@@ -66,7 +66,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
             <Chip
               classNames={{
                 base: `${priorityClass} border-small border-white/50`,
-                content: "text-white mb",
+                content: "text-white body-sm",
               }}
             >
               {priority_level + " Priority"}
