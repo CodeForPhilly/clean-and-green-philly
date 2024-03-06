@@ -36,7 +36,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       </div>
 
       {/* Right-aligned content: Buttons */}
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-2" role="region" aria-label="controls">
         <Button
           onPress={() => handleClick("filter")}
           startContent={<Funnel className="h-6 w-6" />}

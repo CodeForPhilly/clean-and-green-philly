@@ -50,7 +50,7 @@ const Header = () => (
         <DropdownTrigger>
           <Button
             size="md"
-            className="flex items-center hover:text-blue-500 hover:underline bg-white"
+            className="flex items-center focus:text-blue-500 focus:underline hover:text-blue-500 hover:underline bg-white"
           >
             <Hand className="h-6 w-6" aria-hidden="true" />
             <span className="body-md">Take Action</span>
@@ -70,7 +70,7 @@ const Header = () => (
         <DropdownTrigger>
           <Button
             size="md"
-            className="flex items-center hover:text-blue-500 hover:underline bg-white"
+            className="flex items-center focus:text-blue-500 focus:underline hover:text-blue-500 hover:underline bg-white"
           >
             <Info className="h-6 w-6" aria-hidden="true" />
             <span className="body-md">About</span>

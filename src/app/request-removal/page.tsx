@@ -9,6 +9,7 @@ const RequestRemoval: FC = () => {
   return (
     <NextUIProvider>
       <Layout>
+      <title>Request Removal - Clean and Green Philly</title>
         <RequestRemovalPage />
       </Layout>
     </NextUIProvider>

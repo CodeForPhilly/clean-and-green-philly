@@ -9,6 +9,7 @@ const About: FC = () => {
   return (
     <NextUIProvider>
       <Layout>
+      <title>About - Clean and Green Philly</title>
         <AboutPage />
       </Layout>
     </NextUIProvider>

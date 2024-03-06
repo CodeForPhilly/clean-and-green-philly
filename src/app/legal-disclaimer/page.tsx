@@ -9,6 +9,7 @@ const LegalDisclaimer: FC = () => {
   return (
     <NextUIProvider>
       <Layout>
+      <title>Legal Disclaimer - Clean and Green Philly</title>
         <LegalDisclaimerPage />
       </Layout>
     </NextUIProvider>
