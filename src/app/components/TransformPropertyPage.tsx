@@ -24,6 +24,7 @@ export default function TransformPropertyPage() {
           highly effective; even something as simple as cleaning up trash can
           have a big impact. That said, there are many ways to transform a
           vacant property. You could, for example:
+        </p>
           <ul className="list-disc pl-6 mb-4">
             <li>Partner with a local restaurant to offer outdoor eating</li>
             <li>Install bike parking</li>
@@ -38,6 +39,7 @@ export default function TransformPropertyPage() {
               Connect with a non-profit organization to build affordable housing
             </li>
           </ul>
+          <p>
           These are just some of the many possibilities. Remember to be both
           creative and practical: there is no one-size-fits-all solution, and
           Philadelphia will need a variety of uses in its vacant properties,
@@ -156,7 +158,7 @@ export default function TransformPropertyPage() {
           What else should I think about?
         </h2>
 
-        <p>
+        <div>
           <Accordion variant="light" selectionMode="multiple">
             <AccordionItem
               key="1"
@@ -209,7 +211,7 @@ export default function TransformPropertyPage() {
               </div>
             </AccordionItem>
           </Accordion>
-        </p>
+        </div>
       </div>
     </div>
   );
