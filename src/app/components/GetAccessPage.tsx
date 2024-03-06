@@ -186,6 +186,7 @@ export default function GetAccessPage() {
           tool like Grounded in Philly’s pathways quiz
           [https://groundedinphilly.org/#pathways], which can better help you
           understand if you qualify.
+        </p>
           <Accordion variant="light" selectionMode="multiple">
             <AccordionItem
               key="1"
@@ -256,7 +257,6 @@ export default function GetAccessPage() {
               </div>
             </AccordionItem>
           </Accordion>
-        </p>
       </div>
     </div>
   );
