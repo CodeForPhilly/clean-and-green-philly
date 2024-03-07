@@ -61,7 +61,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   }, [page, featuresInView]);
 
   return loading ? (
-    <Spinner />
+    <Spinner className="flex flex-wrap" />
   ) : selectedProperty ? (
     <SinglePropertyDetail
       property={selectedProperty}
