@@ -52,6 +52,7 @@ const Page: FC = () => {
                         currentView={currentView}
                         setCurrentView={setCurrentView}
                         featureCount={featureCount}
+                        loading={loading}
                       />
                     </div>
                   )}
