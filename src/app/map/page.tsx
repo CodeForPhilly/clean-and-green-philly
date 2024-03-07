@@ -20,7 +20,7 @@ const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] =
     useState<MapboxGeoJSONFeature | null>(null);
 
