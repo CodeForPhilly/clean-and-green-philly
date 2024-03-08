@@ -29,9 +29,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   };
 
   return loading ? (
-    <div className="flex w-full justify-center">
-      <h1 className="heading-md">Fetching results</h1>
-    </div>
+    <div>{/* Keep empty while loading */}</div>
   ) : (
     <div className="flex justify-between items-center bg-white p-2 h-12">
       {/* Left-aligned content: Total Properties in View */}

@@ -61,7 +61,15 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   }, [page, featuresInView]);
 
   return loading ? (
-    <Spinner className="flex flex-wrap" />
+    <div>
+      {/* Center vertically in screen */}
+      <div className="flex w-full justify-center p-4 mt-24">
+        <p className="body-md">Loading properties</p>
+      </div>
+      <div className="flex w-full justify-center">
+        <Spinner />
+      </div>
+    </div>
   ) : selectedProperty ? (
     <SinglePropertyDetail
       property={selectedProperty}
