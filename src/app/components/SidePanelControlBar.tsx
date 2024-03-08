@@ -7,12 +7,14 @@ type SidePanelControlBarProps = {
   currentView: BarClickOptions;
   setCurrentView: (view: BarClickOptions) => void;
   featureCount: number;
+  loading: boolean;
 };
 
 const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   currentView,
   setCurrentView,
   featureCount,
+  loading,
 }) => {
   const handleClick = (view: BarClickOptions) => {
     if (view === currentView) {
@@ -26,7 +28,9 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
     setCurrentView(currentView === "detail" ? "list" : "detail");
   };
 
-  return (
+  return loading ? (
+    <div>{/* Keep empty while loading */}</div>
+  ) : (
     <div className="flex justify-between items-center bg-white p-2 h-12">
       {/* Left-aligned content: Total Properties in View */}
       <div className="px-4 py-2">
