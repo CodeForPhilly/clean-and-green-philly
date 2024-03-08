@@ -202,7 +202,7 @@ export default function TransformPropertyPage() {
               </div>
             </AccordionItem>
           </Accordion>
-        </p>
+        </div>
       </div>
     </div>
   );
