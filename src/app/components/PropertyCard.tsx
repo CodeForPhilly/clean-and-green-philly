@@ -28,7 +28,7 @@ function getPriorityClass(priorityLevel: string) {
       return "bg-gray-500 border-gray-700"; // Default style
   }
 }
-
+// test comment
 const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
   const { address, guncrime_density, tree_canopy_gap, priority_level, OPA_ID } =
     feature.properties;
