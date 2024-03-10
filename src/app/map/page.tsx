@@ -20,13 +20,14 @@ const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] =
     useState<MapboxGeoJSONFeature | null>(null);
 
   return (
     <FilterProvider>
       <NextUIProvider>
+      <title>Map - Clean and Green Philly</title>
         <div className="flex flex-col h-screen">
           <a className="font-bold border-solid border-black bg-white transition left-0 absolute p-3 m-3 -translate-y-16 focus:translate-y-0 z-50" href="#main" tabIndex={0}>Skip to main content</a>
           <Header />
@@ -51,6 +52,7 @@ const Page: FC = () => {
                         currentView={currentView}
                         setCurrentView={setCurrentView}
                         featureCount={featureCount}
+                        loading={loading}
                       />
                     </div>
                   )}

@@ -20,7 +20,7 @@ const LandingPage = () => (
   <div className="container mx-auto px-4">
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center my-10">
       <div className="text-left pr-10">
-        <h1 className="text-green-600 text-xl md:text-2xl lg:text-5xl font-thin leading-tight md:leading-[3rem]">
+        <h1 className="text-green-600 heading-3xl font-thin leading-tight md:leading-[3rem]">
           <span className="block">
             Cleaning and greening vacant properties can{" "}
             <span className="font-extrabold">reduce gun violence</span> in
@@ -31,15 +31,20 @@ const LandingPage = () => (
       <div className="flex flex-col justify-between items-end">
         <div className="text-gray-700 mb-4">
           {/* Responsive paragraphs */}
-          <p className="hidden md:block">
+          <p className="hidden md:block body-lg">
             This tool can empower you to find the highest-impact properties in
             Philadelphia and take action.
           </p>
         </div>
         <div className="inline-flex space-x-2">
-          <Button href="/map" as={Link} size="lg" className="bg-green-600 text-white">
+          <Button
+            href="/map"
+            as={Link}
+            size="lg"
+            className="bg-green-600 text-white"
+          >
             <ArrowRightIcon className="w-5 h-5 mr-2" />
-            Find properties
+            <span className="body-md">Find properties</span>
           </Button>
           <Button
             href="about"

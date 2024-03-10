@@ -57,7 +57,7 @@ const FilterView: FC<FilterViewProps> = ({ setCurrentView }) => {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center">
-        <h1 className="font-semibold text-xl">Filter</h1>
+        <h1 className="font-semibold heading-xl">Filter</h1>
         <Button
           size="sm"
           className="bg-green-60 text-white"
