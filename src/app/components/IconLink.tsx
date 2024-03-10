@@ -29,7 +29,7 @@ className={pathname === href ? "active-state-nav" : ""}
       role="link"
       // *only include if there will be no text link present* aria-label={text}
       startContent={<div className="w-5">{icon}</div>}
-      className="flex text-gray-900 items-center active:bg-[#E9FFE5] active:text-green-700 focus:bg-[#E9FFE5] hover:gray-100 bg-color-none hover:bg-gray-10"
+      className="flex text-gray-900 items-center active:bg-[#E9FFE5] active:text-green-700 focus:text-green-700 focus:bg-[#E9FFE5] hover:gray-100 bg-color-none hover:bg-gray-10"
     >
       <span className="body-md">{text}</span>
     </Button>
