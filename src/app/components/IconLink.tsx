@@ -10,14 +10,14 @@ interface IconLinkProps {
   href: string;
 }
 
-function IconLink({ icon, text, href }) {
+function IconLink({ icon, text, href }:any ) {
   const pathname = usePathname();
   return (
 
 
 <NavbarItem
 isActive={pathname === href}
-aria-current={pathname === href ? "true" : null}
+aria-current={pathname === href ? "true" : undefined }
 key={text}
 className={pathname === href ? "active-state-nav" : ""}
 >
