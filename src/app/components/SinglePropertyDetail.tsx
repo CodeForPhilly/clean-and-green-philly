@@ -116,7 +116,7 @@ const SinglePropertyDetail = ({
         </div>
       </div>
 
-      <table className="w-full mb-3">
+      <table aria-label="Community Impact" className="w-full mb-3">
         <tbody
           style={{
             fontSize: "16px",
@@ -144,7 +144,7 @@ const SinglePropertyDetail = ({
         </tbody>
       </table>
 
-      <table className="w-full mb-4">
+      <table aria-label="Land Information" className="w-full mb-4">
         <tbody>
           <tr style={{ display: "none" }}>
             <Th>Access Process</Th>
