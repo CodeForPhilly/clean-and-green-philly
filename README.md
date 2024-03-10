@@ -93,6 +93,7 @@ Please see the documents in our [DOCS](/DOCS) folder for background on the proje
       <td align="center" valign="top" width="14.28%"><a href="http://elizabethwalker.site"><img src="https://avatars.githubusercontent.com/u/44076192?v=4?s=100" width="100px;" alt="Elizabeth Walker"/><br /><sub><b>Elizabeth Walker</b></sub></a><br /><a href="#code-19ewalker" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://alexbyrdleitner-portfolio.netlify.app/"><img src="https://avatars.githubusercontent.com/u/111008425?v=4?s=100" width="100px;" alt="Alex Byrd-Leitner"/><br /><sub><b>Alex Byrd-Leitner</b></sub></a><br /><a href="#code-AZBL" title="Code">💻</a> <a href="#a11y-AZBL" title="Accessibility">️️️️♿️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/gturmel"><img src="https://avatars.githubusercontent.com/u/16137908?v=4?s=100" width="100px;" alt="Greg Turmel"/><br /><sub><b>Greg Turmel</b></sub></a><br /><a href="#code-gturmel" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://paulchoi.dev"><img src="https://avatars.githubusercontent.com/u/8061917?v=4?s=100" width="100px;" alt="Paul Choi"/><br /><sub><b>Paul Choi</b></sub></a><br /><a href="#code-paulhchoi" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
