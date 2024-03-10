@@ -64,11 +64,11 @@ This is a single repository for both the React app and the Python pipeline to ET
 
 ## Contribution
 
-Please see the documents in our [DOCS](/DOCS) folder for background on the project and instructions on how to contribute. At a minimum, please read:
+Please see the documents in our [docs](/docs) folder for background on the project and instructions on how to contribute. At a minimum, please read:
 
-1) The [guide to contributing](/DOCS/CONTRIBUTING.md)
-2) The [code of conduct](/DOCS/CODE_OF_CONDUCT.md)
-3) The appropriate installation setup instructions ([front end](/DOCS/SETUP/FRONT_END.md), [back end](/DOCS/SETUP/BACK_END.md), or [full stack](/DOCS/SETUP/FULL_SETUP.md))
+1) The [guide to contributing](/docs/CONTRIBUTING.md)
+2) The [code of conduct](/docs/CODE_OF_CONDUCT.md)
+3) The appropriate installation setup instructions ([front end](/docs/SETUP/FRONT_END.md), [back end](/docs/SETUP/BACK_END.md), or [full stack](/docs/SETUP/FULL_SETUP.md))
 
 
 ### Contributors
@@ -94,6 +94,7 @@ Please see the documents in our [DOCS](/DOCS) folder for background on the proje
       <td align="center" valign="top" width="14.28%"><a href="https://alexbyrdleitner-portfolio.netlify.app/"><img src="https://avatars.githubusercontent.com/u/111008425?v=4?s=100" width="100px;" alt="Alex Byrd-Leitner"/><br /><sub><b>Alex Byrd-Leitner</b></sub></a><br /><a href="#code-AZBL" title="Code">💻</a> <a href="#a11y-AZBL" title="Accessibility">️️️️♿️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/gturmel"><img src="https://avatars.githubusercontent.com/u/16137908?v=4?s=100" width="100px;" alt="Greg Turmel"/><br /><sub><b>Greg Turmel</b></sub></a><br /><a href="#code-gturmel" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jgaye"><img src="https://avatars.githubusercontent.com/u/4049458?v=4?s=100" width="100px;" alt="Julien Gaye"/><br /><sub><b>Julien Gaye</b></sub></a><br /><a href="#code-jgaye" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/BayLadyCoder"><img src="https://avatars.githubusercontent.com/u/33296817?v=4?s=100" width="100px;" alt="Bay Chairangsaris"/><br /><sub><b>Bay Chairangsaris</b></sub></a><br /><a href="#code-BayLadyCoder" title="Code">💻</a> <a href="#doc-BayLadyCoder" title="Documentation">📖</a></td>
     </tr>
   </tbody>
 </table>

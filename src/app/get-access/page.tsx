@@ -9,6 +9,7 @@ const GetAccess: FC = () => {
   return (
     <NextUIProvider>
       <Layout>
+      <title>Get Access - Clean and Green Philly</title>
         <GetAccessPage />
       </Layout>
     </NextUIProvider>
