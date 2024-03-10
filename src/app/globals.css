@@ -153,3 +153,15 @@
 .mapboxgl-ctrl-legend-pane ul.list li:last-child {
   display: none;
 }
+/* Remove white background on menu item to display active page state */
+a .bg-color-none {
+    background-color: none;
+}
+/* Hardcoding the active page link color styling */
+.active-state-nav > a {
+  color: #0C5C00;
+}
+/* Hardcoding the active page link hover styling */
+.active-state-nav > a:hover {
+  background-color: #C2F5BA;
+}
