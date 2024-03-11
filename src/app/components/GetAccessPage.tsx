@@ -4,12 +4,12 @@ export default function GetAccessPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flew-grow container mx-auto pt-20">
-        <h1 className="text-4xl font-bold mb-6">Get Access</h1>
+        <h1 className="heading-3xl font-bold mb-6">Get Access</h1>
 
-        <h2 className="text-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8">
           What does "get access" mean?
         </h2>
-        <p>
+        <p className="body-md">
           In order to intervene in a property, you need to have some kind of
           legal access to do so. Broadly, this means either becoming the owner
           of the property yourself or reaching a legal agreement with the owner
@@ -19,10 +19,10 @@ export default function GetAccessPage() {
           these options are and how you can get help with each.
         </p>
 
-        <h2 className="text-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8">
           How can I get access to a specific property?
         </h2>
-        <p>
+        <p className="body-md">
           Generally speaking, there are two ways to get access to a property:
           you can either become the owner yourself or reach an agreement with
           the owner to let you access the property. Clean & Green Philly
@@ -158,10 +158,10 @@ export default function GetAccessPage() {
           </AccordionItem>
         </Accordion>
 
-        <h2 className="text-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8">
           What do you mean by "do nothing"?
         </h2>
-        <p>
+        <p className="body-md">
           Although most properties have at least one reasonable way to get
           access to them, in some cases, a property may have a particular
           combination of factors that make it difficult to impossible to get
@@ -174,8 +174,8 @@ export default function GetAccessPage() {
           easily pursue an intervention.
         </p>
 
-        <h2 className="text-2xl font-bold mt-8">Are there other options?</h2>
-        <p>
+        <h2 className="heading-2xl font-bold mt-8">Are there other options?</h2>
+        <p className="body-md">
           The four options mentioned above are not a complete list of ways to
           get access to a vacant property in Philadelphia. There are several
           others worth considering. However, the criteria for these options

@@ -4,9 +4,9 @@ export default function TransformPropertyPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flew-grow container mx-auto pt-20">
-        <h1 className="text-4xl font-bold mb-6">Transform a Property</h1>
+        <h1 className="heading-3xl font-bold mb-6">Transform a Property</h1>
 
-        <p>
+        <p className="body-md">
           Clean & Green Philly aims to help reduce gun violence by intervening
           in vacant properties. Very simply, this means improving the property.
           This can range from removing trash to planting a community garden,
@@ -15,8 +15,8 @@ export default function TransformPropertyPage() {
           impacts the neighborhood around it.
         </p>
 
-        <h2 className="text-2xl font-bold mt-8">Types of Interventions</h2>
-        <p>
+        <h2 className="heading-2xl font-bold mt-8">Types of Interventions</h2>
+        <p className="body-md">
           The original research that Clean & Green Philly is based on promotes
           “cleaning and greening”. This includes removing trash, grading the
           land, planting trees, installing low fences, and maintaining the
@@ -25,31 +25,31 @@ export default function TransformPropertyPage() {
           have a big impact. That said, there are many ways to transform a
           vacant property. You could, for example:
         </p>
-          <ul className="list-disc pl-6 mb-4">
-            <li>Partner with a local restaurant to offer outdoor eating</li>
-            <li>Install bike parking</li>
-            <li>
-              Work with the Philadelphia Water Department to install green
-              stormwater infrastructure
-            </li>
-            <li>
-              Plant a pollinator garden to attract birds, butterflies, and bees
-            </li>
-            <li>
-              Connect with a non-profit organization to build affordable housing
-            </li>
-          </ul>
-          <p>
+        <ul className="list-disc pl-6 my-4">
+          <li>Partner with a local restaurant to offer outdoor eating</li>
+          <li>Install bike parking</li>
+          <li>
+            Work with the Philadelphia Water Department to install green
+            stormwater infrastructure
+          </li>
+          <li>
+            Plant a pollinator garden to attract birds, butterflies, and bees
+          </li>
+          <li>
+            Connect with a non-profit organization to build affordable housing
+          </li>
+        </ul>
+        <p className="body-md">
           These are just some of the many possibilities. Remember to be both
           creative and practical: there is no one-size-fits-all solution, and
           Philadelphia will need a variety of uses in its vacant properties,
           including green space, housing, parks, commercial space, and more.
         </p>
 
-        <h2 className="text-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8">
           What's right for my property?
         </h2>
-        <p>
+        <p className="body-md">
           Different properties have different opportunities and different
           challenges. Some properties might be a great spot for a rain garden
           but not for a playground. Likewise, you wouldn’t want to start a
@@ -69,15 +69,15 @@ export default function TransformPropertyPage() {
           maintenance you’re willing or able to do.
         </p>
 
-        <h2 className="text-2xl font-bold mt-8">Where can I get help?</h2>
-        <p>
+        <h2 className="heading-2xl font-bold mt-8">Where can I get help?</h2>
+        <p className="body-md">
           Many organizations in Philadelphia offer support transforming vacant
           properties.
         </p>
-        <h3 className="text-xl font-bold mt-8 mb-4">
+        <h3 className="heading-xl font-bold mt-8 mb-4">
           Community Groups and Local Representatives
         </h3>
-        <p>
+        <p className="body-md">
           For help with greening projects, reach out to local Neighborhood
           Advisory Committees, Community Development Corporations, or Registered
           Community Organizations. They can guide you through the planning
@@ -86,10 +86,10 @@ export default function TransformPropertyPage() {
           plan and show how your project can improve the community.
         </p>
 
-        <h3 className="text-xl font-bold mt-8 mb-4">
+        <h3 className="heading-xl font-bold mt-8 mb-4">
           Garden Justice Legal Initiative
         </h3>
-        <p>
+        <p className="body-md">
           The{" "}
           <a
             href="https://pubintlaw.org/cases-and-projects/garden-justice-legal-initiative-gjli/"
@@ -100,30 +100,21 @@ export default function TransformPropertyPage() {
           supports community gardens and urban farms, offering free legal help,
           policy research, and community education. They work with coalitions
           like{" "}
-          <a
-            href="https://soilgeneration.org/"
-            className="link"
-          >
+          <a href="https://soilgeneration.org/" className="link">
             Soil Generation
           </a>{" "}
           to empower residents to use vacant land for gardens and farming,
           providing tools and information through training sessions and their
           online resource,{" "}
-          <a
-            href="https://groundedinphilly.org/"
-            className="link"
-          >
+          <a href="https://groundedinphilly.org/" className="link">
             Grounded in Philly
           </a>
           .
         </p>
 
-        <h3 className="text-xl font-bold mt-8 mb-4">StreetBoxPHL</h3>
-        <p>
-          <a
-            href="https://streetboxphl.com/"
-            className="link"
-          >
+        <h3 className="heading-xl font-bold mt-8 mb-4">StreetBoxPHL</h3>
+        <p className="body-md">
+          <a href="https://streetboxphl.com/" className="link">
             StreetBoxPHL
           </a>{" "}
           helps community groups revitalize urban spaces by making parklets,
@@ -133,8 +124,8 @@ export default function TransformPropertyPage() {
           and help with insurance requirements.
         </p>
 
-        <h3 className="text-xl font-bold mt-8 mb-4">Park in a Truck</h3>
-        <p>
+        <h3 className="heading-xl font-bold mt-8 mb-4">Park in a Truck</h3>
+        <p className="body-md">
           <a
             href="https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html"
             className="link"
@@ -154,11 +145,11 @@ export default function TransformPropertyPage() {
           communities create and maintain their parks.
         </p>
 
-        <h2 className="text-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8">
           What else should I think about?
         </h2>
 
-        <div>
+        <div className="body-md">
           <Accordion variant="light" selectionMode="multiple">
             <AccordionItem
               key="1"

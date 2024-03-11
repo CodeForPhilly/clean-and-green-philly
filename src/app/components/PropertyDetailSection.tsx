@@ -63,7 +63,15 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   }, [page, featuresInView]);
 
   return loading ? (
-    <Spinner />
+    <div>
+      {/* Center vertically in screen */}
+      <div className="flex w-full justify-center p-4 mt-24">
+        <p className="body-md">Loading properties</p>
+      </div>
+      <div className="flex w-full justify-center">
+        <Spinner />
+      </div>
+    </div>
   ) : selectedProperty ? (
     <SinglePropertyDetail
       property={selectedProperty}
@@ -95,8 +103,8 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                     setSelectedProperty(
                       items.find(
                         (item) =>
-                          properties?.OPA_ID === item?.properties?.OPA_ID
-                      ) || null
+                          properties?.OPA_ID === item?.properties?.OPA_ID,
+                      ) || null,
                     );
                   }}
                 >
@@ -132,7 +140,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
               />
             </div>
             <div className="flex w-full justify-center p-2">
-              <p className="text-sm text-gray-500">
+              <p className="body-sm text-gray-500">
                 Note: only the first 100 properties can be viewed in list.
                 Filter or zoom in to a smaller area to see more detail.{" "}
               </p>

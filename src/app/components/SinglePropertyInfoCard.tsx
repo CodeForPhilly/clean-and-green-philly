@@ -16,7 +16,7 @@ const SinglePropertyInfoCard: FC<SinglePropertyInfoCardProps> = ({
       <div className="flex gap-4 items-center">
         <div>{icon}</div>
         <div>
-          <h4 className="font-bold mb-2 text-xl">{title}</h4>
+          <h4 className="font-bold mb-2 heading-lg">{title}</h4>
           <p>{body}</p>
         </div>
       </div>

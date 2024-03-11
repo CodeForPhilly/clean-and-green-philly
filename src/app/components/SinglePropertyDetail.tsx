@@ -58,6 +58,12 @@ const SinglePropertyDetail = ({
     ? "bg-priority-low"
     : "";
 
+  const Th = ({ children }: { children: React.ReactNode }) => (
+    <th scope="row" className="table-cell whitespace-nowrap w-1/3">
+      {children}
+    </th>
+  );
+
   return (
     <div
       className="w-full p-4"
@@ -74,7 +80,8 @@ const SinglePropertyDetail = ({
           }}
           onClick={() => setSelectedProperty(null)}
         >
-          <ArrowLeft color="#3D3D3D" size={24} /> Back{" "}
+          <ArrowLeft color="#3D3D3D" size={24} />{" "}
+          <span className="body-md">Back</span>{" "}
         </Button>
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
@@ -98,7 +105,7 @@ const SinglePropertyDetail = ({
       <div className="py-4 px-2">
         <div className="flex justify-between content-center">
           <h2
-            className="font-bold text-2xl"
+            className="font-bold heading-2xl"
             style={{
               textTransform: "capitalize",
             }}
@@ -111,7 +118,7 @@ const SinglePropertyDetail = ({
               target="_blank"
               rel="noopener noreferrer"
               color="primary"
-              className="flex p-2 items-center gap-1"
+              className="flex p-2 items-center gap-1 body-md"
             >
               Atlas Link
               <ArrowSquareOut className="inline h-6 w-6" aria-hidden="true" />
@@ -120,16 +127,14 @@ const SinglePropertyDetail = ({
         </div>
       </div>
 
-      <table className="w-full mb-3">
+      <table aria-label="Community Impact" className="w-full mb-3">
         <tbody
           style={{
             fontSize: "16px",
           }}
         >
           <tr>
-            <th scope="row" className="table-cell w-3/12">
-              Suggested Priority
-            </th>
+            <Th>Suggested Priority</Th>
             <td className="table-cell">
               <div className="flex gap-1 items-center">
                 <span
@@ -140,85 +145,63 @@ const SinglePropertyDetail = ({
             </td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Gun Crime Rate
-            </th>
+            <Th>Gun Crime Rate</Th>
             <td className="table-cell">{guncrime_density}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Tree Canopy Gap
-            </th>
+            <Th>Tree Canopy Gap</Th>
             <td className="table-cell">{Math.round(tree_canopy_gap * 100)}%</td>
           </tr>
         </tbody>
       </table>
 
-      <table className="w-full mb-4">
+      <table aria-label="Land Information" className="w-full mb-4">
         <tbody>
           <tr style={{ display: "none" }}>
-            <th scope="row" className="table-cell w-3/12">
-              Access Process
-            </th>
+            <Th>Access Process</Th>
             <td className="table-cell">{access_process}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell w-3/12">
-              Owner
-            </th>
+            <Th>Owner</Th>
             <td className="table-cell">
               <p>{owner_1}</p>
               {owner_2 && <p>{owner_2}</p>}
             </td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Parcel Type
-            </th>
+            <Th>Parcel Type</Th>
             <td className="table-cell">
               <p>{parcel_type}</p>
             </td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Zip Code
-            </th>
+            <Th>Zip Code</Th>
             <td className="table-cell">{zipcode}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              RCO
-            </th>
+            <Th>RCO</Th>
             <td className="table-cell">{neighborhood}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Council District
-            </th>
+            <Th>Council District</Th>
             <td className="table-cell">{council_district}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Market Value
-            </th>
+            <Th>Market Value</Th>
             <td className="table-cell">${market_value.toLocaleString()}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              Tax Delinquency
-            </th>
+            <Th>Tax Delinquency</Th>
             <td className="table-cell">{total_due ? "Yes" : "No"}</td>
           </tr>
           <tr>
-            <th scope="row" className="table-cell">
-              L&I Violations
-            </th>
+            <Th>L&I Violations</Th>
             <td className="table-cell">{open_violations_past_year}</td>
           </tr>
         </tbody>
       </table>
 
-      <h3 className="font-bold mb-2 py-2 text-xl">Getting Access</h3>
+      <h3 className="font-bold mb-2 py-2 heading-xl">Getting Access</h3>
       <p className="mb-4">
         Based on the information about this property, we believe that you can
         get access to this property through:
@@ -269,7 +252,9 @@ const SinglePropertyDetail = ({
         </a>
       </p>
 
-      <h3 className="font-bold mb-2 py-2 text-xl">Ways to transform the lot</h3>
+      <h3 className="font-bold mb-2 py-2 heading-xl">
+        Ways to transform the lot
+      </h3>
       <p className="mb-4">
         To see different ways in which you might transform this property, see
         <a
@@ -299,7 +284,7 @@ const SinglePropertyDetail = ({
       </div>
       */}
 
-      <h3 className="font-bold mb-2 py-2 text-xl">Remove This Property</h3>
+      <h3 className="font-bold mb-2 py-2 heading-xl">Remove This Property</h3>
       <p>
         If you would like to request that we remove this property from the
         dashboard, please see our{" "}

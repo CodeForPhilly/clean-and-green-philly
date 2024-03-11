@@ -9,6 +9,7 @@ const TakeActionOverview: FC = () => {
   return (
     <NextUIProvider>
       <Layout>
+      <title>Overview - Clean and Green Philly</title>
         <TakeActionOverviewPage />
       </Layout>
     </NextUIProvider>

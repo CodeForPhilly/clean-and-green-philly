@@ -115,7 +115,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
         return acc;
       },
-      [] as any[]
+      [] as any[],
     );
 
     map.setFilter("vacant_properties_tiles", ["all", ...mapFilter]);
@@ -160,8 +160,23 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
     setFeatureCount(features.length);
 
+    const priorities: { [key: string]: number } = {
+      High: 1,
+      Medium: 2,
+      Low: 3,
+    };
+
+    const sortedFeatures = features
+      .sort((a, b) => {
+        return (
+          priorities[a?.properties?.priority_level || ""] -
+          priorities[b?.properties?.priority_level || ""]
+        );
+      })
+      .slice(0, 100);
+
     // only set the first 100 properties in state
-    setFeaturesInView(features.slice(0, 100));
+    setFeaturesInView(sortedFeatures);
     setLoading(false);
   };
 
@@ -242,7 +257,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         layers: ["vacant_properties_tiles"],
       });
       const mapItem = features.find(
-        (feature) => feature.properties?.OPA_ID === id
+        (feature) => feature.properties?.OPA_ID === id,
       );
 
       if (mapItem != null) {
@@ -251,7 +266,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         if (coordinates.length > 0) {
           // Filter out coordinates that are not available
           const validCoordinates = coordinates.filter(
-            ([x, y]) => !isNaN(x) && !isNaN(y)
+            ([x, y]) => !isNaN(x) && !isNaN(y),
           );
 
           if (validCoordinates.length > 0) {
@@ -260,7 +275,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
                 prevSum[0] + position[0],
                 prevSum[1] + position[1],
               ],
-              [0, 0]
+              [0, 0],
             );
 
             let finalPoint = [
@@ -341,7 +356,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
             onClose={() => setPopupInfo(null)}
           >
             <div>
-              <p className="font-semibold text-md p-1">
+              <p className="font-semibold body-md p-1">
                 {popupInfo.feature.address}
               </p>
             </div>
