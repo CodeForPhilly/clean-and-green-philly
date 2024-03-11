@@ -10,17 +10,21 @@ import {
   Tree,
   ProhibitInset,
   PiggyBank,
+  ArrowsOut,
 } from "@phosphor-icons/react";
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
+import { Dispatch, SetStateAction } from "react";
 
 interface PropertyDetailProps {
   property: MapboxGeoJSONFeature | null;
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
+  setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const SinglePropertyDetail = ({
   property,
   setSelectedProperty,
+  setIsStreetViewModalOpen,
 }: PropertyDetailProps) => {
   if (!property) return null;
   const { properties } = property;
@@ -89,6 +93,13 @@ const SinglePropertyDetail = ({
             objectFit="cover"
             unoptimized
           />
+          <button
+            className="absolute top-4 right-4 bg-white p-[10px] rounded-md"
+            onClick={() => setIsStreetViewModalOpen(true)}
+            aria-label="Open full screen street view map"
+          >
+            <ArrowsOut color="#3D3D3D" size={24} />
+          </button>
         </div>
       </div>
       <div className="py-4 px-2">

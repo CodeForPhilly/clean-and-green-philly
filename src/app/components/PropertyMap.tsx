@@ -30,6 +30,7 @@ import { MapboxGeoJSONFeature } from "mapbox-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import ZoomModal from "./ZoomModal";
+import { Coordinates } from "../types";
 
 const layerStyle: FillLayer = {
   id: "vacant_properties_tiles",
@@ -76,6 +77,7 @@ interface PropertyMapProps {
   selectedProperty: MapboxGeoJSONFeature | null;
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
+  setCoordinates: Dispatch<SetStateAction<Coordinates>>;
 }
 const PropertyMap: FC<PropertyMapProps> = ({
   setFeaturesInView,
@@ -83,6 +85,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   selectedProperty,
   setSelectedProperty,
   setFeatureCount,
+  setCoordinates,
 }) => {
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
@@ -126,6 +129,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
       if (features.length > 0) {
         setSelectedProperty(features[0]);
+        setCoordinates({
+          lng: event.lngLat.lng,
+          lat: event.lngLat.lat,
+        });
         setPopupInfo({
           longitude: event.lngLat.lng,
           latitude: event.lngLat.lat,
@@ -286,6 +293,11 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
             map.flyTo({
               center: pointForMap,
+            });
+
+            setCoordinates({
+              lng: finalPoint[0].toString(),
+              lat: finalPoint[1].toString(),
             });
 
             setPopupInfo({

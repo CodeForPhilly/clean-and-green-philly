@@ -66,10 +66,9 @@ This is a single repository for both the React app and the Python pipeline to ET
 
 Please see the documents in our [docs](/docs) folder for background on the project and instructions on how to contribute. At a minimum, please read:
 
-1) The [guide to contributing](/docs/CONTRIBUTING.md)
-2) The [code of conduct](/docs/CODE_OF_CONDUCT.md)
-3) The appropriate installation setup instructions ([front end](/docs/SETUP/FRONT_END.md), [back end](/docs/SETUP/BACK_END.md), or [full stack](/docs/SETUP/FULL_SETUP.md))
-
+1. The [guide to contributing](/docs/CONTRIBUTING.md)
+2. The [code of conduct](/docs/CODE_OF_CONDUCT.md)
+3. The appropriate installation setup instructions ([front end](/docs/SETUP/FRONT_END.md), [back end](/docs/SETUP/BACK_END.md), or [full stack](/docs/SETUP/FULL_SETUP.md))
 
 ### Contributors
 
@@ -96,6 +95,7 @@ Please see the documents in our [docs](/docs) folder for background on the proje
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/liathirsh"><img src="https://avatars.githubusercontent.com/u/110303683?v=4?s=100" width="100px;" alt="Liat"/><br /><sub><b>Liat</b></sub></a><br /><a href="#code-liathirsh" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jgaye"><img src="https://avatars.githubusercontent.com/u/4049458?v=4?s=100" width="100px;" alt="Julien Gaye"/><br /><sub><b>Julien Gaye</b></sub></a><br /><a href="#code-jgaye" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/BayLadyCoder"><img src="https://avatars.githubusercontent.com/u/33296817?v=4?s=100" width="100px;" alt="Bay Chairangsaris"/><br /><sub><b>Bay Chairangsaris</b></sub></a><br /><a href="#code-BayLadyCoder" title="Code">💻</a> <a href="#doc-BayLadyCoder" title="Documentation">📖</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="http://paulchoi.dev"><img src="https://avatars.githubusercontent.com/u/8061917?v=4?s=100" width="100px;" alt="Paul Choi"/><br /><sub><b>Paul Choi</b></sub></a><br /><a href="#code-paulhchoi" title="Code">💻</a></td>
     </tr>
   </tbody>
 </table>
@@ -108,4 +108,3 @@ Please see the documents in our [docs](/docs) folder for background on the proje
 ## License
 
 MIT © Code for Philly
-

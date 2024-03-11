@@ -1,4 +1,4 @@
-import { FC, useState, useMemo } from "react";
+import { FC, useState, useMemo, SetStateAction, Dispatch } from "react";
 import {
   Table,
   TableHeader,
@@ -35,6 +35,7 @@ interface PropertyDetailSectionProps {
   loading: boolean;
   selectedProperty: MapboxGeoJSONFeature | null;
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
+  setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
@@ -43,6 +44,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   loading,
   selectedProperty,
   setSelectedProperty,
+  setIsStreetViewModalOpen,
 }) => {
   const [page, setPage] = useState(1);
 
@@ -74,6 +76,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     <SinglePropertyDetail
       property={selectedProperty}
       setSelectedProperty={setSelectedProperty}
+      setIsStreetViewModalOpen={setIsStreetViewModalOpen}
     />
   ) : (
     <>
