@@ -149,7 +149,7 @@ export default function TransformPropertyPage() {
           What else should I think about?
         </h2>
 
-        <p className="body-md">
+        <div className="body-md">
           <Accordion variant="light" selectionMode="multiple">
             <AccordionItem
               key="1"
