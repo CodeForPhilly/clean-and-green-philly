@@ -16,10 +16,13 @@ PostgreSQL is an open-source relational database management system. We use it to
 
 ## Setup
 
-### Clone the Repository
+### Fork the Repository
 
 1. Navigate to [our GitHub repository](https://github.com/CodeForPhilly/vacant-lots-proj).
-2. Clone the repository to your local machine using `git clone`.
+2. Create a fork of the repository by clicking the "Fork" button in the top right corner of the page. This will create a copy of the repository in your own GitHub account.
+2. Clone your fork of the repository to your local machine using `git clone`.
+
+Note: make sure to keep your fork up to date with the original repository by following the instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo#keep-your-fork-synced).
 
 ### Create a New Database
 
