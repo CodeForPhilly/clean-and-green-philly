@@ -96,6 +96,7 @@ Please see the documents in our [docs](/docs) folder for background on the proje
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/jgaye"><img src="https://avatars.githubusercontent.com/u/4049458?v=4?s=100" width="100px;" alt="Julien Gaye"/><br /><sub><b>Julien Gaye</b></sub></a><br /><a href="#code-jgaye" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/BayLadyCoder"><img src="https://avatars.githubusercontent.com/u/33296817?v=4?s=100" width="100px;" alt="Bay Chairangsaris"/><br /><sub><b>Bay Chairangsaris</b></sub></a><br /><a href="#code-BayLadyCoder" title="Code">💻</a> <a href="#doc-BayLadyCoder" title="Documentation">📖</a></td>
       <td align="center" valign="top" width="14.28%"><a href="http://paulchoi.dev"><img src="https://avatars.githubusercontent.com/u/8061917?v=4?s=100" width="100px;" alt="Paul Choi"/><br /><sub><b>Paul Choi</b></sub></a><br /><a href="#code-paulhchoi" title="Code">💻</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Amberroseweeks"><img src="https://avatars.githubusercontent.com/u/61482332?v=4?s=100" width="100px;" alt="Amberroseweeks"/><br /><sub><b>Amberroseweeks</b></sub></a><br /><a href="#code-Amberroseweeks" title="Code">💻</a> <a href="#a11y-Amberroseweeks" title="Accessibility">️️️️♿️</a></td>
     </tr>
   </tbody>
 </table>
