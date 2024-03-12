@@ -116,6 +116,7 @@ const SinglePropertyDetail = ({
           }}
         >
           <tr>
+            {/* w-4/12 class works in tandam with "whitespace-nowrap" */}
             <th scope="row" className="table-cell w-4/12">
               Suggested Priority
             </th>
@@ -292,7 +293,7 @@ const SinglePropertyDetail = ({
       <p>
         If you would like to request that we remove this property from the
         dashboard, please see our{' '}
-        <a href="/request-removal" className="text-primary">
+        <a href="/request-removal" className="link">
           Request Removal page
         </a>
         .
