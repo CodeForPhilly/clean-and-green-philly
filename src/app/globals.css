@@ -119,6 +119,34 @@
     font-family: var(--font-family);
     font-weight: regular;
   }
+
+  .iconLink {
+    @apply text-gray-900;
+    @apply items-center;
+    @apply items-center;
+    @apply active:bg-[#E9FFE5];
+    @apply active:text-green-700;
+    @apply focus:text-green-700;
+    @apply focus:bg-[#E9FFE5];
+    @apply hover:bg-gray-100;
+    @apply bg-color-none;
+    @apply hover:bg-gray-10;
+  }
+
+  .activeIconLinkNav {
+    @apply flex;
+    @apply relative;
+    @apply h-full;
+    @apply items-center;
+    @apply data-[active=true]:bottom-0;
+    @apply data-[active=true]:left-0;
+    @apply data-[active=true]:right-0;
+    @apply data-[active=true]:h-full;
+    @apply data-[active=true]:rounded-[12px];
+    @apply data-[active=true]:bg-[#E9FFE5];
+    @apply data-[active=true]:text-[#E9FFE5];
+    @apply data-[active=true]:rounded-medium;
+  }
 }
 
 .customized-map *,
@@ -157,11 +185,13 @@
 a .bg-color-none {
   background-color: none;
 }
-/* Hardcoding the active page link color styling */
-.active-state-nav > a {
+
+.active-state-nav {
   color: #0c5c00;
+  background-color: #e9ffe5;
 }
-/* Hardcoding the active page link hover styling */
-.active-state-nav > a:hover {
+
+.active-state-nav:hover {
+  color: #0c5c00;
   background-color: #c2f5ba;
 }

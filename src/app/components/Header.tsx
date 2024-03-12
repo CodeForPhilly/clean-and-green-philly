@@ -21,6 +21,11 @@ import {
   Tree,
 } from "@phosphor-icons/react";
 
+// Apply multiple CSS classes using CSS Modules
+// const buttonClasses = `${styles.button} ${primary ? styles.primary : ""} ${
+//   large ? styles.large : ""
+// }`;
+
 const Header = () => (
   <Navbar
     maxWidth="full"
@@ -28,19 +33,7 @@ const Header = () => (
     height="auto"
     isBordered
     classNames={{
-      item: [
-        "flex",
-        "relative",
-        "h-full",
-        "items-center",
-        "data-[active=true]:bottom-0",
-        "data-[active=true]:left-0",
-        "data-[active=true]:right-0",
-        "data-[active=true]:h-full",
-        "data-[active=true]:rounded-[12px]",
-        "data-[active=true]:bg-[#E9FFE5]",
-        "data-[active=true]:rounded-medium",
-      ],
+      item: ["activeIconLinkNav"],
     }}
   >
     <NavbarContent

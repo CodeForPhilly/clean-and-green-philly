@@ -28,7 +28,7 @@ const config: Config = {
           DEFAULT: "#3867DE",
         },
         green: {
-          100: "#006B08",
+          100: "#E9FFE5",
           80: "#00A40C",
           60: "#35C03F",
           10: "#D8FFDB",
