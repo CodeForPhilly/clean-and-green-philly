@@ -1,7 +1,7 @@
 export default function TakeActionOverviewPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-grow container mx-auto pt-20">
+      <div className="flex-grow container mx-auto max-w-5xl p-5 pt-20">
         <h1 className="heading-3xl font-bold mb-6">Overview</h1>
 
         <p className="body-md">
