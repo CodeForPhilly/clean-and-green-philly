@@ -2,28 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '~mapbox-gl/dist/mapbox-gl.css';
+@import "~mapbox-gl/dist/mapbox-gl.css";
 
 @font-face {
-  font-family: 'HK Grotesk';
-  src: url('/fonts/hkgrotesk-bold-webfont.woff2') format('woff2'),
-       url('/fonts/hkgrotesk-bold-webfont.woff') format('woff');
+  font-family: "HK Grotesk";
+  src: url("/fonts/hkgrotesk-bold-webfont.woff2") format("woff2"),
+    url("/fonts/hkgrotesk-bold-webfont.woff") format("woff");
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'HK Grotesk';
-  src: url('/fonts/hkgrotesk-extrabold-webfont.woff2') format('woff2'),
-       url('/fonts/hkgrotesk-extrabold-webfont.woff') format('woff');
+  font-family: "HK Grotesk";
+  src: url("/fonts/hkgrotesk-extrabold-webfont.woff2") format("woff2"),
+    url("/fonts/hkgrotesk-extrabold-webfont.woff") format("woff");
   font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'HK Grotesk';
-  src: url('/fonts/hkgrotesk-regular-webfont.woff2') format('woff2'),
-       url('/fonts/hkgrotesk-regular-webfont.woff') format('woff');
+  font-family: "HK Grotesk";
+  src: url("/fonts/hkgrotesk-regular-webfont.woff2") format("woff2"),
+    url("/fonts/hkgrotesk-regular-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
@@ -119,6 +119,34 @@
     font-family: var(--font-family);
     font-weight: regular;
   }
+
+  .iconLink {
+    @apply text-gray-900;
+    @apply items-center;
+    @apply items-center;
+    @apply active:bg-[#E9FFE5];
+    @apply active:text-green-700;
+    @apply focus:text-green-700;
+    @apply focus:bg-[#E9FFE5];
+    @apply hover:bg-gray-100;
+    @apply bg-color-none;
+    @apply hover:bg-gray-10;
+  }
+
+  .activeIconLinkNav {
+    @apply flex;
+    @apply relative;
+    @apply h-full;
+    @apply items-center;
+    @apply data-[active=true]:bottom-0;
+    @apply data-[active=true]:left-0;
+    @apply data-[active=true]:right-0;
+    @apply data-[active=true]:h-full;
+    @apply data-[active=true]:rounded-[12px];
+    @apply data-[active=true]:bg-[#E9FFE5];
+    @apply data-[active=true]:text-[#E9FFE5];
+    @apply data-[active=true]:rounded-medium;
+  }
 }
 
 .customized-map *,
@@ -152,4 +180,18 @@
 /* Crude way to hide the last "Other" legend item. */
 .mapboxgl-ctrl-legend-pane ul.list li:last-child {
   display: none;
+}
+/* Remove white background on menu item to display active page state */
+a .bg-color-none {
+  background-color: none;
+}
+
+.active-state-nav {
+  color: #0c5c00;
+  background-color: #e9ffe5;
+}
+
+.active-state-nav:hover {
+  color: #0c5c00;
+  background-color: #c2f5ba;
 }

@@ -1,5 +1,8 @@
+"use client";
+import { usePathname } from "next/navigation";
 import React, { FC, ReactElement } from "react";
-import { Button, Link } from "@nextui-org/react";
+import { Button, Link, NavbarItem } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
 
 interface IconLinkProps {
   icon: ReactElement;
@@ -7,16 +10,31 @@ interface IconLinkProps {
   href: string;
 }
 
-const IconLink: FC<IconLinkProps> = ({ icon, text, href }) => (
-  <Button
-    as={Link}
-    href={href}
-    aria-label={text}
-    className="flex items-center focus:text-blue-500 focus:underline hover:text-blue-500 hover:underline bg-white"
-    startContent={<div className="w-5">{icon}</div>}
-  >
-    <span className="body-md">{text}</span>
-  </Button>
-);
+function IconLink({ icon, text, href }: any) {
+  const pathname = usePathname();
+  return (
+    <NavbarItem
+      isActive={pathname === href}
+      aria-current={pathname === href ? "true" : undefined}
+      key={text}
+      className={pathname === href ? "active-state-nav" : ""}
+    >
+      <Button
+        as={Link}
+        disableRipple={true}
+        href={href}
+        role="link"
+        // *only include if there will be no text link present* aria-label={text}
+        startContent={<div className="w-5">{icon}</div>}
+        className={
+          pathname === href ? "active-state-nav" : "iconLink bg-color-none"
+        }
+        // className="flex text-gray-900 items-center active:bg-[#E9FFE5] active:text-green-700 focus:text-green-700 focus:bg-[#E9FFE5] hover:gray-100 bg-color-none hover:bg-gray-10"
+      >
+        <span className="body-md">{text}</span>
+      </Button>
+    </NavbarItem>
+  );
+}
 
 export default IconLink;
