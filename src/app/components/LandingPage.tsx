@@ -31,13 +31,11 @@ const LandingPage = () => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center my-10">
       <div className="text-left pr-9">
         <h1 className="heading-3xl font-extrabold leading-tight md:leading-[3rem] text-pretty">
-          <span className="block">
-            Cleaning and greening vacant properties can{" "}
-            <span className="text-green-600 font-extrabold">
-              reduce gun violence
-            </span>{" "}
-            by as much as 29%.
-          </span>
+          Cleaning and greening vacant properties can{" "}
+          <span className="text-green-600 font-extrabold">
+            reduce gun violence
+          </span>{" "}
+          by as much as 29%.
         </h1>
       </div>
       <div className="flex flex-col justify-between items-start">
@@ -74,26 +72,24 @@ const LandingPage = () => (
 
     <div id={"guncrimes"} className="my-20">
       <InfoGraphicSection
-        header={"Philadelphia has a gun violence problem."}
-        body={
-          "With homicides trending up since 2013, and a record high of 562 gun deaths in 2021, community members need concrete solutions. Many solutions focus on long-term impact, including nearly 80% of the City of Philadelphia's anti-violence spending, but immediate, actionable approaches are also needed."
-        }
+        header={{ text: "Philadelphia has a gun violence problem." }}
+        body={{
+          text: "With homicides trending up since 2013, and a record high of 562 gun deaths in 2021, community members need concrete solutions. Many solutions focus on long-term impact, including nearly 80% of the City of Philadelphia's anti-violence spending, but immediate, actionable approaches are also needed.",
+        }}
         image={{
           data: imageGunCrimes,
-          alt: "Diagram of Annual Shootings in Philadelphia",
         }}
       />
     </div>
 
     <div id={"research"} className="my-20">
       <InfoGraphicSection
-        header={"Cleaning and greening reduces violence by 29%."}
-        body={
-          "Research shows that greening and cleaning vacant properties is one of the most impactful, cost-effective interventions available to reduce gun violence in a neighborhood. Dr. Eugenia South and her team have demonstrated that greening vacant lots in Philadelphia reduced gun violence by as much as 29% in the surrounding area."
-        }
+        header={{ text: "Cleaning and greening reduces violence by 29%." }}
+        body={{
+          text: "Research shows that greening and cleaning vacant properties is one of the most impactful, cost-effective interventions available to reduce gun violence in a neighborhood. Dr. Eugenia South and her team have demonstrated that greening vacant lots in Philadelphia reduced gun violence by as much as 29% in the surrounding area.",
+        }}
         image={{
           data: imageResearch,
-          alt: "Academic research papers",
           className: "aspect-[4/3] object-cover object-center",
         }}
       />
@@ -101,13 +97,14 @@ const LandingPage = () => (
 
     <div id={"community"} className="my-20">
       <InfoGraphicSection
-        header={"Community groups and organizations are taking action."}
-        body={
-          "Community groups have been cleaning up lots in their own neighborhoods for decades. Large organizations like the Pennsylvania Horticulture Society have cleaned, greened and now maintain thousands of lots. Their efforts have been instrumental in proving this works."
-        }
+        header={{
+          text: "Community groups and organizations are taking action.",
+        }}
+        body={{
+          text: "Community groups have been cleaning up lots in their own neighborhoods for decades. Large organizations like the Pennsylvania Horticulture Society have cleaned, greened and now maintain thousands of lots. Their efforts have been instrumental in proving this works.",
+        }}
         image={{
           data: imageCleaning,
-          alt: "Two people cleaning a lot",
           className: "aspect-video object-cover object-center",
         }}
       />
@@ -115,10 +112,12 @@ const LandingPage = () => (
 
     <div id={"actions"} className="my-20">
       <InfoGraphicSection
-        header={"We are building the ultimate toolkit to help them."}
-        body={
-          "We are a passionate group of volunteers with a vision to empower citizens, groups, and organizations to do impactful data-driven environmental interventions in Philadelphia."
-        }
+        header={{
+          text: "We are building the ultimate toolkit to help them.",
+        }}
+        body={{
+          text: "We are a passionate group of volunteers with a vision to empower citizens, groups, and organizations to do impactful data-driven environmental interventions in Philadelphia.",
+        }}
         component={
           <div className="grid grid-cols-3 gap-5 w-full lg:w-[550px]">
             <NumberedIconCard
@@ -141,81 +140,105 @@ const LandingPage = () => (
       />
     </div>
 
-    <div id={"step-1"} className="my-20">
-      <InfoGraphicSection
-        header={
-          <ol start={1} className="list-outside list-decimal pl-7 md:pl-10">
-            <li>Find vacant properties that match your goals.</li>
-          </ol>
-        }
-        body={
-          "You can search and find vacant properties that match your goals. Understand the data around that property and the surrounding neighborhoods."
-        }
-        image={{
-          data: imageStep1,
-          alt: "Placeholder graphic",
-        }}
-        link={{
-          icon: Binoculars,
-          label: "Find Properties",
-          href: "/map",
-        }}
-      />
-    </div>
+    <ol className="pl-6 md:pl-10">
+      <li>
+        <div id={"step-1"} className="my-20">
+          <InfoGraphicSection
+            header={{
+              text: (
+                <ol>
+                  <li value={1} className="list-outside list-decimal">
+                    <h3>Find vacant properties that match your goals.</h3>
+                  </li>
+                </ol>
+              ),
+              as: "div",
+            }}
+            body={{
+              text: "You can search and find vacant properties that match your goals. Understand the data around that property and the surrounding neighborhoods.",
+              className: "-ml-6 md:-ml-10",
+            }}
+            image={{
+              data: imageStep1,
+            }}
+            link={{
+              icon: Binoculars,
+              label: "Find Properties",
+              href: "/map",
+            }}
+          />
+        </div>
+      </li>
 
-    <div id={"step-2"} className="my-20">
-      <InfoGraphicSection
-        header={
-          <ol start={2} className="list-outside list-decimal pl-7 md:pl-10">
-            <li>Get data-driven suggestions on how to legally get access.</li>
-          </ol>
-        }
-        body={
-          "How do you actually get access to the property legally? This is often confusing and baffling to people. We use the property data to suggest the most convenient options and provide guidance on the process."
-        }
-        image={{
-          data: imageStep2,
-          alt: "Placeholder graphic",
-        }}
-        link={{
-          icon: Key,
-          label: "Get Access",
-          href: "/get-access",
-        }}
-      />
-    </div>
+      <li>
+        <div id={"step-2"} className="my-20">
+          <InfoGraphicSection
+            header={{
+              text: (
+                <ol>
+                  <li value={2} className="list-outside list-decimal">
+                    <h3>
+                      Get data-driven suggestions on how to legally get access.
+                    </h3>
+                  </li>
+                </ol>
+              ),
+              as: "div",
+            }}
+            body={{
+              text: "How do you actually get access to the property legally? This is often confusing and baffling to people. We use the property data to suggest the most convenient options and provide guidance on the process.",
+              className: "-ml-6 md:-ml-10",
+            }}
+            image={{
+              data: imageStep2,
+            }}
+            link={{
+              icon: Key,
+              label: "Get Access",
+              href: "/get-access",
+            }}
+          />
+        </div>
+      </li>
 
-    <div id={"step-3"} className="my-20">
-      <InfoGraphicSection
-        header={
-          <ol start={3} className="list-outside list-decimal pl-7 md:pl-10">
-            <li>See all the ways you can transform properties.</li>
-          </ol>
-        }
-        body={
-          "We guide you through the most common, convenient and affordable ways to transform properties and resources on how to do it."
-        }
-        image={{
-          data: imageStep3,
-          alt: "Placeholder graphic",
-        }}
-        link={{
-          icon: Tree,
-          label: "Transform",
-          href: "/transform-property",
-        }}
-      />
-    </div>
+      <li>
+        <div id={"step-3"} className="my-20">
+          <InfoGraphicSection
+            header={{
+              text: (
+                <ol>
+                  <li value={3} className="list-outside list-decimal">
+                    <h3>See all the ways you can transform properties.</h3>
+                  </li>
+                </ol>
+              ),
+              as: "div",
+            }}
+            body={{
+              text: "We guide you through the most common, convenient and affordable ways to transform properties and resources on how to do it.",
+              className: "-ml-6 md:-ml-10",
+            }}
+            image={{
+              data: imageStep3,
+            }}
+            link={{
+              icon: Tree,
+              label: "Transform",
+              href: "/transform-property",
+            }}
+          />
+        </div>
+      </li>
+    </ol>
 
     <div id={"get-started"} className="my-20">
       <InfoGraphicSection
-        header={"Let's Do This!"}
-        body={
-          "There's groups and organizations throughout Philadelphia taking action and seeing impacts in their community and you can too."
-        }
+        header={{ text: "Let's Do This!" }}
+        body={{
+          text: "There's groups and organizations throughout Philadelphia taking action and seeing impacts in their community and you can too.",
+        }}
         image={{
           data: imageGreened,
-          alt: "A beautifully transformed community lot",
           className: "aspect-video object-cover object-center",
         }}
         link={{
