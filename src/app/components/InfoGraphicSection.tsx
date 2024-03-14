@@ -4,6 +4,7 @@ import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 
 interface InfoGraphicBase {
+  id?: string;
   header: {
     text: string | JSX.Element;
     as?: "h2" | "div";
@@ -39,6 +40,7 @@ type InfoGraphicProps = InfoGraphicWithImage | InfoGraphicWithComponent;
  */
 export const InfoGraphicSection = (props: InfoGraphicProps) => {
   const {
+    id,
     header: { text: headerText, as: headerAs },
     body,
     link,
@@ -67,11 +69,14 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
   return (
     <div className="grid lg:grid-cols-2 gap-[60px] items-center">
       <div className="space-y-5">
-        <HeaderTag className="heading-2xl text-pretty">{headerText}</HeaderTag>
+        <HeaderTag id={id} className="heading-2xl text-pretty">
+          {headerText}
+        </HeaderTag>
         <div className={body.className || ""}>
           <p className="body-md text-balance">{body.text}</p>
           {link && (
             <Button
+              role="link"
               href={link.href}
               as={Link}
               size="lg"

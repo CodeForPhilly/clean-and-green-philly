@@ -71,11 +71,27 @@ const LandingPage = () => (
       ))}
     </div>
 
-    <div id={"guncrimes"} className="my-20">
+    <div className="my-20">
       <InfoGraphicSection
+        id={"guncrimes"}
         header={{ text: "Philadelphia has a gun violence problem." }}
         body={{
-          text: "With homicides trending up since 2013, and a record high of 562 gun deaths in 2021, community members need concrete solutions. Many solutions focus on long-term impact, including nearly 80% of the City of Philadelphia's anti-violence spending, but immediate, actionable approaches are also needed.",
+          text: (
+            <>
+              With homicides trending up since 2013, and a record high of 562
+              gun deaths in 2021, community members need concrete solutions.
+              Many solutions focus on long-term impact, including{" "}
+              <a
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                href="https://controller.phila.gov/philadelphia-audits/fy23-anti-violence-budget/#/"
+                className="default"
+              >
+                nearly 80% of the City of Philadelphia's anti-violence spending
+              </a>
+              , but immediate, actionable approaches are also needed.
+            </>
+          ),
         }}
         image={{
           data: imageGunCrimes,
@@ -83,11 +99,29 @@ const LandingPage = () => (
       />
     </div>
 
-    <div id={"research"} className="my-20">
+    <div className="my-20">
       <InfoGraphicSection
+        id={"research"}
         header={{ text: "Cleaning and greening reduces violence by 29%." }}
         body={{
-          text: "Research shows that greening and cleaning vacant properties is one of the most impactful, cost-effective interventions available to reduce gun violence in a neighborhood. Dr. Eugenia South and her team have demonstrated that greening vacant lots in Philadelphia reduced gun violence by as much as 29% in the surrounding area.",
+          text: (
+            <>
+              Research shows that greening and cleaning vacant properties is one
+              of the most impactful, cost-effective interventions available to
+              reduce gun violence in a neighborhood. Dr. Eugenia South and her
+              team have demonstrated that{" "}
+              <a
+                target="_blank"
+                rel="noopener noreferrer nofollow"
+                href="https://www.pnas.org/doi/10.1073/pnas.1718503115"
+                className="default"
+              >
+                greening vacant lots
+              </a>{" "}
+              in Philadelphia reduced gun violence by as much as 29% in the
+              surrounding area.
+            </>
+          ),
         }}
         image={{
           data: imageResearch,
@@ -96,8 +130,9 @@ const LandingPage = () => (
       />
     </div>
 
-    <div id={"community"} className="my-20">
+    <div className="my-20">
       <InfoGraphicSection
+        id={"community"}
         header={{
           text: "Community groups and organizations are taking action.",
         }}
@@ -111,8 +146,9 @@ const LandingPage = () => (
       />
     </div>
 
-    <div id={"actions"} className="my-20">
+    <div className="my-20">
       <InfoGraphicSection
+        id={"actions"}
         header={{
           text: "We are building the ultimate toolkit to help them.",
         }}
@@ -216,8 +252,9 @@ const LandingPage = () => (
       />
     </div>
 
-    <div id={"get-started"} className="my-20">
+    <div className="my-20">
       <InfoGraphicSection
+        id={"get-started"}
         header={{ text: "Let's Do This!" }}
         body={{
           text: "There's groups and organizations throughout Philadelphia taking action and seeing impacts in their community and you can too.",
