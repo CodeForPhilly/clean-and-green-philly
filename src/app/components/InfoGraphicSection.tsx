@@ -52,7 +52,7 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
         <Image
           src={props.image.data}
           alt={props.image.alt || ""}
-          className={`max-w-full lg:max-w-[550px] rounded-[8px] ${
+          className={`w-full rounded-[8px] ${
             props.image.className && props.image.className
           }`}
           priority={(props.image.priority && props.image.priority) || false}
@@ -65,7 +65,7 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
   };
 
   return (
-    <div className="flex flex-col lg:flex-row gap-[60px] items-center">
+    <div className="grid lg:grid-cols-2 gap-[60px] items-center">
       <div className="space-y-5">
         <HeaderTag className="heading-2xl text-pretty">{headerText}</HeaderTag>
         <div className={body.className || ""}>
