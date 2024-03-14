@@ -44,12 +44,7 @@ const LandingPage = () => (
             clean and green vacant properties to reduce gun violence.
           </p>
         </div>
-        <Button
-          href="#guncrimes"
-          as={Link}
-          // size="lg"
-          className="bg-gray-200 iconLink"
-        >
+        <Button href="#guncrimes" as={Link} className="bg-gray-200 iconLink">
           <ArrowDownIcon className="w-5 h-5" />
           <span className="body-md">Learn How</span>
         </Button>
@@ -71,9 +66,8 @@ const LandingPage = () => (
       ))}
     </div>
 
-    <div className="my-20">
+    <div id={"guncrimes"} className="my-20">
       <InfoGraphicSection
-        id={"guncrimes"}
         header={{ text: "Philadelphia has a gun violence problem." }}
         body={{
           text: (
@@ -99,9 +93,8 @@ const LandingPage = () => (
       />
     </div>
 
-    <div className="my-20">
+    <div id={"research"} className="my-20">
       <InfoGraphicSection
-        id={"research"}
         header={{ text: "Cleaning and greening reduces violence by 29%." }}
         body={{
           text: (
@@ -130,9 +123,8 @@ const LandingPage = () => (
       />
     </div>
 
-    <div className="my-20">
+    <div id={"community"} className="my-20">
       <InfoGraphicSection
-        id={"community"}
         header={{
           text: "Community groups and organizations are taking action.",
         }}
@@ -146,9 +138,8 @@ const LandingPage = () => (
       />
     </div>
 
-    <div className="my-20">
+    <div id={"actions"} className="my-20">
       <InfoGraphicSection
-        id={"actions"}
         header={{
           text: "We are building the ultimate toolkit to help them.",
         }}
@@ -252,9 +243,8 @@ const LandingPage = () => (
       />
     </div>
 
-    <div className="my-20">
+    <div id={"get-started"} className="my-20">
       <InfoGraphicSection
-        id={"get-started"}
         header={{ text: "Let's Do This!" }}
         body={{
           text: "There's groups and organizations throughout Philadelphia taking action and seeing impacts in their community and you can too.",

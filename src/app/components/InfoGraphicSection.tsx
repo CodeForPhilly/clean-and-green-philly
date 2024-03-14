@@ -79,8 +79,7 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
               role="link"
               href={link.href}
               as={Link}
-              size="lg"
-              className="bg-gray-100 text-black gap-1 mt-5"
+              className="bg-gray-200 iconLink mt-5"
             >
               <link.icon className="w-5 h-5" />
               <span className="body-md">{link.label}</span>
