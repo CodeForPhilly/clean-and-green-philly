@@ -169,10 +169,12 @@
 
 /* Styles for the mapbox legend pane. */
 .mapboxgl-ctrl-legend-pane summary {
+  font-size: 16px;
   text-transform: capitalize;
 }
 
 .mapboxgl-ctrl-legend-pane ul.list li {
+  font-size: 14px;
   text-transform: capitalize;
   color: #173009;
 }
