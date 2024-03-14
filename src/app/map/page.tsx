@@ -1,21 +1,22 @@
 "use client";
 
-import { FC, useState } from "react";
-import { NextUIProvider } from "@nextui-org/react";
 import { FilterProvider } from "@/context/FilterContext";
+import { NextUIProvider } from "@nextui-org/react";
+import { X } from "@phosphor-icons/react";
+import { MapboxGeoJSONFeature } from "mapbox-gl";
+import { FC, useState } from "react";
+import ReactDOM from "react-dom";
 import {
+  FilterView,
   Header,
-  PropertyMap,
   PropertyDetailSection,
+  PropertyMap,
   SidePanel,
   SidePanelControlBar,
-  FilterView,
 } from "../components";
 import Hotjar from "../components/Hotjar";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
 import StreetView from "../components/StreetView";
 import { Coordinates } from "../types";
-import { X } from "@phosphor-icons/react";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
@@ -36,7 +37,7 @@ const Page: FC = () => {
   return (
     <FilterProvider>
       <NextUIProvider>
-      <title>Map - Clean and Green Philly</title>
+        <title>Map - Clean and Green Philly</title>
         <div className="flex flex-col h-screen">
           <a
             className="font-bold border-solid border-black bg-white transition left-0 absolute p-3 m-3 -translate-y-16 focus:translate-y-0 z-50"
@@ -48,10 +49,10 @@ const Page: FC = () => {
           <Header />
 
           <main className="flex flex-grow overflow-hidden" id="main">
-            {isStreetViewModalOpen && coordinates && (
+            <StreetViewModal isOpen={isStreetViewModalOpen}>
               <div
                 id="street-view-overlay"
-                className="fixed z-20 h-[100lvh] w-[100lvw] bg-black"
+                className="fixed w-full h-full bg-black"
               >
                 <button
                   className="absolute top-4 right-4 bg-white p-[10px] rounded-md flex flex-row space-x-1 items-center"
@@ -69,7 +70,7 @@ const Page: FC = () => {
                   fov="0.7"
                 />
               </div>
-            )}
+            </StreetViewModal>
             <div className="flex-grow overflow-auto">
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
@@ -137,3 +138,17 @@ const Page: FC = () => {
 };
 
 export default Page;
+
+const StreetViewModal = ({
+  children,
+  isOpen,
+}: {
+  children: React.ReactNode;
+  isOpen: boolean;
+}) => {
+  if (!isOpen) return null;
+  return ReactDOM.createPortal(
+    <div className="absolute inset-0 z-50 w-full h-full">{children}</div>,
+    document.body
+  );
+};
