@@ -2,7 +2,7 @@
 
 import { NextUIProvider } from "@nextui-org/react";
 import { FC } from "react";
-import GetAccessPage from "../../components/GetAccessPage";
+import GetAccessPage from "./GetAccessPage";
 
 const GetAccess: FC = () => {
   return (

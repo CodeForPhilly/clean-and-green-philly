@@ -1,17 +1,13 @@
 "use client";
 
-import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
-import Layout from "../../components/Layout";
-import MethodologyPage from "../../components/MethodologyPage";
+import { FC } from "react";
+import MethodologyPage from "./MethodologyPage";
 
 const Methodology: FC = () => {
   return (
     <NextUIProvider>
-      <Layout>
-        <title>Methodology - Clean and Green Philly</title>
-        <MethodologyPage />
-      </Layout>
+      <MethodologyPage />
     </NextUIProvider>
   );
 };

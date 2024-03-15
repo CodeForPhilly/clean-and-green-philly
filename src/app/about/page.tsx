@@ -2,7 +2,7 @@
 
 import { NextUIProvider } from "@nextui-org/react";
 import { FC } from "react";
-import AboutPage from "../../components/AboutPage";
+import AboutPage from "./AboutPage";
 
 const About: FC = () => {
   return (
