@@ -14,7 +14,6 @@ import { mapboxAccessToken } from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
 import "mapboxgl-legend/dist/style.css";
-import "../globals.css";
 import Map, {
   Source,
   Layer,
