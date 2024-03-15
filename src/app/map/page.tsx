@@ -1,24 +1,24 @@
 "use client";
 
-import { FilterProvider } from "@/context/FilterContext";
-import { NextUIProvider } from "@nextui-org/react";
-import { X } from "@phosphor-icons/react";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
-import { FC, useState } from "react";
+import { Coordinates } from "@/app/types";
 import {
   FilterView,
   PropertyDetailSection,
   PropertyMap,
   SidePanel,
   SidePanelControlBar
-} from "../../components";
-import StreetView from "../../components/StreetView";
-import { Coordinates } from "../types";
+} from "@/components";
+import { FilterProvider } from "@/context/FilterContext";
+import { NextUIProvider } from "@nextui-org/react";
+import { X } from "@phosphor-icons/react";
+import { MapboxGeoJSONFeature } from "mapbox-gl";
+import { FC, useState } from "react";
 import ReactDOM from "react-dom";
+import StreetView from "../../components/StreetView";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
-const Page: FC = () => {
+const MapPage: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
@@ -124,7 +124,7 @@ const Page: FC = () => {
   );
 };
 
-export default Page;
+export default MapPage;
 
 const StreetViewModal = ({
   children,
