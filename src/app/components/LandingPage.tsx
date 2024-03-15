@@ -38,8 +38,7 @@ const LandingPage = () => (
       </h1>
       <div className="flex flex-col justify-between items-start">
         <div className="text-gray-700 mb-4">
-          {/* Responsive paragraphs */}
-          <p className="hidden md:block body-lg text-balance">
+          <p className="body-lg text-balance">
             This tool can empower community groups and organizations trying to
             clean and green vacant properties to reduce gun violence.
           </p>
