@@ -24,7 +24,7 @@ import Map, {
   ScaleControl,
   GeolocateControl,
 } from "react-map-gl";
-import { FillLayer } from "react-map-gl";
+import { FillLayer, CircleLayer } from "react-map-gl";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
@@ -32,11 +32,11 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import ZoomModal from "./ZoomModal";
 import { Coordinates } from "../types";
 
-const layerStyle: FillLayer = {
-  id: "vacant_properties_tiles",
+const layerStylePolygon: FillLayer = {
+  id: "vacant_properties_tiles_test",
   type: "fill",
-  source: "vacant_properties_tiles",
-  "source-layer": "vacant_properties_tiles",
+  source: "vacant_properties_tiles_test",
+  "source-layer": "vacant_properties_tiles_test",
   paint: {
     "fill-color": [
       "match",
@@ -56,6 +56,31 @@ const layerStyle: FillLayer = {
       "#D3D3D3", // default color if none of the categories match
     ],
     "fill-opacity": 0.7,
+  },
+  metadata: {
+    name: "Priority",
+  },
+};
+
+const layerStylePoints: CircleLayer = {
+  id: "vacant_properties_centroids_test",
+  type: "circle",
+  source: "vacant_properties_centroids_test",
+  "source-layer": "vacant_properties_centroids_test",
+  paint: {
+    "circle-color": [
+      "match",
+      ["get", "priority_level"], // get the value of the priority_level property
+      "High",
+      "#FF4500", // Orange Red
+      "Medium",
+      "#FFD700", // Gold
+      "Low",
+      "#B0E57C", // Light Green
+      "#D3D3D3", // default color if none of the categories match
+    ],
+    "circle-opacity": 0.7,
+    "circle-radius": 3, // Adjust the circle radius as needed
   },
   metadata: {
     name: "Priority",
@@ -115,16 +140,19 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
         return acc;
       },
-      [] as any[],
+      [] as any[]
     );
 
-    map.setFilter("vacant_properties_tiles", ["all", ...mapFilter]);
+    //map.setFilter("vacant_properties_tiles_test", ["all", ...mapFilter]);
   };
 
   const onMapClick = (event: any) => {
     if (map) {
       const features = map.queryRenderedFeatures(event.point, {
-        layers: ["vacant_properties_tiles"],
+        layers: [
+          "vacant_properties_tiles_test",
+          "vacant_properties_centroids_test",
+        ],
       });
 
       if (features.length > 0) {
@@ -154,8 +182,13 @@ const PropertyMap: FC<PropertyMapProps> = ({
     setZoom(zoom_);
 
     let bbox: [PointLike, PointLike] | undefined = undefined;
+
+    const queryFeature =
+      map.getZoom() > 14
+        ? "vacant_properties_tiles_test"
+        : "vacant_properties_centroids_test";
     const features = map.queryRenderedFeatures(bbox, {
-      layers: ["vacant_properties_tiles"],
+      layers: [queryFeature],
     });
 
     setFeatureCount(features.length);
@@ -254,10 +287,13 @@ const PropertyMap: FC<PropertyMapProps> = ({
     /** Ticket #87 - focus on map when a property is selected */
     if (id && map != null) {
       const features = map.queryRenderedFeatures(undefined, {
-        layers: ["vacant_properties_tiles"],
+        layers: [
+          "vacant_properties_tiles_test",
+          "vacant_properties_centroids_test",
+        ],
       });
       const mapItem = features.find(
-        (feature) => feature.properties?.OPA_ID === id,
+        (feature) => feature.properties?.OPA_ID === id
       );
 
       if (mapItem != null) {
@@ -266,7 +302,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         if (coordinates.length > 0) {
           // Filter out coordinates that are not available
           const validCoordinates = coordinates.filter(
-            ([x, y]) => !isNaN(x) && !isNaN(y),
+            ([x, y]) => !isNaN(x) && !isNaN(y)
           );
 
           if (validCoordinates.length > 0) {
@@ -275,7 +311,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
                 prevSum[0] + position[0],
                 prevSum[1] + position[1],
               ],
-              [0, 0],
+              [0, 0]
             );
 
             let finalPoint = [
@@ -363,11 +399,18 @@ const PropertyMap: FC<PropertyMapProps> = ({
           </Popup>
         )}
         <Source
-          id="vacant_properties_tiles"
+          id="vacant_properties_tiles_test"
           type="vector"
-          url={"mapbox://nlebovits.vacant_properties_tiles"}
+          url={"mapbox://nlebovits.vacant_properties_tiles_test"}
         >
-          <Layer {...layerStyle} />
+          {zoom > 14 && <Layer {...layerStylePolygon} />}
+        </Source>
+        <Source
+          id="vacant_properties_centroids_test"
+          type="vector"
+          url={"mapbox://nlebovits.vacant_properties_centroids_test"}
+        >
+          {zoom <= 14 && <Layer {...layerStylePoints} />}
         </Source>
       </Map>
     </div>

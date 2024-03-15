@@ -1,5 +1,6 @@
+import os
+import subprocess
 import requests
-import json
 import geopandas as gpd
 import pandas as pd
 from esridump.dumper import EsriDumper
@@ -92,9 +93,7 @@ class FeatureLayer:
                         parcel_type = (
                             "Land"
                             if "Vacant_Indicators_Land" in url
-                            else "Building"
-                            if "Vacant_Indicators_Bldg" in url
-                            else None
+                            else "Building" if "Vacant_Indicators_Bldg" in url else None
                         )
                         self.dumper = EsriDumper(url)
                         features = [feature for feature in self.dumper]
@@ -230,6 +229,48 @@ class FeatureLayer:
         self.gdf = joined
         self.rebuild_gdf()
 
+    def create_centroid_gdf(self):
+        """
+        Convert the geometry of the GeoDataFrame to centroids.
+        """
+        self.centroid_gdf = self.gdf.copy()
+        self.centroid_gdf["geometry"] = self.gdf["geometry"].centroid
+
+    def geodataframe_to_mapbox(self, gdf, tileset_id, min_zoom=13, max_zoom=16):
+        # Initialize Mapbox Uploader
+        uploader = Uploader()
+        uploader.session.params.update(access_token=MAPBOX_TOKEN)
+
+        # Export the GeoDataFrame to a temporary GeoJSON file
+        temp_geojson = f"tmp/temp_{tileset_id}.geojson"
+        temp_mbtiles = f"tmp/temp_{tileset_id}.mbtiles"
+
+        # Reproject
+        gdf_wm = gdf.to_crs(epsg=4326)
+        gdf_wm.to_file(temp_geojson, driver="GeoJSON")
+
+        subprocess.run(
+            [
+                "tippecanoe",
+                "-o",
+                temp_mbtiles,
+                "-l",
+                tileset_id,
+                "-z",
+                str(max_zoom),
+                "-Z",
+                str(min_zoom),
+                temp_geojson,
+                "--force",
+            ]
+        )
+
+        # Clean up the temporary GeoJSON file
+        os.remove(temp_geojson)
+
+        s3_url = uploader.stage(open(temp_mbtiles, "rb"))
+        response = uploader.create(s3_url, tileset_id)
+
     def rebuild_gdf(self):
         self.gdf = gpd.GeoDataFrame(self.gdf, geometry="geometry", crs=self.crs)
 
@@ -240,22 +281,38 @@ class FeatureLayer:
         uploader = Uploader()
         uploader.session.params.update(access_token=MAPBOX_TOKEN)
 
-        # Reproject
-        self.gdf_wm = self.gdf.to_crs(epsg=4326)
+        # Create polygons tiles
+        self.geodataframe_to_mapbox(self.gdf, "vacant_properties_tiles_test")
 
-        # Convert to GeoJSON
-        geojson_data = json.loads(self.gdf_wm.to_json())
+        # Create points tiles
+        self.create_centroid_gdf()
+        self.geodataframe_to_mapbox(
+            self.centroid_gdf,
+            "vacant_properties_centroids_test",
+            min_zoom=10,
+            max_zoom=13,
+        )
 
-        # Save to a temporary file
-        with open("tmp/temp.geojson", "w") as f:
-            json.dump(geojson_data, f)
+        # # Convert to GeoJSON
+        # geojson_data = json.loads(self.gdf_wm.to_json())
 
-        # Stage the data on S3
-        print("Beginning Mapbox upload.")
-        s3_url = uploader.stage(open("tmp/temp.geojson", "rb"))
+        # # Save to a temporary file
+        # with open("tmp/temp.geojson", "w") as f:
+        #     json.dump(geojson_data, f)
 
-        # Create Tileset
-        response = uploader.create(s3_url, tileset_id)
-        print("Uploaded gdf tileset to Mapbox.")
+        # # Stage the data on S3
+        # print("Beginning Mapbox upload.")
+        # s3_url = uploader.stage(open("tmp/temp.geojson", "rb"))
 
-        return response
+        # # Create Tileset
+        # response = uploader.create(s3_url, tileset_id)
+        # print("Uploaded gdf tileset to Mapbox.")
+
+        # ## Upload centroid data to Mapbox
+        # self.create_centroid_gdf()
+        # self.centroid_gdf_wm = self.centroid_gdf.to_crs(epsg=4326)
+        # centroid_geojson_data = json.loads(self.centroid_gdf_wm.to_json())
+        # with open("tmp/centroid_temp.geojson", "w") as f:
+        #     json.dump(centroid_geojson_data, f)
+
+        # return response
