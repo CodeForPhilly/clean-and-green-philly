@@ -1,7 +1,7 @@
-import { Icon } from "@phosphor-icons/react";
+import type { IconType } from "react-icons";
 
 interface NumberedIconCardProps {
-  icon: Icon;
+  icon: IconType;
   num: number;
   body: string;
 }
