@@ -43,7 +43,7 @@ const LandingPage = () => (
             size="lg"
             className="bg-green-600 text-white"
           >
-            <ArrowRightIcon className="w-5 h-5 mr-2" />
+            <ArrowRightIcon className="linkIcon" />
             <span className="body-md">Find properties</span>
           </Button>
           <Button
@@ -52,7 +52,7 @@ const LandingPage = () => (
             size="lg"
             className="bg-transparent border border-green-600 text-green-600"
           >
-            <ArrowRightIcon className="w-5 h-5 mr-2" />
+            <ArrowRightIcon className="linkIcon" />
             Learn more
           </Button>
         </div>

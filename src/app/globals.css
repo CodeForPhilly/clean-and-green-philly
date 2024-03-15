@@ -147,6 +147,16 @@
     @apply data-[active=true]:text-[#E9FFE5];
     @apply data-[active=true]:rounded-medium;
   }
+
+  .linkIcon {
+    @apply w-5 h-5 mr-2;
+    -webkit-transform: translateZ(0);
+  }
+
+  .iconButton {
+    @apply h-6 w-6;
+    -webkit-transform: translateZ(0);
+  }
 }
 
 .customized-map *,
