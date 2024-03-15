@@ -1,17 +1,17 @@
 "use client";
 
-import React, { FC } from "react";
-import Image from "next/image";
 import {
-  Navbar,
-  NavbarContent,
-  NavbarBrand,
-  NavbarMenuToggle,
-  NavbarMenu,
   Link,
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarMenu,
+  NavbarMenuToggle
 } from "@nextui-org/react";
+import { Hand, Info, List, MapPin } from "@phosphor-icons/react";
+import Image from "next/image";
+import React, { FC } from "react";
 import IconLink from "./IconLink";
-import { MapPin, Hand, Info, List, Binoculars, X } from "@phosphor-icons/react";
 const MobileNav: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 

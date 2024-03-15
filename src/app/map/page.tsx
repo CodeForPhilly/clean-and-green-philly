@@ -12,10 +12,10 @@ import {
   PropertyDetailSection,
   PropertyMap,
   SidePanel,
-  SidePanelControlBar,
-} from "../components";
-import Hotjar from "../components/Hotjar";
-import StreetView from "../components/StreetView";
+  SidePanelControlBar
+} from "../../components";
+import Hotjar from "../../components/Hotjar";
+import StreetView from "../../components/StreetView";
 import { Coordinates } from "../types";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
@@ -31,7 +31,7 @@ const Page: FC = () => {
     useState<boolean>(false);
   const [coordinates, setCoordinates] = useState<Coordinates>({
     lat: null,
-    lng: null,
+    lng: null
   });
 
   return (
@@ -141,7 +141,7 @@ export default Page;
 
 const StreetViewModal = ({
   children,
-  isOpen,
+  isOpen
 }: {
   children: React.ReactNode;
   isOpen: boolean;

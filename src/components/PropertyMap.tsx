@@ -10,7 +10,7 @@ import React, {
 } from "react";
 import mapboxgl, { Map as MapboxMap, PointLike } from "mapbox-gl";
 import { Polygon } from "geojson";
-import { mapboxAccessToken } from "../../config/config";
+import { mapboxAccessToken } from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
 import "mapboxgl-legend/dist/style.css";
@@ -30,7 +30,7 @@ import { MapboxGeoJSONFeature } from "mapbox-gl";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import ZoomModal from "./ZoomModal";
-import { Coordinates } from "../types";
+import { Coordinates } from "../app/types";
 
 const layerStyle: FillLayer = {
   id: "vacant_properties_tiles",
@@ -98,7 +98,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const updateFilter = () => {
     if (!map) return;
 
-    const isAnyFilterEmpty = Object.values(appFilter).some((filterItem) => {
+    const isAnyFilterEmpty = Object.values(appFilter).some(filterItem => {
       return filterItem.values.length === 0;
     });
 
@@ -115,7 +115,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
         return acc;
       },
-      [] as any[],
+      [] as any[]
     );
 
     map.setFilter("vacant_properties_tiles", ["all", ...mapFilter]);
@@ -219,7 +219,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
         map.addControl(geocoderRef.current, "top-right");
 
-        geocoderRef.current.on("result", (e) => {
+        geocoderRef.current.on("result", e => {
           map.flyTo({
             center: e.result.center,
             zoom: 16,
@@ -257,7 +257,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         layers: ["vacant_properties_tiles"],
       });
       const mapItem = features.find(
-        (feature) => feature.properties?.OPA_ID === id,
+        feature => feature.properties?.OPA_ID === id
       );
 
       if (mapItem != null) {
@@ -266,7 +266,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         if (coordinates.length > 0) {
           // Filter out coordinates that are not available
           const validCoordinates = coordinates.filter(
-            ([x, y]) => !isNaN(x) && !isNaN(y),
+            ([x, y]) => !isNaN(x) && !isNaN(y)
           );
 
           if (validCoordinates.length > 0) {
@@ -275,7 +275,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
                 prevSum[0] + position[0],
                 prevSum[1] + position[1],
               ],
-              [0, 0],
+              [0, 0]
             );
 
             let finalPoint = [
@@ -332,14 +332,14 @@ const PropertyMap: FC<PropertyMapProps> = ({
           zoom,
         }}
         mapStyle="mapbox://styles/mapbox/light-v10"
-        onMouseEnter={(e) => changeCursor(e, "pointer")}
-        onMouseLeave={(e) => changeCursor(e, "default")}
+        onMouseEnter={e => changeCursor(e, "pointer")}
+        onMouseLeave={e => changeCursor(e, "default")}
         onClick={onMapClick}
         interactiveLayerIds={["vacant_properties_tiles"]}
-        onLoad={(e) => {
+        onLoad={e => {
           setMap(e.target);
         }}
-        onSourceData={(e) => {
+        onSourceData={e => {
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}

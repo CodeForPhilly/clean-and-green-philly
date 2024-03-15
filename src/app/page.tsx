@@ -2,8 +2,8 @@
 
 import { NextUIProvider } from "@nextui-org/react";
 import { FC } from "react";
-import LandingPage from "./components/LandingPage";
-import Layout from "./components/Layout";
+import LandingPage from "../components/LandingPage";
+import Layout from "../components/Layout";
 
 const Page: FC = () => {
   return (
