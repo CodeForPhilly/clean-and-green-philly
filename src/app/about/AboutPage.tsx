@@ -6,7 +6,7 @@ import {
   Image,
   Tooltip,
   Button,
-  Link,
+  Link
 } from "@nextui-org/react";
 
 import { PiArrowRight } from "react-icons/pi";
