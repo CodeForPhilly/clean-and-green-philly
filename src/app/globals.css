@@ -197,3 +197,28 @@ a .bg-color-none {
   color: #0c5c00;
   background-color: #c2f5ba;
 }
+
+/* consolidating styles for filter control tag buttons */
+.tagDefault {
+  @apply h-6 px-2 py-0.5 body-sm bg-gray-100 text-gray-900;
+}
+
+.tagDefault:hover {
+  @apply ease-in h-6 bg-gray-200;
+}
+
+.tagDefault:active {
+  @apply ease-in h-6 bg-gray-300;
+}
+
+.tagSelected {
+  @apply h-6 px-2 py-0.5 body-sm bg-blue-200 text-blue-800;
+}
+
+.tagSelected:hover {
+  @apply ease-in h-6 bg-blue-300;
+}
+
+.tagSelected:active {
+  @apply ease-in h-6 bg-blue-400;
+}
