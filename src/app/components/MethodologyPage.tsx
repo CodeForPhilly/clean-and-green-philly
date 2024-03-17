@@ -209,7 +209,7 @@ export default function AboutPage() {
           <p className="body-md mb-4">
             Documentation of the data that we use is available on{" "}
             <a
-              href="https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/DATASETS.md"
+              href="https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/docs/DATASETS.md"
               target="_blank"
               rel="noopener noreferrer"
               className="link"
