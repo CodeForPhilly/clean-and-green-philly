@@ -9,7 +9,7 @@ type SidePanelControlBarProps = {
   featureCount: number;
   loading: boolean;
   smallScreenMode: string;
-  setSmallScreenMode: Dispatch<SetStateAction<(arg: string) => string>>;
+  setSmallScreenMode: Dispatch<SetStateAction<string>>;
 };
 
 const SearchBarComponent: FC<SidePanelControlBarProps> = ({

@@ -78,7 +78,7 @@ interface PropertyMapProps {
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
   setCoordinates: Dispatch<SetStateAction<Coordinates>>;
-  setSmallScreenMode: Dispatch<SetStateAction<(arg: string) => string> | string>;
+  setSmallScreenMode: Dispatch<SetStateAction<string>>;
 }
 const PropertyMap: FC<PropertyMapProps> = ({
   setFeaturesInView,

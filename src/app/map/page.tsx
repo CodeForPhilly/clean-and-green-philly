@@ -35,7 +35,7 @@ const Page: FC = () => {
   });
   const [smallScreenMode, setSmallScreenMode] = useState('map');
 
-  const controlBarProps = {currentView, setCurrentView, featureCount, smallScreenMode, setSmallScreenMode};
+  const controlBarProps = {currentView, setCurrentView, featureCount, loading, smallScreenMode, setSmallScreenMode};
   const isVisible = (mode : string) => (smallScreenMode === mode ? '' : 'max-sm:hidden');
 
   return (
