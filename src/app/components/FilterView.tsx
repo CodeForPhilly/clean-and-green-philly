@@ -60,7 +60,7 @@ const FilterView: FC<FilterViewProps> = ({ setCurrentView }) => {
         <h1 className="font-semibold heading-xl">Filter</h1>
         <Button
           size="sm"
-          className="bg-green-60 text-white"
+          className="bg-gray-100 text-gray-900"
           onPress={() => setCurrentView("detail")}
         >
           <Check className="h-4 w-4" />

@@ -17,6 +17,8 @@ const config: Config = {
       colors: {
         gray: {
           900: "#03141B",
+          300: "#8A9DA3",
+          200: "#CCDCE3",
           100: "#EAF3F7",
           60: "#737E6C",
           40: "#C0C7BC",
@@ -26,6 +28,10 @@ const config: Config = {
         },
         blue: {
           DEFAULT: "#3867DE",
+          800: "#003144",
+          400: "#57BEE7",
+          300: "#84D5F5",
+          200: "#BAE4F5",
         },
         green: {
           100: "#E9FFE5",
