@@ -78,6 +78,7 @@ interface PropertyMapProps {
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
   setCoordinates: Dispatch<SetStateAction<Coordinates>>;
+  setSmallScreenMode: Dispatch<SetStateAction<(arg: string) => string> | string>;
 }
 const PropertyMap: FC<PropertyMapProps> = ({
   setFeaturesInView,
@@ -86,6 +87,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   setSelectedProperty,
   setFeatureCount,
   setCoordinates,
+  setSmallScreenMode
 }) => {
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
@@ -138,6 +140,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
           latitude: event.lngLat.lat,
           feature: features[0].properties,
         });
+        if (window.innerWidth < 640) {
+          setSmallScreenMode('properties')
+        }
       } else {
         setSelectedProperty(null);
         setPopupInfo(null);

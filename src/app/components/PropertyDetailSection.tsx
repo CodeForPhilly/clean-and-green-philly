@@ -1,4 +1,4 @@
-import { FC, useState, useMemo, SetStateAction, Dispatch } from "react";
+import { FC, useState, useMemo, useRef, SetStateAction, Dispatch } from "react";
 import {
   Table,
   TableHeader,
@@ -36,6 +36,7 @@ interface PropertyDetailSectionProps {
   selectedProperty: MapboxGeoJSONFeature | null;
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
+  smallScreenMode: string;
 }
 
 const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
@@ -45,22 +46,32 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   selectedProperty,
   setSelectedProperty,
   setIsStreetViewModalOpen,
+  smallScreenMode
 }) => {
   const [page, setPage] = useState(1);
 
   const rowsPerPage = 6;
   const pages = Math.ceil(featuresInView.length / rowsPerPage);
+  const widthRef = useRef(false);
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
+
+    /*Updates the pagination width
+      Toggling from map (0 results) to results in mobile causes the component
+      to miscalculate the 1st active span since parent width === 0.
+    */
+    if (typeof(window) !== 'undefined') {
+      widthRef.current = ((smallScreenMode === 'properties' && window.innerWidth < 640) || window.innerWidth >= 640)
+    }
 
     if (start > featuresInView.length) {
       setPage(1);
     }
 
     return featuresInView.slice(start, end);
-  }, [page, featuresInView]);
+  }, [page, featuresInView, smallScreenMode]);
 
   return loading ? (
     <div>
@@ -80,7 +91,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     />
   ) : (
     <>
-      <div className="flex flex-wrap overflow-y-auto max-h-[calc(100vh-110px)]">
+      <div className="flex flex-wrap max-h-[calc(100vh-110px)]">
         {display === "list" ? (
           <Table
             aria-label="Property Details"
@@ -124,7 +135,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             />
           ))
         )}
-        {featuresInView?.length > 0 && (
+        {(featuresInView?.length > 0 && widthRef.current) && (
           <div>
             <div className="flex w-full justify-center">
               <Pagination

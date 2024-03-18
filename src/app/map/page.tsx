@@ -19,6 +19,7 @@ import { X } from "@phosphor-icons/react";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
+
 const Page: FC = () => {
   const [featuresInView, setFeaturesInView] = useState<any[]>([]);
   const [featureCount, setFeatureCount] = useState<number>(0);
@@ -32,6 +33,10 @@ const Page: FC = () => {
     lat: null,
     lng: null,
   });
+  const [smallScreenMode, setSmallScreenMode] = useState('map');
+
+  const controlBarProps = {currentView, setCurrentView, featureCount, smallScreenMode, setSmallScreenMode};
+  const isVisible = (mode : string) => (smallScreenMode === mode ? '' : 'max-sm:hidden');
 
   return (
     <FilterProvider>
@@ -70,7 +75,10 @@ const Page: FC = () => {
                 />
               </div>
             )}
-            <div className="flex-grow overflow-auto">
+            <div className={`flex-grow overflow-auto ${isVisible('map')}`}>
+              <div className={`sticky top-0 z-10 sm:hidden ${isVisible('map')}`}>
+                <SidePanelControlBar {...controlBarProps} />
+              </div>
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
                 setLoading={setLoading}
@@ -78,21 +86,17 @@ const Page: FC = () => {
                 setSelectedProperty={setSelectedProperty}
                 setFeatureCount={setFeatureCount}
                 setCoordinates={setCoordinates}
+                setSmallScreenMode={setSmallScreenMode}
               />
             </div>
-            <SidePanel>
+            <SidePanel isVisible={isVisible('properties')}>
               {currentView === "filter" ? (
                 <FilterView setCurrentView={setCurrentView} />
               ) : (
                 <>
                   {!selectedProperty && (
-                    <div className="pt-2 sticky top-0 z-10">
-                      <SidePanelControlBar
-                        currentView={currentView}
-                        setCurrentView={setCurrentView}
-                        featureCount={featureCount}
-                        loading={loading}
-                      />
+                    <div className="h-14 sticky top-0 z-10">
+                      <SidePanelControlBar {...controlBarProps} />
                     </div>
                   )}
                   {currentView === "download" ? (
@@ -123,6 +127,7 @@ const Page: FC = () => {
                       selectedProperty={selectedProperty}
                       setSelectedProperty={setSelectedProperty}
                       setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+                      smallScreenMode={smallScreenMode}
                     />
                   )}
                 </>

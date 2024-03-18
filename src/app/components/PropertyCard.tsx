@@ -39,7 +39,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
 
   return (
     <div
-      className="max-w-sm w-full md:w-1/2 p-2 cursor-pointer"
+      className="sm:max-w-sm w-full md:w-1/2 p-2 cursor-pointer max-sm:flex max-sm:justify-center"
       onClick={() => setSelectedProperty(feature)}
     >
       <div className="max-w-sm w-full p-4">

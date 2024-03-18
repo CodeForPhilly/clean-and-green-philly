@@ -15,7 +15,7 @@ import Image from "next/image";
 import { MapPin, Hand, Info } from "@phosphor-icons/react";
 
 const Header = () => (
-  <Navbar maxWidth="full" position="sticky" height="auto" isBordered>
+  <Navbar maxWidth="full" position="sticky" height="auto" isBordered className="max-sm:h-40">
     <NavbarContent
       className="hidden sm:flex basis-1/5 sm:basis-full"
       style={{ paddingTop: "16px", paddingBottom: "16px", paddingLeft: "32px" }}
