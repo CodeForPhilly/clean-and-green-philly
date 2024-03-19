@@ -187,76 +187,76 @@ export default function GetAccessPage() {
           [https://groundedinphilly.org/#pathways], which can better help you
           understand if you qualify.
         </p>
-          <Accordion variant="light" selectionMode="multiple">
-            <AccordionItem
-              key="1"
-              aria-label="Tangled Titles"
-              title="Tangled Titles"
-              subtitle="Click to expand"
-              className="font-bold text-large"
-            >
-              <div className="text-base font-normal">
-                A tangled title is a situation in which the deed to a property
-                lists the name of someone other than the apparent owner. This
-                often happens when children or grandchildren live in homes that
-                are still listed in the name of a deceased parent or
-                grandparent, for example. Tangled titles are a major issue in
-                Philadelphia, affecting at least 10,000 properties
-                [https://www.pewtrusts.org/en/research-and-analysis/reports/2021/08/how-tangled-titles-affect-philadelphia],
-                and can contribute to issues of vacancy and neglect. They are
-                also difficult to resolve without legal support. If you are the
-                rightful owner of a property with a tangled title, or if you
-                believe that a vacant property in your neighborhood is the
-                result of a tangled title, consider reaching out to Philadelphia
-                Legal Assistance for help
-                [https://philalegal.org/services/tangled-title].
-              </div>
-            </AccordionItem>
+        <Accordion variant="light" selectionMode="multiple">
+          <AccordionItem
+            key="1"
+            aria-label="Tangled Titles"
+            title="Tangled Titles"
+            subtitle="Click to expand"
+            className="font-bold text-large"
+          >
+            <div className="text-base font-normal">
+              A tangled title is a situation in which the deed to a property
+              lists the name of someone other than the apparent owner. This
+              often happens when children or grandchildren live in homes that
+              are still listed in the name of a deceased parent or grandparent,
+              for example. Tangled titles are a major issue in Philadelphia,
+              affecting at least 10,000 properties
+              [https://www.pewtrusts.org/en/research-and-analysis/reports/2021/08/how-tangled-titles-affect-philadelphia],
+              and can contribute to issues of vacancy and neglect. They are also
+              difficult to resolve without legal support. If you are the
+              rightful owner of a property with a tangled title, or if you
+              believe that a vacant property in your neighborhood is the result
+              of a tangled title, consider reaching out to Philadelphia Legal
+              Assistance for help
+              [https://philalegal.org/services/tangled-title].
+            </div>
+          </AccordionItem>
 
-            <AccordionItem
-              key="2"
-              aria-label="Adverse Possession"
-              title="Adverse Possession"
-              subtitle="Click to expand"
-              className="font-bold text-large"
-            >
-              <div className="text-base font-normal">
-                If you have been using a specific vacant property for a long
-                time against the wishes of the property’s owner, you may qualify
-                for adverse possession
-                [https://groundedinphilly.org/how-to-obtain-land-adverse-possession/].
-                This can be a good way to get full legal ownership of a property
-                that has been neglected by someone else if you have invested
-                effort in maintaining the property yourself (for example, as a
-                member of a community garden). However, be aware that this is a
-                very complicated process. It usually requires a lawyer and can
-                require taking on years of unpaid property taxes. If you believe
-                you may qualify for adverse possession, we recommend reaching
-                out to the Garden Justice Legal Initiative
-                [https://groundedinphilly.org/press/] for help.
-              </div>
-            </AccordionItem>
+          <AccordionItem
+            key="2"
+            aria-label="Adverse Possession"
+            title="Adverse Possession"
+            subtitle="Click to expand"
+            className="font-bold text-large"
+          >
+            <div className="text-base font-normal">
+              If you have been using a specific vacant property for a long time
+              against the wishes of the property’s owner, you may qualify for
+              adverse possession
+              [https://groundedinphilly.org/how-to-obtain-land-adverse-possession/].
+              This can be a good way to get full legal ownership of a property
+              that has been neglected by someone else if you have invested
+              effort in maintaining the property yourself (for example, as a
+              member of a community garden). However, be aware that this is a
+              very complicated process. It usually requires a lawyer and can
+              require taking on years of unpaid property taxes. If you believe
+              you may qualify for adverse possession, we recommend reaching out
+              to the Garden Justice Legal Initiative
+              [https://groundedinphilly.org/press/] for help.
+            </div>
+          </AccordionItem>
 
-            <AccordionItem
-              key="3"
-              aria-label="The Side Yard Program"
-              title="The Side Yard Program"
-              subtitle="Click to expand"
-              className="font-bold text-large"
-            >
-              <div className="text-base font-normal">
-                If you live next to a vacant property, you may be able to buy it
-                from the Land Bank to use as a side or rear yard. This is
-                potentially a quick and easy way to make productive use of a
-                vacant property, and we indicate in our dashboard whether or not
-                a property is eligible for this program. If you believe you have
-                the opportunity to acquire a vacant property through the side
-                yard program, please consult the Land Bank’s guide to the side
-                yard acquisition process
-                [https://phdcphila.org/land/buy-land/side-or-rear-yards/].
-              </div>
-            </AccordionItem>
-          </Accordion>
+          <AccordionItem
+            key="3"
+            aria-label="The Side Yard Program"
+            title="The Side Yard Program"
+            subtitle="Click to expand"
+            className="font-bold text-large"
+          >
+            <div className="text-base font-normal">
+              If you live next to a vacant property, you may be able to buy it
+              from the Land Bank to use as a side or rear yard. This is
+              potentially a quick and easy way to make productive use of a
+              vacant property, and we indicate in our dashboard whether or not a
+              property is eligible for this program. If you believe you have the
+              opportunity to acquire a vacant property through the side yard
+              program, please consult the Land Bank’s guide to the side yard
+              acquisition process
+              [https://phdcphila.org/land/buy-land/side-or-rear-yards/].
+            </div>
+          </AccordionItem>
+        </Accordion>
       </div>
     </div>
   );
