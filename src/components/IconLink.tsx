@@ -1,16 +1,15 @@
 "use client";
-import { usePathname } from "next/navigation";
-import React, { FC, ReactElement } from "react";
+
 import { Button, Link, NavbarItem } from "@nextui-org/react";
-import { useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 interface IconLinkProps {
-  icon: ReactElement;
+  icon: React.ReactElement;
   text: string;
   href: string;
 }
 
-function IconLink({ icon, text, href }: any) {
+function IconLink({ icon, text, href }: IconLinkProps) {
   const pathname = usePathname();
   return (
     <NavbarItem

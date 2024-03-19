@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, FC } from "react";
 import { Button, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
@@ -23,7 +25,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
 
   const toggleDimension = (dimension: string) => {
     const newSelectedKeys = selectedKeys.includes(dimension)
-      ? selectedKeys.filter((key) => key !== dimension)
+      ? selectedKeys.filter(key => key !== dimension)
       : [...selectedKeys, dimension];
     setSelectedKeys(newSelectedKeys);
     dispatch({

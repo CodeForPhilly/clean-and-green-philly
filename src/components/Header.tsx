@@ -1,16 +1,10 @@
-import { Navbar, NavbarContent, NavbarBrand } from "@nextui-org/react";
-import IconLink from "./IconLink";
-import Link from "next/link";
+import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/react";
+import { PiBinoculars, PiKey, PiTree, PiInfo } from "react-icons/pi";
 import Image from "next/image";
+import Link from "next/link";
+import IconLink from "./IconLink";
 import MobileNav from "./MobileNav";
-import {
-  MapPin,
-  Hand,
-  Info,
-  Binoculars,
-  Key,
-  Tree,
-} from "@phosphor-icons/react";
+
 // Apply multiple CSS classes using CSS Modules
 // const buttonClasses = `${styles.button} ${primary ? styles.primary : ""} ${
 //   large ? styles.large : ""
@@ -21,7 +15,11 @@ const Header = () => (
     <MobileNav />
     <NavbarContent
       className="hidden sm:flex basis-1/5 sm:basis-full"
-      style={{ paddingTop: "16px", paddingBottom: "16px", paddingLeft: "32px" }}
+      style={{
+        paddingTop: "16px",
+        paddingBottom: "16px",
+        paddingLeft: "32px"
+      }}
       justify="start"
     >
       <NavbarBrand>
@@ -41,22 +39,22 @@ const Header = () => (
       justify="end"
     >
       <IconLink
-        icon={<Binoculars className="h-6 w-6" />}
+        icon={<PiBinoculars className="h-6 w-6" />}
         text="Find Properties"
         href="/map"
       />
       <IconLink
-        icon={<Key className="h-6 w-6" />}
+        icon={<PiKey className="h-6 w-6" />}
         text="Get Access"
         href="/get-access"
       />
       <IconLink
-        icon={<Tree className="h-6 w-6" />}
+        icon={<PiTree className="h-6 w-6" />}
         text="Transform"
         href="/transform-property"
       />
       <IconLink
-        icon={<Info className="h-6 w-6" />}
+        icon={<PiInfo className="h-6 w-6" />}
         text="About"
         href="/about"
       />

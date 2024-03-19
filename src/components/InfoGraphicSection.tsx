@@ -1,7 +1,7 @@
 import { Button } from "@nextui-org/react";
-import { Icon } from "@phosphor-icons/react";
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
+import type { IconType } from "react-icons";
 
 interface InfoGraphicBase {
   id?: string;
@@ -11,7 +11,7 @@ interface InfoGraphicBase {
   };
   body: { text: string | JSX.Element; className?: string };
   link?: {
-    icon: Icon;
+    icon: IconType;
     label: string;
     href: string;
   };

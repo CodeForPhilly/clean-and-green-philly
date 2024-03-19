@@ -1,3 +1,5 @@
+"use client";
+
 import React, { FC } from "react";
 import { Button, Tooltip } from "@nextui-org/react";
 import { BarClickOptions } from "@/app/map/page";
@@ -40,7 +42,11 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       </div>
 
       {/* Right-aligned content: Buttons */}
-      <div className="flex items-center space-x-2" role="region" aria-label="controls">
+      <div
+        className="flex items-center space-x-2"
+        role="region"
+        aria-label="controls"
+      >
         <Button
           onPress={() => handleClick("filter")}
           startContent={<Funnel className="h-6 w-6" />}
