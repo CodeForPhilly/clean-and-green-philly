@@ -1,17 +1,8 @@
-import {
-  Navbar,
-  NavbarContent,
-  NavbarBrand,
-  NavbarItem,
-  Dropdown,
-  DropdownTrigger,
-  DropdownMenu,
-  DropdownItem,
-  Button,
-} from "@nextui-org/react";
+import { Navbar, NavbarContent, NavbarBrand } from "@nextui-org/react";
 import IconLink from "./IconLink";
 import Link from "next/link";
 import Image from "next/image";
+import MobileNav from "./MobileNav";
 import {
   MapPin,
   Hand,
@@ -20,22 +11,14 @@ import {
   Key,
   Tree,
 } from "@phosphor-icons/react";
-
 // Apply multiple CSS classes using CSS Modules
 // const buttonClasses = `${styles.button} ${primary ? styles.primary : ""} ${
 //   large ? styles.large : ""
 // }`;
 
 const Header = () => (
-  <Navbar
-    maxWidth="full"
-    position="sticky"
-    height="auto"
-    isBordered
-    classNames={{
-      item: ["activeIconLinkNav"],
-    }}
-  >
+  <Navbar maxWidth="full" position="sticky" height="auto" isBordered>
+    <MobileNav />
     <NavbarContent
       className="hidden sm:flex basis-1/5 sm:basis-full"
       style={{ paddingTop: "16px", paddingBottom: "16px", paddingLeft: "32px" }}
