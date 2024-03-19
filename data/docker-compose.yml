@@ -3,12 +3,15 @@ services:
   vacant-lots-proj:
     build: .
     environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CFP_MAPBOX_TOKEN_UPLOADER
       - VACANT_LOTS_DB
       - VACANT_LOTS_DB_REMOTE
+      - CLEAN_GREEN_GOOGLE_KEY
       - PYTHONUNBUFFERED=1
     volumes:
       - ./src:/usr/src/app
+      - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
 
   formatter:
     build: .

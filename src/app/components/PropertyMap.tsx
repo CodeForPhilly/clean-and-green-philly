@@ -8,7 +8,6 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import mapboxgl, { Map as MapboxMap, PointLike } from "mapbox-gl";
 import { Polygon } from "geojson";
 import { mapboxAccessToken } from "../../config/config";
 import { useFilter } from "@/context/FilterContext";
@@ -25,36 +24,42 @@ import Map, {
   GeolocateControl,
 } from "react-map-gl";
 import { FillLayer, CircleLayer } from "react-map-gl";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
+import maplibregl, {
+  PointLike,
+  Map as MaplibreMap,
+  MapGeoJSONFeature,
+} from "maplibre-gl";
+import mapboxgl, { Expression } from "mapbox-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import { Protocol } from "pmtiles";
 
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import ZoomModal from "./ZoomModal";
 import { Coordinates } from "../types";
 
+const MIN_MAP_ZOOM = 10;
+const MAX_MAP_ZOOM = 20;
+const POINT_POLYGON_THRESHOLD = 14;
+const MAX_TILE_ZOOM = 16;
+
+const colorScheme: Expression = [
+  "match",
+  ["get", "priority_level"], // get the value of the guncrime_density property
+  "High",
+  "#FF4500", // Orange Red
+  "Medium",
+  "#FFD700", // Gold
+  "Low",
+  "#B0E57C", // Light Green
+  "#D3D3D3", // default color if none of the categories match
+];
+
 const layerStylePolygon: FillLayer = {
-  id: "vacant_properties_tiles_test",
+  id: "vacant_properties_tiles_polygons",
   type: "fill",
-  source: "vacant_properties_tiles_test",
-  "source-layer": "vacant_properties_tiles_test",
+  "source-layer": "vacant_properties_tiles_polygons",
   paint: {
-    "fill-color": [
-      "match",
-      ["get", "priority_level"], // get the value of the guncrime_density property
-      "High",
-      "#FF4500", // Orange Red
-      "Medium",
-      "#FFD700", // Gold
-      "Low",
-      "#B0E57C", // Light Green
-      //"Medium Priority",
-      //"#FF8C00", // Dark Orange
-      //"High Priority",
-      //"#B22222", // FireBrick
-      //"Top 1%",
-      //"#8B0000", // Dark Rednp
-      "#D3D3D3", // default color if none of the categories match
-    ],
+    "fill-color": colorScheme,
     "fill-opacity": 0.7,
   },
   metadata: {
@@ -63,24 +68,13 @@ const layerStylePolygon: FillLayer = {
 };
 
 const layerStylePoints: CircleLayer = {
-  id: "vacant_properties_centroids_test",
+  id: "vacant_properties_tiles_points",
   type: "circle",
-  source: "vacant_properties_centroids_test",
-  "source-layer": "vacant_properties_centroids_test",
+  "source-layer": "vacant_properties_tiles_points",
   paint: {
-    "circle-color": [
-      "match",
-      ["get", "priority_level"], // get the value of the priority_level property
-      "High",
-      "#FF4500", // Orange Red
-      "Medium",
-      "#FFD700", // Gold
-      "Low",
-      "#B0E57C", // Light Green
-      "#D3D3D3", // default color if none of the categories match
-    ],
+    "circle-color": colorScheme,
     "circle-opacity": 0.7,
-    "circle-radius": 3, // Adjust the circle radius as needed
+    "circle-radius": 3,
   },
   metadata: {
     name: "Priority",
@@ -99,8 +93,8 @@ const MapControls = () => (
 interface PropertyMapProps {
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
-  selectedProperty: MapboxGeoJSONFeature | null;
-  setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
+  selectedProperty: MapGeoJSONFeature | null;
+  setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
   setCoordinates: Dispatch<SetStateAction<Coordinates>>;
 }
@@ -114,10 +108,18 @@ const PropertyMap: FC<PropertyMapProps> = ({
 }) => {
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
-  const [map, setMap] = useState<MapboxMap | null>(null);
+  const [map, setMap] = useState<MaplibreMap | null>(null);
   const [zoom, setZoom] = useState<number>(13);
   const legendRef = useRef<LegendControl | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
+
+  useEffect(() => {
+    let protocol = new Protocol();
+    maplibregl.addProtocol("pmtiles", protocol.tile);
+    return () => {
+      maplibregl.removeProtocol("pmtiles");
+    };
+  }, []);
 
   // filter function
   const updateFilter = () => {
@@ -143,16 +145,13 @@ const PropertyMap: FC<PropertyMapProps> = ({
       [] as any[]
     );
 
-    //map.setFilter("vacant_properties_tiles_test", ["all", ...mapFilter]);
+    map.setFilter("vacant_properties_tiles", ["all", ...mapFilter]);
   };
 
   const onMapClick = (event: any) => {
     if (map) {
       const features = map.queryRenderedFeatures(event.point, {
-        layers: [
-          "vacant_properties_tiles_test",
-          "vacant_properties_centroids_test",
-        ],
+        layers: ["vacant_properties_tiles"],
       });
 
       if (features.length > 0) {
@@ -183,13 +182,14 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
     let bbox: [PointLike, PointLike] | undefined = undefined;
 
-    const queryFeature =
-      map.getZoom() > 14
-        ? "vacant_properties_tiles_test"
-        : "vacant_properties_centroids_test";
     const features = map.queryRenderedFeatures(bbox, {
-      layers: [queryFeature],
+      layers: [
+        "vacant_properties_tiles_polygons",
+        "vacant_properties_tiles_points",
+      ],
     });
+
+    console.log(features);
 
     setFeatureCount(features.length);
 
@@ -255,7 +255,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         geocoderRef.current.on("result", (e) => {
           map.flyTo({
             center: e.result.center,
-            zoom: 16,
+            zoom: MAX_TILE_ZOOM,
           });
         });
       }
@@ -288,8 +288,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
     if (id && map != null) {
       const features = map.queryRenderedFeatures(undefined, {
         layers: [
-          "vacant_properties_tiles_test",
-          "vacant_properties_centroids_test",
+          "vacant_properties_tiles_polygons",
+          "vacant_properties_tiles_points",
         ],
       });
       const mapItem = features.find(
@@ -362,16 +362,20 @@ const PropertyMap: FC<PropertyMapProps> = ({
     <div className="customized-map relative h-full w-full">
       <Map
         mapboxAccessToken={mapboxAccessToken}
+        mapLib={maplibregl as any}
         initialViewState={{
           longitude: -75.15975924194129,
           latitude: 39.9910071520824,
           zoom,
         }}
-        mapStyle="mapbox://styles/mapbox/light-v10"
+        mapStyle="https://api.maptiler.com/maps/dataviz/style.json?key=dIagszPpXO3RgO1NNgzm"
         onMouseEnter={(e) => changeCursor(e, "pointer")}
         onMouseLeave={(e) => changeCursor(e, "default")}
         onClick={onMapClick}
-        interactiveLayerIds={["vacant_properties_tiles"]}
+        interactiveLayerIds={[
+          "vacant_properties_tiles_polygons",
+          "vacant_properties_tiles_points",
+        ]}
         onLoad={(e) => {
           setMap(e.target);
         }}
@@ -379,10 +383,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}
-        maxZoom={20}
-        minZoom={10}
       >
-        {zoom < 13 && <ZoomModal />}
         <MapControls />
         {popupInfo && (
           <Popup
@@ -399,18 +400,12 @@ const PropertyMap: FC<PropertyMapProps> = ({
           </Popup>
         )}
         <Source
-          id="vacant_properties_tiles_test"
           type="vector"
-          url={"mapbox://nlebovits.vacant_properties_tiles_test"}
+          url="pmtiles://https://storage.googleapis.com/cleanandgreenphilly/vacant_properties_tiles.pmtiles"
+          id="vacant_properties_tiles"
         >
-          {zoom > 14 && <Layer {...layerStylePolygon} />}
-        </Source>
-        <Source
-          id="vacant_properties_centroids_test"
-          type="vector"
-          url={"mapbox://nlebovits.vacant_properties_centroids_test"}
-        >
-          {zoom <= 14 && <Layer {...layerStylePoints} />}
+          <Layer {...layerStylePoints} />
+          <Layer {...layerStylePolygon} />
         </Source>
       </Map>
     </div>

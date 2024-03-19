@@ -5,10 +5,18 @@ import geopandas as gpd
 import pandas as pd
 from esridump.dumper import EsriDumper
 import traceback
-from config.config import USE_CRS, FORCE_RELOAD, MAPBOX_TOKEN
+from config.config import USE_CRS, FORCE_RELOAD
 from config.psql import conn
-from mapbox import Uploader
 from shapely import wkb, Point
+from google.cloud import storage
+
+# Configure Google
+key = os.environ["CLEAN_GREEN_GOOGLE_KEY"]
+credentials_path = os.path.expanduser("/app/service-account-key.json")
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+bucket_name = "cleanandgreenphilly"
+storage_client = storage.Client(project="helpful-graph-407400")
+bucket = storage_client.bucket(bucket_name)
 
 
 class FeatureLayer:
@@ -229,6 +237,9 @@ class FeatureLayer:
         self.gdf = joined
         self.rebuild_gdf()
 
+    def rebuild_gdf(self):
+        self.gdf = gpd.GeoDataFrame(self.gdf, geometry="geometry", crs=self.crs)
+
     def create_centroid_gdf(self):
         """
         Convert the geometry of the GeoDataFrame to centroids.
@@ -236,83 +247,74 @@ class FeatureLayer:
         self.centroid_gdf = self.gdf.copy()
         self.centroid_gdf["geometry"] = self.gdf["geometry"].centroid
 
-    def geodataframe_to_mapbox(self, gdf, tileset_id, min_zoom=13, max_zoom=16):
-        # Initialize Mapbox Uploader
-        uploader = Uploader()
-        uploader.session.params.update(access_token=MAPBOX_TOKEN)
-
+    def geodataframe_to_pmtiles(self, tileset_id):
         # Export the GeoDataFrame to a temporary GeoJSON file
-        temp_geojson = f"tmp/temp_{tileset_id}.geojson"
-        temp_mbtiles = f"tmp/temp_{tileset_id}.mbtiles"
+        temp_geojson_points = f"tmp/temp_{tileset_id}_points.geojson"
+        temp_geojson_polygons = f"tmp/temp_{tileset_id}_polygons.geojson"
+        temp_pmtiles_points = f"tmp/temp_{tileset_id}_points.pmtiles"
+        temp_pmtiles_polygons = f"tmp/temp_{tileset_id}_polygons.pmtiles"
+        temp_merged_pmtiles = f"tmp/temp_{tileset_id}_merged.pmtiles"
 
         # Reproject
-        gdf_wm = gdf.to_crs(epsg=4326)
-        gdf_wm.to_file(temp_geojson, driver="GeoJSON")
+        gdf_wm = self.gdf.to_crs(epsg=4326)
+        gdf_wm.to_file(temp_geojson_polygons, driver="GeoJSON")
 
-        subprocess.run(
-            [
-                "tippecanoe",
-                "-o",
-                temp_mbtiles,
-                "-l",
-                tileset_id,
-                "-z",
-                str(max_zoom),
-                "-Z",
-                str(min_zoom),
-                temp_geojson,
-                "--force",
-            ]
-        )
+        # Create points dataset
+        self.centroid_gdf = self.gdf.copy()
+        self.centroid_gdf["geometry"] = self.centroid_gdf["geometry"].centroid
+        self.centroid_gdf = self.centroid_gdf.to_crs(epsg=4326)
+        self.centroid_gdf.to_file(temp_geojson_points, driver="GeoJSON")
 
-        # Clean up the temporary GeoJSON file
-        os.remove(temp_geojson)
+        # Command for generating PMTiles for points up to zoom level 12
+        points_command = [
+            "tippecanoe",
+            f"--output={temp_pmtiles_points}",
+            "--maximum-zoom=13",
+            "--minimum-zoom=10",
+            "-zg",
+            # "--no-tile-size-limit",
+            "-aC",
+            "-r0",
+            temp_geojson_points,
+            "-l",
+            "vacant_properties_tiles_points",
+            "--force",
+        ]
 
-        s3_url = uploader.stage(open(temp_mbtiles, "rb"))
-        response = uploader.create(s3_url, tileset_id)
+        # Command for generating PMTiles for polygons from zoom level 13
+        polygons_command = [
+            "tippecanoe",
+            f"--output={temp_pmtiles_polygons}",
+            "--minimum-zoom=13",
+            "--maximum-zoom=16",
+            "-zg",
+            "--no-tile-size-limit",
+            temp_geojson_polygons,
+            "-l",
+            "vacant_properties_tiles_polygons",
+            "--force",
+        ]
 
-    def rebuild_gdf(self):
-        self.gdf = gpd.GeoDataFrame(self.gdf, geometry="geometry", crs=self.crs)
+        # Command for merging the two PMTiles files into a single output file
+        merge_command = [
+            "tile-join",
+            f"--output={temp_merged_pmtiles}",
+            "--no-tile-size-limit",
+            temp_pmtiles_polygons,
+            temp_pmtiles_points,
+            "--force",
+        ]
 
-    def upload_to_mapbox(self, tileset_id):
-        """Upload GeoDataFrame to Mapbox as Tileset."""
+        # Run the commands
+        for command in [points_command, polygons_command, merge_command]:
+            subprocess.run(command)
 
-        # Initialize Mapbox Uploader
-        uploader = Uploader()
-        uploader.session.params.update(access_token=MAPBOX_TOKEN)
+        # Upload to Google Cloud Storage
+        blob = bucket.blob(f"{tileset_id}.pmtiles")
+        blob.upload_from_filename(temp_merged_pmtiles)
 
-        # Create polygons tiles
-        self.geodataframe_to_mapbox(self.gdf, "vacant_properties_tiles_test")
+    def upload_tiles(self):
+        """Upload GeoDataFrame to GCS as pmtiles files."""
 
-        # Create points tiles
-        self.create_centroid_gdf()
-        self.geodataframe_to_mapbox(
-            self.centroid_gdf,
-            "vacant_properties_centroids_test",
-            min_zoom=10,
-            max_zoom=13,
-        )
-
-        # # Convert to GeoJSON
-        # geojson_data = json.loads(self.gdf_wm.to_json())
-
-        # # Save to a temporary file
-        # with open("tmp/temp.geojson", "w") as f:
-        #     json.dump(geojson_data, f)
-
-        # # Stage the data on S3
-        # print("Beginning Mapbox upload.")
-        # s3_url = uploader.stage(open("tmp/temp.geojson", "rb"))
-
-        # # Create Tileset
-        # response = uploader.create(s3_url, tileset_id)
-        # print("Uploaded gdf tileset to Mapbox.")
-
-        # ## Upload centroid data to Mapbox
-        # self.create_centroid_gdf()
-        # self.centroid_gdf_wm = self.centroid_gdf.to_crs(epsg=4326)
-        # centroid_geojson_data = json.loads(self.centroid_gdf_wm.to_json())
-        # with open("tmp/centroid_temp.geojson", "w") as f:
-        #     json.dump(centroid_geojson_data, f)
-
-        # return response
+        # Create and upload polygons tiles
+        self.geodataframe_to_pmtiles(self.gdf, "vacant_properties_polygon_tiles")

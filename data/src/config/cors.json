@@ -1,0 +1,8 @@
+[
+  {
+    "maxAgeSeconds": 300,
+    "method": ["GET", "HEAD"],
+    "origin": ["http://localhost:3000"],
+    "responseHeader": ["range", "etag", "if-match"]
+  }
+]

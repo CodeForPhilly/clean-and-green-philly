@@ -28,7 +28,7 @@ COPY src/Pipfile src/Pipfile.lock ./
 RUN pipenv install --deploy --ignore-pipfile
 
 # Clone and build Tippecanoe
-RUN git clone https://github.com/mapbox/tippecanoe.git \
+RUN git clone https://github.com/felt/tippecanoe.git \
     && cd tippecanoe \
     && make \
     && make install
