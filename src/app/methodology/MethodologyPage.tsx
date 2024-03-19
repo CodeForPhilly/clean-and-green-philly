@@ -1,6 +1,6 @@
-import { useDisclosure, Image } from "@nextui-org/react";
+import { Image } from "@nextui-org/react";
 
-export default function AboutPage() {
+export default function MethodologyPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 py-8 px-4 md:px-6 lg:px-24">
@@ -209,7 +209,7 @@ export default function AboutPage() {
           <p className="body-md mb-4">
             Documentation of the data that we use is available on{" "}
             <a
-              href="https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/DATASETS.md"
+              href="https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/docs/DATASETS.md"
               target="_blank"
               rel="noopener noreferrer"
               className="link"

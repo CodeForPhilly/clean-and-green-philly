@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, FC } from "react";
 import { Button, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
@@ -18,12 +20,12 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
 }) => {
   const { dispatch, appFilter } = useFilter();
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
-    appFilter[property]?.values || [],
+    appFilter[property]?.values || []
   );
 
   const toggleDimension = (dimension: string) => {
     const newSelectedKeys = selectedKeys.includes(dimension)
-      ? selectedKeys.filter((key) => key !== dimension)
+      ? selectedKeys.filter(key => key !== dimension)
       : [...selectedKeys, dimension];
     setSelectedKeys(newSelectedKeys);
     dispatch({
@@ -55,12 +57,14 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             onPress={() => toggleDimension(option)}
             size="sm"
             color={selectedKeys.includes(option) ? "success" : "default"}
-            className="mb-2 p-2 h-6 body-sm"
+            className={
+              selectedKeys.includes(option) ? "tagSelected" : "tagDefault"
+            }
             radius="full"
             aria-pressed={selectedKeys.includes(option)}
             startContent={
               selectedKeys.includes(option) ? (
-                <Check className="h-3 w-3" />
+                <Check className="w-3 w-3.5 max-h-6" />
               ) : undefined
             }
           >
