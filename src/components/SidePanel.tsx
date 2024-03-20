@@ -13,6 +13,7 @@ const SidePanel: FC<SidePanelProps> = ({ children, isVisible, selectedProperty }
   const [expanded, setExpanded] = useState(true);
   const panelRef = useRef<HTMLDivElement>(null);
 
+  /* Scrolls the selected property to the top onmount for mobile */
   useEffect(() => {
     if (panelRef.current) {
       panelRef.current.scrollTop = 0;
