@@ -1,7 +1,7 @@
 export default function LegalDisclaimerPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="container mx-auto pt-20">
+      <div className="container mx-auto pt-20 max-w-5xl p-5">
         <h1 className="text-4xl font-bold mb-6">Legal Disclaimer</h1>
 
         <h2 className="text-2xl font-bold mt-8">
