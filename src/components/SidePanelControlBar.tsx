@@ -37,7 +37,8 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       {/* Left-aligned content: Total Properties in View */}
       <div className="px-4 py-2">
         <h1 className="body-md">
-          <span className="font-bold">{featureCount}</span> Properties in View
+          <span className="font-bold">{featureCount.toLocaleString()}</span>{" "}
+          Properties in View
         </h1>
       </div>
 
