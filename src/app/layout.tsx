@@ -31,7 +31,13 @@ export default function RootLayout({
             Skip to main content
           </a>
           <Header />
-          <main id="main">{children}</main>
+          <main id="main">
+            <div className="flex flex-col min-h-screen">
+              <div className="container mx-auto pt-20 max-w-5xl p-5">
+                {children}
+              </div>
+            </div>
+          </main>
           <Footer />
           <Hotjar />
         </div>
