@@ -45,7 +45,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
 
       {/* Right-aligned content: Buttons */}
       <div
-        className="flex items-center space-x-4 sm:space-x-2"
+        className="flex items-center space-x-2"
         role="region"
         aria-label="controls"
       >
@@ -56,11 +56,16 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         >
           <span className="max-lg:hidden body-md">Filter</span>
         </Button>
+        <Button
+          onPress={() => updateCurrentView("detail")}
+          startContent={ <Table className="h-6 w-6" />}
+          className={`bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
+        >
+        </Button>
         {/* Temporarily merged other button that pointed to detail */}
         <Button
-          aria-label={`Change to ${currentView === "download" ? "details" : "download"} info`}
-          onPress={() => updateCurrentView(currentView === "download" ? "detail" : "download")}
-          startContent={currentView === "detail" ? <DownloadSimple className="h-6 w-6" /> : <Table className="h-6 w-6" />}
+          onPress={() => updateCurrentView("download")}
+          startContent={<DownloadSimple className="h-6 w-6" /> }
           className={`bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         ></Button>
       </div>
