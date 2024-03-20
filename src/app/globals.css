@@ -2,28 +2,28 @@
 @tailwind components;
 @tailwind utilities;
 
-@import '~mapbox-gl/dist/mapbox-gl.css';
+@import "~mapbox-gl/dist/mapbox-gl.css";
 
 @font-face {
-  font-family: 'HK Grotesk';
-  src: url('/fonts/hkgrotesk-bold-webfont.woff2') format('woff2'),
-       url('/fonts/hkgrotesk-bold-webfont.woff') format('woff');
+  font-family: "HK Grotesk";
+  src: url("/fonts/hkgrotesk-bold-webfont.woff2") format("woff2"),
+    url("/fonts/hkgrotesk-bold-webfont.woff") format("woff");
   font-weight: bold;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'HK Grotesk';
-  src: url('/fonts/hkgrotesk-extrabold-webfont.woff2') format('woff2'),
-       url('/fonts/hkgrotesk-extrabold-webfont.woff') format('woff');
+  font-family: "HK Grotesk";
+  src: url("/fonts/hkgrotesk-extrabold-webfont.woff2") format("woff2"),
+    url("/fonts/hkgrotesk-extrabold-webfont.woff") format("woff");
   font-weight: 800;
   font-style: normal;
 }
 
 @font-face {
-  font-family: 'HK Grotesk';
-  src: url('/fonts/hkgrotesk-regular-webfont.woff2') format('woff2'),
-       url('/fonts/hkgrotesk-regular-webfont.woff') format('woff');
+  font-family: "HK Grotesk";
+  src: url("/fonts/hkgrotesk-regular-webfont.woff2") format("woff2"),
+    url("/fonts/hkgrotesk-regular-webfont.woff") format("woff");
   font-weight: normal;
   font-style: normal;
 }
@@ -45,6 +45,13 @@
 @layer base {
   html {
     @apply font-body;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   /* Fallback variables for browsers that don't support clamp */
@@ -119,6 +126,59 @@
     font-family: var(--font-family);
     font-weight: regular;
   }
+
+  a.default {
+    @apply underline text-blue hover:text-blue-800 visited:text-purple-600;
+  }
+
+  .iconLink {
+    @apply text-gray-900;
+    @apply items-center;
+    @apply items-center;
+    @apply active:bg-[#C2F5BA];
+    @apply active:text-green-700;
+    @apply focus:text-green-700;
+    @apply focus:bg-[#E9FFE5];
+    @apply bg-color-none;
+    @apply hover:bg-gray-10;
+    @apply rounded-medium;
+    @apply max-sm:hover:bg-[#ffffff];
+  }
+
+  .activeIconLinkNav {
+    @apply flex;
+    @apply relative;
+    @apply h-full;
+    @apply items-center;
+    @apply rounded-medium
+    @apply data-[active=true]:bottom-0;
+    @apply data-[active=true]:left-0;
+    @apply data-[active=true]:right-0;
+    @apply data-[active=true]:h-full;
+    @apply data-[active=true]:rounded-[12px];
+    @apply data-[active=true]:bg-[#E9FFE5];
+    @apply data-[active=true]:text-[#E9FFE5];
+    @apply data-[active=true]:rounded-medium;
+  }
+  .mobileIconLinkNav {
+    @apply px-0;
+    @apply text-base;
+    @apply max-h-40;
+    @apply overflow-hidden;
+    @apply fixed;
+    @apply left-2/4;
+    @apply top-20;
+    @apply w-full;
+    @apply z-50;
+    @apply shadow-2xl;
+    @apply rounded-md;
+    @apply border-1;
+    @apply border-gray-200;
+    @apply bg-gray-0;
+  }
+  .mobileIconLinkNav:hover {
+    @apply bg-gray-0;
+  }
 }
 
 .customized-map *,
@@ -141,6 +201,7 @@
 
 /* Styles for the mapbox legend pane. */
 .mapboxgl-ctrl-legend-pane summary {
+  font-size: 16px;
   text-transform: capitalize;
 }
 
@@ -155,6 +216,7 @@
 }
 
 .mapboxgl-ctrl-legend-pane ul.list li {
+  font-size: 14px;
   text-transform: capitalize;
   color: #173009;
 }
@@ -162,4 +224,46 @@
 /* Crude way to hide the last "Other" legend item. */
 .mapboxgl-ctrl-legend-pane ul.list li:last-child {
   display: none;
+}
+/* Remove white background on menu item to display active page state */
+a .bg-color-none {
+  background-color: none;
+}
+
+.active-state-nav {
+  color: #0c5c00;
+  background-color: #e9ffe5;
+  border-radius: 12px;
+  justify-content: left;
+}
+
+.active-state-nav:hover {
+  color: #0c5c00;
+  background-color: #c2f5ba;
+  border-radius: 12px;
+}
+
+/* consolidating styles for filter control tag buttons */
+.tagDefault {
+  @apply h-6 px-2 py-0.5 body-sm bg-gray-100 text-gray-900;
+}
+
+.tagDefault:hover {
+  @apply ease-in h-6 bg-gray-200;
+}
+
+.tagDefault:active {
+  @apply ease-in h-6 bg-gray-300;
+}
+
+.tagSelected {
+  @apply h-6 px-2 py-0.5 body-sm bg-blue-200 text-blue-800;
+}
+
+.tagSelected:hover {
+  @apply ease-in h-6 bg-blue-300;
+}
+
+.tagSelected:active {
+  @apply ease-in h-6 bg-blue-400;
 }

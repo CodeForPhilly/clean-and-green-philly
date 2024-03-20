@@ -1,7 +1,7 @@
 import { FC } from "react";
 import DimensionFilter from "./Filters/DimensionFilter";
 import { Button } from "@nextui-org/react";
-import { Check } from "@phosphor-icons/react";
+import { PiCheck } from "react-icons/pi";
 import { BarClickOptions } from "@/app/map/page";
 
 const filters = [
@@ -60,10 +60,10 @@ const FilterView: FC<FilterViewProps> = ({ setCurrentView }) => {
         <h1 className="font-semibold heading-xl">Filter</h1>
         <Button
           size="sm"
-          className="bg-green-60 text-white"
+          className="bg-gray-100 text-gray-900"
           onPress={() => setCurrentView("detail")}
         >
-          <Check className="h-4 w-4" />
+          <PiCheck className="size-4" />
           Done
         </Button>
       </div>

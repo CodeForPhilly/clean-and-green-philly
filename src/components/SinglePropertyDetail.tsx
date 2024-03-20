@@ -78,7 +78,7 @@ const SinglePropertyDetail = ({
           style={{
             backgroundColor: "white",
           }}
-          onClick={() => setSelectedProperty(null)}
+          onPress={() => setSelectedProperty(null)}
         >
           <ArrowLeft color="#3D3D3D" size={24} />{" "}
           <span className="body-md">Back</span>{" "}
