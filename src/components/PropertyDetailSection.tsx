@@ -138,7 +138,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
         )}
         {(featuresInView?.length > 0 && widthRef.current) && (
           <div>
-            <div className="flex w-full justify-center">
+            <div className="flex w-full justify-center mt-4">
               <Pagination
                 role={undefined}
                 aria-label="pagination"

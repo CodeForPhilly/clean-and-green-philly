@@ -12,7 +12,7 @@ import { FilterProvider } from "@/context/FilterContext";
 import { NextUIProvider } from "@nextui-org/react";
 import { X } from "@phosphor-icons/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
-import { FC, useState } from "react";
+import { FC, useRef, useState } from "react";
 import ReactDOM from "react-dom";
 import StreetView from "../../components/StreetView";
 
@@ -32,9 +32,26 @@ const MapPage: FC = () => {
     lng: null
   });
   const [smallScreenMode, setSmallScreenMode] = useState('map');
+  const prevRef = useRef('map');
 
-  const controlBarProps = {currentView, setCurrentView, featureCount, loading, smallScreenMode, setSmallScreenMode};
+
+  const updateCurrentView = (view: BarClickOptions) => {
+    setCurrentView(view === currentView ? "detail" : view);
+
+    if (prevRef.current === 'map' && window.innerWidth < 640) {
+      setSmallScreenMode((prev : string) => (prev === 'map' ? 'properties' : 'map'));
+    }
+  };
+
+  const updateSmallScreenMode = () => setSmallScreenMode((prev : string) => {
+    prevRef.current = prev === 'map' ? 'properties' : 'map';
+    return prevRef.current
+  })
+
+  const controlBarProps = {featureCount, loading, smallScreenMode, updateCurrentView, updateSmallScreenMode};
   const isVisible = (mode : string) => (smallScreenMode === mode ? '' : 'max-sm:hidden');
+
+  
 
   return (
     <FilterProvider>
@@ -79,7 +96,7 @@ const MapPage: FC = () => {
             </div>
             <SidePanel isVisible={isVisible('properties')}>
               {currentView === "filter" ? (
-                <FilterView setCurrentView={setCurrentView} />
+                <FilterView updateCurrentView={updateCurrentView} />
               ) : (
                 <>
                   {!selectedProperty && (
