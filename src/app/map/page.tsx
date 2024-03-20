@@ -31,28 +31,28 @@ const MapPage: FC = () => {
     lat: null,
     lng: null
   });
-  const [smallScreenMode, setSmallScreenMode] = useState('map');
-  const prevRef = useRef('map');
+  const [smallScreenMode, setSmallScreenMode] = useState("map");
+  const prevRef = useRef("map");
 
 
   const updateCurrentView = (view: BarClickOptions) => {
     setCurrentView(view === currentView ? "detail" : view);
 
     if (prevRef.current === "map" && window.innerWidth < 640) {
-      setSmallScreenMode((prev : string) => (prev === 'map' ? 'properties' : 'map'));
+      setSmallScreenMode((prev : string) => (prev === "map" ? "properties" : "map"));
     }
   };
 
   const updateSmallScreenMode = () => 
     setSmallScreenMode((prev : string) => {
-      prevRef.current = prev === 'map' ? 'properties' : 'map';
+      prevRef.current = prev === "map" ? "properties" : "map";
       setCurrentView("detail");
       return prevRef.current
     });
   
 
   const controlBarProps = {currentView, featureCount, loading, smallScreenMode, updateCurrentView, updateSmallScreenMode};
-  const isVisible = (mode : string) => (smallScreenMode === mode ? '' : 'max-sm:hidden');
+  const isVisible = (mode : string) => (smallScreenMode === mode ? "" : "max-sm:hidden");
 
   return (
     <FilterProvider>
@@ -81,8 +81,8 @@ const MapPage: FC = () => {
                 />
               </div>
             </StreetViewModal>
-            <div className={`flex-grow overflow-auto ${isVisible('map')}`}>
-              <div className={`sticky top-0 z-10 sm:hidden ${isVisible('map')}`}>
+            <div className={`flex-grow overflow-auto ${isVisible("map")}`}>
+              <div className={`sticky top-0 z-10 sm:hidden ${isVisible("map")}`}>
                 <SidePanelControlBar {...controlBarProps} />
               </div>
               <PropertyMap
@@ -95,7 +95,7 @@ const MapPage: FC = () => {
                 setSmallScreenMode={setSmallScreenMode}
               />
             </div>
-            <SidePanel isVisible={isVisible('properties')} selectedProperty={selectedProperty}>
+            <SidePanel isVisible={isVisible("properties")} selectedProperty={selectedProperty}>
               {currentView === "filter" ? (
                 <FilterView updateCurrentView={updateCurrentView} />
               ) : (

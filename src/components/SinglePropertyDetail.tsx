@@ -79,7 +79,7 @@ const SinglePropertyDetail = ({
     >
       <div className="pb-4">
         <Button
-          onPress={() => {setSelectedProperty(null); updateCurrentView('detail')}}
+          onPress={() => {setSelectedProperty(null); updateCurrentView("detail")}}
           className="bg-white rounded-md hover:bg-gray-100"
         >
           <ArrowLeft color="#3D3D3D" size={24} />{" "}

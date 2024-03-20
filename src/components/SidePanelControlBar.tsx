@@ -35,7 +35,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         className="bg-white w-fit px-2 sm:hidden hover:bg-gray-100 max-md:min-w-[4rem]"
         onPress={updateSmallScreenMode}
       >
-        {smallScreenMode === 'map' ? <SquaresFour className="h-6 w-6" /> : <GlobeHemisphereWest className="h-6 w-6"/>}
+        {smallScreenMode === "map" ? <SquaresFour className="h-6 w-6" /> : <GlobeHemisphereWest className="h-6 w-6"/>}
       </Button>
       <div className="sm:px-4 py-2">
         <h1 className="body-md">
@@ -62,7 +62,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           aria-label={`Change to ${currentView === "download" ? "details" : "download"} info`}
           onPress={() => updateCurrentView(currentView === "download" ? "detail" : "download")}
           startContent={currentView === "detail" ? <DownloadSimple className="h-6 w-6" /> : <Table className="h-6 w-6" />}
-          className={`bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem] ${smallScreenMode === 'map' ? 'max-sm:hidden' : ''}`}
+          className={`bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         ></Button>
       </div>
     </div>

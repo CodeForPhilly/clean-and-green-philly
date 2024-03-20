@@ -67,8 +67,8 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       Toggling from map (0 results) to results in mobile causes the component
       to miscalculate the 1st active span since parent width === 0.
     */
-    if (typeof(window) !== 'undefined') {
-      widthRef.current = ((smallScreenMode === 'properties' && window.innerWidth < 640) || window.innerWidth >= 640)
+    if (typeof(window) !== "undefined") {
+      widthRef.current = ((smallScreenMode === "properties" && window.innerWidth < 640) || window.innerWidth >= 640)
     }
 
     if (start > featuresInView.length) {

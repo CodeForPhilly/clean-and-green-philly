@@ -140,7 +140,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           feature: features[0].properties,
         });
         if (window.innerWidth < 640) {
-          setSmallScreenMode('properties')
+          setSmallScreenMode("properties")
         }
       } else {
         setSelectedProperty(null);
