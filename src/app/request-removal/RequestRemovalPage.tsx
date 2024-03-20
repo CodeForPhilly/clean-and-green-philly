@@ -1,7 +1,7 @@
 export default function RequestRemovalPage() {
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="container mx-auto pt-20">
+      <div className="container mx-auto pt-20 max-w-5xl p-5">
         <h1 className="text-4xl font-bold mb-6">
           Request to Remove a Property Listing
         </h1>
