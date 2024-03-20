@@ -144,6 +144,16 @@
   text-transform: capitalize;
 }
 
+/* Hard-coded way to add info element, done so to use phosphor icon specifically */
+.mapboxgl-ctrl-legend-pane summary:after {
+  content: '';
+  background-image: url(../../public/assets/info.svg);
+  background-size: contain;
+  margin-left: -5px;
+  height: 1rem;
+  width: 1rem;
+}
+
 .mapboxgl-ctrl-legend-pane ul.list li {
   text-transform: capitalize;
   color: #173009;
