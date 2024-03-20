@@ -19,11 +19,11 @@ function toTitleCase(str: string) {
 function getPriorityClass(priorityLevel: string) {
   switch (priorityLevel) {
     case "High":
-      return "bg-red-500 border-red-700"; // Style for High Priority
+      return "bg-red-200 text-red-800"; // Style for High Priority
     case "Medium":
-      return "bg-yellow-500 border-yellow-700"; // Style for Medium Priority
+      return "bg-yellow-200 text-yellow-800"; // Style for Medium Priority
     case "Low":
-      return "bg-green-500 border-green-700"; // Style for Low Priority
+      return "bg-green-200 text-green-800"; // Style for Low Priority
     default:
       return "bg-gray-500 border-gray-700"; // Default style
   }
@@ -38,9 +38,9 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
   const priorityClass = getPriorityClass(priority_level);
 
   const handleClick = () => setSelectedProperty(feature);
-  const handleKeyDown = (e: React.KeyboardEvent): void  => {
-    if (e.key === 'Enter' || e.key === 'Space') {
-      handleClick()
+  const handleKeyDown = (e: React.KeyboardEvent): void => {
+    if (e.key === "Enter" || e.key === "Space") {
+      handleClick();
     }
   };
 
@@ -64,7 +64,9 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
             />
           </div>
           <div className="p-2">
-            <button className="font-bold heading-lg" onKeyDown={handleKeyDown}>{formattedAddress}</button>
+            <button className="font-bold heading-lg" onKeyDown={handleKeyDown}>
+              {formattedAddress}
+            </button>
             <div className="text-gray-700 body-sm">
               {guncrime_density} Gun Crime Rate
             </div>
@@ -73,7 +75,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
             <Chip
               classNames={{
                 base: `${priorityClass} border-small border-white/50`,
-                content: "text-white body-sm",
+                content: "body-sm",
               }}
             >
               {priority_level + " Priority"}
