@@ -38,20 +38,21 @@ const MapPage: FC = () => {
   const updateCurrentView = (view: BarClickOptions) => {
     setCurrentView(view === currentView ? "detail" : view);
 
-    if (prevRef.current === 'map' && window.innerWidth < 640) {
+    if (prevRef.current === "map" && window.innerWidth < 640) {
       setSmallScreenMode((prev : string) => (prev === 'map' ? 'properties' : 'map'));
     }
   };
 
-  const updateSmallScreenMode = () => setSmallScreenMode((prev : string) => {
-    prevRef.current = prev === 'map' ? 'properties' : 'map';
-    return prevRef.current
-  })
-
-  const controlBarProps = {featureCount, loading, smallScreenMode, updateCurrentView, updateSmallScreenMode};
-  const isVisible = (mode : string) => (smallScreenMode === mode ? '' : 'max-sm:hidden');
-
+  const updateSmallScreenMode = () => 
+    setSmallScreenMode((prev : string) => {
+      prevRef.current = prev === 'map' ? 'properties' : 'map';
+      setCurrentView("detail");
+      return prevRef.current
+    });
   
+
+  const controlBarProps = {currentView, featureCount, loading, smallScreenMode, updateCurrentView, updateSmallScreenMode};
+  const isVisible = (mode : string) => (smallScreenMode === mode ? '' : 'max-sm:hidden');
 
   return (
     <FilterProvider>
@@ -94,7 +95,7 @@ const MapPage: FC = () => {
                 setSmallScreenMode={setSmallScreenMode}
               />
             </div>
-            <SidePanel isVisible={isVisible('properties')}>
+            <SidePanel isVisible={isVisible('properties')} selectedProperty={selectedProperty}>
               {currentView === "filter" ? (
                 <FilterView updateCurrentView={updateCurrentView} />
               ) : (
@@ -133,6 +134,7 @@ const MapPage: FC = () => {
                       setSelectedProperty={setSelectedProperty}
                       setIsStreetViewModalOpen={setIsStreetViewModalOpen}
                       smallScreenMode={smallScreenMode}
+                      updateCurrentView={updateCurrentView}
                     />
                   )}
                 </>

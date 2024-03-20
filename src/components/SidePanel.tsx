@@ -1,14 +1,23 @@
 "use client";
 
-import React, { FC, useState } from "react";
+import React, { FC, useState, useEffect, useRef } from "react";
+import { MapboxGeoJSONFeature } from "mapbox-gl";
 
 interface SidePanelProps {
   children?: React.ReactNode;
   isVisible: string;
+  selectedProperty: MapboxGeoJSONFeature | null;
 }
 
-const SidePanel: FC<SidePanelProps> = ({ children, isVisible }) => {
+const SidePanel: FC<SidePanelProps> = ({ children, isVisible, selectedProperty }) => {
   const [expanded, setExpanded] = useState(true);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (panelRef.current) {
+      panelRef.current.scrollTop = 0;
+    }
+  }, [selectedProperty])
 
   return (
     <div
@@ -17,6 +26,7 @@ const SidePanel: FC<SidePanelProps> = ({ children, isVisible }) => {
       className={`h-full transition-all duration-300 ${
         expanded ? "w-5/12" : "w-0"
       } bg-white overflow-auto max-sm:w-full ${isVisible}`}
+      ref={panelRef}
     >
       {children}
     </div>

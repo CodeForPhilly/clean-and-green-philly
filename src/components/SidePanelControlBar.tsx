@@ -1,11 +1,12 @@
 "use client";
 
 import React, { Dispatch, FC, SetStateAction } from "react";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Button } from "@nextui-org/react";
 import { BarClickOptions } from "@/app/map/page";
 import { DownloadSimple, Funnel, GlobeHemisphereWest, SquaresFour, Table } from "@phosphor-icons/react";
 
 type SidePanelControlBarProps = {
+  currentView: string,
   featureCount: number;
   loading: boolean;
   smallScreenMode: string;
@@ -15,6 +16,7 @@ type SidePanelControlBarProps = {
 };
 
 const SearchBarComponent: FC<SidePanelControlBarProps> = ({
+  currentView,
   featureCount,
   loading,
   smallScreenMode,
@@ -30,10 +32,10 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       {/* Left-aligned content: Total Properties in View */}
       <Button
         aria-label={`Change to ${smallScreenMode}`}
-        className="bg-white w-fit px-2 sm:hidden hover:bg-gray-100"
+        className="bg-white w-fit px-2 sm:hidden hover:bg-gray-100 max-md:min-w-[4rem]"
         onPress={updateSmallScreenMode}
       >
-        {smallScreenMode === 'map' ? <GlobeHemisphereWest className="h-6 w-6"/> : <SquaresFour className="h-6 w-6" />}
+        {smallScreenMode === 'map' ? <SquaresFour className="h-6 w-6" /> : <GlobeHemisphereWest className="h-6 w-6"/>}
       </Button>
       <div className="sm:px-4 py-2">
         <h1 className="body-md">
@@ -44,28 +46,23 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
 
       {/* Right-aligned content: Buttons */}
       <div
-        className="flex items-center sm:space-x-2"
+        className="flex items-center space-x-4 sm:space-x-2"
         role="region"
         aria-label="controls"
       >
         <Button
           onPress={() => updateCurrentView("filter")}
           startContent={<Funnel className="h-6 w-6" />}
-          className="bg-white max-sm:px-2 hover:bg-gray-100"
+          className="bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem]"
         >
-          <span className="max-sm:hidden body-md">Filter</span>
+          <span className="max-lg:hidden body-md">Filter</span>
         </Button>
+        {/* Temporarily merged other button that pointed to detail */}
         <Button
-          aria-label="View"
-          onPress={() => updateCurrentView("detail")}
-          startContent={<Table className="h-6 w-6" />}
-          className="bg-white max-md:hidden hover:bg-gray-100"
-        ></Button>
-        <Button
-          aria-label="Download"
-          onPress={() => updateCurrentView("download")}
-          startContent={<DownloadSimple className="h-6 w-6" />}
-          className="bg-white max-sm:px-2 hover:bg-gray-100"
+          aria-label={`Change to ${currentView === "download" ? "details" : "download"} info`}
+          onPress={() => updateCurrentView(currentView === "download" ? "detail" : "download")}
+          startContent={currentView === "detail" ? <DownloadSimple className="h-6 w-6" /> : <Table className="h-6 w-6" />}
+          className={`bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem] ${smallScreenMode === 'map' ? 'max-sm:hidden' : ''}`}
         ></Button>
       </div>
     </div>

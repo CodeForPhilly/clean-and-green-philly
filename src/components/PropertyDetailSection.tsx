@@ -15,6 +15,7 @@ import {
 import PropertyCard from "./PropertyCard";
 import SinglePropertyDetail from "./SinglePropertyDetail";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
+import { BarClickOptions } from "@/app/map/page";
 
 const tableCols = [
   {
@@ -39,6 +40,7 @@ interface PropertyDetailSectionProps {
   setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
   smallScreenMode: string;
+  updateCurrentView: (view: BarClickOptions) => void;
 }
 
 const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
@@ -48,6 +50,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   selectedProperty,
   setSelectedProperty,
   setIsStreetViewModalOpen,
+  updateCurrentView,
   smallScreenMode
 }) => {
   const [page, setPage] = useState(1);
@@ -90,6 +93,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       property={selectedProperty}
       setSelectedProperty={setSelectedProperty}
       setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+      updateCurrentView={updateCurrentView}
     />
   ) : (
     <>
