@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Dispatch, FC, SetStateAction } from "react";
+import React, { FC } from "react";
 import { Button } from "@nextui-org/react";
 import { BarClickOptions } from "@/app/map/page";
 import { DownloadSimple, Funnel, GlobeHemisphereWest, SquaresFour, Table } from "@phosphor-icons/react";
@@ -10,7 +10,6 @@ type SidePanelControlBarProps = {
   featureCount: number;
   loading: boolean;
   smallScreenMode: string;
-  setSmallScreenMode: Dispatch<SetStateAction<string>>;
   updateCurrentView: (view: BarClickOptions) => void;
   updateSmallScreenMode: () => void;
 };
