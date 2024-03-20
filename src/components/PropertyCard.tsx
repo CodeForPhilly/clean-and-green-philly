@@ -37,10 +37,17 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
   const formattedAddress = toTitleCase(address);
   const priorityClass = getPriorityClass(priority_level);
 
+  const handleClick = () => setSelectedProperty(feature);
+  const handleKeyDown = (e: React.KeyboardEvent): void  => {
+    if (e.key === 'Enter' || e.key === 'Space') {
+      handleClick()
+    }
+  };
+
   return (
     <div
       className="sm:max-w-sm w-full md:w-1/2 p-2 cursor-pointer max-sm:flex max-sm:justify-center"
-      onClick={() => setSelectedProperty(feature)}
+      onClick={handleClick}
     >
       <div className="max-w-sm w-full p-4">
         <div className="bg-white rounded-md overflow-hidden">
@@ -50,14 +57,14 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
           >
             <Image
               src={image}
-              alt={`Property at ${formattedAddress}`}
+              alt=""
               layout="fill"
               objectFit="cover"
               unoptimized
             />
           </div>
           <div className="p-2">
-            <div className="font-bold heading-lg">{formattedAddress}</div>
+            <button className="font-bold heading-lg" onKeyDown={handleKeyDown}>{formattedAddress}</button>
             <div className="text-gray-700 body-sm">
               {guncrime_density} Gun Crime Rate
             </div>

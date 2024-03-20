@@ -1,4 +1,4 @@
-export default function GetAccessPage() {
+export default function RequestRemovalPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="container mx-auto pt-20">

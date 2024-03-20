@@ -1,3 +1,5 @@
+"use client";
+
 import { FC, useState, useMemo, useRef, SetStateAction, Dispatch } from "react";
 import {
   Table,
@@ -102,7 +104,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             }}
           >
             <TableHeader>
-              {tableCols.map((column) => (
+              {tableCols.map(column => (
                 <TableColumn key={column.key}>{column.label}</TableColumn>
               ))}
             </TableHeader>
@@ -113,13 +115,12 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                   onClick={() => {
                     setSelectedProperty(
                       items.find(
-                        (item) =>
-                          properties?.OPA_ID === item?.properties?.OPA_ID,
-                      ) || null,
+                        item => properties?.OPA_ID === item?.properties?.OPA_ID
+                      ) || null
                     );
                   }}
                 >
-                  {(columnKey) => (
+                  {columnKey => (
                     <TableCell>{getKeyValue(properties, columnKey)}</TableCell>
                   )}
                 </TableRow>
@@ -147,7 +148,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 color="secondary"
                 page={page}
                 total={pages}
-                onChange={(newPage) => setPage(newPage)}
+                onChange={newPage => setPage(newPage)}
               />
             </div>
             <div className="flex w-full justify-center p-2">
