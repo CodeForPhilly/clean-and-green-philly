@@ -5,163 +5,130 @@ import {
   useDisclosure,
   Image,
   Tooltip,
+  Button,
+  Link,
 } from "@nextui-org/react";
+
+import { PiArrowRight } from "react-icons/pi";
 
 export default function AboutPage() {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 py-8 px-4 md:px-6 lg:px-24">
+      <div className="flex-grow grid grid-cols-1 md:grid-cols-1 gap-4 py-8 px-4 md:px-6 lg:px-24">
         <div className="container mx-auto px-4 md:px-8">
-          <h2 className="heading-2xl font-semibold mb-4">What is this?</h2>
+          <h1 className="heading-3xl font-bold mb-6">About This Project</h1>
           <p className="body-md mb-4">
             Philadelphia has a gun violence problem. Clean & Green Philly
             empowers Philadelphians to take action to solve it.
           </p>
-          <p className="body-md">
-            Our dashboard helps local residents, non-profit organizations, and
-            government stakeholders identify and prioritize vacant properties
-            for interventions, understand how to transform the properties
-            they’ve identified, and connect with resources that will help them
-            do so.
-          </p>
           <br></br>
-          <h2 className="heading-2xl font-semibold mb-4">Why make this?</h2>
-          <p className="body-md mb-4">
-            Clean & Green Philly was built to respond to Philadelphia’s historic
-            gun violence problem. With homicides trending up since 2013, and a
-            record high of 562 gun deaths in 2021, community members need
-            concrete solutions.
-          </p>
-          <div className="mt-1 flex items-center justify-center">
-            <Image
-              src="/annual_guncrimes_plot.png"
-              alt="A graph of gun crimes in Philadelphia since 2013"
-              height={500}
-            />
+          <div className="flex grid grid-cols-2 mb-2">
+            <div className=" flex flex-col justify-center pr-3">
+              <h2 className="heading-2xl font-semibold mb-4">
+                The Gun Violence Problem
+              </h2>
+              <p className="body-md mb-4">
+                With homicides trending up since 2013, and a record high of 562
+                gun deaths in 2021, community members need concrete solutions.
+                Many solutions focus on long-term impact, including nearly 80%
+                of the City of Philadelphia’s anti-violence spending. But
+                immediate, actionable approaches are also needed. 
+              </p>
+            </div>
+            <div className="m-4 flex items-center justify-center">
+              <Image
+                src="/dark_map_dots.png"
+                alt="A map of gun crime density in Philadelphia in March of 2023"
+                className="border-1"
+                style={{
+                  width: "500px",
+                  height: `${(500 / 4) * 3}px`,
+                  objectFit: "cover",
+                  objectPosition: "top center",
+                }}
+              />
+            </div>
           </div>
-          <p className="body-md mb-4">
-            Many solutions focus on long-term impact, including{" "}
-            <a
-              href="https://controller.phila.gov/philadelphia-audits/fy23-anti-violence-budget/#/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link"
-            >
-              nearly 80% of the City of Philadelphia’s anti-violence spending
-            </a>
-            . But immediate, actionable approaches are also needed. Clean &
-            Green Philly helps to fill that gap by promoting interventions in
-            vacant properties. Our goal is to make it as easy as possible for
-            everyday Philadelphians to take action to reduce gun violence in our
-            city.
-          </p>
-          <p className="body-md mb-4">
-            Research shows that greening and cleaning vacant properties is one
-            of the most impactful, cost-effective interventions available to
-            reduce gun violence in a neighborhood. For example, Dr. Eugenia
-            South and her team have demonstrated that
-            <a
-              href="https://www.pnas.org/doi/10.1073/pnas.1718503115"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link"
-            >
-              {" "}
-              greening vacant lots
-            </a>{" "}
-            in Philadelphia reduced gun violence by as much as 29% in the
-            surrounding area.
-          </p>
-          <div className="mt-4 flex items-center justify-center">
-            <Tooltip
-              content="Click image to expand"
-              color={"primary"}
-              offset={-150}
-            >
+          <div className="flex grid grid-cols-2 my-2">
+            <div className=" flex flex-col justify-center pr-3">
+              <h2 className="heading-2xl font-semibold mb-4">The Research</h2>
+              <p className="body-md mb-4">
+                Research shows that greening and cleaning vacant properties is
+                one of the most impactful, cost-effective interventions
+                available to reduce gun violence in a neighborhood. For example,
+                Dr. Eugenia South and her team have demonstrated that greening
+                vacant lots in Philadelphia reduced gun violence by as much as
+                29% in the surrounding area.
+              </p>
+            </div>
+            <div className="m-4 flex items-center justify-center overflow-hidden">
               <Image
                 src="/main_article_summary.png"
                 alt="Excerpts from research on reducing gun violence with vacant lot interventions"
-                width={300}
-                onClick={onOpen} // using the onOpen function from useDisclosure
-                title="Click to expand"
-                className="cursor-pointer mx-auto" // Center the image and change cursor on hover
+                className="border-1"
+                style={{
+                  width: "500px",
+                  height: `${(500 / 4) * 3}px`,
+                  objectFit: "cover",
+                  objectPosition: "top center",
+                }}
               />
-            </Tooltip>
-            <Modal
-              size="3xl"
-              isOpen={isOpen}
-              onClose={() => onOpenChange()}
-              shadow="lg"
-            >
-              <ModalContent>
-                <ModalBody className="flex flex-col items-center justify-center">
-                  {" "}
-                  {/* Centering content in the modal */}
-                  <Image
-                    src="/main_article_summary.png"
-                    alt="Excerpts from research on reducing gun violence with vacant lot interventions"
-                    className="max-w-full h-auto" // Responsive width, maintain aspect ratio
-                    width={600}
-                  />
-                </ModalBody>
-              </ModalContent>
-            </Modal>
+            </div>
           </div>
-          <p className="body-md">
-            Transforming Philadelphia’s vacant lots should be a key strategy to
-            combating gun violence here. But in a city with nearly 40,000 vacant
-            properties, the main obstacle is figuring out which properties to
-            prioritize and how to get access to them. Clean & Green Philly helps
-            solve this problem by using public data to identify high-priority
-            properties, filter them based on the possible ways of intervening,
-            and connect users to resources that can support these interventions.
+          <div className="flex grid grid-cols-2 ">
+            <div className=" flex flex-col justify-center pr-3">
+              <h2 className="heading-2xl font-semibold mb-4">The Challenge</h2>
+              <p className="body-md mb-4">
+                Transforming Philadelphia’s vacant lots should be a key strategy
+                to combating gun violence here. But in a city with nearly 40,000
+                vacant properties, the main obstacle is figuring out which
+                properties to prioritize and how to get access to them.
+              </p>
+            </div>
+            <div className="m-4 flex items-center justify-center overflow-hidden">
+              <Image
+                src="/light_map_lots.png"
+                alt="A zoomed in map showing an example of the lots in the interactive map"
+                className="border-1"
+                style={{
+                  width: "500px",
+                  height: `${(500 / 4) * 3}px`,
+                  objectFit: "cover",
+                  objectPosition: "top center",
+                }}
+              />
+            </div>
+          </div>
+          <h2 className="heading-2xl font-semibold mb-4">Our Vision</h2>
+          <p className="body-md mb-4">
+            Our vision was to empower local residents, non-profit organizations,
+            and government stakeholders to find and prioritize vacant properties
+            for interventions, understand how to transform the properties
+            they’ve identified, and connect users to resources that can support
+            them.
           </p>
-          <div className="mt-4 flex items-center justify-center">
-            <Image
-              src="/transformed_lots.png"
-              alt="Examples of transformed lots"
-              width={600}
-              height={400}
-            />
-          </div>
+          <h2 className="heading-2xl font-semibold mb-4">Our Methodology</h2>
+          <p className="body-md mb-4">
+            We created a dataset based on the original research conducted by Dr.
+            Eugenia South and her colleagues, as well as many conversations with
+            stakeholders, including community residents, CDCs, City government
+            offices, academic researchers, and more. We analyzed and combined
+            many data sets on crime, green-space, and properties.
+          </p>
+          <Button
+            href="/methodology"
+            as={Link}
+            className="bg-gray-200 iconLink"
+          >
+            <span className="body-md">Learn How</span>
+            <PiArrowRight className="w-5 h-5" />
+          </Button>
         </div>
-        <div className="container mx-auto px-4 md:px-8">
-          <h2 className="heading-2xl font-semibold mb-4">
-            How was this built?
-          </h2>
-          <p className="body-md mb-4">
-            Clean & Green Philly combines several public datasets in order to
-            categorize Philadelphia’s vacant properties based on how important
-            it is that someone intervene there and what the easiest way to do
-            that is.
-          </p>
-          <p className="body-md mb-4">
-            We created the dataset based on the original research conducted by
-            Dr. Eugenia South and her colleagues, as well as many conversations
-            with stakeholders, including community residents, CDCs, City
-            government offices, academic researchers, and more.
-          </p>
-          <p className="body-md">
-            All of the code used to build this tool is{" "}
-            <a
-              href="https://github.com/CodeForPhilly/vacant-lots-proj"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link"
-            >
-              available on our GitHub repository
-            </a>
-            . We hope to add data documentation in the near future. For further
-            questions about our methods, feel free to reach out to us at{" "}
-            <a href="mailto:cleanandgreenphl@gmail.com" className="link">
-              cleangreenphilly@gmail.com
-            </a>
-            .
-          </p>
-          <br></br>
-          <h2 className="heading-2xl font-semibold mb-4">Who built this?</h2>
+
+        <div>
+          <h2 className="heading-2xl font-semibold mb-4">Contributors</h2>
           <p className="body-md mb-4">
             Clean & Green Philly was built by a team of Code for Philly
             volunteers. The project was created and led by{" "}
@@ -184,7 +151,7 @@ export default function AboutPage() {
             </a>{" "}
             was responsible for user testing and research,{" "}
             <a
-              href="https://wwww.brandonfcohen.com"
+              href="https://www.brandonfcohen.com"
               target="_blank"
               rel="noopener noreferrer"
               className="link"
@@ -219,22 +186,46 @@ export default function AboutPage() {
           <h2 className="heading-2xl font-semibold mb-4">Feedback</h2>
           <p className="body-md mb-4">
             If you find issues in this website or would like to offer us
-            feedback, please reach out to us at{" "}
-            <a href="mailto:cleanandgreenphl@gmail.com" className="link">
-              cleanandgreenphl@gmail.com
+            feedback, please reach out to us at {" "}
+            <a
+              href="mailto:cleanandgreenphl@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link"
+            >
+              cleanandgreenphl@gmail.com.
             </a>
-            .
+             {" "}
+          </p>
+          <h2 className="heading-2xl font-semibold mb-4">Concerns</h2>
+          <p className="body-md mb-4">
+            Our goal is to help community groups reduce violence through
+            cleaning and greening methods in their neighborhoods. We recognize
+            that may inadvertently increase property values, increase rental
+            prices and displace already-marginalized Philadelphians. We are
+            working to avoid this by meeting extensively with community groups
+            and responding to their concerns. Read more about this topic here.  {" "}
           </p>
           <h2 className="heading-2xl font-semibold mb-4">
             Removing Properties
           </h2>
           <p className="body-md mb-4">
-            If you would like to request that we remove a property from the
-            dashboard, please see our{" "}
+            If you find issues If you would like to request that we remove a
+            property from the dashboard, please see our 
             <a href="/request-removal" className="link">
-              Request Removal page
-            </a>
-            .
+              Request Removal
+            </a>{" "}
+            page.in this website or would like to offer us feedback, please
+            reach out to us at 
+            <a
+              href="mailto:cleanandgreenphl@gmail.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link"
+            >
+              cleanandgreenphl@gmail.com.
+            </a>{" "}
+             {" "}
           </p>
         </div>
       </div>
