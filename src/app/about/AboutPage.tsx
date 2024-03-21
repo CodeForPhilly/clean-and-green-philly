@@ -222,7 +222,7 @@ export default function AboutPage() {
               <h2 className="heading-2xl font-semibold mb-4">Feedback</h2>
               <p className="body-md mb-4">
                 If you find issues in this website or would like to offer us
-                feedback, please reach out to us at {" "}
+                feedback, please reach out to us at{" "}
                 <a
                   href="mailto:cleanandgreenphl@gmail.com"
                   target="_blank"
@@ -243,7 +243,7 @@ export default function AboutPage() {
                 increase rental prices and displace already-marginalized
                 Philadelphians. We are working to avoid this by meeting
                 extensively with community groups and responding to their
-                concerns.
+                concerns.{" "}
                 {/* <a href="/gentrification" className="link"> 
                 Not sure what the path will be but this will go to the Concerns or Gentrification page once it's made. */}
                 Read more about this topic here.   {/* </a> */}
@@ -259,7 +259,7 @@ export default function AboutPage() {
                 <a href="/request-removal" className="link">
                   Request Removal
                 </a>{" "}
-                page.in this website or would like to offer us feedback, please
+                page in this website or would like to offer us feedback, please
                 reach out to us at 
                 <a
                   href="mailto:cleanandgreenphl@gmail.com"
