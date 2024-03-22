@@ -2,7 +2,7 @@
   {
     "maxAgeSeconds": 300,
     "method": ["GET", "HEAD"],
-    "origin": ["http://localhost:3000"],
+    "origin": ["*"],
     "responseHeader": ["range", "etag", "if-match"]
   }
 ]
