@@ -39,15 +39,8 @@ export default function AboutPage() {
             </div>
             <div className="m-4 flex items-center justify-center">
               <Image
-                src="/dark_map_dots.png"
+                src="/Graphic-Map-Shootings.png"
                 alt="A map of gun crime density in Philadelphia in March of 2023"
-                className="border-1"
-                style={{
-                  width: "500px",
-                  height: `${(500 / 4) * 3}px`,
-                  objectFit: "cover",
-                  objectPosition: "top center",
-                }}
               />
             </div>
           </div>
@@ -65,15 +58,9 @@ export default function AboutPage() {
             </div>
             <div className="m-4 flex items-center justify-center overflow-hidden">
               <Image
-                src="/main_article_summary.png"
+                src="/Graphic-Research.png"
                 alt="Excerpts from research on reducing gun violence with vacant lot interventions"
                 className="border-1"
-                style={{
-                  width: "500px",
-                  height: `${(500 / 4) * 3}px`,
-                  objectFit: "cover",
-                  objectPosition: "top center",
-                }}
               />
             </div>
           </div>
@@ -89,15 +76,8 @@ export default function AboutPage() {
             </div>
             <div className="m-4 flex items-center justify-center overflow-hidden">
               <Image
-                src="/light_map_lots.png"
+                src="/Graphic-Lots-Streets.png"
                 alt="A zoomed in map showing an example of the lots in the interactive map"
-                className="border-1"
-                style={{
-                  width: "500px",
-                  height: `${(500 / 4) * 3}px`,
-                  objectFit: "cover",
-                  objectPosition: "top center",
-                }}
               />
             </div>
           </div>
@@ -114,13 +94,8 @@ export default function AboutPage() {
             </div>
             <div className="m-4 flex items-center justify-center overflow-hidden">
               <Image
-                src="/about_vision_graphic.png"
+                src="/Graphic-Skills.png"
                 alt="A graphic of a cluster of green circles with icons representing aspects of the project"
-                className="border-1"
-                style={{
-                  width: "500px",
-                  height: `${(500 / 16) * 9}px`,
-                }}
               />
             </div>
           </div>
@@ -150,13 +125,8 @@ export default function AboutPage() {
             </div>
             <div className="m-4 flex items-center justify-center overflow-hidden">
               <Image
-                src="/about_method_graphic.png"
+                src="/Graphic-Merge-Data.png"
                 alt="A graphic of a green circle with a grid symbol surrounded by other grid symbols with arrows pointing back to the circle."
-                className="border-1"
-                style={{
-                  width: "500px",
-                  height: `${(500 / 16) * 9}px`,
-                }}
               />
             </div>
           </div>
@@ -232,21 +202,6 @@ export default function AboutPage() {
                   cleanandgreenphl@gmail.com.
                 </a>
                  {" "}
-              </p>
-            </div>
-            <div className="my-6">
-              <h2 className="heading-2xl font-semibold mb-4">Concerns</h2>
-              <p className="body-md mb-4">
-                Our goal is to help community groups reduce violence through
-                cleaning and greening methods in their neighborhoods. We
-                recognize that may inadvertently increase property values,
-                increase rental prices and displace already-marginalized
-                Philadelphians. We are working to avoid this by meeting
-                extensively with community groups and responding to their
-                concerns.{" "}
-                {/* <a href="/gentrification" className="link"> 
-                Not sure what the path will be but this will go to the Concerns or Gentrification page once it's made. */}
-                Read more about this topic here.   {/* </a> */}
               </p>
             </div>
             <div className="my-6">
