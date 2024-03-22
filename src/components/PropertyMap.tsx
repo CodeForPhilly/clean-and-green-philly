@@ -210,7 +210,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
     const features = map.queryRenderedFeatures(bbox, { layers });
 
     //Get count of features if they are clustered
-    const cluteredFeatureCount = features.reduce(
+    const clusteredFeatureCount = features.reduce(
       (acc: number, feature: MapGeoJSONFeature) => {
         if (feature.properties?.clustered) {
           acc += feature.properties?.point_count || 0;
@@ -222,7 +222,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
       0
     );
 
-    setFeatureCount(cluteredFeatureCount);
+    setFeatureCount(clusteredFeatureCount);
 
     const priorities: { [key: string]: number } = {
       High: 1,
