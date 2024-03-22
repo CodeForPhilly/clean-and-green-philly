@@ -8,7 +8,7 @@ import {
   Dispatch,
   SetStateAction,
 } from "react";
-import { mapboxAccessToken } from "../config/config";
+import { maptilerApiKey, mapboxAccessToken } from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
 import "mapboxgl-legend/dist/style.css";
@@ -315,7 +315,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           latitude: 39.9910071520824,
           zoom,
         }}
-        mapStyle="https://api.maptiler.com/maps/dataviz/style.json?key=dIagszPpXO3RgO1NNgzm"
+        mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
         onMouseEnter={(e) => changeCursor(e, "pointer")}
         onMouseLeave={(e) => changeCursor(e, "default")}
         onClick={onMapClick}
