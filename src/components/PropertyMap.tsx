@@ -1,6 +1,6 @@
 "use client";
 
-import React, {
+import {
   FC,
   useEffect,
   useState,
@@ -8,7 +8,6 @@ import React, {
   Dispatch,
   SetStateAction,
 } from "react";
-import { Polygon } from "geojson";
 import { mapboxAccessToken } from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import LegendControl from "mapboxgl-legend";
@@ -21,27 +20,35 @@ import Map, {
   FullscreenControl,
   ScaleControl,
   GeolocateControl,
-} from "react-map-gl";
-import { FillLayer, CircleLayer } from "react-map-gl";
+} from "react-map-gl/maplibre";
 import maplibregl, {
-  PointLike,
   Map as MaplibreMap,
+  PointLike,
   MapGeoJSONFeature,
+  ColorSpecification,
+  FillLayerSpecification,
+  CircleLayerSpecification,
+  DataDrivenPropertyValueSpecification,
+  IControl,
 } from "maplibre-gl";
-import mapboxgl, { Expression } from "mapbox-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import mapboxgl from "mapbox-gl";
 import { Protocol } from "pmtiles";
-
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { Coordinates } from "../types";
+import { Coordinates } from "../app/types";
 
 const MIN_MAP_ZOOM = 10;
 const MAX_MAP_ZOOM = 20;
-const POINT_POLYGON_THRESHOLD = 14;
+const POINT_POLYGON_THRESHOLD = 13;
 const MAX_TILE_ZOOM = 16;
 
-const colorScheme: Expression = [
+const layers = [
+  "vacant_properties_tiles_polygons",
+  "vacant_properties_tiles_points",
+];
+
+const colorScheme: DataDrivenPropertyValueSpecification<ColorSpecification> = [
   "match",
   ["get", "priority_level"], // get the value of the guncrime_density property
   "High",
@@ -53,9 +60,10 @@ const colorScheme: Expression = [
   "#D3D3D3", // default color if none of the categories match
 ];
 
-const layerStylePolygon: FillLayer = {
+const layerStylePolygon: FillLayerSpecification = {
   id: "vacant_properties_tiles_polygons",
   type: "fill",
+  source: "vacant_properties_tiles",
   "source-layer": "vacant_properties_tiles_polygons",
   paint: {
     "fill-color": colorScheme,
@@ -66,9 +74,10 @@ const layerStylePolygon: FillLayer = {
   },
 };
 
-const layerStylePoints: CircleLayer = {
+const layerStylePoints: CircleLayerSpecification = {
   id: "vacant_properties_tiles_points",
   type: "circle",
+  source: "vacant_properties_tiles",
   "source-layer": "vacant_properties_tiles_points",
   paint: {
     "circle-color": colorScheme,
@@ -109,6 +118,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
   const [zoom, setZoom] = useState<number>(13);
+  const [activeLayer, setActiveLayer] = useState<
+    "vacant_properties_tiles_polygons" | "vacant_properties_tiles_points"
+  >("vacant_properties_tiles_polygons");
   const legendRef = useRef<LegendControl | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
 
@@ -120,7 +132,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
     };
   }, []);
 
+  useEffect(() => {
+    if (zoom < POINT_POLYGON_THRESHOLD) {
+      setActiveLayer("vacant_properties_tiles_points");
+    } else {
+      setActiveLayer("vacant_properties_tiles_polygons");
+    }
+  }, [zoom]);
+
   // filter function
+  // update filters on both layers for ease of switching between layers
   const updateFilter = () => {
     if (!map) return;
 
@@ -129,7 +150,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
     });
 
     if (isAnyFilterEmpty) {
-      map.setFilter("vacant_properties_tiles", ["==", ["id"], ""]);
+      map.setFilter("vacant_properties_tiles_points", ["==", ["id"], ""]);
+      map.setFilter("vacant_properties_tiles_polygons", ["==", ["id"], ""]);
+
       return;
     }
 
@@ -144,14 +167,13 @@ const PropertyMap: FC<PropertyMapProps> = ({
       [] as any[]
     );
 
-    map.setFilter("vacant_properties_tiles", ["all", ...mapFilter]);
+    map.setFilter("vacant_properties_tiles_points", ["all", ...mapFilter]);
+    map.setFilter("vacant_properties_tiles_polygons", ["all", ...mapFilter]);
   };
 
   const onMapClick = (event: any) => {
     if (map) {
-      const features = map.queryRenderedFeatures(event.point, {
-        layers: ["vacant_properties_tiles"],
-      });
+      const features = map.queryRenderedFeatures(event.point, { layers });
 
       if (features.length > 0) {
         setSelectedProperty(features[0]);
@@ -163,6 +185,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
           longitude: event.lngLat.lng,
           latitude: event.lngLat.lat,
           feature: features[0].properties,
+        });
+
+        map.easeTo({
+          center: [event.lngLat.lng, event.lngLat.lat],
         });
       } else {
         setSelectedProperty(null);
@@ -181,16 +207,22 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
     let bbox: [PointLike, PointLike] | undefined = undefined;
 
-    const features = map.queryRenderedFeatures(bbox, {
-      layers: [
-        "vacant_properties_tiles_polygons",
-        "vacant_properties_tiles_points",
-      ],
-    });
+    const features = map.queryRenderedFeatures(bbox, { layers });
 
-    console.log(features);
+    //Get count of features if they are clustered
+    const cluteredFeatureCount = features.reduce(
+      (acc: number, feature: MapGeoJSONFeature) => {
+        if (feature.properties?.clustered) {
+          acc += feature.properties?.point_count || 0;
+        } else {
+          acc += 1;
+        }
+        return acc;
+      },
+      0
+    );
 
-    setFeatureCount(features.length);
+    setFeatureCount(cluteredFeatureCount);
 
     const priorities: { [key: string]: number } = {
       High: 1,
@@ -199,7 +231,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
     };
 
     const sortedFeatures = features
-      .sort((a, b) => {
+      .sort((a: MapGeoJSONFeature, b: MapGeoJSONFeature) => {
         return (
           priorities[a?.properties?.priority_level || ""] -
           priorities[b?.properties?.priority_level || ""]
@@ -214,26 +246,14 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   useEffect(() => {
     if (map) {
-      if (!legendRef.current) {
-        legendRef.current = new LegendControl();
-        map.addControl(legendRef.current, "bottom-left");
-      }
-    }
-
-    return () => {
-      if (map && legendRef.current) {
-        map.removeControl(legendRef.current);
-        legendRef.current = null;
-      }
-    };
-  }, [map]);
-
-  useEffect(() => {
-    if (map) {
       // Add Legend Control
       if (!legendRef.current) {
-        legendRef.current = new LegendControl();
-        map.addControl(legendRef.current, "bottom-left");
+        legendRef.current = new LegendControl({
+          layers: ["vacant_properties_tiles_polygons"],
+        });
+
+        // Note: this is a hack to get around the typescript error because we are using incompatible packages. We should write our own legend
+        map.addControl(legendRef.current as unknown as IControl, "bottom-left");
       }
 
       // Add Geocoder
@@ -249,10 +269,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
           },
         });
 
-        map.addControl(geocoderRef.current, "top-right");
+        map.addControl(geocoderRef.current as unknown as IControl, "top-right");
 
         geocoderRef.current.on("result", (e) => {
-          map.flyTo({
+          map.easeTo({
             center: e.result.center,
             zoom: MAX_TILE_ZOOM,
           });
@@ -263,13 +283,13 @@ const PropertyMap: FC<PropertyMapProps> = ({
     return () => {
       // Remove Legend Control
       if (map && legendRef.current) {
-        map.removeControl(legendRef.current);
+        map.removeControl(legendRef.current as unknown as IControl);
         legendRef.current = null;
       }
 
       // Remove Geocoder
       if (map && geocoderRef.current) {
-        map.removeControl(geocoderRef.current);
+        map.removeControl(geocoderRef.current as unknown as IControl);
         geocoderRef.current = null;
       }
     };
@@ -280,77 +300,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
       updateFilter();
     }
   }, [map, appFilter]);
-
-  const id = selectedProperty?.properties?.OPA_ID ?? null;
-  useEffect(() => {
-    /** Ticket #87 - focus on map when a property is selected */
-    if (id && map != null) {
-      const features = map.queryRenderedFeatures(undefined, {
-        layers: [
-          "vacant_properties_tiles_polygons",
-          "vacant_properties_tiles_points",
-        ],
-      });
-      const mapItem = features.find(
-        (feature) => feature.properties?.OPA_ID === id
-      );
-
-      if (mapItem != null) {
-        const coordinates = (mapItem.geometry as Polygon).coordinates[0];
-
-        if (coordinates.length > 0) {
-          // Filter out coordinates that are not available
-          const validCoordinates = coordinates.filter(
-            ([x, y]) => !isNaN(x) && !isNaN(y)
-          );
-
-          if (validCoordinates.length > 0) {
-            const totalPoint = validCoordinates.reduce(
-              (prevSum, position) => [
-                prevSum[0] + position[0],
-                prevSum[1] + position[1],
-              ],
-              [0, 0]
-            );
-
-            let finalPoint = [
-              totalPoint[0] / validCoordinates.length,
-              totalPoint[1] / validCoordinates.length,
-            ];
-
-            // Check if the finalPoint is valid
-            if (isNaN(finalPoint[0]) || isNaN(finalPoint[1])) {
-              // Fallback to first coordinate of the polygon if finalPoint is invalid
-              finalPoint = validCoordinates[0];
-            }
-
-            const pointForMap = { lng: finalPoint[0], lat: finalPoint[1] };
-
-            map.flyTo({
-              center: pointForMap,
-            });
-
-            setCoordinates({
-              lng: finalPoint[0].toString(),
-              lat: finalPoint[1].toString(),
-            });
-
-            setPopupInfo({
-              longitude: finalPoint[0],
-              latitude: finalPoint[1],
-              feature: selectedProperty?.properties,
-            });
-          }
-        }
-      }
-    }
-  }, [id]);
-
-  useEffect(() => {
-    if (id == null) {
-      setPopupInfo(null);
-    }
-  }, [id]);
 
   const changeCursor = (e: any, cursorType: "pointer" | "default") => {
     e.target.getCanvas().style.cursor = cursorType;
@@ -371,10 +320,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
         onMouseEnter={(e) => changeCursor(e, "pointer")}
         onMouseLeave={(e) => changeCursor(e, "default")}
         onClick={onMapClick}
-        interactiveLayerIds={[
-          "vacant_properties_tiles_polygons",
-          "vacant_properties_tiles_points",
-        ]}
+        minZoom={MIN_MAP_ZOOM}
+        maxZoom={MAX_MAP_ZOOM}
+        interactiveLayerIds={layers}
         onLoad={(e) => {
           setMap(e.target);
         }}

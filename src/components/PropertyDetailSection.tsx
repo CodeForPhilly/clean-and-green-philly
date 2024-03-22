@@ -14,7 +14,7 @@ import {
 } from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
 import SinglePropertyDetail from "./SinglePropertyDetail";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
+import { MapGeoJSONFeature } from "maplibre-gl";
 
 const tableCols = [
   {
@@ -32,11 +32,11 @@ const tableCols = [
 ];
 
 interface PropertyDetailSectionProps {
-  featuresInView: MapboxGeoJSONFeature[];
+  featuresInView: MapGeoJSONFeature[];
   display: "detail" | "list";
   loading: boolean;
-  selectedProperty: MapboxGeoJSONFeature | null;
-  setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
+  selectedProperty: MapGeoJSONFeature | null;
+  setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
 }
 
@@ -93,7 +93,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             }}
           >
             <TableHeader>
-              {tableCols.map(column => (
+              {tableCols.map((column) => (
                 <TableColumn key={column.key}>{column.label}</TableColumn>
               ))}
             </TableHeader>
@@ -104,12 +104,13 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                   onClick={() => {
                     setSelectedProperty(
                       items.find(
-                        item => properties?.OPA_ID === item?.properties?.OPA_ID
+                        (item) =>
+                          properties?.OPA_ID === item?.properties?.OPA_ID
                       ) || null
                     );
                   }}
                 >
-                  {columnKey => (
+                  {(columnKey) => (
                     <TableCell>{getKeyValue(properties, columnKey)}</TableCell>
                   )}
                 </TableRow>
@@ -137,7 +138,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 color="secondary"
                 page={page}
                 total={pages}
-                onChange={newPage => setPage(newPage)}
+                onChange={(newPage) => setPage(newPage)}
               />
             </div>
             <div className="flex w-full justify-center p-2">

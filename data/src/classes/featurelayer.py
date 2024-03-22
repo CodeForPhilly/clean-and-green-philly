@@ -247,7 +247,9 @@ class FeatureLayer:
         self.centroid_gdf = self.gdf.copy()
         self.centroid_gdf["geometry"] = self.gdf["geometry"].centroid
 
-    def geodataframe_to_pmtiles(self, tileset_id):
+    def build_and_publish_pmtiles(self, tileset_id):
+        zoom_threshold = 13
+
         # Export the GeoDataFrame to a temporary GeoJSON file
         temp_geojson_points = f"tmp/temp_{tileset_id}_points.geojson"
         temp_geojson_polygons = f"tmp/temp_{tileset_id}_polygons.geojson"
@@ -265,14 +267,13 @@ class FeatureLayer:
         self.centroid_gdf = self.centroid_gdf.to_crs(epsg=4326)
         self.centroid_gdf.to_file(temp_geojson_points, driver="GeoJSON")
 
-        # Command for generating PMTiles for points up to zoom level 12
+        # Command for generating PMTiles for points up to zoom level zoom_threshold
         points_command = [
             "tippecanoe",
             f"--output={temp_pmtiles_points}",
-            "--maximum-zoom=13",
+            f"--maximum-zoom={zoom_threshold}",
             "--minimum-zoom=10",
             "-zg",
-            # "--no-tile-size-limit",
             "-aC",
             "-r0",
             temp_geojson_points,
@@ -281,11 +282,11 @@ class FeatureLayer:
             "--force",
         ]
 
-        # Command for generating PMTiles for polygons from zoom level 13
+        # Command for generating PMTiles for polygons from zoom level zoom_threshold
         polygons_command = [
             "tippecanoe",
             f"--output={temp_pmtiles_polygons}",
-            "--minimum-zoom=13",
+            f"--minimum-zoom={zoom_threshold}",
             "--maximum-zoom=16",
             "-zg",
             "--no-tile-size-limit",
@@ -312,9 +313,3 @@ class FeatureLayer:
         # Upload to Google Cloud Storage
         blob = bucket.blob(f"{tileset_id}.pmtiles")
         blob.upload_from_filename(temp_merged_pmtiles)
-
-    def upload_tiles(self):
-        """Upload GeoDataFrame to GCS as pmtiles files."""
-
-        # Create and upload polygons tiles
-        self.geodataframe_to_pmtiles(self.gdf, "vacant_properties_polygon_tiles")
