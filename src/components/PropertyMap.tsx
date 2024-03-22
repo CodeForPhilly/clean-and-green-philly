@@ -309,7 +309,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
   return (
     <div className="customized-map relative h-full w-full">
       <Map
-        mapboxAccessToken={mapboxAccessToken}
         mapLib={maplibregl as any}
         initialViewState={{
           longitude: -75.15975924194129,
