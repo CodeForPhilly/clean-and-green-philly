@@ -66,7 +66,7 @@ const LandingPage: FC = () => {
             alt={alt}
             width={608}
             placeholder="blur"
-            className={`rounded-[8px] aspect-video md:aspect-auto object-cover object-center ${
+            className={`overflow-hidden rounded-[20px] aspect-video md:aspect-auto object-cover object-center ${
               // only show the middle image on mobile
               !(index % 2) && "hidden md:block"
             }`}

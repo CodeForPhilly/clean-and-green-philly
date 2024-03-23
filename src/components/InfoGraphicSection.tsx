@@ -43,7 +43,7 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
     id,
     header: { text: headerText, as: headerAs },
     body,
-    link,
+    link
   } = props;
   const HeaderTag = headerAs || "h2";
 
@@ -54,7 +54,7 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
         <Image
           src={props.image.data}
           alt={props.image.alt || ""}
-          className={`w-full rounded-[8px] ${
+          className={`w-full rounded-[20px] ${
             props.image.className && props.image.className
           }`}
           priority={(props.image.priority && props.image.priority) || false}
