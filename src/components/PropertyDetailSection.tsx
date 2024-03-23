@@ -82,7 +82,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     />
   ) : (
     <>
-      <div className="flex flex-wrap overflow-y-auto max-h-[calc(100vh-110px)]">
+      <div className="flex flex-wrap">
         {display === "list" ? (
           <Table
             aria-label="Property Details"

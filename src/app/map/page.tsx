@@ -42,7 +42,7 @@ const MapPage: FC = () => {
   return (
     <FilterProvider>
       <NextUIProvider>
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col">
           <div className="flex flex-grow overflow-hidden">
             <StreetViewModal isOpen={isStreetViewModalOpen}>
               <div
@@ -81,7 +81,7 @@ const MapPage: FC = () => {
               ) : (
                 <>
                   {!selectedProperty && (
-                    <div className="pt-2 sticky top-0 z-10">
+                    <div className="sticky top-0 z-10">
                       <SidePanelControlBar
                         currentView={currentView}
                         setCurrentView={setCurrentView}
