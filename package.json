@@ -6,8 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "tiles": "node src/scripts/buildTiles.js"
+    "lint": "next lint"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.18",
@@ -22,12 +21,14 @@
     "eslint-config-next": "13.4.19",
     "framer-motion": "^10.16.4",
     "lodash": "^4.17.21",
-    "mapbox-gl": "^2.15.0",
-    "mapboxgl-legend": "^1.13.0",
+    "mapbox-gl": "^3.2.0",
+    "mapboxgl-legend": "^1.14.0",
+    "maplibre-gl": "^4.1.1",
     "multi-range-slider-react": "^2.0.5",
     "next": "^14.0.3",
     "pg": "^8.11.3",
     "pg-promise": "^11.5.4",
+    "pmtiles": "^3.0.5",
     "postcss": "8.4.29",
     "protobufjs": "^7.2.5",
     "react": "18.2.0",
@@ -39,7 +40,6 @@
     "typescript": "5.2.2"
   },
   "devDependencies": {
-    "@types/mapbox-gl": "^2.7.17",
     "@types/pbf": "^3.0.2",
     "@types/pg": "^8.10.2",
     "@typescript-eslint/parser": "^7.1.1",

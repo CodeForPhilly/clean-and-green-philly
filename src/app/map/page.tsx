@@ -6,12 +6,12 @@ import {
   PropertyDetailSection,
   PropertyMap,
   SidePanel,
-  SidePanelControlBar
+  SidePanelControlBar,
 } from "@/components";
 import { FilterProvider } from "@/context/FilterContext";
 import { NextUIProvider } from "@nextui-org/react";
 import { X } from "@phosphor-icons/react";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
+import { MapGeoJSONFeature } from "maplibre-gl";
 import { FC, useState } from "react";
 import ReactDOM from "react-dom";
 import StreetView from "../../components/StreetView";
@@ -19,17 +19,17 @@ import StreetView from "../../components/StreetView";
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
 const MapPage: FC = () => {
-  const [featuresInView, setFeaturesInView] = useState<any[]>([]);
+  const [featuresInView, setFeaturesInView] = useState<MapGeoJSONFeature[]>([]);
   const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
   const [loading, setLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] =
-    useState<MapboxGeoJSONFeature | null>(null);
+    useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
   const [coordinates, setCoordinates] = useState<Coordinates>({
     lat: null,
-    lng: null
+    lng: null,
   });
 
   return (
@@ -128,7 +128,7 @@ export default MapPage;
 
 const StreetViewModal = ({
   children,
-  isOpen
+  isOpen,
 }: {
   children: React.ReactNode;
   isOpen: boolean;

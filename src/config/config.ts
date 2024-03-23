@@ -9,3 +9,5 @@ export const pgConnString = process.env.VACANT_LOTS_DB || EMPTY_STRING;
 export const finalDataset = "vacant_properties_end";
 
 export const useLocalTiles = process.env.USE_LOCAL_TILES || false;
+
+export const maptilerApiKey = process.env.NEXT_PUBLIC_MAPTILER_KEY || "";
