@@ -110,6 +110,10 @@ In the terminal, use the `cd` command to navigate to your repository location, a
 
 Finally, it's time to run the Nextjs app. Navigate to the root directory of the repository. Install dependencies by running `npm i`. Then, run the development server with `npm run dev`. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Congrats! You're all set up.
 
+### MapTiler
+
+You'll need to set up a free [MapTiler](https://www.maptiler.com/) and get an API key. Once you have this, set it as en environment variable called `NEXT_PUBLIC_MAPTILER_KEY`.
+
 #### Formatting
 
 For js/ts, install [Prettier](https://prettier.io/) and enable it for your [editor](https://prettier.io/docs/en/editors.html). For VSCode, enable [Format on Save](https://www.robinwieruch.de/how-to-use-prettier-vscode/) for best experience.
