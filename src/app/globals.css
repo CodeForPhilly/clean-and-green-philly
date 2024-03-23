@@ -131,6 +131,8 @@
     @apply underline text-blue hover:text-blue-800 visited:text-purple-600;
   }
 
+  /* added webkit transform to remove icon movement in safari */
+
   .iconLink {
     @apply text-gray-900 items-center items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
     -webkit-transform: translateZ(0);
