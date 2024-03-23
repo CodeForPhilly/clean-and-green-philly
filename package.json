@@ -13,10 +13,6 @@
     "@mapbox/mapbox-gl-geocoder": "^5.0.1",
     "@nextui-org/react": "^2.1.10",
     "@phosphor-icons/react": "^2.0.15",
-    "@types/mapbox__mapbox-gl-geocoder": "^4.7.7",
-    "@types/node": "20.5.7",
-    "@types/react": "18.2.21",
-    "@types/react-dom": "18.2.7",
     "autoprefixer": "10.4.15",
     "eslint-config-next": "13.4.19",
     "framer-motion": "^10.16.4",
@@ -26,8 +22,6 @@
     "maplibre-gl": "^4.1.1",
     "multi-range-slider-react": "^2.0.5",
     "next": "^14.0.3",
-    "pg": "^8.11.3",
-    "pg-promise": "^11.5.4",
     "pmtiles": "^3.0.5",
     "postcss": "8.4.29",
     "protobufjs": "^7.2.5",
@@ -40,8 +34,12 @@
     "typescript": "5.2.2"
   },
   "devDependencies": {
+    "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
+    "@types/node": "^20.11.30",
     "@types/pbf": "^3.0.2",
     "@types/pg": "^8.10.2",
+    "@types/react": "^18.2.69",
+    "@types/react-dom": "^18.2.22",
     "@typescript-eslint/parser": "^7.1.1",
     "eslint": "^8.57.0"
   }
