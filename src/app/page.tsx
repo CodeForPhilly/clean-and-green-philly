@@ -3,7 +3,7 @@ import { NumberedIconCard } from "@/components/NumberedIconCard";
 import imageCleaning from "@/images/cleaningLot.jpg";
 import imageDirty from "@/images/dirtyLot.jpg";
 import imageGunCrimes from "@/images/graphic-guncrimes.png";
-import imageResearch from "@/images/graphic-research.png";
+import imageResearch from "@/images/graphic-research-home.png";
 import imageGreened from "@/images/greenedLot.jpg";
 import imageStep1 from "@/images/landing-step-1.png";
 import imageStep2 from "@/images/landing-step-2.png";
