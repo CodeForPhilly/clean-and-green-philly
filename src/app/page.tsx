@@ -50,8 +50,8 @@ const LandingPage: FC = () => {
               clean and green vacant properties to reduce gun violence.
             </p>
           </div>
-          <Button href="#guncrimes" as={Link} className="bg-gray-200 iconLink">
-            <PiArrowDown className="w-5 h-5" />
+          <Button href="#guncrimes" as={Link} className="bg-gray-200">
+            <PiArrowDown className="iconButton-w-5" />
             <span className="body-md">Learn How</span>
           </Button>
         </div>

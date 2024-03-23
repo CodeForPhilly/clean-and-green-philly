@@ -132,52 +132,37 @@
   }
 
   .iconLink {
-    @apply text-gray-900;
-    @apply items-center;
-    @apply items-center;
-    @apply active:bg-[#C2F5BA];
-    @apply active:text-green-700;
-    @apply focus:text-green-700;
-    @apply focus:bg-[#E9FFE5];
-    @apply bg-color-none;
-    @apply hover:bg-gray-10;
-    @apply rounded-medium;
-    @apply max-sm:hover:bg-[#ffffff];
+    @apply text-gray-900 items-center items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
+    -webkit-transform: translateZ(0);
+  }
+
+  .linkIcon {
+    @apply w-5 h-5 mr-2;
+    -webkit-transform: translateZ(0);
+  }
+
+  .iconButton {
+    @apply h-6 w-6;
+    -webkit-transform: translateZ(0);
+  }
+
+  .iconButton-w-5 {
+    @apply h-5 w-5;
+    -webkit-transform: translateZ(0);
   }
 
   .activeIconLinkNav {
-    @apply flex;
-    @apply relative;
-    @apply h-full;
-    @apply items-center;
-    @apply rounded-medium
-    @apply data-[active=true]:bottom-0;
-    @apply data-[active=true]:left-0;
-    @apply data-[active=true]:right-0;
-    @apply data-[active=true]:h-full;
-    @apply data-[active=true]:rounded-[12px];
-    @apply data-[active=true]:bg-[#E9FFE5];
-    @apply data-[active=true]:text-[#E9FFE5];
-    @apply data-[active=true]:rounded-medium;
+    @apply flex relative h-full items-center rounded-medium;
+    @apply data-[active=true]:bottom-0 data-[active=true]:left-0 data-[active=true]:right-0 data-[active=true]:h-full data-[active=true]:rounded-[12px] data-[active=true]:bg-[#E9FFE5] data-[active=true]:text-[#E9FFE5] data-[active=true]:rounded-medium;
+    -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav {
-    @apply px-0;
-    @apply text-base;
-    @apply max-h-52;
-    @apply overflow-hidden;
-    @apply fixed;
-    @apply left-2/4;
-    @apply top-20;
-    @apply w-full;
-    @apply z-50;
-    @apply shadow-2xl;
-    @apply rounded-md;
-    @apply border-1;
-    @apply border-gray-200;
-    @apply bg-gray-0;
+    @apply px-0 text-base max-h-52 overflow-hidden fixed left-2/4 top-20 w-full z-50 shadow-2xl rounded-md border-1 border-gray-200 bg-gray-0;
+    -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav:hover {
     @apply bg-gray-0;
+    -webkit-transform: translateZ(0);
   }
 }
 
