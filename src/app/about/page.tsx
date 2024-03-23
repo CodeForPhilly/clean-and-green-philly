@@ -1,17 +1,13 @@
-'use client';
+"use client";
 
-import React, { FC } from "react";
 import { NextUIProvider } from "@nextui-org/react";
-import Layout from "../components/Layout";
-import AboutPage from "../components/AboutPage";
+import { FC } from "react";
+import AboutPage from "./AboutPage";
 
 const About: FC = () => {
   return (
     <NextUIProvider>
-      <Layout>
-      <title>About - Clean and Green Philly</title>
-        <AboutPage />
-      </Layout>
+      <AboutPage />
     </NextUIProvider>
   );
 };

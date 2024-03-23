@@ -50,9 +50,9 @@ dataset = access_process(dataset)
 
 
 # Post to Mapbox
-dataset.upload_to_mapbox("vacant_properties_tiles")
+dataset.build_and_publish_pmtiles("vacant_properties_tiles")
 
+# Finalize in Postgres
 dataset.gdf.to_postgis("vacant_properties_end", conn, if_exists="replace", index=False)
-print("Vacant Properties End Uploaded to Postgres")
 conn.commit()
 conn.close()
