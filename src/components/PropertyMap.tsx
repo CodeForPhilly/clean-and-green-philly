@@ -30,17 +30,19 @@ import maplibregl, {
   CircleLayerSpecification,
   DataDrivenPropertyValueSpecification,
   IControl,
+  LngLatLike,
+  MapMouseEvent,
+  LngLat,
 } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import mapboxgl from "mapbox-gl";
 import { Protocol } from "pmtiles";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { Coordinates } from "../app/types";
+import { centroid } from "@turf/centroid";
 
 const MIN_MAP_ZOOM = 10;
 const MAX_MAP_ZOOM = 20;
-const POINT_POLYGON_THRESHOLD = 13;
 const MAX_TILE_ZOOM = 16;
 
 const layers = [
@@ -104,7 +106,6 @@ interface PropertyMapProps {
   selectedProperty: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
-  setCoordinates: Dispatch<SetStateAction<Coordinates>>;
 }
 const PropertyMap: FC<PropertyMapProps> = ({
   setFeaturesInView,
@@ -112,15 +113,11 @@ const PropertyMap: FC<PropertyMapProps> = ({
   selectedProperty,
   setSelectedProperty,
   setFeatureCount,
-  setCoordinates,
 }) => {
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
   const [zoom, setZoom] = useState<number>(13);
-  const [activeLayer, setActiveLayer] = useState<
-    "vacant_properties_tiles_polygons" | "vacant_properties_tiles_points"
-  >("vacant_properties_tiles_polygons");
   const legendRef = useRef<LegendControl | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
 
@@ -131,14 +128,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
       maplibregl.removeProtocol("pmtiles");
     };
   }, []);
-
-  useEffect(() => {
-    if (zoom < POINT_POLYGON_THRESHOLD) {
-      setActiveLayer("vacant_properties_tiles_points");
-    } else {
-      setActiveLayer("vacant_properties_tiles_polygons");
-    }
-  }, [zoom]);
 
   // filter function
   // update filters on both layers for ease of switching between layers
@@ -171,28 +160,28 @@ const PropertyMap: FC<PropertyMapProps> = ({
     map.setFilter("vacant_properties_tiles_polygons", ["all", ...mapFilter]);
   };
 
-  const onMapClick = (event: any) => {
+  const onMapClick = (e: MapMouseEvent) => {
+    handleMapClick(e.lngLat);
+  };
+
+  const moveMap = (targetPoint: LngLatLike) => {
     if (map) {
-      const features = map.queryRenderedFeatures(event.point, { layers });
+      map.easeTo({
+        center: targetPoint,
+      });
+    }
+  };
+
+  const handleMapClick = (clickPoint: LngLat) => {
+    if (map) {
+      const features = map.queryRenderedFeatures(map.project(clickPoint), {
+        layers,
+      });
 
       if (features.length > 0) {
         setSelectedProperty(features[0]);
-        setCoordinates({
-          lng: event.lngLat.lng,
-          lat: event.lngLat.lat,
-        });
-        setPopupInfo({
-          longitude: event.lngLat.lng,
-          latitude: event.lngLat.lat,
-          feature: features[0].properties,
-        });
-
-        map.easeTo({
-          center: [event.lngLat.lng, event.lngLat.lat],
-        });
       } else {
         setSelectedProperty(null);
-        setPopupInfo(null);
       }
     }
   };
@@ -294,6 +283,21 @@ const PropertyMap: FC<PropertyMapProps> = ({
       }
     };
   }, [map]);
+
+  useEffect(() => {
+    if (!map) return;
+    if (!selectedProperty) {
+      setPopupInfo(null);
+    } else {
+      const propCentroid = centroid(selectedProperty.geometry);
+      moveMap(propCentroid.geometry.coordinates as LngLatLike);
+      setPopupInfo({
+        longitude: propCentroid.geometry.coordinates[0],
+        latitude: propCentroid.geometry.coordinates[1],
+        feature: selectedProperty.properties,
+      });
+    }
+  }, [selectedProperty]);
 
   useEffect(() => {
     if (map) {
