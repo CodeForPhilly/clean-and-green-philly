@@ -13,7 +13,7 @@ const SidePanel: FC<SidePanelProps> = ({ children }) => {
     <div
       role="region"
       aria-label="results sidepanel"
-      className={`min-h-[calc(100svh-165px)] max-h-[calc(100svh-165px)] h-full overflow-y-scroll transition-all duration-300 bg-white ${
+      className={`min-h-[calc(100svh-100px)] max-h-[calc(100svh-100px)] h-full overflow-y-scroll transition-all duration-300 bg-white flex flex-col ${
         expanded ? "w-5/12" : "w-0"
       }`}
     >
