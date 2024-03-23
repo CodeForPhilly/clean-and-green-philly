@@ -1,54 +1,49 @@
 "use client";
 
-import { FilterProvider } from "@/context/FilterContext";
-import { NextUIProvider } from "@nextui-org/react";
-import { X } from "@phosphor-icons/react";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
-import { FC, useState } from "react";
-import ReactDOM from "react-dom";
+import React, { useEffect } from "react";
 import {
   FilterView,
-  Header,
   PropertyDetailSection,
   PropertyMap,
   SidePanel,
   SidePanelControlBar,
-} from "../components";
-import Hotjar from "../components/Hotjar";
-import StreetView from "../components/StreetView";
-import { Coordinates } from "../types";
+} from "@/components";
+import { FilterProvider } from "@/context/FilterContext";
+import { NextUIProvider } from "@nextui-org/react";
+import { X } from "@phosphor-icons/react";
+import { MapGeoJSONFeature } from "maplibre-gl";
+import { FC, useState } from "react";
+import ReactDOM from "react-dom";
+import StreetView from "../../components/StreetView";
+import { centroid } from "@turf/centroid";
+import { Position } from "geojson";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
-const Page: FC = () => {
-  const [featuresInView, setFeaturesInView] = useState<any[]>([]);
+const MapPage: FC = () => {
+  const [featuresInView, setFeaturesInView] = useState<MapGeoJSONFeature[]>([]);
   const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
   const [loading, setLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] =
-    useState<MapboxGeoJSONFeature | null>(null);
+    useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
-  const [coordinates, setCoordinates] = useState<Coordinates>({
-    lat: null,
-    lng: null,
-  });
+  const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (!selectedProperty) return;
+    const propCentroid = centroid(selectedProperty.geometry);
+    setStreetViewLocation(propCentroid.geometry.coordinates);
+  }, [selectedProperty]);
 
   return (
     <FilterProvider>
       <NextUIProvider>
-        <title>Map - Clean and Green Philly</title>
         <div className="flex flex-col h-screen">
-          <a
-            className="font-bold border-solid border-black bg-white transition left-0 absolute p-3 m-3 -translate-y-16 focus:translate-y-0 z-50"
-            href="#main"
-            tabIndex={0}
-          >
-            Skip to main content
-          </a>
-          <Header />
-
-          <main className="flex flex-grow overflow-hidden" id="main">
+          <div className="flex flex-grow overflow-hidden">
             <StreetViewModal isOpen={isStreetViewModalOpen}>
               <div
                 id="street-view-overlay"
@@ -63,8 +58,8 @@ const Page: FC = () => {
                   <span className="leading-0">Close</span>
                 </button>
                 <StreetView
-                  lat={coordinates.lat || ""}
-                  lng={coordinates.lng || ""}
+                  lat={streetViewLocation?.[1].toString() || ""}
+                  lng={streetViewLocation?.[0].toString() || ""}
                   yaw="180"
                   pitch="5"
                   fov="0.7"
@@ -78,7 +73,6 @@ const Page: FC = () => {
                 selectedProperty={selectedProperty}
                 setSelectedProperty={setSelectedProperty}
                 setFeatureCount={setFeatureCount}
-                setCoordinates={setCoordinates}
               />
             </div>
             <SidePanel>
@@ -129,15 +123,14 @@ const Page: FC = () => {
                 </>
               )}
             </SidePanel>
-          </main>
-          <Hotjar />
+          </div>
         </div>
       </NextUIProvider>
     </FilterProvider>
   );
 };
 
-export default Page;
+export default MapPage;
 
 const StreetViewModal = ({
   children,

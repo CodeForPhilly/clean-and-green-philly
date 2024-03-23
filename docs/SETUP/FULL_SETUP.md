@@ -24,7 +24,7 @@ If you are running Windows, you will need to [install NVM for Windows](https://g
 
 1. Navigate to [our GitHub repository](https://github.com/CodeForPhilly/vacant-lots-proj).
 2. Create a fork of the repository by clicking the "Fork" button in the top right corner of the page. This will create a copy of the repository in your own GitHub account.
-2. Clone your fork of the repository to your local machine using `git clone`.
+3. Clone your fork of the repository to your local machine using `git clone`.
 
 Note: make sure to keep your fork up to date with the original repository by following the instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo#keep-your-fork-synced).
 
@@ -110,6 +110,10 @@ In the terminal, use the `cd` command to navigate to your repository location, a
 
 Finally, it's time to run the Nextjs app. Navigate to the root directory of the repository. Install dependencies by running `npm i`. Then, run the development server with `npm run dev`. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Congrats! You're all set up.
 
+### MapTiler
+
+You'll need to set up a free [MapTiler](https://www.maptiler.com/) and get an API key. Once you have this, set it as en environment variable called `NEXT_PUBLIC_MAPTILER_KEY`.
+
 #### Formatting
 
 For js/ts, install [Prettier](https://prettier.io/) and enable it for your [editor](https://prettier.io/docs/en/editors.html). For VSCode, enable [Format on Save](https://www.robinwieruch.de/how-to-use-prettier-vscode/) for best experience.
@@ -119,3 +123,7 @@ For Python, `black` will run automatically in `docker-compose` when the main scr
 ```
 docker-compose run formatter
 ```
+
+#### Google Cloud
+
+The map data is converted to the [pmtiles](https://docs.protomaps.com/pmtiles/) format and served from Google Cloud. For access to production credentials, contact the project lead. If you'd like to test the tile build locally, create your own credentials using their free trial.

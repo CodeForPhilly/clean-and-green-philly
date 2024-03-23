@@ -45,6 +45,13 @@
 @layer base {
   html {
     @apply font-body;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   /* Fallback variables for browsers that don't support clamp */
@@ -120,17 +127,22 @@
     font-weight: regular;
   }
 
+  a.default {
+    @apply underline text-blue hover:text-blue-800 visited:text-purple-600;
+  }
+
   .iconLink {
     @apply text-gray-900;
     @apply items-center;
     @apply items-center;
-    @apply active:bg-[#E9FFE5];
+    @apply active:bg-[#C2F5BA];
     @apply active:text-green-700;
     @apply focus:text-green-700;
     @apply focus:bg-[#E9FFE5];
-    @apply hover:bg-gray-100;
     @apply bg-color-none;
     @apply hover:bg-gray-10;
+    @apply rounded-medium;
+    @apply max-sm:hover:bg-[#ffffff];
   }
 
   .activeIconLinkNav {
@@ -138,6 +150,7 @@
     @apply relative;
     @apply h-full;
     @apply items-center;
+    @apply rounded-medium
     @apply data-[active=true]:bottom-0;
     @apply data-[active=true]:left-0;
     @apply data-[active=true]:right-0;
@@ -146,6 +159,25 @@
     @apply data-[active=true]:bg-[#E9FFE5];
     @apply data-[active=true]:text-[#E9FFE5];
     @apply data-[active=true]:rounded-medium;
+  }
+  .mobileIconLinkNav {
+    @apply px-0;
+    @apply text-base;
+    @apply max-h-52;
+    @apply overflow-hidden;
+    @apply fixed;
+    @apply left-2/4;
+    @apply top-20;
+    @apply w-full;
+    @apply z-50;
+    @apply shadow-2xl;
+    @apply rounded-md;
+    @apply border-1;
+    @apply border-gray-200;
+    @apply bg-gray-0;
+  }
+  .mobileIconLinkNav:hover {
+    @apply bg-gray-0;
   }
 }
 
@@ -191,9 +223,37 @@ a .bg-color-none {
 .active-state-nav {
   color: #0c5c00;
   background-color: #e9ffe5;
+  border-radius: 12px;
+  justify-content: left;
 }
 
 .active-state-nav:hover {
   color: #0c5c00;
   background-color: #c2f5ba;
+  border-radius: 12px;
+}
+
+/* consolidating styles for filter control tag buttons */
+.tagDefault {
+  @apply h-6 px-2 py-0.5 body-sm bg-gray-100 text-gray-900;
+}
+
+.tagDefault:hover {
+  @apply ease-in h-6 bg-gray-200;
+}
+
+.tagDefault:active {
+  @apply ease-in h-6 bg-gray-300;
+}
+
+.tagSelected {
+  @apply h-6 px-2 py-0.5 body-sm bg-blue-200 text-blue-800;
+}
+
+.tagSelected:hover {
+  @apply ease-in h-6 bg-blue-300;
+}
+
+.tagSelected:active {
+  @apply ease-in h-6 bg-blue-400;
 }
