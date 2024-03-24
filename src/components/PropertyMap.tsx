@@ -7,13 +7,12 @@ import React, {
   useRef,
   Dispatch,
   SetStateAction,
+  ReactElement,
 } from "react";
 import mapboxgl, { Map as MapboxMap, PointLike } from "mapbox-gl";
 import { Polygon } from "geojson";
 import { mapboxAccessToken } from "../config/config";
 import { useFilter } from "@/context/FilterContext";
-import LegendControl from "mapboxgl-legend";
-import "mapboxgl-legend/dist/style.css";
 import Map, {
   Source,
   Layer,
@@ -30,6 +29,12 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import ZoomModal from "./ZoomModal";
 import { Coordinates } from "../app/types";
+import { MapLegend, MapLegendControl } from "./MapLegend";
+import { createPortal } from "react-dom";
+import { Tooltip } from "@nextui-org/react";
+import { Info } from "@phosphor-icons/react";
+
+import "../app/mapLegend.css";
 
 const layerStyle: FillLayer = {
   id: "vacant_properties_tiles",
@@ -61,12 +66,15 @@ const layerStyle: FillLayer = {
   },
 };
 
+let summaryInfo: ReactElement | null = null;
+
 const MapControls = () => (
   <>
     <GeolocateControl position="bottom-right" />
     <FullscreenControl position="bottom-right" />
     <NavigationControl showCompass={false} position="bottom-right" />
     <ScaleControl />
+    <MapLegendControl {...layerStyle} />
   </>
 );
 
@@ -90,14 +98,13 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MapboxMap | null>(null);
   const [zoom, setZoom] = useState<number>(13);
-  const legendRef = useRef<LegendControl | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
 
   // filter function
   const updateFilter = () => {
     if (!map) return;
 
-    const isAnyFilterEmpty = Object.values(appFilter).some(filterItem => {
+    const isAnyFilterEmpty = Object.values(appFilter).some((filterItem) => {
       return filterItem.values.length === 0;
     });
 
@@ -181,26 +188,19 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   useEffect(() => {
     if (map) {
-      if (!legendRef.current) {
-        legendRef.current = new LegendControl();
-        map.addControl(legendRef.current, "bottom-left");
-      }
-    }
-
-    return () => {
-      if (map && legendRef.current) {
-        map.removeControl(legendRef.current);
-        legendRef.current = null;
-      }
-    };
-  }, [map]);
-
-  useEffect(() => {
-    if (map) {
-      // Add Legend Control
-      if (!legendRef.current) {
-        legendRef.current = new LegendControl();
-        map.addControl(legendRef.current, "bottom-left");
+      // Add info icon
+      const legendSummary = document.getElementById("legend-summary");
+      if (legendSummary) {
+        summaryInfo = createPortal(
+          <Tooltip content="We prioritize properties based on how much they can reduce gun violence considering the vacancy, gun violence, cleanliness, and tree canopy.">
+            <Info
+              alt="Priority Info"
+              className="text-gray-500 cursor-pointer"
+              tabIndex={0}
+            />
+          </Tooltip>,
+          legendSummary
+        );
       }
 
       // Add Geocoder
@@ -218,7 +218,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
         map.addControl(geocoderRef.current, "top-right");
 
-        geocoderRef.current.on("result", e => {
+        geocoderRef.current.on("result", (e) => {
           map.flyTo({
             center: e.result.center,
             zoom: 16,
@@ -228,12 +228,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
     }
 
     return () => {
-      // Remove Legend Control
-      if (map && legendRef.current) {
-        map.removeControl(legendRef.current);
-        legendRef.current = null;
-      }
-
       // Remove Geocoder
       if (map && geocoderRef.current) {
         map.removeControl(geocoderRef.current);
@@ -256,7 +250,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         layers: ["vacant_properties_tiles"],
       });
       const mapItem = features.find(
-        feature => feature.properties?.OPA_ID === id
+        (feature) => feature.properties?.OPA_ID === id
       );
 
       if (mapItem != null) {
@@ -331,14 +325,14 @@ const PropertyMap: FC<PropertyMapProps> = ({
           zoom,
         }}
         mapStyle="mapbox://styles/mapbox/light-v10"
-        onMouseEnter={e => changeCursor(e, "pointer")}
-        onMouseLeave={e => changeCursor(e, "default")}
+        onMouseEnter={(e) => changeCursor(e, "pointer")}
+        onMouseLeave={(e) => changeCursor(e, "default")}
         onClick={onMapClick}
         interactiveLayerIds={["vacant_properties_tiles"]}
-        onLoad={e => {
+        onLoad={(e) => {
           setMap(e.target);
         }}
-        onSourceData={e => {
+        onSourceData={(e) => {
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}
@@ -369,6 +363,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           <Layer {...layerStyle} />
         </Source>
       </Map>
+      {summaryInfo}
     </div>
   );
 };
