@@ -24,7 +24,7 @@ function IconLink({ icon, text, href }: IconLinkProps) {
         href={href}
         role="link"
         // *only include if there will be no text link present* aria-label={text}
-        startContent={<div className="w-5">{icon}</div>}
+        startContent={<div className="linkIcon">{icon}</div>}
         className={
           pathname === href ? "active-state-nav" : "iconLink bg-color-none"
         }

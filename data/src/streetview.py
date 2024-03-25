@@ -4,7 +4,6 @@ from urllib.parse import quote
 from google.cloud import storage
 import pandas as pd
 from config.psql import conn
-import time
 
 
 # Configure Google

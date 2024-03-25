@@ -6,9 +6,9 @@ import {
   NavbarBrand,
   NavbarContent,
   NavbarMenu,
-  NavbarMenuToggle
+  NavbarMenuToggle,
 } from "@nextui-org/react";
-import { Hand, Info, List, MapPin } from "@phosphor-icons/react";
+import { PiBinoculars, PiKey, PiTree, PiInfo, PiList } from "react-icons/pi";
 import Image from "next/image";
 import React, { FC } from "react";
 import IconLink from "./IconLink";
@@ -38,27 +38,30 @@ const MobileNav: FC = () => {
           className="sm:hidden flex-end w-fit"
           icon={
             <div className="flex">
-              <List className="h-6 w-6" /> Menu
+              <PiList className="h-6 w-6" /> Menu
             </div>
           }
         ></NavbarMenuToggle>
       </NavbarContent>
 
-      <NavbarMenu className="left-2/4 z-50 px-0 w-fit mobileIconLinkNav">
+      <NavbarMenu className="left-2/4 z-75 px-0 w-fit mobileIconLinkNav">
         <IconLink
-          icon={<MapPin className="h-6 w-6" />}
+          icon={<PiBinoculars className="h-6 w-6" />}
           text="Find Properties"
           href="/map"
         />
-
         <IconLink
-          icon={<Hand className="h-6 w-6" />}
-          text="Take Action"
-          href="/take-action-overview"
+          icon={<PiKey className="h-6 w-6" />}
+          text="Get Access"
+          href="/get-access"
         />
-
         <IconLink
-          icon={<Info className="h-6 w-6" />}
+          icon={<PiTree className="h-6 w-6" />}
+          text="Transform"
+          href="/transform-property"
+        />
+        <IconLink
+          icon={<PiInfo className="h-6 w-6" />}
           text="About"
           href="/about"
         />

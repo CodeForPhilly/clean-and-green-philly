@@ -1,36 +1,43 @@
 "use client";
 
-import { Coordinates } from "@/app/types";
+import React, { useEffect } from "react";
 import {
   FilterView,
   PropertyDetailSection,
   PropertyMap,
   SidePanel,
-  SidePanelControlBar
+  SidePanelControlBar,
 } from "@/components";
 import { FilterProvider } from "@/context/FilterContext";
 import { NextUIProvider } from "@nextui-org/react";
 import { X } from "@phosphor-icons/react";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
+import { MapGeoJSONFeature } from "maplibre-gl";
 import { FC, useState } from "react";
 import ReactDOM from "react-dom";
 import StreetView from "../../components/StreetView";
+import { centroid } from "@turf/centroid";
+import { Position } from "geojson";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
 const MapPage: FC = () => {
-  const [featuresInView, setFeaturesInView] = useState<any[]>([]);
+  const [featuresInView, setFeaturesInView] = useState<MapGeoJSONFeature[]>([]);
   const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
   const [loading, setLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] =
-    useState<MapboxGeoJSONFeature | null>(null);
+    useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
-  const [coordinates, setCoordinates] = useState<Coordinates>({
-    lat: null,
-    lng: null
-  });
+  const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (!selectedProperty) return;
+    const propCentroid = centroid(selectedProperty.geometry);
+    setStreetViewLocation(propCentroid.geometry.coordinates);
+  }, [selectedProperty]);
 
   return (
     <FilterProvider>
@@ -51,8 +58,8 @@ const MapPage: FC = () => {
                   <span className="leading-0">Close</span>
                 </button>
                 <StreetView
-                  lat={coordinates.lat || ""}
-                  lng={coordinates.lng || ""}
+                  lat={streetViewLocation?.[1].toString() || ""}
+                  lng={streetViewLocation?.[0].toString() || ""}
                   yaw="180"
                   pitch="5"
                   fov="0.7"
@@ -66,7 +73,6 @@ const MapPage: FC = () => {
                 selectedProperty={selectedProperty}
                 setSelectedProperty={setSelectedProperty}
                 setFeatureCount={setFeatureCount}
-                setCoordinates={setCoordinates}
               />
             </div>
             <SidePanel>
@@ -128,7 +134,7 @@ export default MapPage;
 
 const StreetViewModal = ({
   children,
-  isOpen
+  isOpen,
 }: {
   children: React.ReactNode;
   isOpen: boolean;

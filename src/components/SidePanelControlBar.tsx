@@ -37,7 +37,8 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       {/* Left-aligned content: Total Properties in View */}
       <div className="px-4 py-2">
         <h1 className="body-md">
-          <span className="font-bold">{featureCount}</span> Properties in View
+          <span className="font-bold">{featureCount.toLocaleString()}</span>{" "}
+          Properties in View
         </h1>
       </div>
 
@@ -49,7 +50,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       >
         <Button
           onPress={() => handleClick("filter")}
-          startContent={<Funnel className="h-6 w-6" />}
+          startContent={<Funnel className="iconButton" />}
           className="bg-white"
         >
           <span className="body-md">Filter</span>
@@ -59,7 +60,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           <Button
             aria-label="View"
             onPress={() => handleClick("detail")}
-            startContent={<Table className="h-6 w-6" />}
+            startContent={<Table className="iconButton" />}
             className="bg-white"
           ></Button>
         </Tooltip>
@@ -68,7 +69,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           <Button
             aria-label="Download"
             onPress={() => handleClick("download")}
-            startContent={<DownloadSimple className="h-6 w-6" />}
+            startContent={<DownloadSimple className="iconButton" />}
             className="bg-white"
           ></Button>
         </Tooltip>
