@@ -3,6 +3,7 @@
 import React, { useEffect } from "react";
 import {
   FilterView,
+  Footer,
   PropertyDetailSection,
   PropertyMap,
   SidePanel,
@@ -30,7 +31,7 @@ const MapPage: FC = () => {
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
   const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
-    null
+    null,
   );
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const MapPage: FC = () => {
   return (
     <FilterProvider>
       <NextUIProvider>
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col">
           <div className="flex flex-grow overflow-hidden">
             <StreetViewModal isOpen={isStreetViewModalOpen}>
               <div
@@ -81,7 +82,7 @@ const MapPage: FC = () => {
               ) : (
                 <>
                   {!selectedProperty && (
-                    <div className="pt-2 sticky top-0 z-10">
+                    <div className="sticky top-0 z-10">
                       <SidePanelControlBar
                         currentView={currentView}
                         setCurrentView={setCurrentView}
@@ -91,7 +92,7 @@ const MapPage: FC = () => {
                     </div>
                   )}
                   {currentView === "download" ? (
-                    <div className="p-4 mt-8 text-center">
+                    <div className="p-4 mt-8 text-center flex-grow">
                       <h2 className="text-2xl font-bold mb-4">
                         Access Our Data
                       </h2>
@@ -122,6 +123,7 @@ const MapPage: FC = () => {
                   )}
                 </>
               )}
+              <Footer />
             </SidePanel>
           </div>
         </div>
@@ -142,6 +144,6 @@ const StreetViewModal = ({
   if (!isOpen) return null;
   return ReactDOM.createPortal(
     <div className="absolute inset-0 z-50 w-full h-full">{children}</div>,
-    document.body
+    document.body,
   );
 };
