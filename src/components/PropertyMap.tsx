@@ -29,12 +29,10 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import ZoomModal from "./ZoomModal";
 import { Coordinates } from "../app/types";
-import { MapLegend, MapLegendControl } from "./MapLegend";
+import { MapLegendControl } from "./MapLegend";
 import { createPortal } from "react-dom";
 import { Tooltip } from "@nextui-org/react";
 import { Info } from "@phosphor-icons/react";
-
-import "../app/mapLegend.css";
 
 const layerStyle: FillLayer = {
   id: "vacant_properties_tiles",
@@ -57,7 +55,7 @@ const layerStyle: FillLayer = {
       //"#B22222", // FireBrick
       //"Top 1%",
       //"#8B0000", // Dark Rednp
-      "#D3D3D3", // default color if none of the categories match
+      "#D3D3D3", // default color if none of the categories match;  TODO: Remove this possibly? We don't use it currently
     ],
     "fill-opacity": 0.7,
   },
@@ -74,7 +72,12 @@ const MapControls = () => (
     <FullscreenControl position="bottom-right" />
     <NavigationControl showCompass={false} position="bottom-right" />
     <ScaleControl />
-    <MapLegendControl {...layerStyle} />
+    <MapLegendControl
+      position="bottom-left"
+      source={layerStyle["source-layer"]!}
+      paint={layerStyle.paint!}
+      metadata={layerStyle.metadata}
+    />
   </>
 );
 
@@ -188,7 +191,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   useEffect(() => {
     if (map) {
-      // Add info icon
+      // Add info icon to legend on map load
       const legendSummary = document.getElementById("legend-summary");
       if (legendSummary) {
         summaryInfo = createPortal(
@@ -363,7 +366,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           <Layer {...layerStyle} />
         </Source>
       </Map>
-      {summaryInfo}
+      {summaryInfo /* Render the summary info icon using createPortal */}
     </div>
   );
 };
