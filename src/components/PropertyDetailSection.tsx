@@ -65,7 +65,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   }, [page, featuresInView]);
 
   return loading ? (
-    <div>
+    <div className="flex-grow h-full">
       {/* Center vertically in screen */}
       <div className="flex w-full justify-center p-4 mt-24">
         <p className="body-md">Loading properties</p>
@@ -82,7 +82,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     />
   ) : (
     <>
-      <div className="flex flex-wrap overflow-y-auto max-h-[calc(100vh-110px)]">
+      <div className="flex flex-wrap flex-grow h-full">
         {display === "list" ? (
           <Table
             aria-label="Property Details"
@@ -93,7 +93,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             }}
           >
             <TableHeader>
-              {tableCols.map((column) => (
+              {tableCols.map(column => (
                 <TableColumn key={column.key}>{column.label}</TableColumn>
               ))}
             </TableHeader>
@@ -104,13 +104,12 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                   onClick={() => {
                     setSelectedProperty(
                       items.find(
-                        (item) =>
-                          properties?.OPA_ID === item?.properties?.OPA_ID
-                      ) || null
+                        item => properties?.OPA_ID === item?.properties?.OPA_ID,
+                      ) || null,
                     );
                   }}
                 >
-                  {(columnKey) => (
+                  {columnKey => (
                     <TableCell>{getKeyValue(properties, columnKey)}</TableCell>
                   )}
                 </TableRow>
@@ -138,10 +137,10 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 color="secondary"
                 page={page}
                 total={pages}
-                onChange={(newPage) => setPage(newPage)}
+                onChange={newPage => setPage(newPage)}
               />
             </div>
-            <div className="flex w-full justify-center p-2">
+            <div className="flex w-full justify-center py-4 px-6">
               <p className="body-sm text-gray-500">
                 Note: only the first 100 properties can be viewed in list.
                 Filter or zoom in to a smaller area to see more detail.{" "}
