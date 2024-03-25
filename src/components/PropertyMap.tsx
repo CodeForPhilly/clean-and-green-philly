@@ -7,11 +7,10 @@ import {
   useRef,
   Dispatch,
   SetStateAction,
+  ReactElement,
 } from "react";
 import { maptilerApiKey, mapboxAccessToken } from "../config/config";
 import { useFilter } from "@/context/FilterContext";
-import LegendControl from "mapboxgl-legend";
-import "mapboxgl-legend/dist/style.css";
 import Map, {
   Source,
   Layer,
@@ -39,6 +38,12 @@ import mapboxgl from "mapbox-gl";
 import { Protocol } from "pmtiles";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
+import ZoomModal from "./ZoomModal";
+import { Coordinates } from "../app/types";
+import { MapLegendControl } from "./MapLegendControl";
+import { createPortal } from "react-dom";
+import { Tooltip } from "@nextui-org/react";
+import { Info } from "@phosphor-icons/react";
 import { centroid } from "@turf/centroid";
 
 const MIN_MAP_ZOOM = 10;
@@ -91,12 +96,16 @@ const layerStylePoints: CircleLayerSpecification = {
   },
 };
 
+// info icon in legend summary
+let summaryInfo: ReactElement | null = null;
+
 const MapControls = () => (
   <>
     <GeolocateControl position="bottom-right" />
     <FullscreenControl position="bottom-right" />
     <NavigationControl showCompass={false} position="bottom-right" />
     <ScaleControl />
+    <MapLegendControl position="bottom-left" layerStyle={layerStylePolygon} />
   </>
 );
 
@@ -118,7 +127,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
   const [zoom, setZoom] = useState<number>(13);
-  const legendRef = useRef<LegendControl | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
 
   useEffect(() => {
@@ -235,14 +243,30 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   useEffect(() => {
     if (map) {
-      // Add Legend Control
-      if (!legendRef.current) {
-        legendRef.current = new LegendControl({
-          layers: ["vacant_properties_tiles_polygons"],
-        });
-
-        // Note: this is a hack to get around the typescript error because we are using incompatible packages. We should write our own legend
-        map.addControl(legendRef.current as unknown as IControl, "bottom-left");
+      // Add info icon to legend on map load
+      const legendSummary = document.getElementById("legend-summary");
+      if (legendSummary) {
+        const infoString: string =
+          "We prioritize properties based on how much they can reduce gun violence considering the vacancy, gun violence, cleanliness, and tree canopy.";
+        summaryInfo = createPortal(
+          <Tooltip
+            showArrow
+            placement="top-start"
+            color="primary"
+            content={infoString}
+            classNames={{
+              base: ["before:-translate-x-2"],
+              content: ["max-w-96 -translate-x-2"],
+            }}
+          >
+            <Info
+              alt="Priority Info"
+              className="text-gray-500 cursor-pointer"
+              tabIndex={0}
+            />
+          </Tooltip>,
+          legendSummary
+        );
       }
 
       // Add Geocoder
@@ -270,12 +294,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
     }
 
     return () => {
-      // Remove Legend Control
-      if (map && legendRef.current) {
-        map.removeControl(legendRef.current as unknown as IControl);
-        legendRef.current = null;
-      }
-
       // Remove Geocoder
       if (map && geocoderRef.current) {
         map.removeControl(geocoderRef.current as unknown as IControl);
@@ -358,6 +376,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           <Layer {...layerStylePolygon} />
         </Source>
       </Map>
+      {summaryInfo /* Render the summary info icon using createPortal */}
     </div>
   );
 };

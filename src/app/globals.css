@@ -199,6 +199,7 @@
 }
 
 /* Crude way to hide the last "Other" legend item. */
+/* TODO: If we decide to get rid of the default option in the legend, we can remove this */
 .mapboxgl-ctrl-legend-pane ul.list li:last-child {
   display: none;
 }
