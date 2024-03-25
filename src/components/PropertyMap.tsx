@@ -40,7 +40,7 @@ import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import ZoomModal from "./ZoomModal";
 import { Coordinates } from "../app/types";
-import { MapLegendControl } from "./MapLegend";
+import { MapLegendControl } from "./MapLegendControl";
 import { createPortal } from "react-dom";
 import { Tooltip } from "@nextui-org/react";
 import { Info } from "@phosphor-icons/react";

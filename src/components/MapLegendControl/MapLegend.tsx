@@ -2,42 +2,12 @@ import { ExpressionName } from "mapbox-gl";
 import React, { ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { FillLayerSpecification } from "maplibre-gl";
-import { ControlPosition, IControl, MapboxMap, useControl } from "react-map-gl";
+import { IControl, MapboxMap } from "react-map-gl";
 
 import "../app/mapLegend.css";
 
-interface LegendOptions {
-  position: ControlPosition;
-  layerStyle: FillLayerSpecification;
-}
-
 interface LayerStyleMetadata {
   name: string;
-}
-
-class MapLegendControlClass implements IControl {
-  private _map: MapboxMap | undefined;
-  private _container: HTMLElement;
-
-  constructor(layerStyle: FillLayerSpecification) {
-    this._container = document.createElement("div");
-    this._container.classList.add("mapboxgl-ctrl", "mapboxgl-ctrl-legend");
-    // render legend as static markup so it can be rendered with map
-    this._container.innerHTML = renderToStaticMarkup(
-      <MapLegend {...layerStyle} />
-    );
-  }
-
-  // able to add event listeners here for interactivity with layer
-  onAdd = (map: MapboxMap) => {
-    this._map = map;
-    return this._container;
-  };
-
-  onRemove = () => {
-    this._container.parentNode?.removeChild(this._container);
-    this._map = undefined;
-  };
 }
 
 /**
@@ -123,9 +93,27 @@ function MapLegend(layerStyle: FillLayerSpecification) {
   );
 }
 
-export function MapLegendControl(props: LegendOptions) {
-  useControl(() => new MapLegendControlClass(props.layerStyle), {
-    position: props.position,
-  });
-  return null;
+export class MapLegendControlClass implements IControl {
+  private _map: MapboxMap | undefined;
+  private _container: HTMLElement;
+
+  constructor(layerStyle: FillLayerSpecification) {
+    this._container = document.createElement("div");
+    this._container.classList.add("mapboxgl-ctrl", "mapboxgl-ctrl-legend");
+    // render legend as static markup so it can be rendered with map
+    this._container.innerHTML = renderToStaticMarkup(
+      <MapLegend {...layerStyle} />
+    );
+  }
+
+  // able to add event listeners here for interactivity with layer
+  onAdd = (map: MapboxMap) => {
+    this._map = map;
+    return this._container;
+  };
+
+  onRemove = () => {
+    this._container.parentNode?.removeChild(this._container);
+    this._map = undefined;
+  };
 }
