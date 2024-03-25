@@ -24,6 +24,7 @@ function parseBlocks(
     case "fill-color": {
       if (value && Array.isArray(value) && value.length > 0) {
         const [name, ...args] = value;
+
         switch (name as ExpressionName) {
           case "match": {
             const [getter, ...paneLabels] = args;
@@ -49,7 +50,6 @@ function parseBlocks(
                 </li>
               );
             }
-
             return elements;
           }
           default:
