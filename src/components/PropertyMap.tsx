@@ -105,12 +105,7 @@ const MapControls = () => (
     <FullscreenControl position="bottom-right" />
     <NavigationControl showCompass={false} position="bottom-right" />
     <ScaleControl />
-    <MapLegendControl
-      position="bottom-left"
-      source={layerStylePolygon["source-layer"]!}
-      paint={layerStylePolygon.paint!}
-      metadata={layerStylePolygon.metadata}
-    />
+    <MapLegendControl position="bottom-left" layerStyle={layerStylePolygon} />
   </>
 );
 

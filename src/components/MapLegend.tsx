@@ -1,27 +1,30 @@
-import { ExpressionName, FillPaint } from "mapbox-gl";
+import { ExpressionName } from "mapbox-gl";
 import React, { ReactElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { FillLayerSpecification } from "maplibre-gl";
 import { ControlPosition, IControl, MapboxMap, useControl } from "react-map-gl";
 
 import "../app/mapLegend.css";
 
 interface LegendOptions {
   position: ControlPosition;
-  source: string;
-  paint: FillPaint;
-  metadata: { [key: string]: string };
+  layerStyle: FillLayerSpecification;
+}
+
+interface LayerStyleMetadata {
+  name: string;
 }
 
 class MapLegendControlClass implements IControl {
   private _map: MapboxMap | undefined;
   private _container: HTMLElement;
 
-  constructor(options: LegendOptions) {
+  constructor(layerStyle: FillLayerSpecification) {
     this._container = document.createElement("div");
     this._container.classList.add("mapboxgl-ctrl", "mapboxgl-ctrl-legend");
     // render legend as static markup so it can be rendered with map
     this._container.innerHTML = renderToStaticMarkup(
-      <MapLegend {...options} />
+      <MapLegend {...layerStyle} />
     );
   }
 
@@ -91,11 +94,12 @@ function parseBlocks(
 
 /**
  *
- * @param {LegendOptions} props - data for legend
+ * @param {FillLayerSpecification} layerStyle - data for legend
  * @returns - JSX of legend UI to be rendered in markup
  */
-function MapLegend(props: LegendOptions) {
-  const paneBlocks = Object.entries({ ...props.paint }).reduce(
+function MapLegend(layerStyle: FillLayerSpecification) {
+  // generate label panes for legend
+  const paneBlocks = Object.entries({ ...layerStyle.paint }).reduce(
     (acc, [attribute, value]) => {
       const blocks = parseBlocks(attribute, value);
       blocks?.forEach((block: ReactElement) => acc.push(block));
@@ -107,10 +111,12 @@ function MapLegend(props: LegendOptions) {
   return (
     <div className="panes" style={{ display: "block" }}>
       <details
-        className={`mapboxgl-ctrl-legend-pane mapboxgl-ctrl-legend-pane--${props.source}`}
+        className={`mapboxgl-ctrl-legend-pane mapboxgl-ctrl-legend-pane--${layerStyle.source}`}
         open
       >
-        <summary id="legend-summary">{props.metadata.name}</summary>
+        <summary id="legend-summary">
+          {(layerStyle.metadata as LayerStyleMetadata).name}
+        </summary>
         <ul className="legend-list list list--color">{paneBlocks}</ul>
       </details>
     </div>
@@ -118,7 +124,7 @@ function MapLegend(props: LegendOptions) {
 }
 
 export function MapLegendControl(props: LegendOptions) {
-  useControl(() => new MapLegendControlClass(props), {
+  useControl(() => new MapLegendControlClass(props.layerStyle), {
     position: props.position,
   });
   return null;
