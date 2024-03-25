@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { FillLayerSpecification } from "maplibre-gl";
 import { IControl, MapboxMap } from "react-map-gl";
 
-import "../app/mapLegend.css";
+import "../../app/mapLegend.css";
 
 interface LayerStyleMetadata {
   name: string;
