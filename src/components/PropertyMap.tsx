@@ -246,8 +246,19 @@ const PropertyMap: FC<PropertyMapProps> = ({
       // Add info icon to legend on map load
       const legendSummary = document.getElementById("legend-summary");
       if (legendSummary) {
+        const infoString: string =
+          "We prioritize properties based on how much they can reduce gun violence considering the vacancy, gun violence, cleanliness, and tree canopy.";
         summaryInfo = createPortal(
-          <Tooltip content="We prioritize properties based on how much they can reduce gun violence considering the vacancy, gun violence, cleanliness, and tree canopy.">
+          <Tooltip
+            showArrow
+            placement="top-start"
+            color="primary"
+            content={infoString}
+            classNames={{
+              base: ["before:-translate-x-2"],
+              content: ["max-w-96 -translate-x-2"],
+            }}
+          >
             <Info
               alt="Priority Info"
               className="text-gray-500 cursor-pointer"
