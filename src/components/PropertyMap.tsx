@@ -331,7 +331,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   // map load
   return (
-    <div className="customized-map relative h-full w-full">
+    <div className="customized-map relative max-sm:min-h-[calc(100svh-100px)] max-sm:max-h-[calc(100svh-100px) h-full w-full">
       <Map
         mapLib={maplibregl as any}
         initialViewState={{

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { FC, useRef, useState, useEffect } from "react";
 import {
   FilterView,
   Footer,
@@ -12,7 +12,6 @@ import {
 import { FilterProvider } from "@/context/FilterContext";
 import { NextUIProvider } from "@nextui-org/react";
 import { X } from "@phosphor-icons/react";
-import { FC, useRef, useState, useEffect } from "react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import ReactDOM from "react-dom";
 import StreetView from "../../components/StreetView";
@@ -79,7 +78,7 @@ const MapPage: FC = () => {
 
   const controlBarProps = {currentView, featureCount, loading, smallScreenMode, updateCurrentView, updateSmallScreenMode};
   const isVisible = (mode : string) => (smallScreenMode === mode ? "" : "max-sm:hidden");
-  
+  console.log(smallScreenMode)
 
   useEffect(() => {
     if (!selectedProperty) return;

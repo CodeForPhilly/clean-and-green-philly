@@ -1,12 +1,12 @@
 "use client";
 
 import React, { FC, useState, useEffect, useRef } from "react";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
+import { MapGeoJSONFeature } from "maplibre-gl";
 
 interface SidePanelProps {
   children?: React.ReactNode;
   isVisible: string;
-  selectedProperty: MapboxGeoJSONFeature | null;
+  selectedProperty: MapGeoJSONFeature | null;
 }
 
 const SidePanel: FC<SidePanelProps> = ({ children, isVisible, selectedProperty }) => {

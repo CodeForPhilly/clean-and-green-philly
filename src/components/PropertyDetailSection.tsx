@@ -14,12 +14,8 @@ import {
 } from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
 import SinglePropertyDetail from "./SinglePropertyDetail";
-<<<<<<< HEAD
-import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { BarClickOptions } from "@/app/map/page";
-=======
 import { MapGeoJSONFeature } from "maplibre-gl";
->>>>>>> staging
 
 const tableCols = [
   {
