@@ -32,8 +32,20 @@ const config: Config = {
           400: "#57BEE7",
           300: "#84D5F5",
           200: "#BAE4F5",
+          600: "#0070F0",
         },
+        yellow: {
+          800: "#443500",
+          200: "#FFF0BB",
+        },
+        red: {
+          200: "#F7C4BC",
+          800: "#440900",
+        },
+
         green: {
+          800: "#094400",
+          200: "#C2F5BA",
           100: "#E9FFE5",
           80: "#00A40C",
           60: "#35C03F",
@@ -45,9 +57,9 @@ const config: Config = {
           20: "#F4E4D4",
         },
         priority: {
-          high: "#ff4500",
-          medium: "#ffd700",
-          low: "#b0e57c",
+          high: "#F9492C",
+          medium: "#F1C936",
+          low: "#95E089",
         },
       },
       backgroundImage: {

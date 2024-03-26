@@ -2,7 +2,7 @@ const Footer = () => (
   <div className="flex flex-col">
     <footer className="px-6 h-16 flex flex-grow w-full items-center">
       <nav className="w-full" aria-label="content info">
-        <ul className="flex justify-between items-center w-full backdrop-saturate-150 bg-background/70">
+        <ul className="flex flex-wrap gap-x-4 justify-between items-center w-full backdrop-saturate-150 bg-background/70">
           <li>
             <span className="base-sm text-gray-600">
               © 2024 Clean & Green Philly

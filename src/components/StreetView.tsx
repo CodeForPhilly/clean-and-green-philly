@@ -52,6 +52,7 @@ const StreetView: React.FC<StreetViewProps> = ({
       style={{ border: 0 }}
       allowFullScreen={false}
       loading="lazy"
+      title="Street View"
     ></iframe>
   );
 };
