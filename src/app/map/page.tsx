@@ -126,50 +126,49 @@ const MapPage: FC = () => {
               />
             </div>
             <SidePanel isVisible={isVisible("properties")} selectedProperty={selectedProperty}>
-              {currentView === "filter" ? (
-                <FilterView updateCurrentView={updateCurrentView} />
-              ) : (
-                <>
-                  {!selectedProperty && (
-                    <div className="h-14 sticky top-0 z-10">
-                      <SidePanelControlBar {...controlBarProps} />
-                    </div>
-                  )}
-                  {currentView === "download" ? (
-                    <div className="p-4 mt-8 text-center flex-grow">
-                      <h2 className="text-2xl font-bold mb-4">
-                        Access Our Data
-                      </h2>
-                      <p>
-                        If you are interested in accessing the data behind this
-                        dashboard, please reach out to us at
-                        <a
-                          href="mailto:cleanandgreenphl@gmail.com"
-                          className="text-blue-600 hover:text-blue-800 underline"
-                        >
-                          {" "}
-                          cleanandgreenphl@gmail.com
-                        </a>
-                        . Let us know who you are and why you want the data. We
-                        are happy to share the data with anyone with
-                        community-oriented interests.
-                      </p>
-                    </div>
-                  ) : (
-                    <PropertyDetailSection
-                      featuresInView={featuresInView}
-                      display={currentView as "detail" | "list"}
-                      loading={loading}
-                      selectedProperty={selectedProperty}
-                      setSelectedProperty={setSelectedProperty}
-                      setIsStreetViewModalOpen={setIsStreetViewModalOpen}
-                      smallScreenMode={smallScreenMode}
-                      updateCurrentView={updateCurrentView}
-                    />
-                  )}
-                </>
+              {!selectedProperty && (
+                <div className="h-14 sticky top-0 z-10">
+                  <SidePanelControlBar {...controlBarProps} />
+                </div>
               )}
-              <Footer />
+              {currentView === "download" ? 
+                (
+                  <div className="p-4 mt-8 text-center">
+                    <h2 className="text-2xl font-bold mb-4">
+                      Access Our Data
+                    </h2>
+                    <p>
+                      If you are interested in accessing the data behind this
+                      dashboard, please reach out to us at
+                      <a
+                        href="mailto:cleanandgreenphl@gmail.com"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        {" "}
+                        cleanandgreenphl@gmail.com
+                      </a>
+                      . Let us know who you are and why you want the data. We
+                      are happy to share the data with anyone with
+                      community-oriented interests.
+                    </p>
+                  </div>
+                ) 
+              : 
+                (currentView === 'filter' ?
+                  <FilterView updateCurrentView={updateCurrentView} />
+                :
+                  <PropertyDetailSection
+                    featuresInView={featuresInView}
+                    display={currentView as "detail" | "list"}
+                    loading={loading}
+                    selectedProperty={selectedProperty}
+                    setSelectedProperty={setSelectedProperty}
+                    setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+                    smallScreenMode={smallScreenMode}
+                    updateCurrentView={updateCurrentView}
+                  />
+                )
+              }
             </SidePanel>
           </div>
         </div>
