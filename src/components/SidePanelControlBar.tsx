@@ -50,22 +50,22 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         aria-label="controls"
       >
         <Button
-          onPress={() => updateCurrentView("filter")}
+          onPress={() => {currentView !== "filter" && updateCurrentView("filter")}}
           startContent={<Funnel className="h-6 w-6" />}
-          className="bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem]"
+          className={`bg-white max-lg:min-w-[4rem] ${currentView === "filter" ? "bg-[#e9ffe5] text-[#0c5c00]" : "hover:bg-gray-100"}`}
         >
           <span className="max-lg:hidden body-md">Filter</span>
         </Button>
         <Button
           onPress={() => updateCurrentView("detail")}
           startContent={ <Table className="h-6 w-6" />}
-          className={`bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
+          className={`bg-white hover:bg-gray-100 max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         >
         </Button>
         <Button
           onPress={() => updateCurrentView("download")}
           startContent={<DownloadSimple className="h-6 w-6" /> }
-          className={`bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
+          className={`bg-white hover:bg-gray-100 max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         ></Button>
       </div>
     </div>
