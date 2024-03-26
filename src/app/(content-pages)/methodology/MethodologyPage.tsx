@@ -1,4 +1,5 @@
-import { Image } from "@nextui-org/react";
+import Image from "next/image";
+import imageKde from "@/images/kde_map.png";
 
 export default function MethodologyPage() {
   return (
@@ -156,7 +157,7 @@ export default function MethodologyPage() {
 
           <div className="mt-1 flex items-center justify-center">
             <Image
-              src="/kde_map.png"
+              src={imageKde}
               alt="A map of gun crime density in Philadelphia in March of 2023"
               width={700}
               height={700}

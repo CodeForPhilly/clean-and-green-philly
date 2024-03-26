@@ -1,35 +1,37 @@
 import { InfoGraphicSection } from "@/components/InfoGraphicSection";
 import { NumberedIconCard } from "@/components/NumberedIconCard";
 import imageCleaning from "@/images/cleaningLot.jpg";
+import imageDirty from "@/images/dirtyLot.jpg";
 import imageGunCrimes from "@/images/graphic-guncrimes.png";
-import imageResearch from "@/images/graphic-research.png";
+import imageResearch from "@/images/graphic-research-home.png";
 import imageGreened from "@/images/greenedLot.jpg";
 import imageStep1 from "@/images/landing-step-1.png";
 import imageStep2 from "@/images/landing-step-2.png";
 import imageStep3 from "@/images/landing-step-3.png";
-import { Button, Image, Link } from "@nextui-org/react";
+import { Button, Link } from "@nextui-org/react";
+import Image from "next/image";
+import { FC } from "react";
 import {
+  PiArrowDown,
   PiArrowRight,
   PiBinoculars,
   PiKey,
-  PiTree,
-  PiArrowDown,
+  PiTree
 } from "react-icons/pi";
-import { FC } from "react";
 
 const images = [
   {
-    src: "/dirtyLot.jpg",
-    alt: "Dirty lot in Philadelphia",
+    data: imageDirty,
+    alt: "Dirty lot in Philadelphia"
   },
   {
-    src: "/cleaningLot.jpg",
-    alt: "Cleaning lot in Philadelphia",
+    data: imageCleaning,
+    alt: "Cleaning lot in Philadelphia"
   },
   {
-    src: "/greenedLot.jpg",
-    alt: "Greened lot in Philadelphia",
-  },
+    data: imageGreened,
+    alt: "Greened lot in Philadelphia"
+  }
 ];
 
 const LandingPage: FC = () => {
@@ -50,21 +52,21 @@ const LandingPage: FC = () => {
               clean and green vacant properties to reduce gun violence.
             </p>
           </div>
-          <Button href="#guncrimes" as={Link} className="bg-gray-200 iconLink">
-            <PiArrowDown className="w-5 h-5" />
+          <Button href="#guncrimes" as={Link} className="bg-gray-200">
+            <PiArrowDown className="iconButton-w-5" />
             <span className="body-md">Learn How</span>
           </Button>
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
-        {images.map(({ src, alt }, index) => (
+        {images.map(({ data, alt }, index) => (
           <Image
-            key={src}
-            src={src}
+            key={data.src}
+            src={data}
             alt={alt}
-            width="100%"
-            height="auto"
-            className={`rounded-[8px] aspect-video md:aspect-auto object-cover object-center ${
+            width={608}
+            placeholder="blur"
+            className={`overflow-hidden rounded-[20px] aspect-video md:aspect-auto object-cover object-center ${
               // only show the middle image on mobile
               !(index % 2) && "hidden md:block"
             }`}
@@ -92,10 +94,10 @@ const LandingPage: FC = () => {
                 </a>
                 , but immediate, actionable approaches are also needed.
               </>
-            ),
+            )
           }}
           image={{
-            data: imageGunCrimes,
+            data: imageGunCrimes
           }}
         />
       </div>
@@ -121,11 +123,11 @@ const LandingPage: FC = () => {
                 in Philadelphia reduced gun violence by as much as 29% in the
                 surrounding area.
               </>
-            ),
+            )
           }}
           image={{
             data: imageResearch,
-            className: "aspect-[4/3] object-cover object-center",
+            className: "aspect-[4/3] object-cover object-center"
           }}
         />
       </div>
@@ -133,14 +135,14 @@ const LandingPage: FC = () => {
       <div id={"community"} className="my-20">
         <InfoGraphicSection
           header={{
-            text: "Community groups and organizations are taking action.",
+            text: "Community groups and organizations are taking action."
           }}
           body={{
-            text: "Community groups have been cleaning up lots in their own neighborhoods for decades. Large organizations like the Pennsylvania Horticulture Society have cleaned, greened and now maintain thousands of lots. Their efforts have been instrumental in proving this works.",
+            text: "Community groups have been cleaning up lots in their own neighborhoods for decades. Large organizations like the Pennsylvania Horticulture Society have cleaned, greened and now maintain thousands of lots. Their efforts have been instrumental in proving this works."
           }}
           image={{
             data: imageCleaning,
-            className: "aspect-video object-cover object-center",
+            className: "aspect-video object-cover object-center"
           }}
         />
       </div>
@@ -148,10 +150,10 @@ const LandingPage: FC = () => {
       <div id={"actions"} className="my-20">
         <InfoGraphicSection
           header={{
-            text: "We are building the ultimate toolkit to help them.",
+            text: "We are building the ultimate toolkit to help them."
           }}
           body={{
-            text: "We are a passionate group of volunteers with a vision to empower citizens, groups, and organizations to do impactful data-driven environmental interventions in Philadelphia.",
+            text: "We are a passionate group of volunteers with a vision to empower citizens, groups, and organizations to do impactful data-driven environmental interventions in Philadelphia."
           }}
           component={
             <ol role="list" className="grid grid-cols-3 gap-5 w-full">
@@ -184,18 +186,18 @@ const LandingPage: FC = () => {
                 <h3>Find vacant properties that match your goals.</h3>
               </div>
             ),
-            as: "div",
+            as: "div"
           }}
           body={{
-            text: "You can search and find vacant properties that match your goals. Understand the data around that property and the surrounding neighborhoods.",
+            text: "You can search and find vacant properties that match your goals. Understand the data around that property and the surrounding neighborhoods."
           }}
           image={{
-            data: imageStep1,
+            data: imageStep1
           }}
           link={{
             icon: PiBinoculars,
             label: "Find Properties",
-            href: "/map",
+            href: "/map"
           }}
         />
       </div>
@@ -211,18 +213,18 @@ const LandingPage: FC = () => {
                 </h3>
               </div>
             ),
-            as: "div",
+            as: "div"
           }}
           body={{
-            text: "How do you actually get access to the property legally? This is often confusing and baffling to people. We use the property data to suggest the most convenient options and provide guidance on the process.",
+            text: "How do you actually get access to the property legally? This is often confusing and baffling to people. We use the property data to suggest the most convenient options and provide guidance on the process."
           }}
           image={{
-            data: imageStep2,
+            data: imageStep2
           }}
           link={{
             icon: PiKey,
             label: "Get Access",
-            href: "/get-access",
+            href: "/get-access"
           }}
         />
       </div>
@@ -236,18 +238,18 @@ const LandingPage: FC = () => {
                 <h3>See all the ways you can transform properties.</h3>
               </div>
             ),
-            as: "div",
+            as: "div"
           }}
           body={{
-            text: "We guide you through the most common, convenient and affordable ways to transform properties and resources on how to do it.",
+            text: "We guide you through the most common, convenient and affordable ways to transform properties and resources on how to do it."
           }}
           image={{
-            data: imageStep3,
+            data: imageStep3
           }}
           link={{
             icon: PiTree,
             label: "Transform",
-            href: "/transform-property",
+            href: "/transform-property"
           }}
         />
       </div>
@@ -256,16 +258,16 @@ const LandingPage: FC = () => {
         <InfoGraphicSection
           header={{ text: "Let's Do This!" }}
           body={{
-            text: "There's groups and organizations throughout Philadelphia taking action and seeing impacts in their community and you can too.",
+            text: "There's groups and organizations throughout Philadelphia taking action and seeing impacts in their community and you can too."
           }}
           image={{
             data: imageGreened,
-            className: "aspect-video object-cover object-center",
+            className: "aspect-video object-cover object-center"
           }}
           link={{
             icon: PiArrowRight,
             label: "Get Started",
-            href: "/map",
+            href: "/map"
           }}
         />
       </div>

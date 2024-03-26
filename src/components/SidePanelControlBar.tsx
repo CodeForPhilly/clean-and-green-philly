@@ -38,7 +38,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       </Button>
       <div className="sm:px-4 py-2">
         <h1 className="body-md">
-          <span className="font-bold">{featureCount} </span> 
+          <span className="font-bold">{featureCount.toLocaleString()} </span> 
           Properties <span className="max-lg:hidden"> in View </span>
         </h1>
       </div>
@@ -62,7 +62,6 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           className={`bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         >
         </Button>
-        {/* Temporarily merged other button that pointed to detail */}
         <Button
           onPress={() => updateCurrentView("download")}
           startContent={<DownloadSimple className="h-6 w-6" /> }

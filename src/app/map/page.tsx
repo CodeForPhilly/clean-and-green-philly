@@ -1,36 +1,38 @@
 "use client";
 
-import { Coordinates } from "@/app/types";
+import React, { useEffect } from "react";
 import {
   FilterView,
+  Footer,
   PropertyDetailSection,
   PropertyMap,
   SidePanel,
-  SidePanelControlBar
+  SidePanelControlBar,
 } from "@/components";
 import { FilterProvider } from "@/context/FilterContext";
 import { NextUIProvider } from "@nextui-org/react";
 import { X } from "@phosphor-icons/react";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { FC, useRef, useState, useEffect } from "react";
+import { MapGeoJSONFeature } from "maplibre-gl";
 import ReactDOM from "react-dom";
 import StreetView from "../../components/StreetView";
+import { centroid } from "@turf/centroid";
+import { Position } from "geojson";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
 const MapPage: FC = () => {
-  const [featuresInView, setFeaturesInView] = useState<any[]>([]);
+  const [featuresInView, setFeaturesInView] = useState<MapGeoJSONFeature[]>([]);
   const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
   const [loading, setLoading] = useState(true);
   const [selectedProperty, setSelectedProperty] =
-    useState<MapboxGeoJSONFeature | null>(null);
+    useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
-  const [coordinates, setCoordinates] = useState<Coordinates>({
-    lat: null,
-    lng: null
-  });
+  const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
+    null,
+  );
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
   const sizeRef = useRef(0);
@@ -77,11 +79,18 @@ const MapPage: FC = () => {
 
   const controlBarProps = {currentView, featureCount, loading, smallScreenMode, updateCurrentView, updateSmallScreenMode};
   const isVisible = (mode : string) => (smallScreenMode === mode ? "" : "max-sm:hidden");
+  
+
+  useEffect(() => {
+    if (!selectedProperty) return;
+    const propCentroid = centroid(selectedProperty.geometry);
+    setStreetViewLocation(propCentroid.geometry.coordinates);
+  }, [selectedProperty]);
 
   return (
     <FilterProvider>
       <NextUIProvider>
-        <div className="flex flex-col h-screen">
+        <div className="flex flex-col">
           <div className="flex flex-grow overflow-hidden">
             <StreetViewModal isOpen={isStreetViewModalOpen}>
               <div
@@ -97,8 +106,8 @@ const MapPage: FC = () => {
                   <span className="leading-0">Close</span>
                 </button>
                 <StreetView
-                  lat={coordinates.lat || ""}
-                  lng={coordinates.lng || ""}
+                  lat={streetViewLocation?.[1].toString() || ""}
+                  lng={streetViewLocation?.[0].toString() || ""}
                   yaw="180"
                   pitch="5"
                   fov="0.7"
@@ -115,7 +124,6 @@ const MapPage: FC = () => {
                 selectedProperty={selectedProperty}
                 setSelectedProperty={setSelectedProperty}
                 setFeatureCount={setFeatureCount}
-                setCoordinates={setCoordinates}
                 setSmallScreenMode={setSmallScreenMode}
               />
             </div>
@@ -130,7 +138,7 @@ const MapPage: FC = () => {
                     </div>
                   )}
                   {currentView === "download" ? (
-                    <div className="p-4 mt-8 text-center">
+                    <div className="p-4 mt-8 text-center flex-grow">
                       <h2 className="text-2xl font-bold mb-4">
                         Access Our Data
                       </h2>
@@ -163,6 +171,7 @@ const MapPage: FC = () => {
                   )}
                 </>
               )}
+              <Footer />
             </SidePanel>
           </div>
         </div>
@@ -175,7 +184,7 @@ export default MapPage;
 
 const StreetViewModal = ({
   children,
-  isOpen
+  isOpen,
 }: {
   children: React.ReactNode;
   isOpen: boolean;
@@ -183,6 +192,6 @@ const StreetViewModal = ({
   if (!isOpen) return null;
   return ReactDOM.createPortal(
     <div className="absolute inset-0 z-50 w-full h-full">{children}</div>,
-    document.body
+    document.body,
   );
 };

@@ -1,5 +1,5 @@
 import { Button } from "@nextui-org/react";
-import { MapboxGeoJSONFeature } from "mapbox-gl";
+import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
 import {
   ArrowSquareOut,
@@ -17,8 +17,8 @@ import { Dispatch, SetStateAction } from "react";
 import { BarClickOptions } from "@/app/map/page";
 
 interface PropertyDetailProps {
-  property: MapboxGeoJSONFeature | null;
-  setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
+  property: MapGeoJSONFeature | null;
+  setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
   updateCurrentView: (view: BarClickOptions) => void;
 }

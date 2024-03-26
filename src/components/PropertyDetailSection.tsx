@@ -14,8 +14,12 @@ import {
 } from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
 import SinglePropertyDetail from "./SinglePropertyDetail";
+<<<<<<< HEAD
 import { MapboxGeoJSONFeature } from "mapbox-gl";
 import { BarClickOptions } from "@/app/map/page";
+=======
+import { MapGeoJSONFeature } from "maplibre-gl";
+>>>>>>> staging
 
 const tableCols = [
   {
@@ -33,11 +37,11 @@ const tableCols = [
 ];
 
 interface PropertyDetailSectionProps {
-  featuresInView: MapboxGeoJSONFeature[];
+  featuresInView: MapGeoJSONFeature[];
   display: "detail" | "list";
   loading: boolean;
-  selectedProperty: MapboxGeoJSONFeature | null;
-  setSelectedProperty: (property: MapboxGeoJSONFeature | null) => void;
+  selectedProperty: MapGeoJSONFeature | null;
+  setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
   smallScreenMode: string;
   updateCurrentView: (view: BarClickOptions) => void;
@@ -79,7 +83,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   }, [page, featuresInView, smallScreenMode]);
 
   return loading ? (
-    <div>
+    <div className="flex-grow h-full">
       {/* Center vertically in screen */}
       <div className="flex w-full justify-center p-4 mt-24">
         <p className="body-md">Loading properties</p>
@@ -97,7 +101,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     />
   ) : (
     <>
-      <div className="flex flex-wrap max-h-[calc(100vh-110px)]">
+      <div className="flex flex-wrap flex-grow h-full">
         {display === "list" ? (
           <Table
             aria-label="Property Details"
@@ -119,8 +123,8 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                   onClick={() => {
                     setSelectedProperty(
                       items.find(
-                        item => properties?.OPA_ID === item?.properties?.OPA_ID
-                      ) || null
+                        item => properties?.OPA_ID === item?.properties?.OPA_ID,
+                      ) || null,
                     );
                   }}
                 >
@@ -155,7 +159,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 onChange={newPage => setPage(newPage)}
               />
             </div>
-            <div className="flex w-full justify-center p-2">
+            <div className="flex w-full justify-center py-4 px-6">
               <p className="body-sm text-gray-500">
                 Note: only the first 100 properties can be viewed in list.
                 Filter or zoom in to a smaller area to see more detail.{" "}
