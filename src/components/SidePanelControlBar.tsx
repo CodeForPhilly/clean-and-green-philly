@@ -52,20 +52,21 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         <Button
           onPress={() => {currentView !== "filter" && updateCurrentView("filter")}}
           startContent={<Funnel className="h-6 w-6" />}
-          className={`bg-white max-lg:min-w-[4rem] ${currentView === "filter" ? "bg-[#e9ffe5] text-[#0c5c00]" : "hover:bg-gray-100"}`}
+          className={`bg-white max-lg:min-w-[4rem] ${currentView === "filter" ? "bg-[#e9ffe5] text-green-700 hover:text-green-700 hover:opacity-100" : "hover:bg-gray-10 focus:bg-[#e9ffe5] focus:text-green-700"}`}
+          data-hover={false}
         >
           <span className="max-lg:hidden body-md">Filter</span>
         </Button>
         <Button
-          onPress={() => updateCurrentView("detail")}
+          onPress={() => {currentView !== "filter" && updateCurrentView("detail")}}
           startContent={ <Table className="h-6 w-6" />}
-          className={`bg-white hover:bg-gray-100 max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
+          className={`bg-white hover:${currentView !== "filter" ? "bg-gray-10" : "bg-white"} max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         >
         </Button>
         <Button
-          onPress={() => updateCurrentView("download")}
+          onPress={() => {currentView !== "filter" && updateCurrentView("download")}}
           startContent={<DownloadSimple className="h-6 w-6" /> }
-          className={`bg-white hover:bg-gray-100 max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
+          className={`bg-white hover:${currentView !== "filter" ? "bg-gray-10" : "bg-white"} max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         ></Button>
       </div>
     </div>

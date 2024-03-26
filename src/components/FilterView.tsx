@@ -1,7 +1,7 @@
 import { FC } from "react";
 import DimensionFilter from "./Filters/DimensionFilter";
 import { Button } from "@nextui-org/react";
-import { PiX, PiCheck } from "react-icons/pi";
+import { PiX } from "react-icons/pi";
 import { BarClickOptions } from "@/app/map/page";
 
 const filters = [
@@ -57,7 +57,7 @@ const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
   return (
     <div className="relative p-6">
         <Button
-          className="bg-gray-100 right-2 text-gray-900 absolute px-2 top-8 min-w-[3rem]"
+          className="bg-gray-100 right-4 lg:right-[24px] text-gray-900 absolute px-2 top-8 min-w-[3rem] hover:bg-gray-200"
           onPress={() => updateCurrentView("detail")}
         >
           <PiX className="h-6 w-6" />
