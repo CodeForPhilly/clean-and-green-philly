@@ -58,7 +58,7 @@ const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
     <div className="relative p-6">
         <Button
           className="bg-gray-100 right-4 lg:right-[24px] text-gray-900 absolute px-2 top-8 min-w-[3rem] hover:bg-gray-200"
-          onPress={() => updateCurrentView("detail")}
+          onPress={() => updateCurrentView("filter")}
         >
           <PiX className="h-6 w-6" />
         </Button>

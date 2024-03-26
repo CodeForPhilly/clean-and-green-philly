@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useRef } from "react";
 import { Button } from "@nextui-org/react";
 import { BarClickOptions } from "@/app/map/page";
 import { DownloadSimple, Funnel, GlobeHemisphereWest, SquaresFour, Table } from "@phosphor-icons/react";
@@ -22,6 +22,8 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   updateCurrentView,
   updateSmallScreenMode
 }) => {
+
+  const filterRef = useRef<HTMLButtonElement | null>(null);
 
   return loading ? (
     <div>{/* Keep empty while loading */}</div>
@@ -50,21 +52,27 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         aria-label="controls"
       >
         <Button
-          onPress={() => {currentView !== "filter" && updateCurrentView("filter")}}
+          onPress={() => { 
+            if (filterRef.current && currentView === "filter") {
+              filterRef.current.blur();
+            }
+            updateCurrentView("filter");
+          }}
           startContent={<Funnel className="h-6 w-6" />}
-          className={`bg-white max-lg:min-w-[4rem] ${currentView === "filter" ? "bg-[#e9ffe5] text-green-700 hover:text-green-700 hover:opacity-100" : "hover:bg-gray-10 focus:bg-[#e9ffe5] focus:text-green-700"}`}
+          className={`bg-white max-lg:min-w-[4rem] iconLink ${currentView === "filter" && "bg-[#e9ffe5] hover:bg-[#c2f5ba] text-green-700"}`}
           data-hover={false}
+          ref={filterRef}
         >
           <span className="max-lg:hidden body-md">Filter</span>
         </Button>
         <Button
-          onPress={() => {currentView !== "filter" && updateCurrentView("detail")}}
+          onPress={() => updateCurrentView("detail")}
           startContent={ <Table className="h-6 w-6" />}
           className={`bg-white hover:${currentView !== "filter" ? "bg-gray-10" : "bg-white"} max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         >
         </Button>
         <Button
-          onPress={() => {currentView !== "filter" && updateCurrentView("download")}}
+          onPress={() => updateCurrentView("download")}
           startContent={<DownloadSimple className="h-6 w-6" /> }
           className={`bg-white hover:${currentView !== "filter" ? "bg-gray-10" : "bg-white"} max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         ></Button>

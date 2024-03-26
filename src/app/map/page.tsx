@@ -37,9 +37,10 @@ const MapPage: FC = () => {
   const sizeRef = useRef(0);
 
   const updateCurrentView = (view: BarClickOptions) => {
+    console.log(view)
     setCurrentView(view === currentView ? "detail" : view);
 
-    if (prevRef.current === "map" && window.innerWidth < 640) {
+    if (prevRef.current === "map" && window.innerWidth < 640 && view === "filter") {
       setSmallScreenMode((prev : string) => (prev === "map" ? "properties" : "map"));
     }
   };
