@@ -12,7 +12,7 @@ import { FilterProvider } from "@/context/FilterContext";
 import { NextUIProvider } from "@nextui-org/react";
 import { X } from "@phosphor-icons/react";
 import { MapboxGeoJSONFeature } from "mapbox-gl";
-import { FC, useRef, useState } from "react";
+import { FC, useRef, useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import StreetView from "../../components/StreetView";
 
@@ -33,7 +33,7 @@ const MapPage: FC = () => {
   });
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
-
+  const sizeRef = useRef(0);
 
   const updateCurrentView = (view: BarClickOptions) => {
     setCurrentView(view === currentView ? "detail" : view);
@@ -49,6 +49,30 @@ const MapPage: FC = () => {
       setCurrentView("detail");
       return prevRef.current
     });
+
+    /*
+      Because filter view is part of smallScreenMode = properties,
+      we need to switch to properties when filtering from map.
+      If filters are selected from small screen but screen is resized before applying them,
+      restores original small screen mode with the filters.
+     */
+    useEffect(() => {
+      sizeRef.current = window.innerWidth;
+      const updateWindowDimensions = () => {
+        if (sizeRef.current >= 640 && window.innerWidth < 640) {
+          setCurrentView(c => {
+            setSmallScreenMode(c !== "detail" ? "properties" : prevRef.current);
+            return c;
+          });
+        }
+        sizeRef.current = window.innerWidth;
+      };
+
+      window.addEventListener("resize", updateWindowDimensions);
+
+      return () => window.removeEventListener("resize", updateWindowDimensions);
+
+      }, []);
   
 
   const controlBarProps = {currentView, featureCount, loading, smallScreenMode, updateCurrentView, updateSmallScreenMode};
