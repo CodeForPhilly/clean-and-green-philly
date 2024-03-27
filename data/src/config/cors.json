@@ -1,0 +1,8 @@
+[
+  {
+    "maxAgeSeconds": 300,
+    "method": ["GET", "HEAD"],
+    "origin": ["*"],
+    "responseHeader": ["range", "etag", "if-match"]
+  }
+]

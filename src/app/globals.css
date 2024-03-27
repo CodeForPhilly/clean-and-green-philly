@@ -45,6 +45,13 @@
 @layer base {
   html {
     @apply font-body;
+    scroll-behavior: smooth;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
   }
 
   /* Fallback variables for browsers that don't support clamp */
@@ -120,32 +127,44 @@
     font-weight: regular;
   }
 
+  a.default {
+    @apply underline text-blue hover:text-blue-800 visited:text-purple-600;
+  }
+
+  /* added webkit transform to remove icon movement in safari */
+
   .iconLink {
-    @apply text-gray-900;
-    @apply items-center;
-    @apply items-center;
-    @apply active:bg-[#E9FFE5];
-    @apply active:text-green-700;
-    @apply focus:text-green-700;
-    @apply focus:bg-[#E9FFE5];
-    @apply hover:bg-gray-100;
-    @apply bg-color-none;
-    @apply hover:bg-gray-10;
+    @apply text-gray-900 items-center items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
+    -webkit-transform: translateZ(0);
+  }
+
+  .linkIcon {
+    @apply w-5 h-5 mr-2;
+    -webkit-transform: translateZ(0);
+  }
+
+  .iconButton {
+    @apply h-6 w-6;
+    -webkit-transform: translateZ(0);
+  }
+
+  .iconButton-w-5 {
+    @apply h-5 w-5;
+    -webkit-transform: translateZ(0);
   }
 
   .activeIconLinkNav {
-    @apply flex;
-    @apply relative;
-    @apply h-full;
-    @apply items-center;
-    @apply data-[active=true]:bottom-0;
-    @apply data-[active=true]:left-0;
-    @apply data-[active=true]:right-0;
-    @apply data-[active=true]:h-full;
-    @apply data-[active=true]:rounded-[12px];
-    @apply data-[active=true]:bg-[#E9FFE5];
-    @apply data-[active=true]:text-[#E9FFE5];
-    @apply data-[active=true]:rounded-medium;
+    @apply flex relative h-full items-center rounded-medium;
+    @apply data-[active=true]:bottom-0 data-[active=true]:left-0 data-[active=true]:right-0 data-[active=true]:h-full data-[active=true]:rounded-[12px] data-[active=true]:bg-[#E9FFE5] data-[active=true]:text-[#E9FFE5] data-[active=true]:rounded-medium;
+    -webkit-transform: translateZ(0);
+  }
+  .mobileIconLinkNav {
+    @apply px-0 text-base max-h-52 overflow-hidden fixed left-2/4 top-20 w-full z-50 shadow-2xl rounded-md border-1 border-gray-200 bg-gray-0;
+    -webkit-transform: translateZ(0);
+  }
+  .mobileIconLinkNav:hover {
+    @apply bg-gray-0;
+    -webkit-transform: translateZ(0);
   }
 }
 
@@ -169,15 +188,18 @@
 
 /* Styles for the mapbox legend pane. */
 .mapboxgl-ctrl-legend-pane summary {
+  font-size: 16px;
   text-transform: capitalize;
 }
 
 .mapboxgl-ctrl-legend-pane ul.list li {
+  font-size: 14px;
   text-transform: capitalize;
   color: #173009;
 }
 
 /* Crude way to hide the last "Other" legend item. */
+/* TODO: If we decide to get rid of the default option in the legend, we can remove this */
 .mapboxgl-ctrl-legend-pane ul.list li:last-child {
   display: none;
 }
@@ -189,9 +211,37 @@ a .bg-color-none {
 .active-state-nav {
   color: #0c5c00;
   background-color: #e9ffe5;
+  border-radius: 12px;
+  justify-content: left;
 }
 
 .active-state-nav:hover {
   color: #0c5c00;
   background-color: #c2f5ba;
+  border-radius: 12px;
+}
+
+/* consolidating styles for filter control tag buttons */
+.tagDefault {
+  @apply h-6 px-2 py-0.5 body-sm bg-gray-100 text-gray-900;
+}
+
+.tagDefault:hover {
+  @apply ease-in h-6 bg-gray-200;
+}
+
+.tagDefault:active {
+  @apply ease-in h-6 bg-gray-300;
+}
+
+.tagSelected {
+  @apply h-6 px-2 py-0.5 body-sm bg-blue-200 text-blue-800;
+}
+
+.tagSelected:hover {
+  @apply ease-in h-6 bg-blue-300;
+}
+
+.tagSelected:active {
+  @apply ease-in h-6 bg-blue-400;
 }
