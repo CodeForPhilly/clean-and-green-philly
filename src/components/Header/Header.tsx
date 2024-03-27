@@ -89,24 +89,24 @@ const Header = () => {
                   }`}
                 >
                   <ul className="block lg:flex lg:space-x-12">
-                    {menuData.map((menuItem, index) => (
-                      <li key={index} className="group relative">
-                        {menuItem.path ? (
-                          <Link
-                            href={menuItem.path}
-                            className={`flex py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 ${
-                              usePathName === menuItem.path
-                                ? "text-primary dark:text-white"
-                                : "text-dark hover:text-primary dark:text-white/70 dark:hover:text-white"
-                            }`}
-                          >
-                            {menuItem.title}
-                          </Link>
-                        ) : (
-                          <></>
-                        )}
-                      </li>
-                    ))}
+                    {menuData.map((menuItem, index) => {
+                      return (
+                        <li key={index} className="group relative">
+                          {menuItem.path ? (
+                            <Link
+                              href={menuItem.path}
+                              className={`flex py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 ${
+                                usePathName === menuItem.path
+                                  ? "text-primary dark:text-white"
+                                  : "text-dark hover:text-primary dark:text-white/70 dark:hover:text-white"
+                              }`}
+                            >
+                              {menuItem.title}
+                            </Link>
+                          ) : null}
+                        </li>
+                      );
+                    })}
                   </ul>
                 </nav>
               </div>
