@@ -78,7 +78,6 @@ const MapPage: FC = () => {
 
   const controlBarProps = {currentView, featureCount, loading, smallScreenMode, updateCurrentView, updateSmallScreenMode};
   const isVisible = (mode : string) => (smallScreenMode === mode ? "" : "max-sm:hidden");
-  console.log(smallScreenMode)
 
   useEffect(() => {
     if (!selectedProperty) return;
