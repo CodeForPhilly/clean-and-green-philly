@@ -22,6 +22,10 @@ For info on how to get the codebase setup, see the [SETUP](/SETUP) folder, which
 
 To make sure the repo is protected and organized, merges to `main` are not allowed. All changes must be made through pull requests to the `staging` branch. Once you have commits ready to merge, please create a new branch named in the format of `<github-username>`/`<issue-number>`-`<kebab-case-description>`. For example vimusds/1069-fix-territory-on-mobile. Your PR will need to be approved by at least one required reviewer (see [CODEOWNERS](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/.github/CODEOWNERS)) and must pass all required status checks. When these are complete, it will be merged to the `staging` branch and then eventually reviwed by our design team and merged to `main` for deployment. To help them in this, please provide clear instructions on how to test/view the changes you've made, and tag the issues you're addressing. You can do this when writing the PR by writing `#<number>` in the `Does this close any currently open issues` section.
 
+If you're unclear on the precise implementation of a ticket, please refer to [the prototype](https://www.figma.com/proto/NAFkgq34abW6uJ0R7PW24T/Prototype---Clean-%26-Green-Philly?page-id=187%3A12602&type=design&node-id=2592-30019&viewport=-657%2C-623%2C0.1&t=fqZvOvLyE9qv7AAV-8&scaling=min-zoom&starting-point-node-id=2592%3A30019&hide-ui=1).
+
+Note: when you have completed an issue and are ready to close it, please tag the appropriate reviewe(s). It it's a front-end issue, tag @paulhchoi and @thansidwell (plus @brandonfcohen1 if it involves the map). If it's a back-end issue, tag @brandonfcohen1. Feel free to drop a message in the Slack channel if you have questions.
+
 ## Open an Issue
 
 To report a bug, request a feature, or suggest an enhancement, please open an issue on the [issues page](https://github.com/CodeForPhilly/vacant-lots-proj/issues). We ask that you provide as much detail as possible, including steps to reproduce the issue, expected behavior, and any relevant screenshots or logs. We provide issue templates to help guide you through this process.
