@@ -4,7 +4,7 @@ const menuData: Menu[] = [
   {
     id: 1,
     title: "Find Properties",
-    path: "/find-properties",
+    path: "/map",
     newTab: false,
   },
   {
@@ -16,7 +16,7 @@ const menuData: Menu[] = [
   {
     id: 3,
     title: "Transform",
-    path: "/transform",
+    path: "/transform-property",
     newTab: false,
   },
   {

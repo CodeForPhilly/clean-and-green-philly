@@ -36,7 +36,7 @@ const images = [
 
 const LandingPage: FC = () => {
   return (
-    <div className="container mx-auto px-4 pt-32">
+    <div className="container mx-auto px-4 pt-24">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-10 my-10 md:mb-16">
         <h1 className="heading-3xl font-extrabold leading-tight md:leading-[3rem] text-pretty text-left pr-9 col-span-2">
           Cleaning and greening vacant properties can{" "}
