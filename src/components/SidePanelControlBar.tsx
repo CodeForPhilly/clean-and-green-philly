@@ -1,9 +1,10 @@
 "use client";
 
 import React, { FC } from "react";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Tooltip } from "@nextui-org/react";
 import { BarClickOptions } from "@/app/map/page";
 import { DownloadSimple, Funnel, Table } from "@phosphor-icons/react";
+import { ThemeButton } from "./ThemeButton";
 
 type SidePanelControlBarProps = {
   currentView: BarClickOptions;
@@ -48,30 +49,29 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         role="region"
         aria-label="controls"
       >
-        <Button
+        <ThemeButton
+          color="tertiary"
+          label="Filter"
           onPress={() => handleClick("filter")}
-          startContent={<Funnel className="iconButton" />}
-          className="bg-white"
-        >
-          <span className="body-md">Filter</span>
-        </Button>
+          startContent={<Funnel />}
+        />
 
         <Tooltip content="View" showArrow color="primary">
-          <Button
+          <ThemeButton
+            color="tertiary"
             aria-label="View"
             onPress={() => handleClick("detail")}
-            startContent={<Table className="iconButton" />}
-            className="bg-white"
-          ></Button>
+            startContent={<Table />}
+          />
         </Tooltip>
 
         <Tooltip content="Download" showArrow color="primary">
-          <Button
+          <ThemeButton
+            color="tertiary"
             aria-label="Download"
             onPress={() => handleClick("download")}
-            startContent={<DownloadSimple className="iconButton" />}
-            className="bg-white"
-          ></Button>
+            startContent={<DownloadSimple />}
+          />
         </Tooltip>
       </div>
     </div>

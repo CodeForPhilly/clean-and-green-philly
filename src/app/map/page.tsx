@@ -18,6 +18,7 @@ import ReactDOM from "react-dom";
 import StreetView from "../../components/StreetView";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
+import { ThemeButton } from "../../components/ThemeButton";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
@@ -31,7 +32,7 @@ const MapPage: FC = () => {
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
   const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
-    null,
+    null
   );
 
   useEffect(() => {
@@ -50,14 +51,14 @@ const MapPage: FC = () => {
                 id="street-view-overlay"
                 className="fixed w-full h-full bg-black"
               >
-                <button
-                  className="absolute top-4 right-4 bg-white p-[10px] rounded-md flex flex-row space-x-1 items-center"
-                  onClick={() => setIsStreetViewModalOpen(false)}
+                <ThemeButton
+                  color="tertiary"
+                  startContent={<X />}
+                  onPress={() => setIsStreetViewModalOpen(false)}
+                  label="Close"
                   aria-label="Close full screen street view map"
-                >
-                  <X color="#3D3D3D" size={20} />
-                  <span className="leading-0">Close</span>
-                </button>
+                  className="absolute top-4 right-4"
+                />
                 <StreetView
                   lat={streetViewLocation?.[1].toString() || ""}
                   lng={streetViewLocation?.[0].toString() || ""}
@@ -144,6 +145,6 @@ const StreetViewModal = ({
   if (!isOpen) return null;
   return ReactDOM.createPortal(
     <div className="absolute inset-0 z-50 w-full h-full">{children}</div>,
-    document.body,
+    document.body
   );
 };

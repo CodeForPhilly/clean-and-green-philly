@@ -1,7 +1,6 @@
-import { Button } from "@nextui-org/react";
 import Image, { StaticImageData } from "next/image";
-import Link from "next/link";
 import type { IconType } from "react-icons";
+import { ThemeButtonLink } from "./ThemeButton";
 
 interface InfoGraphicBase {
   id?: string;
@@ -14,6 +13,7 @@ interface InfoGraphicBase {
     icon: IconType;
     label: string;
     href: string;
+    color?: "primary" | "secondary" | "tertiary";
   };
 }
 
@@ -43,7 +43,7 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
     id,
     header: { text: headerText, as: headerAs },
     body,
-    link
+    link,
   } = props;
   const HeaderTag = headerAs || "h2";
 
@@ -75,15 +75,13 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
         <div className={body.className || ""}>
           <p className="body-md text-balance">{body.text}</p>
           {link && (
-            <Button
-              role="link"
+            <ThemeButtonLink
               href={link.href}
-              as={Link}
-              className="bg-gray-200 iconLink mt-5"
-            >
-              <link.icon className="w-5 h-5" />
-              <span className="body-md">{link.label}</span>
-            </Button>
+              label={link.label}
+              color={link.color}
+              startContent={<link.icon />}
+              className="max-w-min mt-5"
+            />
           )}
         </div>
       </div>

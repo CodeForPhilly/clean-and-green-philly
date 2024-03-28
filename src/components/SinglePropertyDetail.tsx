@@ -1,4 +1,3 @@
-import { Button } from "@nextui-org/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
 import {
@@ -14,6 +13,7 @@ import {
 } from "@phosphor-icons/react";
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 import { Dispatch, SetStateAction } from "react";
+import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -74,15 +74,12 @@ const SinglePropertyDetail = ({
       }}
     >
       <div className="pb-4">
-        <Button
-          style={{
-            backgroundColor: "white",
-          }}
+        <ThemeButton
+          color="tertiary"
+          label="Back"
+          startContent={<ArrowLeft />}
           onPress={() => setSelectedProperty(null)}
-        >
-          <ArrowLeft color="#3D3D3D" size={24} />{" "}
-          <span className="body-md">Back</span>{" "}
-        </Button>
+        />
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
@@ -93,13 +90,13 @@ const SinglePropertyDetail = ({
             objectFit="cover"
             unoptimized
           />
-          <button
-            className="absolute top-4 right-4 bg-white p-[10px] rounded-md"
-            onClick={() => setIsStreetViewModalOpen(true)}
+          <ThemeButton
+            className="absolute top-4 right-4"
+            color="tertiary"
             aria-label="Open full screen street view map"
-          >
-            <ArrowsOut color="#3D3D3D" size={24} />
-          </button>
+            startContent={<ArrowsOut />}
+            onPress={() => setIsStreetViewModalOpen(true)}
+          />
         </div>
       </div>
       <div className="py-4 px-2">
@@ -113,16 +110,14 @@ const SinglePropertyDetail = ({
             {address.toLowerCase()}
           </h2>
           <div>
-            <a
+            <ThemeButtonLink
               href={atlasUrl}
               target="_blank"
               rel="noopener noreferrer"
-              color="primary"
-              className="flex p-2 items-center gap-1 body-md"
-            >
-              Atlas Link
-              <ArrowSquareOut className="inline h-6 w-6" aria-hidden="true" />
-            </a>
+              color="tertiary"
+              label="Atlas Link"
+              endContent={<ArrowSquareOut aria-hidden="true" />}
+            />
           </div>
         </div>
       </div>
