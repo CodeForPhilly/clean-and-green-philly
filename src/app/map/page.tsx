@@ -16,6 +16,7 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import StreetView from "../../components/StreetView";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
+import { ThemeButton } from "../../components/ThemeButton";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
@@ -220,9 +221,18 @@ const StreetViewModal: React.FC<{
     const handleDocumentClick = (event: MouseEvent) => {
       if (
         isOpen &&
-        containerRef.current &&
+        containerRef.current
+        &&
         !containerRef.current.contains(event.target as Node)
       ) {
+        console.log("handleDocumentClick called", {
+          ref: containerRef.current,
+          contains: containerRef.current.contains.toString(),
+          target: event.target,
+        });
+
+        console.dir(containerRef.current);
+        console.dir(event.target);
         onClose();
         // return focus
         document.getElementById("outside-iframe-element")?.focus();
@@ -258,6 +268,8 @@ const StreetViewModal: React.FC<{
     outsideElement?.focus();
   }, [isOpen]);
 
+  console.log({ isOpen });
+
   return (
     <>
       {isOpen && (
@@ -277,6 +289,15 @@ const StreetViewModal: React.FC<{
               <X color="#3D3D3D" size={20} />
               <span className="leading-0">Close</span>
             </button>
+            {/* <ThemeButton
+              color="tertiary"
+              startContent={<X />}
+              onPress={onClose}
+              tabIndex={0}
+              label="Close"
+              aria-label="Close full screen street view map"
+              className="absolute top-4 right-4"
+            /> */}
             {children}
           </div>
         </div>

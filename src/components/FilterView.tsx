@@ -1,8 +1,8 @@
 import { FC } from "react";
 import DimensionFilter from "./Filters/DimensionFilter";
-import { Button } from "@nextui-org/react";
 import { PiCheck } from "react-icons/pi";
 import { BarClickOptions } from "@/app/map/page";
+import { ThemeButton } from "./ThemeButton";
 
 const filters = [
   {
@@ -58,14 +58,11 @@ const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
     <div className="p-6">
       <div className="flex justify-between items-center">
         <h1 className="font-semibold heading-xl">Filter</h1>
-        <Button
-          size="sm"
-          className="bg-gray-100 text-gray-900"
+        <ThemeButton
+          label="Done"
+          startContent={<PiCheck />}
           onPress={() => updateCurrentView("detail")}
-        >
-          <PiCheck className="size-4" />
-          Done
-        </Button>
+        />
       </div>
       {filters.map(({ property, display, options, tooltip }) => (
         <DimensionFilter
