@@ -17,15 +17,15 @@ const removedTransitionStyles = `transition-none hover:transition-none data-[pre
 
 const btnColorStyles = {
   primary: `bg-green-600 hover:bg-green-700 active:bg-green-800 text-white`,
-  primaryDisabled: `bg-green-600 text-white`,
+  primaryDisabled: `bg-green-600/50 text-white`,
   secondary: `bg-gray-100 hover:bg-gray-200 active:bg-gray-300 text-gray-900 hover:text-gray-900`,
-  secondaryDisabled: `bg-gray-100 text-gray-900`,
+  secondaryDisabled: `bg-gray-100/50 text-gray-900/50`,
   secondarySelected: `bg-green-200 hover:bg-green-300 active:bg-green-400 text-green-700 hover:text-green-700`,
-  secondarySelectedDisabled: `bg-green-200 text-green-700`,
+  secondarySelectedDisabled: `bg-green-200/50 text-green-700/50`,
   tertiary: `bg-gray-0 hover:bg-gray-100 active:bg-gray-200 text-gray-900 hover:text-gray-900`,
-  tertiaryDisabled: `bg-gray-0 text-gray-900`,
+  tertiaryDisabled: `bg-gray-0 text-gray-900/50`,
   tertiarySelected: `bg-green-100 hover:bg-green-200 active:bg-green-300 text-green-700 hover:text-green-700`,
-  tertiarySelectedDisabled: `bg-green-100 text-green-700`,
+  tertiarySelectedDisabled: `bg-green-100/50 text-green-700/50`,
 };
 
 const getButtonColorStyles = (
@@ -91,7 +91,7 @@ const ThemeButton = forwardRef<Ref, ButtonProps>(
     const colorStyles = getButtonColorStyles(color, isSelected, isDisabled);
     const padding = iconOnly ? "p-0" : "py-2.5 px-3";
     const disabledStyles = isDisabled
-      ? `opacity-50 data-[hover=true]:opacity-50 cursor-not-allowed ${removedTransitionStyles}`
+      ? `cursor-not-allowed ${removedTransitionStyles}`
       : "";
     const iconStyles = "w-5 h-5 text-xl";
 
