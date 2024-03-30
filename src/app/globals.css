@@ -178,6 +178,11 @@
   padding: 2px;
 }
 
+#main .maplibregl-ctrl-bottom-left {
+  left: 20px;
+  bottom: 50px;
+}
+
 .table-cell {
   @apply p-2 border border-gray-300 text-left font-normal;
 }
@@ -203,6 +208,14 @@
 .mapboxgl-ctrl-legend-pane ul.list li:last-child {
   display: none;
 }
+
+/* shift map search bar down and to the left 20px */
+
+#main .maplibregl-ctrl-top-right {
+  top: 20px;
+  right: 20px;
+}
+
 /* Remove white background on menu item to display active page state */
 a .bg-color-none {
   background-color: none;
