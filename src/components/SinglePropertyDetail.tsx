@@ -122,7 +122,7 @@ const SinglePropertyDetail = ({
               color="primary"
               className="flex p-2 items-center gap-1 body-md"
             >
-              Atlas Link
+              Atlas
               <ArrowSquareOut className="inline h-6 w-6" aria-hidden="true" />
             </a>
           </div>
