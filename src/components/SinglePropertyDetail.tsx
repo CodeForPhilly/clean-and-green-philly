@@ -97,6 +97,7 @@ const SinglePropertyDetail = ({
             className="absolute top-4 right-4 bg-white p-[10px] rounded-md"
             onClick={() => setIsStreetViewModalOpen(true)}
             aria-label="Open full screen street view map"
+            id="outside-iframe-element"
           >
             <ArrowsOut color="#3D3D3D" size={24} />
           </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import {
   FilterView,
   Footer,
@@ -18,6 +18,7 @@ import ReactDOM from "react-dom";
 import StreetView from "../../components/StreetView";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
+// import FullScreenTrap from "./FullScreenTrap";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
@@ -31,7 +32,7 @@ const MapPage: FC = () => {
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
   const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
-    null,
+    null
   );
 
   useEffect(() => {
@@ -45,28 +46,19 @@ const MapPage: FC = () => {
       <NextUIProvider>
         <div className="flex flex-col">
           <div className="flex flex-grow overflow-hidden">
-            <StreetViewModal isOpen={isStreetViewModalOpen}>
-              <div
-                id="street-view-overlay"
-                className="fixed w-full h-full bg-black"
-              >
-                <button
-                  className="absolute top-4 right-4 bg-white p-[10px] rounded-md flex flex-row space-x-1 items-center"
-                  onClick={() => setIsStreetViewModalOpen(false)}
-                  aria-label="Close full screen street view map"
-                >
-                  <X color="#3D3D3D" size={20} />
-                  <span className="leading-0">Close</span>
-                </button>
-                <StreetView
-                  lat={streetViewLocation?.[1].toString() || ""}
-                  lng={streetViewLocation?.[0].toString() || ""}
-                  yaw="180"
-                  pitch="5"
-                  fov="0.7"
-                />
-              </div>
+            <StreetViewModal
+              isOpen={isStreetViewModalOpen}
+              onClose={() => setIsStreetViewModalOpen(false)}
+            >
+              <StreetView
+                lat={streetViewLocation?.[1].toString() || ""}
+                lng={streetViewLocation?.[0].toString() || ""}
+                yaw="180"
+                pitch="5"
+                fov="0.7"
+              />
             </StreetViewModal>
+
             <div className="flex-grow overflow-auto">
               <PropertyMap
                 setFeaturesInView={setFeaturesInView}
@@ -134,16 +126,107 @@ const MapPage: FC = () => {
 
 export default MapPage;
 
-const StreetViewModal = ({
-  children,
-  isOpen,
-}: {
+// test
+
+const StreetViewModal: React.FC<{
   children: React.ReactNode;
   isOpen: boolean;
-}) => {
-  if (!isOpen) return null;
-  return ReactDOM.createPortal(
-    <div className="absolute inset-0 z-50 w-full h-full">{children}</div>,
-    document.body,
+  onClose: () => void;
+}> = ({ children, isOpen, onClose }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+        // return focus
+        document.getElementById("outside-iframe-element")?.focus();
+        const outsideElement = document.getElementById(
+          "outside-iframe-element"
+        );
+        console.log("Outside element:", outsideElement);
+        outsideElement?.focus();
+        console.log("Focused outside element");
+      } else if (event.key === "Tab") {
+        // Trap focus within the container
+        const container = containerRef.current;
+        if (container && !container.contains(document.activeElement)) {
+          // If focus goes outside the container, bring it back to the first focusable element inside the container
+          const focusableElements = container.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusableElements.length > 0) {
+            event.preventDefault();
+            (focusableElements[0] as HTMLElement).focus();
+          }
+        }
+      }
+    };
+
+    const handleDocumentClick = (event: MouseEvent) => {
+      if (
+        isOpen &&
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+        // return focus
+        document.getElementById("outside-iframe-element")?.focus();
+        const outsideElement = document.getElementById(
+          "outside-iframe-element"
+        );
+        console.log("Outside element:", outsideElement);
+        outsideElement?.focus();
+        console.log("Focused outside element");
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("click", handleDocumentClick);
+    } else {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("click", handleDocumentClick);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("click", handleDocumentClick);
+    };
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
+    // Focus the container when it's opened
+    if (isOpen && containerRef.current) {
+      containerRef.current.focus();
+    }
+    // return focus when closed
+    document.getElementById("outside-iframe-element")?.focus();
+    const outsideElement = document.getElementById("outside-iframe-element");
+    outsideElement?.focus();
+  }, [isOpen]);
+
+  return (
+    <>
+      {isOpen && (
+        <div
+          id="street-view-overlay"
+          className="absolute inset-0 z-50 w-full h-full"
+          ref={containerRef}
+          tabIndex={0} // Make the container focusable
+        >
+          <div className="fixed w-full h-full bg-black">
+            <button
+              onClick={onClose}
+              tabIndex={0}
+              className="absolute top-4 right-4 bg-white p-[10px] rounded-md flex flex-row space-x-1 items-center"
+            >
+              Close
+            </button>
+            {children}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
