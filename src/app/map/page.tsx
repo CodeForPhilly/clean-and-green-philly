@@ -13,11 +13,9 @@ import { FilterProvider } from "@/context/FilterContext";
 import { NextUIProvider } from "@nextui-org/react";
 import { X } from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
-import ReactDOM from "react-dom";
 import StreetView from "../../components/StreetView";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
-// import FullScreenTrap from "./FullScreenTrap";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
@@ -202,9 +200,7 @@ const StreetViewModal: React.FC<{
         const outsideElement = document.getElementById(
           "outside-iframe-element"
         );
-        console.log("Outside element:", outsideElement);
         outsideElement?.focus();
-        console.log("Focused outside element");
       } else if (event.key === "Tab") {
         // Trap focus within the container
         const container = containerRef.current;
@@ -233,9 +229,7 @@ const StreetViewModal: React.FC<{
         const outsideElement = document.getElementById(
           "outside-iframe-element"
         );
-        console.log("Outside element:", outsideElement);
         outsideElement?.focus();
-        console.log("Focused outside element");
       }
     };
 
@@ -277,9 +271,11 @@ const StreetViewModal: React.FC<{
             <button
               onClick={onClose}
               tabIndex={0}
+              aria-label="Close full screen street view map"
               className="absolute top-4 right-4 bg-white p-[10px] rounded-md flex flex-row space-x-1 items-center"
             >
-              Close
+              <X color="#3D3D3D" size={20} />
+              <span className="leading-0">Close</span>
             </button>
             {children}
           </div>
