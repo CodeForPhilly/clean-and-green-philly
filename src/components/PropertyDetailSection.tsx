@@ -14,7 +14,7 @@ import {
 } from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
 import SinglePropertyDetail from "./SinglePropertyDetail";
-import { BarClickOptions } from "@/app/map/page";
+import { BarClickOptions } from "@/app/find-properties/page";
 import { MapGeoJSONFeature } from "maplibre-gl";
 
 const tableCols = [
@@ -51,7 +51,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   setSelectedProperty,
   setIsStreetViewModalOpen,
   updateCurrentView,
-  smallScreenMode
+  smallScreenMode,
 }) => {
   const [page, setPage] = useState(1);
 
@@ -67,8 +67,10 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       Toggling from map (0 results) to results in mobile causes the component
       to miscalculate the 1st active span since parent width === 0.
     */
-    if (typeof(window) !== "undefined") {
-      widthRef.current = ((smallScreenMode === "properties" && window.innerWidth < 640) || window.innerWidth >= 640)
+    if (typeof window !== "undefined") {
+      widthRef.current =
+        (smallScreenMode === "properties" && window.innerWidth < 640) ||
+        window.innerWidth >= 640;
     }
 
     if (start > featuresInView.length) {
@@ -108,7 +110,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             }}
           >
             <TableHeader>
-              {tableCols.map(column => (
+              {tableCols.map((column) => (
                 <TableColumn key={column.key}>{column.label}</TableColumn>
               ))}
             </TableHeader>
@@ -119,12 +121,13 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                   onClick={() => {
                     setSelectedProperty(
                       items.find(
-                        item => properties?.OPA_ID === item?.properties?.OPA_ID,
-                      ) || null,
+                        (item) =>
+                          properties?.OPA_ID === item?.properties?.OPA_ID
+                      ) || null
                     );
                   }}
                 >
-                  {columnKey => (
+                  {(columnKey) => (
                     <TableCell>{getKeyValue(properties, columnKey)}</TableCell>
                   )}
                 </TableRow>
@@ -140,7 +143,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             />
           ))
         )}
-        {(featuresInView?.length > 0 && widthRef.current) && (
+        {featuresInView?.length > 0 && widthRef.current && (
           <div>
             <div className="flex w-full justify-center mt-4">
               <Pagination
@@ -152,7 +155,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 color="secondary"
                 page={page}
                 total={pages}
-                onChange={newPage => setPage(newPage)}
+                onChange={(newPage) => setPage(newPage)}
               />
             </div>
             <div className="flex w-full justify-center py-4 px-6">
