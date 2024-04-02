@@ -13,7 +13,6 @@ import { FilterProvider } from "@/context/FilterContext";
 import { NextUIProvider } from "@nextui-org/react";
 import { X } from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
-import ReactDOM from "react-dom";
 import StreetView from "../../components/StreetView";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
@@ -30,7 +29,7 @@ const MapPage: FC = () => {
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
   const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
-    null,
+    null
   );
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
@@ -40,44 +39,52 @@ const MapPage: FC = () => {
     setCurrentView(view === currentView ? "detail" : view);
 
     if (prevRef.current === "map" && window.innerWidth < 640) {
-      setSmallScreenMode((prev : string) => (prev === "map" ? "properties" : "map"));
+      setSmallScreenMode((prev: string) =>
+        prev === "map" ? "properties" : "map"
+      );
     }
   };
 
-  const updateSmallScreenMode = () => 
-    setSmallScreenMode((prev : string) => {
+  const updateSmallScreenMode = () =>
+    setSmallScreenMode((prev: string) => {
       prevRef.current = prev === "map" ? "properties" : "map";
       setCurrentView("detail");
-      return prevRef.current
+      return prevRef.current;
     });
 
-    /*
+  /*
       Because filter view is part of smallScreenMode = properties,
       we need to switch to properties when filtering from map.
       If filters are selected from small screen but screen is resized before applying them,
       restores original small screen mode with the filters.
      */
-    useEffect(() => {
+  useEffect(() => {
+    sizeRef.current = window.innerWidth;
+    const updateWindowDimensions = () => {
+      if (sizeRef.current >= 640 && window.innerWidth < 640) {
+        setCurrentView((c) => {
+          setSmallScreenMode(c !== "detail" ? "properties" : prevRef.current);
+          return c;
+        });
+      }
       sizeRef.current = window.innerWidth;
-      const updateWindowDimensions = () => {
-        if (sizeRef.current >= 640 && window.innerWidth < 640) {
-          setCurrentView(c => {
-            setSmallScreenMode(c !== "detail" ? "properties" : prevRef.current);
-            return c;
-          });
-        }
-        sizeRef.current = window.innerWidth;
-      };
+    };
 
-      window.addEventListener("resize", updateWindowDimensions);
+    window.addEventListener("resize", updateWindowDimensions);
 
-      return () => window.removeEventListener("resize", updateWindowDimensions);
+    return () => window.removeEventListener("resize", updateWindowDimensions);
+  }, []);
 
-      }, []);
-  
-
-  const controlBarProps = {currentView, featureCount, loading, smallScreenMode, updateCurrentView, updateSmallScreenMode};
-  const isVisible = (mode : string) => (smallScreenMode === mode ? "" : "max-sm:hidden");
+  const controlBarProps = {
+    currentView,
+    featureCount,
+    loading,
+    smallScreenMode,
+    updateCurrentView,
+    updateSmallScreenMode,
+  };
+  const isVisible = (mode: string) =>
+    smallScreenMode === mode ? "" : "max-sm:hidden";
 
   useEffect(() => {
     if (!selectedProperty) return;
@@ -90,30 +97,22 @@ const MapPage: FC = () => {
       <NextUIProvider>
         <div className="flex flex-col">
           <div className="flex flex-grow overflow-hidden">
-            <StreetViewModal isOpen={isStreetViewModalOpen}>
-              <div
-                id="street-view-overlay"
-                className="fixed w-full h-full bg-black"
-              >
-                <button
-                  className="absolute top-4 right-4 bg-white p-[10px] rounded-md flex flex-row space-x-1 items-center"
-                  onClick={() => setIsStreetViewModalOpen(false)}
-                  aria-label="Close full screen street view map"
-                >
-                  <X color="#3D3D3D" size={20} />
-                  <span className="leading-0">Close</span>
-                </button>
-                <StreetView
-                  lat={streetViewLocation?.[1].toString() || ""}
-                  lng={streetViewLocation?.[0].toString() || ""}
-                  yaw="180"
-                  pitch="5"
-                  fov="0.7"
-                />
-              </div>
+            <StreetViewModal
+              isOpen={isStreetViewModalOpen}
+              onClose={() => setIsStreetViewModalOpen(false)}
+            >
+              <StreetView
+                lat={streetViewLocation?.[1].toString() || ""}
+                lng={streetViewLocation?.[0].toString() || ""}
+                yaw="180"
+                pitch="5"
+                fov="0.7"
+              />
             </StreetViewModal>
             <div className={`flex-grow overflow-auto ${isVisible("map")}`}>
-              <div className={`sticky top-0 z-10 sm:hidden ${isVisible("map")}`}>
+              <div
+                className={`sticky top-0 z-10 sm:hidden ${isVisible("map")}`}
+              >
                 <SidePanelControlBar {...controlBarProps} />
               </div>
               <PropertyMap
@@ -125,7 +124,10 @@ const MapPage: FC = () => {
                 setSmallScreenMode={setSmallScreenMode}
               />
             </div>
-            <SidePanel isVisible={isVisible("properties")} selectedProperty={selectedProperty}>
+            <SidePanel
+              isVisible={isVisible("properties")}
+              selectedProperty={selectedProperty}
+            >
               {currentView === "filter" ? (
                 <FilterView updateCurrentView={updateCurrentView} />
               ) : (
@@ -180,16 +182,105 @@ const MapPage: FC = () => {
 
 export default MapPage;
 
-const StreetViewModal = ({
-  children,
-  isOpen,
-}: {
+// test
+
+const StreetViewModal: React.FC<{
   children: React.ReactNode;
   isOpen: boolean;
-}) => {
-  if (!isOpen) return null;
-  return ReactDOM.createPortal(
-    <div className="absolute inset-0 z-50 w-full h-full">{children}</div>,
-    document.body,
+  onClose: () => void;
+}> = ({ children, isOpen, onClose }) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+        // return focus
+        document.getElementById("outside-iframe-element")?.focus();
+        const outsideElement = document.getElementById(
+          "outside-iframe-element"
+        );
+        outsideElement?.focus();
+      } else if (event.key === "Tab") {
+        // Trap focus within the container
+        const container = containerRef.current;
+        if (container && !container.contains(document.activeElement)) {
+          // If focus goes outside the container, bring it back to the first focusable element inside the container
+          const focusableElements = container.querySelectorAll(
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+          );
+          if (focusableElements.length > 0) {
+            event.preventDefault();
+            (focusableElements[0] as HTMLElement).focus();
+          }
+        }
+      }
+    };
+
+    const handleDocumentClick = (event: MouseEvent) => {
+      if (
+        isOpen &&
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node)
+      ) {
+        onClose();
+        // return focus
+        document.getElementById("outside-iframe-element")?.focus();
+        const outsideElement = document.getElementById(
+          "outside-iframe-element"
+        );
+        outsideElement?.focus();
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleKeyDown);
+      document.addEventListener("click", handleDocumentClick);
+    } else {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("click", handleDocumentClick);
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.removeEventListener("click", handleDocumentClick);
+    };
+  }, [isOpen, onClose]);
+
+  useEffect(() => {
+    // Focus the container when it's opened
+    if (isOpen && containerRef.current) {
+      containerRef.current.focus();
+    }
+    // return focus when closed
+    document.getElementById("outside-iframe-element")?.focus();
+    const outsideElement = document.getElementById("outside-iframe-element");
+    outsideElement?.focus();
+  }, [isOpen]);
+
+  return (
+    <>
+      {isOpen && (
+        <div
+          id="street-view-overlay"
+          className="absolute inset-0 z-50 w-full h-full"
+          ref={containerRef}
+          tabIndex={0} // Make the container focusable
+        >
+          <div className="fixed w-full h-full bg-black">
+            <button
+              onClick={onClose}
+              tabIndex={0}
+              aria-label="Close full screen street view map"
+              className="absolute top-4 right-4 bg-white p-[10px] rounded-md flex flex-row space-x-1 items-center"
+            >
+              <X color="#3D3D3D" size={20} />
+              <span className="leading-0">Close</span>
+            </button>
+            {children}
+          </div>
+        </div>
+      )}
+    </>
   );
 };
