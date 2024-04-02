@@ -221,18 +221,9 @@ const StreetViewModal: React.FC<{
     const handleDocumentClick = (event: MouseEvent) => {
       if (
         isOpen &&
-        containerRef.current
-        &&
+        containerRef.current &&
         !containerRef.current.contains(event.target as Node)
       ) {
-        console.log("handleDocumentClick called", {
-          ref: containerRef.current,
-          contains: containerRef.current.contains.toString(),
-          target: event.target,
-        });
-
-        console.dir(containerRef.current);
-        console.dir(event.target);
         onClose();
         // return focus
         document.getElementById("outside-iframe-element")?.focus();
@@ -268,8 +259,6 @@ const StreetViewModal: React.FC<{
     outsideElement?.focus();
   }, [isOpen]);
 
-  console.log({ isOpen });
-
   return (
     <>
       {isOpen && (
@@ -280,16 +269,7 @@ const StreetViewModal: React.FC<{
           tabIndex={0} // Make the container focusable
         >
           <div className="fixed w-full h-full bg-black">
-            <button
-              onClick={onClose}
-              tabIndex={0}
-              aria-label="Close full screen street view map"
-              className="absolute top-4 right-4 bg-white p-[10px] rounded-md flex flex-row space-x-1 items-center"
-            >
-              <X color="#3D3D3D" size={20} />
-              <span className="leading-0">Close</span>
-            </button>
-            {/* <ThemeButton
+            <ThemeButton
               color="tertiary"
               startContent={<X />}
               onPress={onClose}
@@ -297,7 +277,7 @@ const StreetViewModal: React.FC<{
               label="Close"
               aria-label="Close full screen street view map"
               className="absolute top-4 right-4"
-            /> */}
+            />
             {children}
           </div>
         </div>
