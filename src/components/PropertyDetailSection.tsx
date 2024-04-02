@@ -97,7 +97,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     />
   ) : (
     <>
-      <div className="flex flex-wrap flex-grow h-full">
+      <div className="flex flex-wrap flex-grow h-full overflow-y-scroll property-detail-container">
         {display === "list" ? (
           <Table
             aria-label="Property Details"

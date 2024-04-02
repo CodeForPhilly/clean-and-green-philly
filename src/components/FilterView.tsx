@@ -57,6 +57,7 @@ const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
   return (
     <div className="relative p-6">
         <Button
+          aria-label="Close filter panel"
           className="bg-gray-100 right-4 lg:right-[24px] text-gray-900 absolute px-2 top-8 min-w-[3rem] hover:bg-gray-200"
           onPress={() => updateCurrentView("filter")}
         >

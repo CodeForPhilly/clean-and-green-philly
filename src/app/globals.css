@@ -250,3 +250,10 @@ a .bg-color-none {
 .mapboxgl-ctrl-geocoder {
   @apply mt-2;
 }
+
+/* Centers the properties for small screens only, tailwind breakpoint */
+@media screen and (max-width: 639px) {
+  .property-detail-container {
+    scrollbar-gutter: stable both-edges;
+  }
+}

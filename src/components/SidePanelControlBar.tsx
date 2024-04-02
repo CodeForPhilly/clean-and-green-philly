@@ -29,7 +29,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
     <div>{/* Keep empty while loading */}</div>
   ) : (
     <>
-    <div className="flex justify-between items-center bg-white p-2 h-14">
+    <div className="flex justify-between items-center bg-white border-b-[1px] border-[#12121215] p-2 h-14">
       {/* Left-aligned content: Total Properties in View */}
       <Button
         aria-label={`Change to ${smallScreenMode}`}
@@ -68,13 +68,13 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         <Button
           onPress={() => updateCurrentView("detail")}
           startContent={ <Table className="h-6 w-6" />}
-          className={`bg-white hover:${currentView !== "filter" ? "bg-gray-10" : "bg-white"} max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
+          className={`bg-white hover:bg-gray-10 max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         >
         </Button>
         <Button
           onPress={() => updateCurrentView("download")}
           startContent={<DownloadSimple className="h-6 w-6" /> }
-          className={`bg-white hover:${currentView !== "filter" ? "bg-gray-10" : "bg-white"} max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
+          className={`bg-white hover:bg-gray-10 max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         ></Button>
       </div>
     </div>

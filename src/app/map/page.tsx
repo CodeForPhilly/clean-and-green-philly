@@ -112,7 +112,7 @@ const MapPage: FC = () => {
                 />
               </div>
             </StreetViewModal>
-            <div className={`flex-grow overflow-auto ${isVisible("map")}`}>
+            <div className={`grow ${isVisible("map")}`}>
               <div className={`sticky top-0 z-10 sm:hidden ${isVisible("map")}`}>
                 <SidePanelControlBar {...controlBarProps} />
               </div>

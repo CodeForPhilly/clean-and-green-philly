@@ -46,10 +46,9 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
 
   return (
     <div
-      className="sm:max-w-sm w-full lg:w-1/2 p-2 max-lg:px-4 cursor-pointer max-lg:flex max-lg:justify-center"
-      onClick={handleClick}
+      className="sm:max-w-sm w-full lg:w-1/2 p-2 max-lg:px-4 max-lg:flex max-lg:justify-center max-lg:mx-auto"
     >
-      <div className="max-w-sm w-full h-full">
+      <div className="cursor-pointer max-w-sm w-full h-full" onClick={handleClick}>
         <div className="bg-white h-full flex flex-col rounded-md overflow-hidden p-2 hover:bg-gray-100">
           <div
             className="relative w-full rounded-lg overflow-hidden"
