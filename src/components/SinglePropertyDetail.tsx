@@ -1,4 +1,3 @@
-import { Button } from "@nextui-org/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
 import {
@@ -15,6 +14,7 @@ import {
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 import { Dispatch, SetStateAction } from "react";
 import { BarClickOptions } from "@/app/find-properties/page";
+import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -70,16 +70,15 @@ const SinglePropertyDetail = ({
   return (
     <div className="w-full px-6 pb-6">
       <div className="sticky top-0 py-4 z-10">
-        <Button
+        <ThemeButton
+          color="tertiary"
+          label="Back"
+          startContent={<ArrowLeft />}
           onPress={() => {
             setSelectedProperty(null);
             updateCurrentView("detail");
           }}
-          className="bg-white rounded-md hover:bg-gray-100"
-        >
-          <ArrowLeft color="#3D3D3D" size={24} />{" "}
-          <span className="body-md">Back</span>{" "}
-        </Button>
+        />
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
@@ -111,16 +110,14 @@ const SinglePropertyDetail = ({
             {address.toLowerCase()}
           </h2>
           <div>
-            <a
+            <ThemeButtonLink
               href={atlasUrl}
               target="_blank"
               rel="noopener noreferrer"
-              color="primary"
-              className="flex p-2 items-center gap-1 body-md"
-            >
-              Atlas
-              <ArrowSquareOut className="inline h-6 w-6" aria-hidden="true" />
-            </a>
+              color="tertiary"
+              label="Atlas"
+              endContent={<ArrowSquareOut aria-hidden="true" />}
+            />
           </div>
         </div>
       </div>

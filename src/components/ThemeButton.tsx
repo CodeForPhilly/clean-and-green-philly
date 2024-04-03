@@ -4,7 +4,7 @@ import { Button as NextUIButton, Link } from "@nextui-org/react";
 type NextUIButtonProps = React.ComponentProps<typeof NextUIButton>;
 
 type ButtonProps = Omit<NextUIButtonProps, "color"> & {
-  label?: string;
+  label?: string | React.ReactNode;
   color?: "primary" | "secondary" | "tertiary";
   isSelected?: boolean;
 };
@@ -72,6 +72,7 @@ const ThemeButton = forwardRef<Ref, ButtonProps>(
       onClick,
       startContent,
       endContent,
+      size = "md",
       className = "",
       isSelected = false,
       disabled = false,
@@ -100,7 +101,7 @@ const ThemeButton = forwardRef<Ref, ButtonProps>(
         disableRipple={isDisabled}
         onPress={isDisabled ? undefined : onPress}
         isIconOnly={iconOnly}
-        size="md"
+        size={size}
         className={`${basedStyles}  ${colorStyles} ${padding} ${disabledStyles} ${className}`}
         ref={ref}
         aria-disabled={isDisabled}

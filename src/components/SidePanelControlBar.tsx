@@ -10,6 +10,7 @@ import {
   SquaresFour,
   Table,
 } from "@phosphor-icons/react";
+import { ThemeButton } from "./ThemeButton";
 
 type SidePanelControlBarProps = {
   currentView: string;
@@ -36,17 +37,19 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
     <>
       <div className="flex justify-between items-center bg-white border-b-[1px] border-[#12121215] p-2 h-14">
         {/* Left-aligned content: Total Properties in View */}
-        <Button
+        <ThemeButton
+          color="tertiary"
           aria-label={`Change to ${smallScreenMode}`}
-          className="bg-white w-fit px-2 sm:hidden hover:bg-gray-100 max-md:min-w-[4rem]"
+          className="sm:hidden max-md:min-w-[4rem]"
           onPress={updateSmallScreenMode}
-        >
-          {smallScreenMode === "map" ? (
-            <SquaresFour className="h-6 w-6" />
-          ) : (
-            <GlobeHemisphereWest className="h-6 w-6" />
-          )}
-        </Button>
+          startContent={
+            smallScreenMode === "map" ? (
+              <SquaresFour />
+            ) : (
+              <GlobeHemisphereWest />
+            )
+          }
+        />
         <div className="sm:px-4 py-2">
           <h1 className="body-md">
             <span className="font-bold">{featureCount.toLocaleString()} </span>
@@ -60,37 +63,42 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           role="region"
           aria-label="controls"
         >
-          <Button
+          <ThemeButton
+            color="tertiary"
+            label={<span className="max-lg:hidden body-md">Filter</span>}
             onPress={() => {
               if (filterRef.current && currentView === "filter") {
                 filterRef.current.blur();
               }
+              
               updateCurrentView("filter");
             }}
-            startContent={<Funnel className="h-6 w-6" />}
-            className={`bg-white max-lg:min-w-[4rem] iconLink ${
-              currentView === "filter" &&
-              "bg-[#e9ffe5] hover:bg-[#c2f5ba] text-green-700"
-            }`}
+            isSelected={currentView === "filter"}
+            startContent={<Funnel />}
+            className="max-lg:min-w-[4rem]"
             data-hover={false}
             ref={filterRef}
-          >
-            <span className="max-lg:hidden body-md">Filter</span>
-          </Button>
-          <Button
+          />
+
+          <ThemeButton
+            color="tertiary"
+            aria-label="View"
             onPress={() => updateCurrentView("detail")}
-            startContent={<Table className="h-6 w-6" />}
-            className={`bg-white hover:bg-gray-10 max-lg:min-w-[4rem] ${
+            startContent={<Table />}
+            className={`max-lg:min-w-[4rem] ${
               smallScreenMode === "map" ? "max-sm:hidden" : ""
             }`}
-          ></Button>
-          <Button
+          />
+
+          <ThemeButton
+            color="tertiary"
+            aria-label="Download"
             onPress={() => updateCurrentView("download")}
-            startContent={<DownloadSimple className="h-6 w-6" />}
-            className={`bg-white hover:bg-gray-10 max-lg:min-w-[4rem] ${
+            startContent={<DownloadSimple />}
+            className={`max-md:min-w-[4rem] ${
               smallScreenMode === "map" ? "max-sm:hidden" : ""
             }`}
-          ></Button>
+          />
         </div>
       </div>
     </>
