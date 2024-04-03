@@ -10,6 +10,8 @@ import {
   TableCell,
   getKeyValue,
   Pagination,
+  PaginationItem,
+  PaginationItemType,
   Spinner,
 } from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
@@ -51,13 +53,33 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   setSelectedProperty,
   setIsStreetViewModalOpen,
   updateCurrentView,
-  smallScreenMode
+  smallScreenMode,
 }) => {
   const [page, setPage] = useState(1);
 
   const rowsPerPage = 6;
   const pages = Math.ceil(featuresInView.length / rowsPerPage);
   const widthRef = useRef(false);
+
+  // const isBefore = index < range.indexOf(activePage);
+
+  // Function to customize ARIA labels for pagination items
+  const getItemAriaLabel = (page?: string | number | undefined): string => {
+    if (typeof page === "number") {
+      return `go to page  ${page}`;
+    } else if (page === "prev") {
+      return "go to previous page";
+    } else if (page === "next") {
+      return "go to next page";
+    } else if (page === "prev_5") {
+      return "Jump Backward 5 Pages"; // Customize label for jump backward
+    } else if (page === "next_5") {
+      return "Jump Forward 5 Pages"; // Customize label for jump forward
+    } else if (page === "dots") {
+      return "jump 5 pages"; // struggling on a way to identify whether the button is jumping forward or background to apply appropriate label
+    }
+    return ""; // Default label
+  };
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
@@ -67,8 +89,10 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       Toggling from map (0 results) to results in mobile causes the component
       to miscalculate the 1st active span since parent width === 0.
     */
-    if (typeof(window) !== "undefined") {
-      widthRef.current = ((smallScreenMode === "properties" && window.innerWidth < 640) || window.innerWidth >= 640)
+    if (typeof window !== "undefined") {
+      widthRef.current =
+        (smallScreenMode === "properties" && window.innerWidth < 640) ||
+        window.innerWidth >= 640;
     }
 
     if (start > featuresInView.length) {
@@ -108,7 +132,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             }}
           >
             <TableHeader>
-              {tableCols.map(column => (
+              {tableCols.map((column) => (
                 <TableColumn key={column.key}>{column.label}</TableColumn>
               ))}
             </TableHeader>
@@ -119,12 +143,13 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                   onClick={() => {
                     setSelectedProperty(
                       items.find(
-                        item => properties?.OPA_ID === item?.properties?.OPA_ID,
-                      ) || null,
+                        (item) =>
+                          properties?.OPA_ID === item?.properties?.OPA_ID
+                      ) || null
                     );
                   }}
                 >
-                  {columnKey => (
+                  {(columnKey) => (
                     <TableCell>{getKeyValue(properties, columnKey)}</TableCell>
                   )}
                 </TableRow>
@@ -140,11 +165,13 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             />
           ))
         )}
-        {(featuresInView?.length > 0 && widthRef.current) && (
+        {featuresInView?.length > 0 && widthRef.current && (
           <div>
             <div className="flex w-full justify-center mt-4">
               <Pagination
                 role={undefined}
+                key={PaginationItemType.DOTS}
+                getItemAriaLabel={getItemAriaLabel}
                 aria-label="pagination"
                 isCompact
                 showControls
@@ -152,7 +179,14 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 color="secondary"
                 page={page}
                 total={pages}
-                onChange={newPage => setPage(newPage)}
+                onChange={(newPage) => setPage(newPage)}
+                dotsJump={5}
+                classNames={{
+                  ellipsis: "testing-class-names-dots",
+                }}
+                // renderItem={({ value, index }) => {
+                //   console.log(value, index);
+                // }}
               />
             </div>
             <div className="flex w-full justify-center py-4 px-6">
