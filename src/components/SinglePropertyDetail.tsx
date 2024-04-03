@@ -14,7 +14,7 @@ import {
 } from "@phosphor-icons/react";
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 import { Dispatch, SetStateAction } from "react";
-import { BarClickOptions } from "@/app/map/page";
+import { BarClickOptions } from "@/app/find-properties/page";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -27,7 +27,7 @@ const SinglePropertyDetail = ({
   property,
   setSelectedProperty,
   setIsStreetViewModalOpen,
-  updateCurrentView
+  updateCurrentView,
 }: PropertyDetailProps) => {
   if (!property) return null;
   const { properties } = property;
@@ -67,7 +67,6 @@ const SinglePropertyDetail = ({
     </th>
   );
 
-
   return (
     <div
       className="w-full p-4"
@@ -79,7 +78,10 @@ const SinglePropertyDetail = ({
     >
       <div className="pb-4">
         <Button
-          onPress={() => {setSelectedProperty(null); updateCurrentView("detail")}}
+          onPress={() => {
+            setSelectedProperty(null);
+            updateCurrentView("detail");
+          }}
           className="bg-white rounded-md hover:bg-gray-100"
         >
           <ArrowLeft color="#3D3D3D" size={24} />{" "}

@@ -2,11 +2,17 @@
 
 import React, { FC, useRef } from "react";
 import { Button } from "@nextui-org/react";
-import { BarClickOptions } from "@/app/map/page";
-import { DownloadSimple, Funnel, GlobeHemisphereWest, SquaresFour, Table } from "@phosphor-icons/react";
+import { BarClickOptions } from "@/app/find-properties/page";
+import {
+  DownloadSimple,
+  Funnel,
+  GlobeHemisphereWest,
+  SquaresFour,
+  Table,
+} from "@phosphor-icons/react";
 
 type SidePanelControlBarProps = {
-  currentView: string,
+  currentView: string;
   featureCount: number;
   loading: boolean;
   smallScreenMode: string;
@@ -20,7 +26,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   loading,
   smallScreenMode,
   updateCurrentView,
-  updateSmallScreenMode
+  updateSmallScreenMode,
 }) => {
 
   const filterRef = useRef<HTMLButtonElement | null>(null);
@@ -41,7 +47,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       <div className="sm:px-4 py-2">
         <h1 className="body-md">
           <span className="font-bold">{featureCount.toLocaleString()} </span> 
-          Properties <span className="max-lg:hidden"> in View </span>
+          Properties <span className="max-xl:hidden"> in View </span>
         </h1>
       </div>
 
@@ -76,8 +82,8 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           startContent={<DownloadSimple className="h-6 w-6" /> }
           className={`bg-white hover:bg-gray-10 max-lg:min-w-[4rem] ${smallScreenMode === "map" ? "max-sm:hidden" : ""}`}
         ></Button>
+        </div>
       </div>
-    </div>
     </>
   );
 };
