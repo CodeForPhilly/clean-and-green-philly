@@ -72,7 +72,6 @@ const ThemeButton = forwardRef<Ref, ButtonProps>(
       onClick,
       startContent,
       endContent,
-      size = "md",
       className = "",
       isSelected = false,
       disabled = false,
@@ -101,7 +100,7 @@ const ThemeButton = forwardRef<Ref, ButtonProps>(
         disableRipple={isDisabled}
         onPress={isDisabled ? undefined : onPress}
         isIconOnly={iconOnly}
-        size={size}
+        size="md"
         className={`${basedStyles}  ${colorStyles} ${padding} ${disabledStyles} ${className}`}
         ref={ref}
         aria-disabled={isDisabled}
