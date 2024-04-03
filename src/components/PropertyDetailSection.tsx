@@ -16,7 +16,7 @@ import {
 } from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
 import SinglePropertyDetail from "./SinglePropertyDetail";
-import { BarClickOptions } from "@/app/map/page";
+import { BarClickOptions } from "@/app/find-properties/page";
 import { MapGeoJSONFeature } from "maplibre-gl";
 
 const tableCols = [
@@ -180,13 +180,6 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 page={page}
                 total={pages}
                 onChange={(newPage) => setPage(newPage)}
-                dotsJump={5}
-                classNames={{
-                  ellipsis: "testing-class-names-dots",
-                }}
-                // renderItem={({ value, index }) => {
-                //   console.log(value, index);
-                // }}
               />
             </div>
             <div className="flex w-full justify-center py-4 px-6">
