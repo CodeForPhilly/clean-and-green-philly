@@ -10,7 +10,11 @@ import {
   SquaresFour,
   Table,
 } from "@phosphor-icons/react";
+<<<<<<< HEAD
 import { ThemeButton } from "./ThemeButton";
+=======
+import { useFilter } from "@/context/FilterContext";
+>>>>>>> f1c5e16 (feat(457): add filter count to button)
 
 type SidePanelControlBarProps = {
   currentView: string;
@@ -29,7 +33,12 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   updateCurrentView,
   updateSmallScreenMode,
 }) => {
+<<<<<<< HEAD
   const filterRef = useRef<HTMLButtonElement | null>(null);
+=======
+  const { appFilter } = useFilter();
+  const filterCount = Object.keys(appFilter).length;
+>>>>>>> f1c5e16 (feat(457): add filter count to button)
 
   return loading ? (
     <div>{/* Keep empty while loading */}</div>
