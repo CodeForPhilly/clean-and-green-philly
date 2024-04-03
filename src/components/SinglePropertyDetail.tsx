@@ -68,15 +68,8 @@ const SinglePropertyDetail = ({
   );
 
   return (
-    <div
-      className="w-full p-4"
-      style={{
-        paddingRight: "24px",
-        paddingBottom: "24px",
-        paddingLeft: "24px",
-      }}
-    >
-      <div className="pb-4">
+    <div className="w-full px-6 pb-6">
+      <div className="sticky top-0 py-4 z-10">
         <Button
           onPress={() => {
             setSelectedProperty(null);
