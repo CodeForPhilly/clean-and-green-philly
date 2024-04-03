@@ -1,7 +1,7 @@
 import { Footer, Header, Hotjar } from "@/components";
 
 export const metadata = {
-  title: "Map",
+  title: "Find Properties",
 };
 
 const MapLayout = ({ children }: { children: React.ReactNode }) => {

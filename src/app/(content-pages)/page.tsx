@@ -197,7 +197,7 @@ const LandingPage: FC = () => {
           link={{
             icon: PiBinoculars,
             label: "Find Properties",
-            href: "/map",
+            href: "/find-properties",
           }}
         />
       </div>
@@ -267,7 +267,7 @@ const LandingPage: FC = () => {
           link={{
             icon: PiArrowRight,
             label: "Get Started",
-            href: "/map",
+            href: "/find-properties",
           }}
         />
       </div>
