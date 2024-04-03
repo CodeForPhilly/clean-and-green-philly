@@ -253,7 +253,7 @@ a .bg-color-none {
 
 /* Centers the properties for small screens only, tailwind breakpoint */
 @media screen and (max-width: 639px) {
-  .property-detail-container {
+  .side-panel-container {
     scrollbar-gutter: stable both-edges;
   }
 }
