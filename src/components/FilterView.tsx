@@ -2,7 +2,7 @@ import { FC } from "react";
 import DimensionFilter from "./Filters/DimensionFilter";
 import { Button } from "@nextui-org/react";
 import { PiX } from "react-icons/pi";
-import { BarClickOptions } from "@/app/map/page";
+import { BarClickOptions } from "@/app/find-properties/page";
 
 const filters = [
   {
