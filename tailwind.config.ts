@@ -9,6 +9,12 @@ const config: Config = {
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    spacings: {
+      sm: "8px",
+      md: "16px",
+      lg: "24px",
+      xl: "48px",
+    },
     extend: {
       fontFamily: {
         body: ['"HK Grotesk"', "sans-serif"],

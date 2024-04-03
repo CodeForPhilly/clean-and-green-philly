@@ -187,7 +187,7 @@ export default function AboutPage() {
             <h2 className="heading-2xl font-semibold mb-4">Feedback</h2>
             <p className="body-md mb-4">
               If you find issues in this website or would like to offer us
-              feedback, please reach out to us at{" "}
+              feedback, please reach out to us{" "}
               <a
                 href="mailto:cleanandgreenphl@gmail.com"
                 target="_blank"
@@ -209,7 +209,7 @@ export default function AboutPage() {
                 Request Removal
               </a>{" "}
               page in this website or would like to offer us feedback, please
-              reach out to us at
+              reach out to us
               <a
                 href="mailto:cleanandgreenphl@gmail.com"
                 target="_blank"

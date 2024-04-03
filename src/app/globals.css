@@ -134,7 +134,7 @@
   /* added webkit transform to remove icon movement in safari */
 
   .iconLink {
-    @apply text-gray-900 items-center items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
+    @apply text-gray-900 items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
     -webkit-transform: translateZ(0);
   }
 
@@ -155,7 +155,7 @@
 
   .activeIconLinkNav {
     @apply flex relative h-full items-center rounded-medium;
-    @apply data-[active=true]:bottom-0 data-[active=true]:left-0 data-[active=true]:right-0 data-[active=true]:h-full data-[active=true]:rounded-[12px] data-[active=true]:bg-[#E9FFE5] data-[active=true]:text-[#E9FFE5] data-[active=true]:rounded-medium;
+    @apply data-[active=true]:bottom-0 data-[active=true]:left-0 data-[active=true]:right-0 data-[active=true]:h-full data-[active=true]:bg-[#E9FFE5] data-[active=true]:text-[#E9FFE5] data-[active=true]:rounded-medium;
     -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav {

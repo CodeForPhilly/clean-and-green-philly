@@ -1,6 +1,5 @@
 "use client";
 import Image from "next/image";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import menuData from "./menuData";
@@ -39,10 +38,11 @@ const Header = () => {
         }`}
       >
         <div className="container mx-auto px-4 lg:px-8 xl:px-12">
-          <div className=" -mx-4 flex items-center justify-between">
-            <div className="w-60 max-w-full px-4 xl:mr-12">
-              <Link
+          <div className=" -mx-4 flex items-center">
+            <div className="w-60  px-4 ">
+              <a
                 href="/"
+                aria-label="Company"
                 className={`header-logo block w-full ${
                   sticky ? "py-5 lg:py-2" : "py-8"
                 } `}
@@ -52,11 +52,11 @@ const Header = () => {
                   alt="logo"
                   width={40}
                   height={30}
-                  className="w-full dark:block"
+                  className="w-full dark:block mr-12"
                 />
-              </Link>
+              </a>
             </div>
-            <div className="flex w-full items-end justify-between py-2 pl-96 ml-96">
+            <div className="flex w-full justify-items-end  pl-96 ml-96 ">
               <div>
                 <button
                   onClick={navbarToggleHandler}
@@ -93,7 +93,7 @@ const Header = () => {
                       return (
                         <li key={index} className="group relative">
                           {menuItem.path ? (
-                            <Link
+                            <a
                               href={menuItem.path}
                               className={`flex py-2 text-base lg:mr-0 lg:inline-flex lg:px-0 lg:py-6 ${
                                 usePathName === menuItem.path
@@ -102,7 +102,7 @@ const Header = () => {
                               }`}
                             >
                               {menuItem.title}
-                            </Link>
+                            </a>
                           ) : null}
                         </li>
                       );

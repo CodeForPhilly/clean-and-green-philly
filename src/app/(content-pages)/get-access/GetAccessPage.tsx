@@ -4,12 +4,12 @@ export default function GetAccessPage() {
   return (
     <div className="flex flex-col min-h-screen pt-24">
       <div className="flew-grow container mx-auto pt-20">
-        <h1 className="heading-3xl font-bold mb-6">Get Access</h1>
+        <h1 className="heading-3xl font-bold mb-6 ml-6">Get Access</h1>
 
-        <h2 className="heading-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8 ml-6">
           What does "get access" mean?
         </h2>
-        <p className="body-md">
+        <p className="body-md ml-6">
           In order to intervene in a property, you need to have some kind of
           legal access to do so. Broadly, this means either becoming the owner
           of the property yourself or reaching a legal agreement with the owner
@@ -19,10 +19,10 @@ export default function GetAccessPage() {
           these options are and how you can get help with each.
         </p>
 
-        <h2 className="heading-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8 ml-6">
           How can I get access to a specific property?
         </h2>
-        <p className="body-md">
+        <p className="body-md ml-6">
           Generally speaking, there are two ways to get access to a property:
           you can either become the owner yourself or reach an agreement with
           the owner to let you access the property. Clean & Green Philly
@@ -52,7 +52,7 @@ export default function GetAccessPage() {
             aria-label="Buying a Property"
             title="Buying a Property"
             subtitle="Click to expand"
-            className="font-bold text-large"
+            className="font-bold text-large ml-4"
           >
             <div className="text-base font-normal">
               Buying a property outright can often be the simplest, fastest way
@@ -68,7 +68,7 @@ export default function GetAccessPage() {
             aria-label="The Philadelphia Land Bank"
             title="The Philadelphia Land Bank"
             subtitle="Click to expand"
-            className="font-bold text-large"
+            className="font-bold text-large ml-4"
           >
             <div className="text-base font-normal">
               The Philadelphia Land Bank [https://phdcphila.org/] is part of the
@@ -116,7 +116,7 @@ export default function GetAccessPage() {
             aria-label="Act 135 Conservatorship"
             title="Act 135 Conservatorship"
             subtitle="Click to expand"
-            className="font-bold text-large"
+            className="font-bold text-large ml-4"
           >
             <div className="text-base font-normal">
               Act 135 conservatorship can be a potential faster route than other
@@ -143,7 +143,7 @@ export default function GetAccessPage() {
             aria-label="Private Land Use Agreement"
             title="Private Land Use Agreement"
             subtitle="Click to expand"
-            className="font-bold text-large"
+            className="font-bold text-large ml-4"
           >
             <div className="text-base font-normal">
               A private land use agreement can be a fast and easy way to get
@@ -158,10 +158,10 @@ export default function GetAccessPage() {
           </AccordionItem>
         </Accordion>
 
-        <h2 className="heading-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8 ml-5">
           What do you mean by "do nothing"?
         </h2>
-        <p className="body-md">
+        <p className="body-md ml-5">
           Although most properties have at least one reasonable way to get
           access to them, in some cases, a property may have a particular
           combination of factors that make it difficult to impossible to get
@@ -174,8 +174,10 @@ export default function GetAccessPage() {
           easily pursue an intervention.
         </p>
 
-        <h2 className="heading-2xl font-bold mt-8">Are there other options?</h2>
-        <p className="body-md">
+        <h2 className="heading-2xl font-bold mt-8 ml-5">
+          Are there other options?
+        </h2>
+        <p className="body-md ml-5">
           The four options mentioned above are not a complete list of ways to
           get access to a vacant property in Philadelphia. There are several
           others worth considering. However, the criteria for these options
@@ -193,7 +195,7 @@ export default function GetAccessPage() {
             aria-label="Tangled Titles"
             title="Tangled Titles"
             subtitle="Click to expand"
-            className="font-bold text-large"
+            className="font-bold text-large ml-3"
           >
             <div className="text-base font-normal">
               A tangled title is a situation in which the deed to a property
@@ -218,7 +220,7 @@ export default function GetAccessPage() {
             aria-label="Adverse Possession"
             title="Adverse Possession"
             subtitle="Click to expand"
-            className="font-bold text-large"
+            className="font-bold text-large ml-3"
           >
             <div className="text-base font-normal">
               If you have been using a specific vacant property for a long time
@@ -242,7 +244,7 @@ export default function GetAccessPage() {
             aria-label="The Side Yard Program"
             title="The Side Yard Program"
             subtitle="Click to expand"
-            className="font-bold text-large"
+            className="font-bold text-large ml-3 pb-12"
           >
             <div className="text-base font-normal">
               If you live next to a vacant property, you may be able to buy it

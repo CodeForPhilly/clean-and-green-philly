@@ -2,11 +2,13 @@ import { Accordion, AccordionItem } from "@nextui-org/react";
 
 export default function TransformPropertyPage() {
   return (
-    <div className="flex flex-col min-h-screen pt-24">
+    <div className="flex flex-col min-h-screen pt-20">
       <div className="flew-grow container mx-auto pt-20">
-        <h1 className="heading-3xl font-bold mb-6">Transform a Property</h1>
+        <h1 className="heading-3xl font-bold mb-6 ml-4">
+          Transform a Property
+        </h1>
 
-        <p className="body-md">
+        <p className="body-md ml-4">
           Clean & Green Philly aims to help reduce gun violence by intervening
           in vacant properties. Very simply, this means improving the property.
           This can range from removing trash to planting a community garden,
@@ -15,8 +17,10 @@ export default function TransformPropertyPage() {
           impacts the neighborhood around it.
         </p>
 
-        <h2 className="heading-2xl font-bold mt-8">Types of Interventions</h2>
-        <p className="body-md">
+        <h2 className="heading-2xl font-bold mt-8 ml-4">
+          Types of Interventions
+        </h2>
+        <p className="body-md ml-4">
           The original research that Clean & Green Philly is based on promotes
           “cleaning and greening”. This includes removing trash, grading the
           land, planting trees, installing low fences, and maintaining the
@@ -25,7 +29,7 @@ export default function TransformPropertyPage() {
           have a big impact. That said, there are many ways to transform a
           vacant property. You could, for example:
         </p>
-        <ul className="list-disc pl-6 my-4">
+        <ul className="list-disc pl-6 my-4 ml-4">
           <li>Partner with a local restaurant to offer outdoor eating</li>
           <li>Install bike parking</li>
           <li>
@@ -39,17 +43,17 @@ export default function TransformPropertyPage() {
             Connect with a non-profit organization to build affordable housing
           </li>
         </ul>
-        <p className="body-md">
+        <p className="body-md ml-4">
           These are just some of the many possibilities. Remember to be both
           creative and practical: there is no one-size-fits-all solution, and
           Philadelphia will need a variety of uses in its vacant properties,
           including green space, housing, parks, commercial space, and more.
         </p>
 
-        <h2 className="heading-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8 ml-4">
           What's right for my property?
         </h2>
-        <p className="body-md">
+        <p className="body-md ml-4">
           Different properties have different opportunities and different
           challenges. Some properties might be a great spot for a rain garden
           but not for a playground. Likewise, you wouldn’t want to start a
@@ -69,15 +73,17 @@ export default function TransformPropertyPage() {
           maintenance you’re willing or able to do.
         </p>
 
-        <h2 className="heading-2xl font-bold mt-8">Where can I get help?</h2>
-        <p className="body-md">
+        <h2 className="heading-2xl font-bold mt-8 ml-4">
+          Where can I get help?
+        </h2>
+        <p className="body-md ml-4">
           Many organizations in Philadelphia offer support transforming vacant
           properties.
         </p>
-        <h3 className="heading-xl font-bold mt-8 mb-4">
+        <h3 className="heading-xl font-bold mt-8 mb-4 ml-4">
           Community Groups and Local Representatives
         </h3>
-        <p className="body-md">
+        <p className="body-md ml-4">
           For help with greening projects, reach out to local Neighborhood
           Advisory Committees, Community Development Corporations, or Registered
           Community Organizations. They can guide you through the planning
@@ -86,10 +92,10 @@ export default function TransformPropertyPage() {
           plan and show how your project can improve the community.
         </p>
 
-        <h3 className="heading-xl font-bold mt-8 mb-4">
+        <h3 className="heading-xl font-bold mt-8 mb-4 ml-4">
           Garden Justice Legal Initiative
         </h3>
-        <p className="body-md">
+        <p className="body-md ml-4">
           The{" "}
           <a
             href="https://pubintlaw.org/cases-and-projects/garden-justice-legal-initiative-gjli/"
@@ -112,8 +118,8 @@ export default function TransformPropertyPage() {
           .
         </p>
 
-        <h3 className="heading-xl font-bold mt-8 mb-4">StreetBoxPHL</h3>
-        <p className="body-md">
+        <h3 className="heading-xl font-bold mt-8 mb-4 ml-4">StreetBoxPHL</h3>
+        <p className="body-md ml-4">
           <a href="https://streetboxphl.com/" className="link">
             StreetBoxPHL
           </a>{" "}
@@ -124,8 +130,8 @@ export default function TransformPropertyPage() {
           and help with insurance requirements.
         </p>
 
-        <h3 className="heading-xl font-bold mt-8 mb-4">Park in a Truck</h3>
-        <p className="body-md">
+        <h3 className="heading-xl font-bold mt-8 mb-4 ml-4">Park in a Truck</h3>
+        <p className="body-md ml-4">
           <a
             href="https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html"
             className="link"
@@ -145,7 +151,7 @@ export default function TransformPropertyPage() {
           communities create and maintain their parks.
         </p>
 
-        <h2 className="heading-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8 ml-4">
           What else should I think about?
         </h2>
 
@@ -156,7 +162,7 @@ export default function TransformPropertyPage() {
               aria-label="Maintenance"
               title="Maintenance"
               subtitle="Click to expand"
-              className="font-bold text-large"
+              className="font-bold text-large ml-3"
             >
               <div className="text-base font-normal">
                 It's also key to make sure that the improvements you make can
@@ -174,7 +180,7 @@ export default function TransformPropertyPage() {
               aria-label="Funding"
               title="Funding"
               subtitle="Click to expand"
-              className="font-bold text-large"
+              className="font-bold text-large ml-3"
             >
               <div className="text-base font-normal">
                 When it comes to funding, try to connect with local businesses
@@ -189,7 +195,7 @@ export default function TransformPropertyPage() {
               aria-label="Gentrification"
               title="Gentrification"
               subtitle="Click to expand"
-              className="font-bold text-large"
+              className="font-bold text-large ml-3 mb-12"
             >
               <div className="text-base font-normal">
                 Remember, your projects shouldn't push out the current
