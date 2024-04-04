@@ -1,80 +1,107 @@
 "use client";
 
-import React, { FC } from "react";
-import { Button, Tooltip } from "@nextui-org/react";
-import { BarClickOptions } from "@/app/map/page";
-import { DownloadSimple, Funnel, Table } from "@phosphor-icons/react";
+import React, { FC, useRef } from "react";
+import { Button } from "@nextui-org/react";
+import { BarClickOptions } from "@/app/find-properties/page";
+import {
+  DownloadSimple,
+  Funnel,
+  GlobeHemisphereWest,
+  SquaresFour,
+  Table,
+} from "@phosphor-icons/react";
+import { ThemeButton } from "./ThemeButton";
 
 type SidePanelControlBarProps = {
-  currentView: BarClickOptions;
-  setCurrentView: (view: BarClickOptions) => void;
+  currentView: string;
   featureCount: number;
   loading: boolean;
+  smallScreenMode: string;
+  updateCurrentView: (view: BarClickOptions) => void;
+  updateSmallScreenMode: () => void;
 };
 
 const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   currentView,
-  setCurrentView,
   featureCount,
   loading,
+  smallScreenMode,
+  updateCurrentView,
+  updateSmallScreenMode,
 }) => {
-  const handleClick = (view: BarClickOptions) => {
-    if (view === currentView) {
-      setCurrentView("detail");
-    } else {
-      setCurrentView(view);
-    }
-  };
-
-  const toggleDetailView = () => {
-    setCurrentView(currentView === "detail" ? "list" : "detail");
-  };
+  const filterRef = useRef<HTMLButtonElement | null>(null);
 
   return loading ? (
     <div>{/* Keep empty while loading */}</div>
   ) : (
-    <div className="flex justify-between items-center bg-white p-2 h-12">
-      {/* Left-aligned content: Total Properties in View */}
-      <div className="px-4 py-2">
-        <h1 className="body-md">
-          <span className="font-bold">{featureCount.toLocaleString()}</span>{" "}
-          Properties in View
-        </h1>
-      </div>
+    <>
+      <div className="flex justify-between items-center bg-white border-b-[1px] border-[#12121215] p-2 h-14">
+        {/* Left-aligned content: Total Properties in View */}
+        <ThemeButton
+          color="tertiary"
+          aria-label={`Change to ${smallScreenMode}`}
+          className="sm:hidden max-md:min-w-[4rem]"
+          onPress={updateSmallScreenMode}
+          startContent={
+            smallScreenMode === "map" ? (
+              <SquaresFour />
+            ) : (
+              <GlobeHemisphereWest />
+            )
+          }
+        />
+        <div className="sm:px-4 py-2">
+          <h1 className="body-md">
+            <span className="font-bold">{featureCount.toLocaleString()} </span>
+            Properties <span className="max-xl:hidden"> in View </span>
+          </h1>
+        </div>
 
-      {/* Right-aligned content: Buttons */}
-      <div
-        className="flex items-center space-x-2"
-        role="region"
-        aria-label="controls"
-      >
-        <Button
-          onPress={() => handleClick("filter")}
-          startContent={<Funnel className="iconButton" />}
-          className="bg-white"
+        {/* Right-aligned content: Buttons */}
+        <div
+          className="flex items-center space-x-2"
+          role="region"
+          aria-label="controls"
         >
-          <span className="body-md">Filter</span>
-        </Button>
+          <ThemeButton
+            color="tertiary"
+            label={<span className="max-lg:hidden body-md">Filter</span>}
+            onPress={() => {
+              if (filterRef.current && currentView === "filter") {
+                filterRef.current.blur();
+              }
+              
+              updateCurrentView("filter");
+            }}
+            isSelected={currentView === "filter"}
+            startContent={<Funnel />}
+            className="max-lg:min-w-[4rem]"
+            data-hover={false}
+            ref={filterRef}
+          />
 
-        <Tooltip content="View" showArrow color="primary">
-          <Button
+          <ThemeButton
+            color="tertiary"
             aria-label="View"
-            onPress={() => handleClick("detail")}
-            startContent={<Table className="iconButton" />}
-            className="bg-white"
-          ></Button>
-        </Tooltip>
+            onPress={() => updateCurrentView("detail")}
+            startContent={<Table />}
+            className={`max-lg:min-w-[4rem] ${
+              smallScreenMode === "map" ? "max-sm:hidden" : ""
+            }`}
+          />
 
-        <Tooltip content="Download" showArrow color="primary">
-          <Button
+          <ThemeButton
+            color="tertiary"
             aria-label="Download"
-            onPress={() => handleClick("download")}
-            startContent={<DownloadSimple className="iconButton" />}
-            className="bg-white"
-          ></Button>
-        </Tooltip>
+            onPress={() => updateCurrentView("download")}
+            startContent={<DownloadSimple />}
+            className={`max-md:min-w-[4rem] ${
+              smallScreenMode === "map" ? "max-sm:hidden" : ""
+            }`}
+          />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 

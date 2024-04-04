@@ -245,3 +245,15 @@ a .bg-color-none {
 .tagSelected:active {
   @apply ease-in h-6 bg-blue-400;
 }
+
+/* Space between search bar and sidepanel, especially for small screens */
+.mapboxgl-ctrl-geocoder {
+  @apply mt-2;
+}
+
+/* Centers the properties for small screens only, tailwind breakpoint */
+@media screen and (max-width: 639px) {
+  .side-panel-container {
+    scrollbar-gutter: stable both-edges;
+  }
+}

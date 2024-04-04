@@ -1,6 +1,6 @@
 "use client";
 
-import { FC, useState, useMemo, SetStateAction, Dispatch } from "react";
+import { FC, useState, useMemo, useRef, SetStateAction, Dispatch } from "react";
 import {
   Table,
   TableHeader,
@@ -14,6 +14,7 @@ import {
 } from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
 import SinglePropertyDetail from "./SinglePropertyDetail";
+import { BarClickOptions } from "@/app/find-properties/page";
 import { MapGeoJSONFeature } from "maplibre-gl";
 
 const tableCols = [
@@ -38,6 +39,8 @@ interface PropertyDetailSectionProps {
   selectedProperty: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
+  smallScreenMode: string;
+  updateCurrentView: (view: BarClickOptions) => void;
 }
 
 const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
@@ -47,22 +50,35 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   selectedProperty,
   setSelectedProperty,
   setIsStreetViewModalOpen,
+  updateCurrentView,
+  smallScreenMode,
 }) => {
   const [page, setPage] = useState(1);
 
   const rowsPerPage = 6;
   const pages = Math.ceil(featuresInView.length / rowsPerPage);
+  const widthRef = useRef(false);
 
   const items = useMemo(() => {
     const start = (page - 1) * rowsPerPage;
     const end = start + rowsPerPage;
+
+    /*Updates the pagination width
+      Toggling from map (0 results) to results in mobile causes the component
+      to miscalculate the 1st active span since parent width === 0.
+    */
+    if (typeof window !== "undefined") {
+      widthRef.current =
+        (smallScreenMode === "properties" && window.innerWidth < 640) ||
+        window.innerWidth >= 640;
+    }
 
     if (start > featuresInView.length) {
       setPage(1);
     }
 
     return featuresInView.slice(start, end);
-  }, [page, featuresInView]);
+  }, [page, featuresInView, smallScreenMode]);
 
   return loading ? (
     <div className="flex-grow h-full">
@@ -79,10 +95,11 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       property={selectedProperty}
       setSelectedProperty={setSelectedProperty}
       setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+      updateCurrentView={updateCurrentView}
     />
   ) : (
     <>
-      <div className="flex flex-wrap flex-grow h-full">
+      <div className="flex flex-wrap flex-grow h-full min-h-[calc(100svh-101px)] max-h-[calc(100svh-101px)]">
         {display === "list" ? (
           <Table
             aria-label="Property Details"
@@ -93,7 +110,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             }}
           >
             <TableHeader>
-              {tableCols.map(column => (
+              {tableCols.map((column) => (
                 <TableColumn key={column.key}>{column.label}</TableColumn>
               ))}
             </TableHeader>
@@ -104,12 +121,13 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                   onClick={() => {
                     setSelectedProperty(
                       items.find(
-                        item => properties?.OPA_ID === item?.properties?.OPA_ID,
-                      ) || null,
+                        (item) =>
+                          properties?.OPA_ID === item?.properties?.OPA_ID
+                      ) || null
                     );
                   }}
                 >
-                  {columnKey => (
+                  {(columnKey) => (
                     <TableCell>{getKeyValue(properties, columnKey)}</TableCell>
                   )}
                 </TableRow>
@@ -125,9 +143,9 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             />
           ))
         )}
-        {featuresInView?.length > 0 && (
+        {featuresInView?.length > 0 && widthRef.current && (
           <div>
-            <div className="flex w-full justify-center">
+            <div className="flex w-full justify-center mt-4">
               <Pagination
                 role={undefined}
                 aria-label="pagination"
@@ -137,7 +155,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 color="secondary"
                 page={page}
                 total={pages}
-                onChange={newPage => setPage(newPage)}
+                onChange={(newPage) => setPage(newPage)}
               />
             </div>
             <div className="flex w-full justify-center py-4 px-6">
