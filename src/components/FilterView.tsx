@@ -1,7 +1,7 @@
 import { FC } from "react";
 import DimensionFilter from "./Filters/DimensionFilter";
 import { Button } from "@nextui-org/react";
-import { PiCheck } from "react-icons/pi";
+import { PiX } from "react-icons/pi";
 import { BarClickOptions } from "@/app/find-properties/page";
 
 const filters = [
@@ -55,18 +55,14 @@ type FilterViewProps = {
 
 const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center">
-        <h1 className="font-semibold heading-xl">Filter</h1>
+    <div className="relative p-6">
         <Button
-          size="sm"
-          className="bg-gray-100 text-gray-900"
-          onPress={() => updateCurrentView("detail")}
+          aria-label="Close filter panel"
+          className="bg-gray-100 right-4 lg:right-[24px] text-gray-900 absolute px-2 top-8 min-w-[3rem] hover:bg-gray-200"
+          onPress={() => updateCurrentView("filter")}
         >
-          <PiCheck className="size-4" />
-          Done
+          <PiX className="h-6 w-6" />
         </Button>
-      </div>
       {filters.map(({ property, display, options, tooltip }) => (
         <DimensionFilter
           key={property}
