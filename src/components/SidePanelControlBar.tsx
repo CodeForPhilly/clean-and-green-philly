@@ -10,11 +10,8 @@ import {
   SquaresFour,
   Table,
 } from "@phosphor-icons/react";
-<<<<<<< HEAD
 import { ThemeButton } from "./ThemeButton";
-=======
 import { useFilter } from "@/context/FilterContext";
->>>>>>> f1c5e16 (feat(457): add filter count to button)
 
 type SidePanelControlBarProps = {
   currentView: string;
@@ -33,12 +30,9 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   updateCurrentView,
   updateSmallScreenMode,
 }) => {
-<<<<<<< HEAD
   const filterRef = useRef<HTMLButtonElement | null>(null);
-=======
   const { appFilter } = useFilter();
   const filterCount = Object.keys(appFilter).length;
->>>>>>> f1c5e16 (feat(457): add filter count to button)
 
   return loading ? (
     <div>{/* Keep empty while loading */}</div>
@@ -74,15 +68,20 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         >
           <ThemeButton
             color="tertiary"
-            label={<span className="max-lg:hidden body-md">Filter</span>}
+            label={
+              <div className="lg:space-x-1 body-md">
+                <span className="max-lg:hidden">Filter</span>
+                {filterCount !== 0 && <span>({filterCount})</span>}
+              </div>
+            }
             onPress={() => {
               if (filterRef.current && currentView === "filter") {
                 filterRef.current.blur();
               }
-              
+
               updateCurrentView("filter");
             }}
-            isSelected={currentView === "filter"}
+            isSelected={currentView === "filter" || filterCount !== 0}
             startContent={<Funnel />}
             className="max-lg:min-w-[4rem]"
             data-hover={false}
