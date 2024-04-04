@@ -1,10 +1,10 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
 
 export default function GetAccessPage() {
-  //px-4 md:px-6 lg:px-24 (container), px-4 md:px-8 (flex flex-col) (from about page)
+
   return (
-    <div className="container mx-auto min-h-screen py-8">
-      <div className="flex flex-col max-md:px-8">
+    <div className="flex flex-col min-h-screen">
+      <div className="flew-grow container mx-auto pt-20">
         <h1 className="heading-3xl font-bold mb-6">Get Access to a Property</h1>
         <h2 className="body-lg font-normal mb-6">
           In order to intervene in a property, you need to have some kind of
