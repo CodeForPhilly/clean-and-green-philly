@@ -8,4 +8,13 @@ module.exports = {
   images: {
     domains: ["storage.googleapis.com"],
   },
+  async redirects() {
+    return [
+      {
+        source: "/map",
+        destination: "/find-properties",
+        permanent: true,
+      },
+    ];
+  },
 };
