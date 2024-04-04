@@ -16,6 +16,7 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import StreetView from "../../components/StreetView";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
+import { ThemeButton } from "../../components/ThemeButton";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
@@ -264,15 +265,15 @@ const StreetViewModal: React.FC<{
           tabIndex={0} // Make the container focusable
         >
           <div className="fixed w-full h-full bg-black">
-            <button
-              onClick={onClose}
+            <ThemeButton
+              color="tertiary"
+              startContent={<X />}
+              onPress={onClose}
               tabIndex={0}
+              label="Close"
               aria-label="Close full screen street view map"
-              className="absolute top-4 right-4 bg-white p-[10px] rounded-md flex flex-row space-x-1 items-center"
-            >
-              <X color="#3D3D3D" size={20} />
-              <span className="leading-0">Close</span>
-            </button>
+              className="absolute top-4 right-4"
+            />
             {children}
           </div>
         </div>
