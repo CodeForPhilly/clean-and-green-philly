@@ -1,6 +1,14 @@
 "use client";
 
-import { FC, useState, useMemo, useRef, SetStateAction, Dispatch } from "react";
+import {
+  FC,
+  useState,
+  useMemo,
+  useRef,
+  useEffect,
+  SetStateAction,
+  Dispatch,
+} from "react";
 import {
   Table,
   TableHeader,
@@ -12,6 +20,8 @@ import {
   Pagination,
   PaginationItem,
   PaginationItemType,
+  PaginationProps,
+  usePaginationItem,
   Spinner,
 } from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
@@ -61,24 +71,25 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   const pages = Math.ceil(featuresInView.length / rowsPerPage);
   const widthRef = useRef(false);
 
-  // const isBefore = index < range.indexOf(activePage);
-
-  // Function to customize ARIA labels for pagination items
-  const getItemAriaLabel = (page?: string | number | undefined): string => {
+  const getItemAriaLabel = (
+    page?: string | number | undefined,
+    isActive?: boolean
+  ): string => {
     if (typeof page === "number") {
-      return `go to page  ${page}`;
+      const baseLabel = isActive ? `${page}` : `Go to page ${page}`;
+      return baseLabel.replace("active", ""); // Remove the word 'active' from the label
     } else if (page === "prev") {
-      return "go to previous page";
+      return "Go to previous page";
     } else if (page === "next") {
-      return "go to next page";
+      return "Go to next page";
     } else if (page === "prev_5") {
-      return "Jump Backward 5 Pages"; // Customize label for jump backward
+      return "Jump Backward 5 Pages";
     } else if (page === "next_5") {
-      return "Jump Forward 5 Pages"; // Customize label for jump forward
+      return "Jump Forward 5 Pages";
     } else if (page === "dots") {
-      return "jump 5 pages"; // struggling on a way to identify whether the button is jumping forward or background to apply appropriate label
+      return "Jump 5 Pages";
     }
-    return ""; // Default label
+    return "";
   };
 
   const items = useMemo(() => {
@@ -170,7 +181,6 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             <div className="flex w-full justify-center mt-4">
               <Pagination
                 role={undefined}
-                key={PaginationItemType.DOTS}
                 getItemAriaLabel={getItemAriaLabel}
                 aria-label="pagination"
                 isCompact
@@ -180,7 +190,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 page={page}
                 total={pages}
                 onChange={(newPage) => setPage(newPage)}
-              />
+              ></Pagination>
             </div>
             <div className="flex w-full justify-center py-4 px-6">
               <p className="body-sm text-gray-500">
