@@ -29,8 +29,8 @@ export default function GetAccessPage() {
           impact.
         </p>
 
-        <div className="bg-blue-100 rounded-lg">
-          <h3 className="heading-xl font-bold mt-8 mb-4">
+        <div className="bg-blue-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">
             Get Permission from Owner
           </h3>
           <p>
@@ -44,9 +44,9 @@ export default function GetAccessPage() {
           </p>
         </div>
 
-        <div className="bg-blue-100 rounded-lg">
+        <div className="bg-blue-100 rounded-lg p-8 mt-8">
           {" "}
-          <h3 className="heading-xl font-bold mt-8 mb-4">Buy from Owner</h3>
+          <h3 className="heading-xl font-bold mb-4">Buy from Owner</h3>
           <p>
             Buying a property outright can often be the simplest, fastest way to
             get access to it. However, we recognize that not all properties are
@@ -56,9 +56,9 @@ export default function GetAccessPage() {
           </p>
         </div>
 
-        <div className="bg-blue-100 rounded-lg">
+        <div className="bg-blue-100 rounded-lg p-8 mt-8">
           {" "}
-          <h3 className="heading-xl font-bold mt-8 mb-4">
+          <h3 className="heading-xl font-bold mb-4">
             Get through Conservatorship
           </h3>
           <p>
@@ -81,11 +81,9 @@ export default function GetAccessPage() {
           </p>
         </div>
 
-        <div className="bg-blue-100 rounded-lg">
+        <div className="bg-blue-100 rounded-lg p-8 mt-8">
           {" "}
-          <h3 className="heading-xl font-bold mt-8 mb-4">
-            Get through Land Bank
-          </h3>
+          <h3 className="heading-xl font-bold mb-4">Get through Land Bank</h3>
           <p>
             The Philadelphia Land Bank [https://phdcphila.org/] is part of the
             Philadelphia Housing Development Corporation. It works to
@@ -104,8 +102,8 @@ export default function GetAccessPage() {
           </p>
         </div>
 
-        <div className="bg-blue-100 rounded-lg">
-          <h3 className="heading-xl font-bold mt-8 mb-4">Do Nothing </h3>
+        <div className="bg-blue-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">Do Nothing </h3>
           <p>
             Although most properties have at least one reasonable way to get
             access to them, in some cases, a property may have a particular
@@ -134,9 +132,9 @@ export default function GetAccessPage() {
           understand if you qualify.
         </p>
 
-        <div className="bg-gray-100 rounded-lg">
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
           {" "}
-          <h3 className="heading-xl font-bold mt-8 mb-4">Tangled Titles</h3>
+          <h3 className="heading-xl font-bold mb-4">Tangled Titles</h3>
           <p>
             A tangled title is a situation in which the deed to a property lists
             the name of someone other than the apparent owner. This often
@@ -153,8 +151,8 @@ export default function GetAccessPage() {
           </p>
         </div>
 
-        <div className="bg-gray-100 rounded-lg">
-          <h3 className="heading-xl font-bold mt-8 mb-4">Adverse Possession</h3>
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">Adverse Possession</h3>
           <p>
             If you have been using a specific vacant property for a long time
             against the wishes of the property’s owner, you may qualify for
@@ -170,10 +168,8 @@ export default function GetAccessPage() {
           </p>
         </div>
 
-        <div className="bg-gray-100 rounded-lg">
-          <h3 className="heading-xl font-bold mt-8 mb-4">
-            The Side Yard Program
-          </h3>
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">The Side Yard Program</h3>
           <p>
             If you live next to a vacant property, you may be able to buy it
             from the Land Bank to use as a side or rear yard. This is
