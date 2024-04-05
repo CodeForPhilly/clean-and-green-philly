@@ -15,6 +15,7 @@ const config: Config = {
         display: ['"HK Grotesk"', "sans-serif"],
       },
       colors: {
+        focus: "#57BEE7",
         gray: {
           900: "#03141B",
           300: "#8A9DA3",
@@ -45,6 +46,10 @@ const config: Config = {
 
         green: {
           800: "#094400",
+          700: "#0C5C00",
+          600: "#188706",
+          400: "#4BB23B",
+          300: "#95E089",
           200: "#C2F5BA",
           100: "#E9FFE5",
           80: "#00A40C",
@@ -75,7 +80,17 @@ const config: Config = {
     },
   },
   darkMode: "class",
-  plugins: [nextui()],
+  plugins: [
+    nextui({
+      themes: {
+        light: {
+          layout: {
+            hoverOpacity: 1,
+          },
+        },
+      },
+    }),
+  ],
 };
 
 export default config;

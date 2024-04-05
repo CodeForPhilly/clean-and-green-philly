@@ -1,4 +1,3 @@
-import { Button } from "@nextui-org/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
 import {
@@ -14,17 +13,21 @@ import {
 } from "@phosphor-icons/react";
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 import { Dispatch, SetStateAction } from "react";
+import { BarClickOptions } from "@/app/find-properties/page";
+import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
+  updateCurrentView: (view: BarClickOptions) => void;
 }
 
 const SinglePropertyDetail = ({
   property,
   setSelectedProperty,
   setIsStreetViewModalOpen,
+  updateCurrentView,
 }: PropertyDetailProps) => {
   if (!property) return null;
   const { properties } = property;
@@ -65,24 +68,17 @@ const SinglePropertyDetail = ({
   );
 
   return (
-    <div
-      className="w-full p-4"
-      style={{
-        paddingRight: "24px",
-        paddingBottom: "24px",
-        paddingLeft: "24px",
-      }}
-    >
-      <div className="pb-4">
-        <Button
-          style={{
-            backgroundColor: "white",
+    <div className="w-full px-6 pb-6">
+      <div className="sticky top-0 py-4 z-10">
+        <ThemeButton
+          color="tertiary"
+          label="Back"
+          startContent={<ArrowLeft />}
+          onPress={() => {
+            setSelectedProperty(null);
+            updateCurrentView("detail");
           }}
-          onPress={() => setSelectedProperty(null)}
-        >
-          <ArrowLeft color="#3D3D3D" size={24} />{" "}
-          <span className="body-md">Back</span>{" "}
-        </Button>
+        />
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
@@ -94,9 +90,10 @@ const SinglePropertyDetail = ({
             unoptimized
           />
           <button
-            className="absolute top-4 right-4 bg-white p-[10px] rounded-md"
+            className="absolute top-4 right-4 bg-white p-[10px] rounded-md hover:bg-gray-100"
             onClick={() => setIsStreetViewModalOpen(true)}
             aria-label="Open full screen street view map"
+            id="outside-iframe-element"
           >
             <ArrowsOut color="#3D3D3D" size={24} />
           </button>
@@ -113,16 +110,14 @@ const SinglePropertyDetail = ({
             {address.toLowerCase()}
           </h2>
           <div>
-            <a
+            <ThemeButtonLink
               href={atlasUrl}
               target="_blank"
               rel="noopener noreferrer"
-              color="primary"
-              className="flex p-2 items-center gap-1 body-md"
-            >
-              Atlas Link
-              <ArrowSquareOut className="inline h-6 w-6" aria-hidden="true" />
-            </a>
+              color="tertiary"
+              label="Atlas"
+              endContent={<ArrowSquareOut aria-hidden="true" />}
+            />
           </div>
         </div>
       </div>

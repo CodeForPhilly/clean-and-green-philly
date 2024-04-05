@@ -48,7 +48,7 @@ const MobileNav: FC = () => {
         <IconLink
           icon={<PiBinoculars className="h-6 w-6" />}
           text="Find Properties"
-          href="/map"
+          href="/find-properties"
         />
         <IconLink
           icon={<PiKey className="h-6 w-6" />}
