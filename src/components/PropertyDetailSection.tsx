@@ -99,7 +99,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     />
   ) : (
     <>
-      <div className="flex flex-wrap flex-grow h-full">
+      <div className="flex flex-wrap flex-grow h-full min-h-[calc(100svh-101px)] max-h-[calc(100svh-101px)]">
         {display === "list" ? (
           <Table
             aria-label="Property Details"

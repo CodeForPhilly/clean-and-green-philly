@@ -8,7 +8,6 @@ import imageGreened from "@/images/greenedLot.jpg";
 import imageStep1 from "@/images/landing-step-1.png";
 import imageStep2 from "@/images/landing-step-2.png";
 import imageStep3 from "@/images/landing-step-3.png";
-import { Button, Link } from "@nextui-org/react";
 import Image from "next/image";
 import { FC } from "react";
 import {
@@ -18,6 +17,7 @@ import {
   PiKey,
   PiTree,
 } from "react-icons/pi";
+import { ThemeButtonLink } from "../../components/ThemeButton";
 
 const images = [
   {
@@ -52,10 +52,11 @@ const LandingPage: FC = () => {
               clean and green vacant properties to reduce gun violence.
             </p>
           </div>
-          <Button href="#guncrimes" as={Link} className="bg-gray-200">
-            <PiArrowDown className="iconButton-w-5" />
-            <span className="body-md">Learn How</span>
-          </Button>
+          <ThemeButtonLink
+            href="#guncrimes"
+            label="Learn How"
+            startContent={<PiArrowDown />}
+          />
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10">
@@ -198,6 +199,7 @@ const LandingPage: FC = () => {
             icon: PiBinoculars,
             label: "Find Properties",
             href: "/find-properties",
+            color: "secondary",
           }}
         />
       </div>
@@ -225,6 +227,7 @@ const LandingPage: FC = () => {
             icon: PiKey,
             label: "Get Access",
             href: "/get-access",
+            color: "secondary",
           }}
         />
       </div>
@@ -250,6 +253,7 @@ const LandingPage: FC = () => {
             icon: PiTree,
             label: "Transform",
             href: "/transform-property",
+            color: "secondary",
           }}
         />
       </div>
@@ -268,6 +272,7 @@ const LandingPage: FC = () => {
             icon: PiArrowRight,
             label: "Get Started",
             href: "/find-properties",
+            color: "primary",
           }}
         />
       </div>

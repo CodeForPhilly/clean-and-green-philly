@@ -16,6 +16,7 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import StreetView from "../../components/StreetView";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
+import { ThemeButton } from "../../components/ThemeButton";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
@@ -28,9 +29,8 @@ const MapPage: FC = () => {
     useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
-  const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
-    null
-  );
+  const [streetViewLocation, setStreetViewLocation] =
+    useState<Position | null>(null);
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
   const sizeRef = useRef(0);
@@ -38,7 +38,11 @@ const MapPage: FC = () => {
   const updateCurrentView = (view: BarClickOptions) => {
     setCurrentView(view === currentView ? "detail" : view);
 
-    if (prevRef.current === "map" && window.innerWidth < 640) {
+    if (
+      prevRef.current === "map" &&
+      window.innerWidth < 640 &&
+      view === "filter"
+    ) {
       setSmallScreenMode((prev: string) =>
         prev === "map" ? "properties" : "map"
       );
@@ -109,7 +113,7 @@ const MapPage: FC = () => {
                 fov="0.7"
               />
             </StreetViewModal>
-            <div className={`flex-grow overflow-auto ${isVisible("map")}`}>
+            <div className={`flex-grow ${isVisible("map")}`}>
               <div
                 className={`sticky top-0 z-10 sm:hidden ${isVisible("map")}`}
               >
@@ -128,50 +132,43 @@ const MapPage: FC = () => {
               isVisible={isVisible("properties")}
               selectedProperty={selectedProperty}
             >
-              {currentView === "filter" ? (
+              {!selectedProperty && (
+                <div className="h-14 sticky top-0 z-10">
+                  <SidePanelControlBar {...controlBarProps} />
+                </div>
+              )}
+              {currentView === "download" ? (
+                <div className="p-4 mt-8 text-center">
+                  <h2 className="text-2xl font-bold mb-4">Access Our Data</h2>
+                  <p>
+                    If you are interested in accessing the data behind this
+                    dashboard, please reach out to us at
+                    <a
+                      href="mailto:cleanandgreenphl@gmail.com"
+                      className="text-blue-600 hover:text-blue-800 underline"
+                    >
+                      {" "}
+                      cleanandgreenphl@gmail.com
+                    </a>
+                    . Let us know who you are and why you want the data. We are
+                    happy to share the data with anyone with community-oriented
+                    interests.
+                  </p>
+                </div>
+              ) : currentView === "filter" ? (
                 <FilterView updateCurrentView={updateCurrentView} />
               ) : (
-                <>
-                  {!selectedProperty && (
-                    <div className="h-14 sticky top-0 z-10">
-                      <SidePanelControlBar {...controlBarProps} />
-                    </div>
-                  )}
-                  {currentView === "download" ? (
-                    <div className="p-4 mt-8 text-center flex-grow">
-                      <h2 className="text-2xl font-bold mb-4">
-                        Access Our Data
-                      </h2>
-                      <p>
-                        If you are interested in accessing the data behind this
-                        dashboard, please reach out to us at
-                        <a
-                          href="mailto:cleanandgreenphl@gmail.com"
-                          className="text-blue-600 hover:text-blue-800 underline"
-                        >
-                          {" "}
-                          cleanandgreenphl@gmail.com
-                        </a>
-                        . Let us know who you are and why you want the data. We
-                        are happy to share the data with anyone with
-                        community-oriented interests.
-                      </p>
-                    </div>
-                  ) : (
-                    <PropertyDetailSection
-                      featuresInView={featuresInView}
-                      display={currentView as "detail" | "list"}
-                      loading={loading}
-                      selectedProperty={selectedProperty}
-                      setSelectedProperty={setSelectedProperty}
-                      setIsStreetViewModalOpen={setIsStreetViewModalOpen}
-                      smallScreenMode={smallScreenMode}
-                      updateCurrentView={updateCurrentView}
-                    />
-                  )}
-                </>
+                <PropertyDetailSection
+                  featuresInView={featuresInView}
+                  display={currentView as "detail" | "list"}
+                  loading={loading}
+                  selectedProperty={selectedProperty}
+                  setSelectedProperty={setSelectedProperty}
+                  setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+                  smallScreenMode={smallScreenMode}
+                  updateCurrentView={updateCurrentView}
+                />
               )}
-              <Footer />
             </SidePanel>
           </div>
         </div>
@@ -268,15 +265,15 @@ const StreetViewModal: React.FC<{
           tabIndex={0} // Make the container focusable
         >
           <div className="fixed w-full h-full bg-black">
-            <button
-              onClick={onClose}
+            <ThemeButton
+              color="tertiary"
+              startContent={<X />}
+              onPress={onClose}
               tabIndex={0}
+              label="Close"
               aria-label="Close full screen street view map"
-              className="absolute top-4 right-4 bg-white p-[10px] rounded-md flex flex-row space-x-1 items-center"
-            >
-              <X color="#3D3D3D" size={20} />
-              <span className="leading-0">Close</span>
-            </button>
+              className="absolute top-4 right-4"
+            />
             {children}
           </div>
         </div>

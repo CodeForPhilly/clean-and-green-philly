@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC } from "react";
+import React, { FC, useRef } from "react";
 import { Button } from "@nextui-org/react";
 import { BarClickOptions } from "@/app/find-properties/page";
 import {
@@ -10,6 +10,8 @@ import {
   SquaresFour,
   Table,
 } from "@phosphor-icons/react";
+import { ThemeButton } from "./ThemeButton";
+import { useFilter } from "@/context/FilterContext";
 
 type SidePanelControlBarProps = {
   currentView: string;
@@ -28,27 +30,33 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   updateCurrentView,
   updateSmallScreenMode,
 }) => {
+  const filterRef = useRef<HTMLButtonElement | null>(null);
+  const { appFilter } = useFilter();
+  const filterCount = Object.keys(appFilter).length;
+
   return loading ? (
     <div>{/* Keep empty while loading */}</div>
   ) : (
     <>
-      <div className="flex justify-between items-center bg-white p-2 h-14">
+      <div className="flex justify-between items-center bg-white border-b-[1px] border-[#12121215] p-2 h-14">
         {/* Left-aligned content: Total Properties in View */}
-        <Button
+        <ThemeButton
+          color="tertiary"
           aria-label={`Change to ${smallScreenMode}`}
-          className="bg-white w-fit px-2 sm:hidden hover:bg-gray-100 max-md:min-w-[4rem]"
+          className="sm:hidden max-md:min-w-[4rem]"
           onPress={updateSmallScreenMode}
-        >
-          {smallScreenMode === "map" ? (
-            <SquaresFour className="h-6 w-6" />
-          ) : (
-            <GlobeHemisphereWest className="h-6 w-6" />
-          )}
-        </Button>
+          startContent={
+            smallScreenMode === "map" ? (
+              <SquaresFour />
+            ) : (
+              <GlobeHemisphereWest />
+            )
+          }
+        />
         <div className="sm:px-4 py-2">
           <h1 className="body-md">
             <span className="font-bold">{featureCount.toLocaleString()} </span>
-            Properties <span className="max-lg:hidden"> in View </span>
+            Properties <span className="max-xl:hidden"> in View </span>
           </h1>
         </div>
 
@@ -58,27 +66,47 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           role="region"
           aria-label="controls"
         >
-          <Button
-            onPress={() => updateCurrentView("filter")}
-            startContent={<Funnel className="h-6 w-6" />}
-            className="bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem]"
-          >
-            <span className="max-lg:hidden body-md">Filter</span>
-          </Button>
-          <Button
+          <ThemeButton
+            color="tertiary"
+            label={
+              <div className="lg:space-x-1 body-md">
+                <span className="max-lg:hidden">Filter</span>
+                {filterCount !== 0 && <span>({filterCount})</span>}
+              </div>
+            }
+            onPress={() => {
+              if (filterRef.current && currentView === "filter") {
+                filterRef.current.blur();
+              }
+
+              updateCurrentView("filter");
+            }}
+            isSelected={currentView === "filter" || filterCount !== 0}
+            startContent={<Funnel />}
+            className="max-lg:min-w-[4rem]"
+            data-hover={false}
+            ref={filterRef}
+          />
+
+          <ThemeButton
+            color="tertiary"
+            aria-label="View"
             onPress={() => updateCurrentView("detail")}
-            startContent={<Table className="h-6 w-6" />}
-            className={`bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem] ${
+            startContent={<Table />}
+            className={`max-lg:min-w-[4rem] ${
               smallScreenMode === "map" ? "max-sm:hidden" : ""
             }`}
-          ></Button>
-          <Button
+          />
+
+          <ThemeButton
+            color="tertiary"
+            aria-label="Download"
             onPress={() => updateCurrentView("download")}
-            startContent={<DownloadSimple className="h-6 w-6" />}
-            className={`bg-white px-2 hover:bg-gray-100 max-md:min-w-[4rem] ${
+            startContent={<DownloadSimple />}
+            className={`max-md:min-w-[4rem] ${
               smallScreenMode === "map" ? "max-sm:hidden" : ""
             }`}
-          ></Button>
+          />
         </div>
       </div>
     </>
