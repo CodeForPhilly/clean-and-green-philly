@@ -1,12 +1,14 @@
+import { Handshake, Money, Gavel, Tag, XCircle } from "@phosphor-icons/react";
+
 export default function GetAccessPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flew-grow container mx-auto pt-20">
-        <h1 className="heading-3xl font-bold mb-6">Get Access</h1>
-        <h4 className="body-lg mb-6">
+        <h1 className="heading-3xl font-bold mb-6">Get Access to a Property</h1>
+        <p className="body-lg mb-6">
           In order to intervene in a property, you need to have some kind of
           legal access to do so.
-        </h4>
+        </p>
         <p className="body-md">
           This means either becoming the owner of the property yourself or
           reaching a legal agreement with the owner to allow you to transform
@@ -29,93 +31,118 @@ export default function GetAccessPage() {
           impact.
         </p>
 
-        <div className="bg-blue-100 rounded-lg p-8 mt-8">
-          <h3 className="heading-xl font-bold mb-4">
-            Get Permission from Owner
-          </h3>
-          <p>
-            A private land use agreement can be a fast and easy way to get
-            access to a property, provided that you are able to find the owner
-            of the property. When creating such an agreement, you must define
-            the rights and responsibilities of yourself and the property owner.
-            Grounded in Philly provides a good list of key considerations
-            [https://groundedinphilly.org/make-agreement-private-landowner/] as
-            well as sample agreement language.
-          </p>
+        <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+          <div className="mr-6 flex-shrink-0">
+            <Handshake size={60} aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="heading-xl font-bold mb-4">
+              Get Permission from Owner
+            </h3>
+            <p>
+              A private land use agreement can be a fast and easy way to get
+              access to a property, provided that you are able to find the owner
+              of the property. When creating such an agreement, you must define
+              the rights and responsibilities of yourself and the property
+              owner. Grounded in Philly provides a good list of key
+              considerations
+              [https://groundedinphilly.org/make-agreement-private-landowner/]
+              as well as sample agreement language.
+            </p>
+          </div>
         </div>
 
-        <div className="bg-blue-100 rounded-lg p-8 mt-8">
-          {" "}
-          <h3 className="heading-xl font-bold mb-4">Buy from Owner</h3>
-          <p>
-            Buying a property outright can often be the simplest, fastest way to
-            get access to it. However, we recognize that not all properties are
-            affordable to grassroots organizations or private individuals. Based
-            on our stakeholder research, we mark vacant properties with an
-            estimated market value of $1,000 or less as worth buying.
-          </p>
+        <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+          <div className="mr-6 flex-shrink-0">
+            <Money size={60} aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="heading-xl font-bold mb-4">Buy from Owner</h3>
+            <p>
+              Buying a property outright can often be the simplest, fastest way
+              to get access to it. However, we recognize that not all properties
+              are affordable to grassroots organizations or private individuals.
+              Based on our stakeholder research, we mark vacant properties with
+              an estimated market value of $1,000 or less as worth buying.
+            </p>
+          </div>
         </div>
 
-        <div className="bg-blue-100 rounded-lg p-8 mt-8">
-          {" "}
-          <h3 className="heading-xl font-bold mb-4">
-            Get through Conservatorship
-          </h3>
-          <p>
-            Act 135 conservatorship can be a potential faster route than other
-            legal options but is complicated and requires a lot of resources. In
-            short, if a property meets certain specific criteria, it can be
-            turned over to a court-appointed conservator for remediation.
-            According to the law, it must be unoccupied, abandoned by its owner,
-            and unsafe and unhealthy. (For more information, consult this
-            explanation of Act 135.
-            [https://www.vanderslicelaw.com/service_index/real-estate/act-135/].)
-            If those criteria are met, a private individual can petition a judge
-            to appoint them as the conservator of the property. The conservator
-            is then the owner of the property and can improve it as they see
-            fit. However, as mentioned, taking this approach requires legal
-            support and significant financial resources. It is therefore not an
-            ideal route for small organizations, but may be an option for
-            better-resourced organizations such as affordable housing
-            developers.
-          </p>
+        <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+          <div className="mr-6 flex-shrink-0">
+            <Gavel size={60} aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="heading-xl font-bold mb-4">
+              Get through Conservatorship
+            </h3>
+            <p>
+              Act 135 conservatorship can be a potential faster route than other
+              legal options but is complicated and requires a lot of resources.
+              In short, if a property meets certain specific criteria, it can be
+              turned over to a court-appointed conservator for remediation.
+              According to the law, it must be unoccupied, abandoned by its
+              owner, and unsafe and unhealthy. (For more information, consult
+              this explanation of Act 135.
+              [https://www.vanderslicelaw.com/service_index/real-estate/act-135/].)
+              If those criteria are met, a private individual can petition a
+              judge to appoint them as the conservator of the property. The
+              conservator is then the owner of the property and can improve it
+              as they see fit. However, as mentioned, taking this approach
+              requires legal support and significant financial resources. It is
+              therefore not an ideal route for small organizations, but may be
+              an option for better-resourced organizations such as affordable
+              housing developers.
+            </p>
+          </div>
         </div>
 
-        <div className="bg-blue-100 rounded-lg p-8 mt-8">
-          {" "}
-          <h3 className="heading-xl font-bold mb-4">Get through Land Bank</h3>
-          <p>
-            The Philadelphia Land Bank [https://phdcphila.org/] is part of the
-            Philadelphia Housing Development Corporation. It works to
-            redistribute publicly-owned land and return vacant properties to
-            productive use. Vacant properties owned by the Land Bank can often
-            be acquired for nominal or discounted prices for certain kinds of
-            uses or projects. The advantage of this process is that it offers
-            grassroots organizations and other community-oriented groups to get
-            access to land through a non-competitive disposition process at
-            little to no cost. However, one is still required to go through the
-            Land Bank’s process, which also requires the support of the City
-            Council member in whose district the property falls. Grounded in
-            Philly provides a good overview of how to get permission to use City
-            land [https://groundedinphilly.org/get-permission-to-use-land-city/
-            ].
-          </p>
+        <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+          <div className="mr-6 flex-shrink-0">
+            <Tag size={60} aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="heading-xl font-bold mb-4">Get through Land Bank</h3>
+            <p className="mb-4">
+              The Philadelphia Land Bank [https://phdcphila.org/] is part of the
+              Philadelphia Housing Development Corporation. It works to
+              redistribute publicly-owned land and return vacant properties to
+              productive use. Vacant properties owned by the Land Bank can often
+              be acquired for nominal or discounted prices for certain kinds of
+              uses or projects.
+            </p>
+            <p>
+              The advantage of this process is that it offers grassroots
+              organizations and other community-oriented groups to get access to
+              land through a non-competitive disposition process at little to no
+              cost. However, one is still required to go through the Land Bank’s
+              process, which also requires the support of the City Council
+              member in whose district the property falls. Grounded in Philly
+              provides a good overview of how to get permission to use City land
+              [https://groundedinphilly.org/get-permission-to-use-land-city/ ].
+            </p>
+          </div>
         </div>
 
-        <div className="bg-blue-100 rounded-lg p-8 mt-8">
-          <h3 className="heading-xl font-bold mb-4">Do Nothing </h3>
-          <p>
-            Although most properties have at least one reasonable way to get
-            access to them, in some cases, a property may have a particular
-            combination of factors that make it difficult to impossible to get
-            access to. For example, it may be a valuable property owned by a
-            company that is planning to develop the property at a later date. If
-            the company is unwilling to sell the property or negotiate a private
-            land use agreement, there is basically no way to legally get access
-            to the property. In these cases, we suggest that a more productive
-            use of your time would be to focus on other properties where you can
-            more easily pursue an intervention.
-          </p>
+        <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+          <div className="mr-6 flex-shrink-0">
+            <XCircle size={60} aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="heading-xl font-bold mb-4">Do Nothing </h3>
+            <p>
+              Although most properties have at least one reasonable way to get
+              access to them, in some cases, a property may have a particular
+              combination of factors that make it difficult to impossible to get
+              access to. For example, it may be a valuable property owned by a
+              company that is planning to develop the property at a later date.
+              If the company is unwilling to sell the property or negotiate a
+              private land use agreement, there is basically no way to legally
+              get access to the property. In these cases, we suggest that a more
+              productive use of your time would be to focus on other properties
+              where you can more easily pursue an intervention.
+            </p>
+          </div>
         </div>
 
         <h2 className="heading-2xl font-bold mt-8 mb-6">Other Methods</h2>
@@ -133,7 +160,6 @@ export default function GetAccessPage() {
         </p>
 
         <div className="bg-gray-100 rounded-lg p-8 mt-8">
-          {" "}
           <h3 className="heading-xl font-bold mb-4">Tangled Titles</h3>
           <p>
             A tangled title is a situation in which the deed to a property lists
