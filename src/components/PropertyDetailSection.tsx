@@ -9,6 +9,7 @@ import {
   SetStateAction,
   Dispatch,
 } from "react";
+import { PiArrowRight } from "react-icons/pi";
 import {
   Table,
   TableHeader,
@@ -22,12 +23,75 @@ import {
   PaginationItemType,
   PaginationProps,
   usePaginationItem,
+  usePagination,
   Spinner,
 } from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
 import SinglePropertyDetail from "./SinglePropertyDetail";
 import { BarClickOptions } from "@/app/find-properties/page";
 import { MapGeoJSONFeature } from "maplibre-gl";
+
+// const { activePage, range, setPage, onNext, onPrevious } = usePagination({
+//   total: 6,
+//   showControls: true,
+//   siblings: 10,
+//   boundaries: 10,
+// });
+
+// return (
+//   <div className="flex flex-col gap-2">
+//     <p>Active page: {activePage}</p>
+//     <ul className="flex gap-2 items-center">
+//       {range.map((page) => {
+//         if (page === PaginationItemType.NEXT) {
+//           return (
+//             <li key={page} aria-label="next page" className="w-4 h-4">
+//               <button
+//                 className="w-full h-full bg-default-200 rounded-full"
+//                 onClick={onNext}
+//               >
+//                 <PiArrowRight className="rotate-180" />
+//               </button>
+//             </li>
+//           );
+//         }
+
+//         if (page === PaginationItemType.PREV) {
+//           return (
+//             <li key={page} aria-label="previous page" className="w-4 h-4">
+//               <button
+//                 className="w-full h-full bg-default-200 rounded-full"
+//                 onClick={onPrevious}
+//               >
+//                 <PiArrowRight />
+//               </button>
+//             </li>
+//           );
+//         }
+
+//         if (page === PaginationItemType.DOTS) {
+//           return (
+//             <li key={page} className="w-4 h-4">
+//               ...
+//             </li>
+//           );
+//         }
+
+//         return (
+//           <li key={page} aria-label={`page ${page}`} className="w-4 h-4">
+//             <button
+//               className={cn(
+//                 "w-full h-full bg-default-300 rounded-full",
+//                 activePage === page && "bg-secondary"
+//               )}
+//               onClick={() => setPage(page)}
+//             />
+//           </li>
+//         );
+//       })}
+//     </ul>
+//   </div>
+// );
 
 const tableCols = [
   {
@@ -71,6 +135,36 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   const pages = Math.ceil(featuresInView.length / rowsPerPage);
   const widthRef = useRef(false);
 
+  // const getItemAriaLabel = (
+
+  //   page?: string | number | undefined,
+  //   isActive?: boolean
+  // ): string => {
+  //   const paginationElements = document.querySelectorAll('nav[aria-label="pagination"] ul li[role="button"]');
+
+  //   if (typeof page === "number") {
+  //     const baseLabel = isActive ? `${page}` : `Go to page ${page}`;
+  //     return baseLabel.replace("active", ""); // Remove the word 'active' from the label
+  //   } else if (page === "prev") {
+  //     return "Go to previous page";
+  //   } else if (page === "next") {
+  //     return "Go to next page";
+  //   } else if (page === "prev_5") {
+  //     return "Jump Backward 5 Pages";
+  //   } else if (page === "next_5") {
+  //     return "Jump Forward 5 Pages";
+  //   } else if (page === "dots") {
+  //     return "Jump 5 Pages";
+  //   }
+  //   return "";
+  // };
+
+  const paginationElements = document.querySelectorAll<HTMLElement>(
+    'nav[aria-label="pagination"] ul li[role="button"]'
+  );
+
+  console.log(paginationElements);
+
   const getItemAriaLabel = (
     page?: string | number | undefined,
     isActive?: boolean
@@ -78,6 +172,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     if (typeof page === "number") {
       const baseLabel = isActive ? `${page}` : `Go to page ${page}`;
       return baseLabel.replace("active", ""); // Remove the word 'active' from the label
+      console.log(baseLabel);
     } else if (page === "prev") {
       return "Go to previous page";
     } else if (page === "next") {
@@ -188,8 +283,10 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 showShadow
                 color="secondary"
                 page={page}
+                data-dots-jump={false} // Setting data-dots-jump to false to remove ellipses
                 total={pages}
                 onChange={(newPage) => setPage(newPage)}
+                className="example"
               ></Pagination>
             </div>
             <div className="flex w-full justify-center py-4 px-6">
