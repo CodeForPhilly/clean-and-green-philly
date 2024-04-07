@@ -1,6 +1,5 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import Image from "next/image";
-import { FC } from "react";
 import beforeAfter from "@/images/beforeAfter.png";
 
 export default function TransformPropertyPage() {
