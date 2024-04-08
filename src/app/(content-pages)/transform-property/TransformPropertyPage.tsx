@@ -1,55 +1,137 @@
-import { Accordion, AccordionItem } from "@nextui-org/react";
-
 export default function TransformPropertyPage() {
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flew-grow container mx-auto pt-20">
         <h1 className="heading-3xl font-bold mb-6">Transform a Property</h1>
-
-        <p className="body-md">
-          Clean & Green Philly aims to help reduce gun violence by intervening
-          in vacant properties. Very simply, this means improving the property.
-          This can range from removing trash to planting a community garden,
-          from trimming trees to building affordable housing. Below, we lay out
-          ways to transform a vacant property into something that positively
-          impacts the neighborhood around it.
+        <p>
+          After gaining access to the property, you can transform a property to
+          improve the quality of life in the neighborhood.
         </p>
 
-        <h2 className="heading-2xl font-bold mt-8">Types of Interventions</h2>
+        {/* Before/After image to go here */}
+
+        <h2 className="heading-2xl font-bold mt-8">Basic Interventions</h2>
         <p className="body-md">
           The original research that Clean & Green Philly is based on promotes
-          “cleaning and greening”. This includes removing trash, grading the
+          “cleaning and greening.” This includes removing trash, grading the
           land, planting trees, installing low fences, and maintaining the
           property. These are low-cost interventions and have been proven to be
           highly effective; even something as simple as cleaning up trash can
-          have a big impact. That said, there are many ways to transform a
-          vacant property. You could, for example:
+          have a big impact.
         </p>
-        <ul className="list-disc pl-6 my-4">
-          <li>Partner with a local restaurant to offer outdoor eating</li>
-          <li>Install bike parking</li>
-          <li>
-            Work with the Philadelphia Water Department to install green
-            stormwater infrastructure
-          </li>
-          <li>
-            Plant a pollinator garden to attract birds, butterflies, and bees
-          </li>
-          <li>
-            Connect with a non-profit organization to build affordable housing
-          </li>
-        </ul>
+        {/* Four basic interventions green cards go here */}
+
+        <h2 className="heading-2xl font-bold mt-8">Advanced Interventions</h2>
+        <p className="body-md mb-4">
+          Different properties have different opportunities and different
+          challenges. Some properties might be a great spot for a rain garden
+          but not for a playground. Likewise, you wouldn’t want to start a
+          community garden in a vacant lot that doesn’t get any sun. To better
+          understand what your options are for a specific property, try filling
+          out the Detroit Future City vacant property quiz (the recommendations
+          work for Philadelphia too!). It’s meant to help users understand the
+          best options for their specific properties. Also, remember to think
+          about other constraints, like how much funding you have, and how much
+          maintenance you’re willing or able to do.
+        </p>
+        <p className="mb-4">
+          There are many ways to imagine transforming a vacant property if you
+          want to work with funding and community support. Check out our
+          Resources Page to explore more like these:
+        </p>
+
+        {/* Eight Advanced interventions green cards go here */}
+
+        <h2 className="heading-2xl font-bold mt-8">Get Help</h2>
         <p className="body-md">
+          Many organizations in Philadelphia offer support transforming vacant
+          properties. See our resources page for more information!
+        </p>
+        <h3 className="heading-xl font-bold mt-8 mb-4">Park in a Truck</h3>
+        <p>
+          Park in a Truck supports community residents in quickly building
+          custom parks. They've developed a toolkit that helps community groups
+          design and build parks that fit their needs. They also offer training
+          and technical support to help communities create and maintain their
+          parks.
+        </p>
+        <h3 className="heading-xl font-bold mt-8 mb-4">Jump Start</h3>
+        <p></p>
+        <h3 className="heading-xl font-bold mt-8 mb-4">
+          Local Representatives
+        </h3>
+        <p>
+          Local representatives can also support you, especially if you're
+          facing red tape. Bring them a solid plan and show how your project can
+          improve the community.
+        </p>
+
+        <h2 className="heading-2xl font-bold mt-8">
+          Additional Considerations
+        </h2>
+        <h3 className="heading-xl font-bold mt-8 mb-4">Funding</h3>
+        <p className="mb-4">
+          Getting funding is a vital part of returning vacant properties to
+          productive use. Funding can come from many sources, such as grants
+          from local government and non-profit funders, public-private partners,
+          and crowd-sourced fundraising. In the future, we plan to add a page to
+          list common funding sources and explain how to use data from Clean &
+          Green Philly to support a grant application.
+        </p>
+        <p className="mb-4">
+          Any amount of funding can be useful. Many effective interventions such
+          as property cleanups can be accomplished for a few hundred dollars—or
+          even for free, with volunteer support! When planning your property
+          intervention, consider what level of funding you have access to, and
+          how you can get the most bang for your buck.
+        </p>
+        <p className="mb-4">
+          Funding is needed not only for the initial property transformation,
+          but also to maintain the project in the long term. When planning your
+          project, consider dividing your funding into two parts: one part to
+          pay for the initial intervention, and a second part—at least equal to
+          the first part—to pay for maintaining your project in the future.
+        </p>
+
+        <h3 className="heading-xl font-bold mt-8 mb-4">Maintenance</h3>
+        <p className="mb-4">
+          {/* split into 2 p's */}
+          Transforming a vacant property isn’t a one-and-done event. In fact,
+          many properties that are currently vacant were transformed years
+          ago—but not maintained in the decades since. In order to make sure
+          that your intervention is high-impact and long-lived, make sure to
+          have a maintenance plan in place.
+        </p>
+        <p className="mb-4">
+          Consider who will be responsible for maintaining the property, what
+          their tasks will be, what kind of resources they will need, and how
+          you will fund this ongoing maintenance. Often, partnering with an
+          established organization like a CDC can help make sure that you have
+          the capacity and resources needed to ensure that your intervention
+          continues to be effective for many years into the future.
+        </p>
+        <h3 className="heading-xl font-bold mt-8 mb-4">Gentrification </h3>
+        <p>
+          Our goal is to help community groups reduce violence through cleaning
+          and greening methods in their neighborhoods. We recognize that may
+          inadvertently increase property values, increase rental prices and
+          displace already-marginalized Philadelphians. We are working to avoid
+          this by meeting extensively with community groups and responding to
+          their concerns. Read more about this topic.{" "}
+          {/* Link to gentrification page */}
+        </p>
+        {/* <p className="body-md">
           These are just some of the many possibilities. Remember to be both
           creative and practical: there is no one-size-fits-all solution, and
           Philadelphia will need a variety of uses in its vacant properties,
           including green space, housing, parks, commercial space, and more.
-        </p>
+        </p> */}
 
-        <h2 className="heading-2xl font-bold mt-8">
+        {/* <h2 className="heading-2xl font-bold mt-8">
           What's right for my property?
-        </h2>
-        <p className="body-md">
+        </h2> */}
+
+        {/* <p className="body-md">
           Different properties have different opportunities and different
           challenges. Some properties might be a great spot for a rain garden
           but not for a playground. Likewise, you wouldn’t want to start a
@@ -67,9 +149,8 @@ export default function TransformPropertyPage() {
           still helpful here in Philadelphia. Also, remember to think about
           other constraints, like how much funding you have, and how much
           maintenance you’re willing or able to do.
-        </p>
-
-        <h2 className="heading-2xl font-bold mt-8">Where can I get help?</h2>
+        </p> */}
+        {/* <h2 className="heading-2xl font-bold mt-8">Where can I get help?</h2>
         <p className="body-md">
           Many organizations in Philadelphia offer support transforming vacant
           properties.
@@ -85,7 +166,6 @@ export default function TransformPropertyPage() {
           support you, especially if you're facing red tape. Bring them a solid
           plan and show how your project can improve the community.
         </p>
-
         <h3 className="heading-xl font-bold mt-8 mb-4">
           Garden Justice Legal Initiative
         </h3>
@@ -111,7 +191,6 @@ export default function TransformPropertyPage() {
           </a>
           .
         </p>
-
         <h3 className="heading-xl font-bold mt-8 mb-4">StreetBoxPHL</h3>
         <p className="body-md">
           <a href="https://streetboxphl.com/" className="link">
@@ -123,7 +202,6 @@ export default function TransformPropertyPage() {
           community. They offer technical support, a street furniture library,
           and help with insurance requirements.
         </p>
-
         <h3 className="heading-xl font-bold mt-8 mb-4">Park in a Truck</h3>
         <p className="body-md">
           <a
@@ -144,11 +222,9 @@ export default function TransformPropertyPage() {
           needs. They also offer training and technical support to help
           communities create and maintain their parks.
         </p>
-
         <h2 className="heading-2xl font-bold mt-8">
           What else should I think about?
         </h2>
-
         <div className="body-md">
           <Accordion variant="light" selectionMode="multiple">
             <AccordionItem
@@ -202,7 +278,7 @@ export default function TransformPropertyPage() {
               </div>
             </AccordionItem>
           </Accordion>
-        </div>
+        </div> */}
       </div>
     </div>
   );
