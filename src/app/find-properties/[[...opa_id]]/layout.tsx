@@ -1,4 +1,4 @@
-import { Footer, Header, Hotjar } from "@/components";
+import { Header, Hotjar } from "@/components";
 
 export const metadata = {
   title: "Find Properties",

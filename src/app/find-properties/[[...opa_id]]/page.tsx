@@ -1,26 +1,33 @@
 "use client";
 
-import React, { FC, useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import {
   FilterView,
-  Footer,
   PropertyDetailSection,
   PropertyMap,
   SidePanel,
   SidePanelControlBar,
 } from "@/components";
 import { FilterProvider } from "@/context/FilterContext";
-import { NextUIProvider } from "@nextui-org/react";
+import { NextUIProvider, Spinner } from "@nextui-org/react";
 import { X } from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
-import StreetView from "../../components/StreetView";
+import StreetView from "../../../components/StreetView";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
-import { ThemeButton } from "../../components/ThemeButton";
+import { ThemeButton } from "../../../components/ThemeButton";
+import { useRouter } from "next/navigation";
+import { ViewState } from "react-map-gl";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
-const MapPage: FC = () => {
+type MapPageProps = {
+  params: {
+    opa_id: string;
+  };
+};
+
+const MapPage = ({ params }: MapPageProps) => {
   const [featuresInView, setFeaturesInView] = useState<MapGeoJSONFeature[]>([]);
   const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
@@ -29,11 +36,85 @@ const MapPage: FC = () => {
     useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
-  const [streetViewLocation, setStreetViewLocation] =
-    useState<Position | null>(null);
+  const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
+    null
+  );
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
   const sizeRef = useRef(0);
+  const linkedPropertyRef = useRef<string | null>(null);
+  const [initialViewState, setInitialViewState] = useState<ViewState>({
+    longitude: -75.15975924194129,
+    latitude: 39.9910071520824,
+    zoom: 13,
+    bearing: 0,
+    pitch: 0,
+    padding: { top: 0, bottom: 0, left: 0, right: 0 },
+  });
+  const [linkedPropertyParsed, setLinkedPropertyParsed] = useState(false);
+
+  const router = useRouter();
+
+  // Handle Routing
+  useEffect(() => {
+    const { opa_id } = params;
+
+    if (!opa_id) {
+      // do nothing, load map
+      setLinkedPropertyParsed(true);
+    } else if (opa_id?.length === 1 && opa_id[0].match(/^\d{8,9}$/)) {
+      if (opa_id.toString() === linkedPropertyRef.current?.toString()) return;
+      linkedPropertyRef.current = opa_id[0];
+      getLinkedPropertyDetails();
+    } else {
+      // Invalid OPA ID- redirect to main map page
+      router.push("/find-properties");
+    }
+  }, []);
+
+  const getLinkedPropertyDetails = async () => {
+    // Check if OPA ID is present in URL
+    // It should be the only URL parameter and a string-like collection of numbers between 8 and 9 characters
+
+    // Get property metadata
+    const objectMetadataResponse = await fetch(
+      `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`
+    );
+    const objectMetadata = await objectMetadataResponse.json();
+    const { metadata } = objectMetadata;
+    let { location } = metadata;
+    location = JSON.parse(location.replace(/'/g, '"'));
+    setInitialViewState({
+      ...initialViewState,
+      longitude: location.lng,
+      latitude: location.lat,
+      zoom: 18,
+    });
+    setLinkedPropertyParsed(true);
+  };
+
+  useEffect(() => {
+    // This useEffect navigates to the linked property when it is loaded
+    if (!featuresInView || !linkedPropertyRef.current) return;
+
+    const linkedProperty = featuresInView.find(
+      (feature) =>
+        feature.properties.OPA_ID.toString() ===
+        linkedPropertyRef?.current?.toString()
+    );
+    if (
+      linkedProperty &&
+      linkedProperty.properties.OPA_ID !== selectedProperty?.properties.OPA_ID
+    ) {
+      setSelectedProperty(linkedProperty);
+    }
+  }, [featuresInView, linkedPropertyRef.current]);
+
+  useEffect(() => {
+    if (!selectedProperty) return;
+    const opa_id = selectedProperty.properties.OPA_ID;
+    history.replaceState(null, "", `/find-properties/${opa_id}`);
+  }, [selectedProperty]);
 
   const updateCurrentView = (view: BarClickOptions) => {
     setCurrentView(view === currentView ? "detail" : view);
@@ -119,14 +200,21 @@ const MapPage: FC = () => {
               >
                 <SidePanelControlBar {...controlBarProps} />
               </div>
-              <PropertyMap
-                setFeaturesInView={setFeaturesInView}
-                setLoading={setLoading}
-                selectedProperty={selectedProperty}
-                setSelectedProperty={setSelectedProperty}
-                setFeatureCount={setFeatureCount}
-                setSmallScreenMode={setSmallScreenMode}
-              />
+              {linkedPropertyParsed ? (
+                <PropertyMap
+                  setFeaturesInView={setFeaturesInView}
+                  setLoading={setLoading}
+                  selectedProperty={selectedProperty}
+                  setSelectedProperty={setSelectedProperty}
+                  setFeatureCount={setFeatureCount}
+                  setSmallScreenMode={setSmallScreenMode}
+                  initialViewState={initialViewState}
+                />
+              ) : (
+                <div className="flex w-full h-full justify-center">
+                  <Spinner />
+                </div>
+              )}
             </div>
             <SidePanel
               isVisible={isVisible("properties")}
@@ -178,8 +266,6 @@ const MapPage: FC = () => {
 };
 
 export default MapPage;
-
-// test
 
 const StreetViewModal: React.FC<{
   children: React.ReactNode;
