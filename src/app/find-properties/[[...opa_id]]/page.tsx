@@ -107,6 +107,7 @@ const MapPage = ({ params }: MapPageProps) => {
       linkedProperty.properties.OPA_ID !== selectedProperty?.properties.OPA_ID
     ) {
       setSelectedProperty(linkedProperty);
+      linkedPropertyRef.current = null;
     }
   }, [featuresInView, linkedPropertyRef.current]);
 
