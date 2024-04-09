@@ -2,7 +2,7 @@ import { Accordion, AccordionItem } from "@nextui-org/react";
 
 export default function TransformPropertyPage() {
   return (
-    <div className="flex flex-col min-h-screen pt-20">
+    <div className="flex flex-col min-h-screen pt-5">
       <div className="flew-grow container mx-auto pt-20">
         <h1 className="heading-3xl font-bold mb-6 ml-4">
           Transform a Property

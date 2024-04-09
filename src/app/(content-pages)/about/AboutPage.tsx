@@ -8,7 +8,7 @@ import { PiArrowRight } from "react-icons/pi";
 
 export default function AboutPage() {
   return (
-    <div className="flex flex-col min-h-screen pt-24">
+    <div className="flex flex-col min-h-screen pt-5">
       <div className="flex-grow grid grid-cols-1 md:grid-cols-1 gap-4 py-8 px-4 md:px-6 lg:px-24">
         <div className="container mx-auto px-4 md:px-8">
           <h1 className="heading-3xl font-bold mb-6">About This Project</h1>
