@@ -77,20 +77,24 @@ const MapPage = ({ params }: MapPageProps) => {
     // It should be the only URL parameter and a string-like collection of numbers between 8 and 9 characters
 
     // Get property metadata
-    const objectMetadataResponse = await fetch(
-      `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`
-    );
-    const objectMetadata = await objectMetadataResponse.json();
-    const { metadata } = objectMetadata;
-    let { location } = metadata;
-    location = JSON.parse(location.replace(/'/g, '"'));
-    setInitialViewState({
-      ...initialViewState,
-      longitude: location.lng,
-      latitude: location.lat,
-      zoom: 18,
-    });
-    setLinkedPropertyParsed(true);
+    try {
+      const objectMetadataResponse = await fetch(
+        `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`
+      );
+      const objectMetadata = await objectMetadataResponse.json();
+      const { metadata } = objectMetadata;
+      let { location } = metadata;
+      location = JSON.parse(location.replace(/'/g, '"'));
+      setInitialViewState({
+        ...initialViewState,
+        longitude: location.lng,
+        latitude: location.lat,
+        zoom: 18,
+      });
+      setLinkedPropertyParsed(true);
+    } catch {
+      router.push("/find-properties");
+    }
   };
 
   useEffect(() => {
