@@ -6,7 +6,6 @@ services:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CFP_MAPBOX_TOKEN_UPLOADER
       - VACANT_LOTS_DB
-      - VACANT_LOTS_DB_REMOTE
       - CLEAN_GREEN_GOOGLE_KEY
       - PYTHONUNBUFFERED=1
     volumes:
@@ -18,3 +17,14 @@ services:
     volumes:
       - ./src:/usr/src/app
     command: sh -c "pipenv run black /usr/src/app"
+
+  streetview:
+    build: .
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
+      - CLEAN_GREEN_GOOGLE_KEY
+      - VACANT_LOTS_DB
+    volumes:
+      - ./src:/usr/src/app
+      - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
+    command: sh -c "pipenv run python streetview.py"

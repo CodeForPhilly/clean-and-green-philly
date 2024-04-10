@@ -2,7 +2,7 @@
 
 import React, { FC, useRef } from "react";
 import { Button } from "@nextui-org/react";
-import { BarClickOptions } from "@/app/find-properties/page";
+import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import {
   DownloadSimple,
   Funnel,
@@ -11,6 +11,7 @@ import {
   Table,
 } from "@phosphor-icons/react";
 import { ThemeButton } from "./ThemeButton";
+import { useFilter } from "@/context/FilterContext";
 
 type SidePanelControlBarProps = {
   currentView: string;
@@ -30,6 +31,8 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   updateSmallScreenMode,
 }) => {
   const filterRef = useRef<HTMLButtonElement | null>(null);
+  const { appFilter } = useFilter();
+  const filterCount = Object.keys(appFilter).length;
 
   return loading ? (
     <div>{/* Keep empty while loading */}</div>
@@ -65,15 +68,20 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         >
           <ThemeButton
             color="tertiary"
-            label={<span className="max-lg:hidden body-md">Filter</span>}
+            label={
+              <div className="lg:space-x-1 body-md">
+                <span className="max-lg:hidden">Filter</span>
+                {filterCount !== 0 && <span>({filterCount})</span>}
+              </div>
+            }
             onPress={() => {
               if (filterRef.current && currentView === "filter") {
                 filterRef.current.blur();
               }
-              
+
               updateCurrentView("filter");
             }}
-            isSelected={currentView === "filter"}
+            isSelected={currentView === "filter" || filterCount !== 0}
             startContent={<Funnel />}
             className="max-lg:min-w-[4rem]"
             data-hover={false}
