@@ -51,7 +51,7 @@ const MapPage = ({ params }: MapPageProps) => {
     pitch: 0,
     padding: { top: 0, bottom: 0, left: 0, right: 0 },
   });
-  const [linkedPropertyParsed, setLinkedPropertyParsed] = useState(false);
+  const [isLinkedPropertyParsed, setIsLinkedPropertyParsed] = useState(false);
 
   const router = useRouter();
 
@@ -61,7 +61,7 @@ const MapPage = ({ params }: MapPageProps) => {
 
     if (!opa_id) {
       // do nothing, load map
-      setLinkedPropertyParsed(true);
+      setIsLinkedPropertyParsed(true);
     } else if (opa_id?.length === 1 && opa_id[0].match(/^\d{8,9}$/)) {
       if (opa_id.toString() === linkedPropertyRef.current?.toString()) return;
       linkedPropertyRef.current = opa_id[0];
@@ -91,7 +91,7 @@ const MapPage = ({ params }: MapPageProps) => {
         latitude: location.lat,
         zoom: 18,
       });
-      setLinkedPropertyParsed(true);
+      setIsLinkedPropertyParsed(true);
     } catch {
       router.push("/find-properties");
     }
@@ -205,7 +205,7 @@ const MapPage = ({ params }: MapPageProps) => {
               >
                 <SidePanelControlBar {...controlBarProps} />
               </div>
-              {linkedPropertyParsed ? (
+              {isLinkedPropertyParsed ? (
                 <PropertyMap
                   setFeaturesInView={setFeaturesInView}
                   setLoading={setLoading}
