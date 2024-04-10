@@ -33,7 +33,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
   const { address, guncrime_density, tree_canopy_gap, priority_level, OPA_ID } =
     feature.properties;
 
-  const image = `https://storage.googleapis.com/cleanandgreenphilly/${OPA_ID}.jpg`;
+  const image = `https://storage.googleapis.com/cleanandgreenphl/${OPA_ID}.jpg`;
   const formattedAddress = toTitleCase(address);
   const priorityClass = getPriorityClass(priority_level);
 
@@ -45,10 +45,11 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
   };
 
   return (
-    <div
-      className="sm:max-w-sm w-full lg:w-1/2 p-2 max-lg:px-4 max-lg:flex max-lg:justify-center max-lg:mx-auto"
-    >
-      <div className="cursor-pointer max-w-sm w-full h-full" onClick={handleClick}>
+    <div className="sm:max-w-sm w-full lg:w-1/2 p-2 max-lg:px-4 max-lg:flex max-lg:justify-center max-lg:mx-auto">
+      <div
+        className="cursor-pointer max-w-sm w-full h-full"
+        onClick={handleClick}
+      >
         <div className="bg-white h-full flex flex-col rounded-md overflow-hidden p-2 hover:bg-gray-100">
           <div
             className="relative w-full rounded-lg overflow-hidden"

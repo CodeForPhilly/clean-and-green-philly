@@ -1,7 +1,7 @@
 import { FC } from "react";
 import DimensionFilter from "./Filters/DimensionFilter";
 import { PiX } from "react-icons/pi";
-import { BarClickOptions } from "@/app/find-properties/page";
+import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton } from "./ThemeButton";
 
 const filters = [

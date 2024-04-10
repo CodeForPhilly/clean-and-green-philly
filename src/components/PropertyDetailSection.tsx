@@ -26,7 +26,7 @@ import {
 } from "@nextui-org/react";
 import PropertyCard from "./PropertyCard";
 import SinglePropertyDetail from "./SinglePropertyDetail";
-import { BarClickOptions } from "@/app/find-properties/page";
+import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { MapGeoJSONFeature } from "maplibre-gl";
 
 const tableCols = [

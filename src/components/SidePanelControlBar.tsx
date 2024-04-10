@@ -2,7 +2,7 @@
 
 import React, { FC, useRef } from "react";
 import { Button } from "@nextui-org/react";
-import { BarClickOptions } from "@/app/find-properties/page";
+import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import {
   DownloadSimple,
   Funnel,
