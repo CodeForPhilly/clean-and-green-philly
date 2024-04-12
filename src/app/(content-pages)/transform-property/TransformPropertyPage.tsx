@@ -61,86 +61,105 @@ export default function TransformPropertyPage() {
           Many organizations in Philadelphia offer support transforming vacant
           properties. See our resources page for more information!
         </p>
-        <h3 className="heading-xl font-bold mt-8 mb-4">Park in a Truck</h3>
-        <p>
-          Park in a Truck supports community residents in quickly building
-          custom parks. They've developed a toolkit that helps community groups
-          design and build parks that fit their needs. They also offer training
-          and technical support to help communities create and maintain their
-          parks.
-        </p>
-        <h3 className="heading-xl font-bold mt-8 mb-4">Jump Start</h3>
-        <p>
-          Jump Start is a source of short term financing that guides you along
-          the way, and moves quickly, to help you succeed in a competitive real
-          estate market. Jumpstart Philly offers acquisition and construction
-          financing for residential and mixed-use investment projects throughout
-          the City of Philadelphia. We are more than a bank, we’re a
-          non-traditional, community-driven lender ready to see you succeed.
-        </p>
-        <h3 className="heading-xl font-bold mt-8 mb-4">
-          Local Representatives
-        </h3>
-        <p>
-          Local representatives can also support you, especially if you're
-          facing red tape. Bring them a solid plan and show how your project can
-          improve the community.
-        </p>
+
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">Park in a Truck</h3>
+          <p>
+            Park in a Truck supports community residents in quickly building
+            custom parks. They've developed a toolkit that helps community
+            groups design and build parks that fit their needs. They also offer
+            training and technical support to help communities create and
+            maintain their parks.
+          </p>
+        </div>
+
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">Jump Start</h3>
+          <p>
+            Jump Start is a source of short term financing that guides you along
+            the way, and moves quickly, to help you succeed in a competitive
+            real estate market. Jumpstart Philly offers acquisition and
+            construction financing for residential and mixed-use investment
+            projects throughout the City of Philadelphia. We are more than a
+            bank, we’re a non-traditional, community-driven lender ready to see
+            you succeed.
+          </p>
+        </div>
+
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mt-8 mb-4">
+            Local Representatives
+          </h3>
+          <p>
+            Local representatives can also support you, especially if you're
+            facing red tape. Bring them a solid plan and show how your project
+            can improve the community.
+          </p>
+        </div>
 
         <h2 className="heading-2xl font-bold mt-8 mb-6">
           Additional Considerations
         </h2>
-        <h3 className="heading-xl font-bold mt-8 mb-4">Funding</h3>
-        <p className="mb-4">
-          Getting funding is a vital part of returning vacant properties to
-          productive use. Funding can come from many sources, such as grants
-          from local government and non-profit funders, public-private partners,
-          and crowd-sourced fundraising. In the future, we plan to add a page to
-          list common funding sources and explain how to use data from Clean &
-          Green Philly to support a grant application.
-        </p>
-        <p className="mb-4">
-          Any amount of funding can be useful. Many effective interventions such
-          as property cleanups can be accomplished for a few hundred dollars—or
-          even for free, with volunteer support! When planning your property
-          intervention, consider what level of funding you have access to, and
-          how you can get the most bang for your buck.
-        </p>
-        <p className="mb-4">
-          Funding is needed not only for the initial property transformation,
-          but also to maintain the project in the long term. When planning your
-          project, consider dividing your funding into two parts: one part to
-          pay for the initial intervention, and a second part—at least equal to
-          the first part—to pay for maintaining your project in the future.
-        </p>
 
-        <h3 className="heading-xl font-bold mt-8 mb-4">Maintenance</h3>
-        <p className="mb-4">
-          {/* split into 2 p's */}
-          Transforming a vacant property isn’t a one-and-done event. In fact,
-          many properties that are currently vacant were transformed years
-          ago—but not maintained in the decades since. In order to make sure
-          that your intervention is high-impact and long-lived, make sure to
-          have a maintenance plan in place.
-        </p>
-        <p className="mb-4">
-          Consider who will be responsible for maintaining the property, what
-          their tasks will be, what kind of resources they will need, and how
-          you will fund this ongoing maintenance. Often, partnering with an
-          established organization like a CDC can help make sure that you have
-          the capacity and resources needed to ensure that your intervention
-          continues to be effective for many years into the future.
-        </p>
-        <h3 className="heading-xl font-bold mt-8 mb-4">Gentrification </h3>
-        <p>
-          Our goal is to help community groups reduce violence through cleaning
-          and greening methods in their neighborhoods. We recognize that may
-          inadvertently increase property values, increase rental prices and
-          displace already-marginalized Philadelphians. We are working to avoid
-          this by meeting extensively with community groups and responding to
-          their concerns. Read more about this topic.{" "}
-          {/* Link to gentrification page */}
-        </p>
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">Funding</h3>
+          <p className="mb-4">
+            Getting funding is a vital part of returning vacant properties to
+            productive use. Funding can come from many sources, such as grants
+            from local government and non-profit funders, public-private
+            partners, and crowd-sourced fundraising. In the future, we plan to
+            add a page to list common funding sources and explain how to use
+            data from Clean & Green Philly to support a grant application.
+          </p>
+          <p className="mb-4">
+            Any amount of funding can be useful. Many effective interventions
+            such as property cleanups can be accomplished for a few hundred
+            dollars—or even for free, with volunteer support! When planning your
+            property intervention, consider what level of funding you have
+            access to, and how you can get the most bang for your buck.
+          </p>
+          <p className="mb-4">
+            Funding is needed not only for the initial property transformation,
+            but also to maintain the project in the long term. When planning
+            your project, consider dividing your funding into two parts: one
+            part to pay for the initial intervention, and a second part—at least
+            equal to the first part—to pay for maintaining your project in the
+            future.
+          </p>
+        </div>
+
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">Maintenance</h3>
+          <p className="mb-4">
+            Transforming a vacant property isn’t a one-and-done event. In fact,
+            many properties that are currently vacant were transformed years
+            ago—but not maintained in the decades since. In order to make sure
+            that your intervention is high-impact and long-lived, make sure to
+            have a maintenance plan in place.
+          </p>
+          <p className="mb-4">
+            Consider who will be responsible for maintaining the property, what
+            their tasks will be, what kind of resources they will need, and how
+            you will fund this ongoing maintenance. Often, partnering with an
+            established organization like a CDC can help make sure that you have
+            the capacity and resources needed to ensure that your intervention
+            continues to be effective for many years into the future.
+          </p>
+        </div>
+
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">Gentrification </h3>
+          <p>
+            Our goal is to help community groups reduce violence through
+            cleaning and greening methods in their neighborhoods. We recognize
+            that may inadvertently increase property values, increase rental
+            prices and displace already-marginalized Philadelphians. We are
+            working to avoid this by meeting extensively with community groups
+            and responding to their concerns. Read more about this topic.
+            {/* Link to gentrification page */}
+          </p>
+        </div>
+
         {/* <p >
           These are just some of the many possibilities. Remember to be both
           creative and practical: there is no one-size-fits-all solution, and
