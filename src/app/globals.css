@@ -127,6 +127,17 @@
     font-weight: regular;
   }
 
+  ol.methodology {
+    list-style: decimal;
+    /* font-weight: 700; */
+    /* list-style-position: inside; */
+    margin-left: 20px;
+  }
+
+  ol li::marker {
+    font-weight: 700;
+  }
+
   a.default {
     @apply underline text-blue hover:text-blue-800 visited:text-purple-600;
   }

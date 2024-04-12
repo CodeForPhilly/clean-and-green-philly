@@ -1,4 +1,4 @@
-import { Accordion, AccordionItem } from "@nextui-org/react";
+import { Handshake, Money, Gavel, Tag, XCircle } from "@phosphor-icons/react";
 
 export default function GetAccessPage() {
 
@@ -33,79 +33,52 @@ export default function GetAccessPage() {
           impact.
         </p>
 
-        <Accordion variant="light" selectionMode="multiple">
-          <AccordionItem
-            key="1"
-            aria-label="Buying a Property"
-            title="Buying a Property"
-            subtitle="Click to expand"
-            className="font-bold text-large"
-          >
-            <div className="text-base font-normal">
+        <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+          <div className="mr-6 flex-shrink-0">
+            <Handshake size={60} aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="heading-xl font-bold mb-4">
+              Get Permission from Owner
+            </h3>
+            <p>
+              A private land use agreement can be a fast and easy way to get
+              access to a property, provided that you are able to find the owner
+              of the property. When creating such an agreement, you must define
+              the rights and responsibilities of yourself and the property
+              owner. Grounded in Philly provides a good list of key
+              considerations
+              [https://groundedinphilly.org/make-agreement-private-landowner/]
+              as well as sample agreement language.
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+          <div className="mr-6 flex-shrink-0">
+            <Money size={60} aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="heading-xl font-bold mb-4">Buy from Owner</h3>
+            <p>
               Buying a property outright can often be the simplest, fastest way
               to get access to it. However, we recognize that not all properties
               are affordable to grassroots organizations or private individuals.
               Based on our stakeholder research, we mark vacant properties with
               an estimated market value of $1,000 or less as worth buying.
-            </div>
-          </AccordionItem>
+            </p>
+          </div>
+        </div>
 
-          <AccordionItem
-            key="2"
-            aria-label="The Philadelphia Land Bank"
-            title="The Philadelphia Land Bank"
-            subtitle="Click to expand"
-            className="font-bold text-large"
-          >
-            <div className="text-base font-normal">
-              The Philadelphia Land Bank [https://phdcphila.org/] is part of the
-              Philadelphia Housing Development Corporation. It works to
-              redistribute publicly-owned land and return vacant properties to
-              productive use. Vacant properties owned by the Land Bank can often
-              be acquired for nominal or discounted prices for certain kinds of
-              uses or projects. These include properties that:
-              <br />
-              <br />
-              <ul className="list-disc pl-6 mb-4">
-                <li>Qualify for the side/rear yard program</li>
-                <li>
-                  Will be used for gardens, open space, or recreational areas
-                </li>
-                <li>Will be used for a business expansion</li>
-                <li>Will be part of a development assemblage</li>
-                <li>
-                  Will be part of affordable, mixed-income, or workforce housing
-                </li>
-                <li>Will benefit the community</li>
-                <li>Will be included in economic development projects</li>
-                <li>Will be used for urban agriculture</li>
-                <li>
-                  Advance the City’s Strategic Plan or Comprehensive Land Use
-                  Plan
-                </li>
-              </ul>
-              The advantage of this process is that it offers grassroots
-              organizations and other community-oriented groups to get access to
-              land through a non-competitive disposition process at little to no
-              cost. However, one is still required to go through the Land Bank’s
-              process, which also requires the support of the City Councilmember
-              in whose district the property falls. Grounded in Philly provides
-              a good overview of how to get permission to use City land
-              [https://groundedinphilly.org/get-permission-to-use-land-city/ ].
-              For more detailed information, please refer to the Land Bank’s
-              official disposition process document
-              [https://cdn-63e66af2c1ac1837386d75dd.closte.com/wp-content/uploads/2022/06/Philadelphia-Land-Bank-Disposition-Policies-2020-pubintlaw-copy.pdf].
-            </div>
-          </AccordionItem>
-
-          <AccordionItem
-            key="3"
-            aria-label="Act 135 Conservatorship"
-            title="Act 135 Conservatorship"
-            subtitle="Click to expand"
-            className="font-bold text-large"
-          >
-            <div className="text-base font-normal">
+        <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+          <div className="mr-6 flex-shrink-0">
+            <Gavel size={60} aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="heading-xl font-bold mb-4">
+              Get through Conservatorship
+            </h3>
+            <p>
               Act 135 conservatorship can be a potential faster route than other
               legal options but is complicated and requires a lot of resources.
               In short, if a property meets certain specific criteria, it can be
@@ -122,29 +95,59 @@ export default function GetAccessPage() {
               therefore not an ideal route for small organizations, but may be
               an option for better-resourced organizations such as affordable
               housing developers.
-            </div>
-          </AccordionItem>
+            </p>
+          </div>
+        </div>
 
-          <AccordionItem
-            key="4"
-            aria-label="Private Land Use Agreement"
-            title="Private Land Use Agreement"
-            subtitle="Click to expand"
-            className="font-bold text-large"
-          >
-            <div className="text-base font-normal">
-              A private land use agreement can be a fast and easy way to get
-              access to a property, provided that you are able to find the owner
-              of the property. When creating such an agreement, you must define
-              the rights and responsibilities of yourself and the property
-              owner. Grounded in Philly provides a good list of key
-              considerations
-              [https://groundedinphilly.org/make-agreement-private-landowner/]
-              as well as sample agreement language.
-            </div>
-          </AccordionItem>
-        </Accordion>
-        <h2 className="heading-2xl font-bold mt-8 mb-6"> Other Methods</h2>
+        <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+          <div className="mr-6 flex-shrink-0">
+            <Tag size={60} aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="heading-xl font-bold mb-4">Get through Land Bank</h3>
+            <p className="mb-4">
+              The Philadelphia Land Bank [https://phdcphila.org/] is part of the
+              Philadelphia Housing Development Corporation. It works to
+              redistribute publicly-owned land and return vacant properties to
+              productive use. Vacant properties owned by the Land Bank can often
+              be acquired for nominal or discounted prices for certain kinds of
+              uses or projects.
+            </p>
+            <p>
+              The advantage of this process is that it offers grassroots
+              organizations and other community-oriented groups to get access to
+              land through a non-competitive disposition process at little to no
+              cost. However, one is still required to go through the Land Bank’s
+              process, which also requires the support of the City Council
+              member in whose district the property falls. Grounded in Philly
+              provides a good overview of how to get permission to use City land
+              [https://groundedinphilly.org/get-permission-to-use-land-city/ ].
+            </p>
+          </div>
+        </div>
+
+        <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+          <div className="mr-6 flex-shrink-0">
+            <XCircle size={60} aria-hidden="true" />
+          </div>
+          <div>
+            <h3 className="heading-xl font-bold mb-4">Do Nothing </h3>
+            <p>
+              Although most properties have at least one reasonable way to get
+              access to them, in some cases, a property may have a particular
+              combination of factors that make it difficult to impossible to get
+              access to. For example, it may be a valuable property owned by a
+              company that is planning to develop the property at a later date.
+              If the company is unwilling to sell the property or negotiate a
+              private land use agreement, there is basically no way to legally
+              get access to the property. In these cases, we suggest that a more
+              productive use of your time would be to focus on other properties
+              where you can more easily pursue an intervention.
+            </p>
+          </div>
+        </div>
+
+        <h2 className="heading-2xl font-bold mt-8 mb-6">Other Methods</h2>
         <p className="body-md mb-6">
           The four options mentioned above are not a complete list of ways to
           get access to a vacant property in Philadelphia. There are several
@@ -164,76 +167,56 @@ export default function GetAccessPage() {
           </a>
           , which can better help you understand if you qualify.
         </p>
-        <Accordion variant="light" selectionMode="multiple">
-          <AccordionItem
-            key="1"
-            aria-label="Tangled Titles"
-            title="Tangled Titles"
-            subtitle="Click to expand"
-            className="font-bold text-large"
-          >
-            <div className="text-base font-normal">
-              A tangled title is a situation in which the deed to a property
-              lists the name of someone other than the apparent owner. This
-              often happens when children or grandchildren live in homes that
-              are still listed in the name of a deceased parent or grandparent,
-              for example. Tangled titles are a major issue in Philadelphia,
-              affecting at least 10,000 properties
-              [https://www.pewtrusts.org/en/research-and-analysis/reports/2021/08/how-tangled-titles-affect-philadelphia],
-              and can contribute to issues of vacancy and neglect. They are also
-              difficult to resolve without legal support. If you are the
-              rightful owner of a property with a tangled title, or if you
-              believe that a vacant property in your neighborhood is the result
-              of a tangled title, consider reaching out to Philadelphia Legal
-              Assistance for help
-              [https://philalegal.org/services/tangled-title].
-            </div>
-          </AccordionItem>
 
-          <AccordionItem
-            key="2"
-            aria-label="Adverse Possession"
-            title="Adverse Possession"
-            subtitle="Click to expand"
-            className="font-bold text-large"
-          >
-            <div className="text-base font-normal">
-              If you have been using a specific vacant property for a long time
-              against the wishes of the property’s owner, you may qualify for
-              adverse possession
-              [https://groundedinphilly.org/how-to-obtain-land-adverse-possession/].
-              This can be a good way to get full legal ownership of a property
-              that has been neglected by someone else if you have invested
-              effort in maintaining the property yourself (for example, as a
-              member of a community garden). However, be aware that this is a
-              very complicated process. It usually requires a lawyer and can
-              require taking on years of unpaid property taxes. If you believe
-              you may qualify for adverse possession, we recommend reaching out
-              to the Garden Justice Legal Initiative
-              [https://groundedinphilly.org/press/] for help.
-            </div>
-          </AccordionItem>
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">Tangled Titles</h3>
+          <p>
+            A tangled title is a situation in which the deed to a property lists
+            the name of someone other than the apparent owner. This often
+            happens when children or grandchildren live in homes that are still
+            listed in the name of a deceased parent or grandparent, for example.
+            Tangled titles are a major issue in Philadelphia, affecting at least
+            10,000 properties, and can contribute to issues of vacancy and
+            neglect. They are also difficult to resolve without legal support.
+            If you are the rightful owner of a property with a tangled title, or
+            if you believe that a vacant property in your neighborhood is the
+            result of a tangled title, consider reaching out to Philadelphia
+            Legal Assistance for help
+            [https://philalegal.org/services/tangled-title].
+          </p>
+        </div>
 
-          <AccordionItem
-            key="3"
-            aria-label="The Side Yard Program"
-            title="The Side Yard Program"
-            subtitle="Click to expand"
-            className="font-bold text-large"
-          >
-            <div className="text-base font-normal">
-              If you live next to a vacant property, you may be able to buy it
-              from the Land Bank to use as a side or rear yard. This is
-              potentially a quick and easy way to make productive use of a
-              vacant property, and we indicate in our dashboard whether or not a
-              property is eligible for this program. If you believe you have the
-              opportunity to acquire a vacant property through the side yard
-              program, please consult the Land Bank’s guide to the side yard
-              acquisition process
-              [https://phdcphila.org/land/buy-land/side-or-rear-yards/].
-            </div>
-          </AccordionItem>
-        </Accordion>
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">Adverse Possession</h3>
+          <p>
+            If you have been using a specific vacant property for a long time
+            against the wishes of the property’s owner, you may qualify for
+            adverse possession. This can be a good way to get full legal
+            ownership of a property that has been neglected by someone else if
+            you have invested effort in maintaining the property yourself (for
+            example, as a member of a community garden). However, be aware that
+            this is a very complicated process. It usually requires a lawyer and
+            can require taking on years of unpaid property taxes. If you believe
+            you may qualify for adverse possession, we recommend reaching out to
+            the Garden Justice Legal Initiative
+            [https://groundedinphilly.org/press/] for help.
+          </p>
+        </div>
+
+        <div className="bg-gray-100 rounded-lg p-8 mt-8">
+          <h3 className="heading-xl font-bold mb-4">The Side Yard Program</h3>
+          <p>
+            If you live next to a vacant property, you may be able to buy it
+            from the Land Bank to use as a side or rear yard. This is
+            potentially a quick and easy way to make productive use of a vacant
+            property, and we indicate in our dashboard whether or not a property
+            is eligible for this program. If you believe you have the
+            opportunity to acquire a vacant property through the side yard
+            program, please consult the Land Bank’s guide to the side yard
+            acquisition process
+            [https://phdcphila.org/land/buy-land/side-or-rear-yards/].
+          </p>
+        </div>
       </div>
     </div>
   );
