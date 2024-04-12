@@ -22,8 +22,8 @@ export default function TransformPropertyPage() {
           />
         </div>
 
-        <h2 className="heading-2xl font-bold mt-8">Basic Interventions</h2>
-        <p className="body-md">
+        <h2 className="heading-2xl font-bold mt-8 mb-6">Basic Interventions</h2>
+        <p>
           The original research that Clean & Green Philly is based on promotes
           “cleaning and greening.” This includes removing trash, grading the
           land, planting trees, installing low fences, and maintaining the
@@ -33,7 +33,9 @@ export default function TransformPropertyPage() {
         </p>
         {/* Four basic interventions green cards go here */}
 
-        <h2 className="heading-2xl font-bold mt-8">Advanced Interventions</h2>
+        <h2 className="heading-2xl font-bold mt-8 mb-6">
+          Advanced Interventions
+        </h2>
         <p className="body-md mb-4">
           Different properties have different opportunities and different
           challenges. Some properties might be a great spot for a rain garden
@@ -54,8 +56,8 @@ export default function TransformPropertyPage() {
 
         {/* Eight Advanced interventions green cards go here */}
 
-        <h2 className="heading-2xl font-bold mt-8">Get Help</h2>
-        <p className="body-md">
+        <h2 className="heading-2xl font-bold mt-8 mb-6">Get Help</h2>
+        <p>
           Many organizations in Philadelphia offer support transforming vacant
           properties. See our resources page for more information!
         </p>
@@ -68,7 +70,14 @@ export default function TransformPropertyPage() {
           parks.
         </p>
         <h3 className="heading-xl font-bold mt-8 mb-4">Jump Start</h3>
-        <p></p>
+        <p>
+          Jump Start is a source of short term financing that guides you along
+          the way, and moves quickly, to help you succeed in a competitive real
+          estate market. Jumpstart Philly offers acquisition and construction
+          financing for residential and mixed-use investment projects throughout
+          the City of Philadelphia. We are more than a bank, we’re a
+          non-traditional, community-driven lender ready to see you succeed.
+        </p>
         <h3 className="heading-xl font-bold mt-8 mb-4">
           Local Representatives
         </h3>
@@ -78,7 +87,7 @@ export default function TransformPropertyPage() {
           improve the community.
         </p>
 
-        <h2 className="heading-2xl font-bold mt-8">
+        <h2 className="heading-2xl font-bold mt-8 mb-6">
           Additional Considerations
         </h2>
         <h3 className="heading-xl font-bold mt-8 mb-4">Funding</h3>
@@ -132,7 +141,7 @@ export default function TransformPropertyPage() {
           their concerns. Read more about this topic.{" "}
           {/* Link to gentrification page */}
         </p>
-        {/* <p className="body-md">
+        {/* <p >
           These are just some of the many possibilities. Remember to be both
           creative and practical: there is no one-size-fits-all solution, and
           Philadelphia will need a variety of uses in its vacant properties,
@@ -143,7 +152,7 @@ export default function TransformPropertyPage() {
           What's right for my property?
         </h2> */}
 
-        {/* <p className="body-md">
+        {/* <p >
           Different properties have different opportunities and different
           challenges. Some properties might be a great spot for a rain garden
           but not for a playground. Likewise, you wouldn’t want to start a
@@ -163,14 +172,14 @@ export default function TransformPropertyPage() {
           maintenance you’re willing or able to do.
         </p> */}
         {/* <h2 className="heading-2xl font-bold mt-8">Where can I get help?</h2>
-        <p className="body-md">
+        <p >
           Many organizations in Philadelphia offer support transforming vacant
           properties.
         </p>
         <h3 className="heading-xl font-bold mt-8 mb-4">
           Community Groups and Local Representatives
         </h3>
-        <p className="body-md">
+        <p >
           For help with greening projects, reach out to local Neighborhood
           Advisory Committees, Community Development Corporations, or Registered
           Community Organizations. They can guide you through the planning
@@ -181,7 +190,7 @@ export default function TransformPropertyPage() {
         <h3 className="heading-xl font-bold mt-8 mb-4">
           Garden Justice Legal Initiative
         </h3>
-        <p className="body-md">
+        <p >
           The{" "}
           <a
             href="https://pubintlaw.org/cases-and-projects/garden-justice-legal-initiative-gjli/"
@@ -204,7 +213,7 @@ export default function TransformPropertyPage() {
           .
         </p>
         <h3 className="heading-xl font-bold mt-8 mb-4">StreetBoxPHL</h3>
-        <p className="body-md">
+        <p >
           <a href="https://streetboxphl.com/" className="link">
             StreetBoxPHL
           </a>{" "}
@@ -215,7 +224,7 @@ export default function TransformPropertyPage() {
           and help with insurance requirements.
         </p>
         <h3 className="heading-xl font-bold mt-8 mb-4">Park in a Truck</h3>
-        <p className="body-md">
+        <p >
           <a
             href="https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html"
             className="link"
@@ -237,7 +246,7 @@ export default function TransformPropertyPage() {
         <h2 className="heading-2xl font-bold mt-8">
           What else should I think about?
         </h2>
-        <div className="body-md">
+        <div >
           <Accordion variant="light" selectionMode="multiple">
             <AccordionItem
               key="1"
