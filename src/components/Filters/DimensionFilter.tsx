@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, FC } from "react";
-import { Autocomplete, AutocompleteItem, Button, Select, SelectItem, Selection, Tooltip } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Button, Chip, Select, SelectItem, Selection, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
 import { Check, Info } from "@phosphor-icons/react";
 
@@ -29,6 +29,16 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newMultiSelect: string[] = e.target.value.split(",")
     setMultiSelect(newMultiSelect);
+    dispatch({
+      type: "SET_DIMENSIONS",
+      property,
+      dimensions: newMultiSelect,
+    });
+  }
+
+  const handleSelectionRemove = (removedOption: string | undefined) => {
+    const newMultiSelect: string[] = multiSelect.filter(option => option !== removedOption)
+    setMultiSelect(newMultiSelect)
     dispatch({
       type: "SET_DIMENSIONS",
       property,
@@ -66,10 +76,22 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
         <div>
           <Select
             aria-label={display}
+            items={options}
+            variant="flat"
+            isMultiline={true}
             selectionMode="multiple"
             placeholder="Select options"
-            selectedKeys={multiSelect}
             className="space-x-2 min-h-[33.5px]"
+            selectedKeys={multiSelect}
+            renderValue={(multiSelect) => {
+              return (
+                <div>
+                  {multiSelect.map((option, index) => (
+                    <Chip key={index} onClose={() => handleSelectionRemove(option.textValue)}>{option.textValue}</Chip>
+                  ))}
+                </div>
+              )
+            }}
             onChange={handleSelectionChange}
           >
             {options.map((option) => (
@@ -79,6 +101,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             ))}
           </Select>
         </div>
+        {}
       </div>
     )
   } 
