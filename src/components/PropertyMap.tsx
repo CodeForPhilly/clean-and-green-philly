@@ -16,7 +16,6 @@ import Map, {
   Layer,
   Popup,
   NavigationControl,
-  FullscreenControl,
   ScaleControl,
   GeolocateControl,
   ViewState,
@@ -100,9 +99,8 @@ let summaryInfo: ReactElement | null = null;
 
 const MapControls = () => (
   <>
-    <GeolocateControl position="bottom-right" />
-    <FullscreenControl position="bottom-right" />
     <NavigationControl showCompass={false} position="bottom-right" />
+    <GeolocateControl position="bottom-right" />
     <ScaleControl />
     <MapLegendControl position="bottom-left" layerStyle={layerStylePolygon} />
   </>
