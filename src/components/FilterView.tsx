@@ -3,8 +3,8 @@ import DimensionFilter from "./Filters/DimensionFilter";
 import { PiX } from "react-icons/pi";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton } from "./ThemeButton";
+import { rcos, neighborhoods } from "./Filters/Options";
 
-const neighborhoods = ['Academy Gardens', 'Airport', 'Allegheny West', 'Andorra', 'Aston-Woodbridge', 'Bartram Village', 'Bella Vista', 'Belmont', 'Brewerytown', 'Bridesburg', 'Burholme', 'Bustleton', 'Byberry', 'Callowhill', 'Carroll Park', 'Cedar Park', 'Cedarbrook', 'Center City East', 'Chestnut Hill', 'Chinatown', 'Clearview', 'Cobbs Creek', 'Crescentville', 'Crestmont Farms', 'Dearnley Park', 'Dickinson Narrows', 'Dunlap', 'East Falls', 'East Germantown', 'East Kensington', 'East Mount Airy', 'East Oak Lane', 'East Park', 'East Parkside', 'East Passyunk', 'East Poplar', 'Eastwick', 'Elmwood', 'Fairhill', 'Fairmount', 'Feltonville', 'Fern Rock', 'Fishtown - Lower Kensington', 'Fitler Square', 'Fox Chase', 'Francisville', 'Frankford', 'Franklin Mills', 'Franklinville', 'Garden Court', 'Germantown - Morton', 'Germantown - Penn Knox', 'Germantown - Westside', 'Germany Hill', 'Girard Estates', 'Glenwood', 'Graduate Hospital', 'Grays Ferry', 'Greenwich', 'Haddington', 'Harrowgate', 'Hartranft', 'Haverford North', 'Hawthorne', 'Holmesburg', 'Hunting Park', 'Industrial', 'Juniata Park', 'Kingsessing', 'Lawndale', 'Lexington Park', 'Logan', 'Logan Square', 'Lower Moyamensing', 'Ludlow', 'Manayunk', 'Mantua', 'Mayfair', 'McGuire', 'Mechanicsville', 'Melrose Park Gardens', 'Mill Creek', 'Millbrook', 'Modena', 'Morrell Park', 'Navy Yard', 'Newbold', 'Nicetown', 'Normandy Village', 'North Central', 'Northeast Phila Airport', 'Northern Liberties', 'Northwood', 'Ogontz', 'Old City', 'Old Kensington', 'Olney', 'Overbrook', 'Oxford Circle', 'Packer Park', 'Parkwood Manor', 'Paschall', 'Passyunk Square', 'Pennsport', 'Pennypack', 'Pennypack Park', 'Pennypack Woods', 'Penrose', 'Point Breeze', 'Port Richmond', 'Powelton', 'Queen Village', 'Rhawnhurst', 'Richmond', 'Rittenhouse', 'Riverfront', 'Roxborough', 'Roxborough Park', 'Sharswood', 'Society Hill', 'Somerton', 'Southwest Germantown', 'Southwest Schuylkill', 'Spring Garden', 'Spruce Hill', 'Stadium District', 'Stanton', 'Strawberry Mansion', 'Summerdale', 'Tacony', 'Tioga', 'Torresdale', 'University City', 'Upper Kensington', 'Upper Roxborough', 'Walnut Hill', 'Washington Square West', 'West Central Germantown', 'West Kensington', 'West Mount Airy', 'West Oak Lane', 'West Park', 'West Parkside', 'West Passyunk', 'West Poplar', 'West Powelton', 'West Torresdale', 'Whitman', 'Winchester Park', 'Wissahickon', 'Wissahickon Hills', 'Wissahickon Park', 'Wissinoming', 'Wister', 'Woodland Terrace', 'Wynnefield', 'Wynnefield Heights', 'Yorktown']
 
 const filters = [
   {
@@ -31,9 +31,12 @@ const filters = [
     options: neighborhoods,
     tooltip: "",
   },
-  // {
-
-  // },
+  {
+    property: "rco_info",
+    display: "Community Organizations",
+    options: rcos,
+    tooltip: "",
+  },
   {
     property: "tactical_urbanism",
     display: "Tactical Urbanism",

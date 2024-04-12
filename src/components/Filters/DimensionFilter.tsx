@@ -58,7 +58,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     });
   };
 
-  if(property === "neighborhood") {
+  if (property === "neighborhood" || property === "rco_info") {
     return (
       <div className="pb-6">
         <div className="flex items-center mb-2">
@@ -73,21 +73,26 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             </Tooltip>
           </div>
         </div>
-        <div>
+        <div className="space-x-2 min-h-[33.5px]">
           <Select
             aria-label={display}
             items={options}
             variant="flat"
+            size="sm"
+            radius="full"
             isMultiline={true}
             selectionMode="multiple"
             placeholder="Select options"
-            className="space-x-2 min-h-[33.5px]"
+            classNames={{
+              trigger: "bg-gray-100 h-6 px-2 py-0.5",
+              value: "text-gray-900"
+            }}
             selectedKeys={multiSelect}
             renderValue={(multiSelect) => {
               return (
-                <div>
+                <div className="flex flex-wrap gap-2">
                   {multiSelect.map((option, index) => (
-                    <Chip key={index} onClose={() => handleSelectionRemove(option.textValue)}>{option.textValue}</Chip>
+                    <Chip key={index} className={"tagSelected"} onClose={() => handleSelectionRemove(option.textValue)}>{option.textValue}</Chip>
                   ))}
                 </div>
               )
