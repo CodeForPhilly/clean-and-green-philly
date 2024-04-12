@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, FC } from "react";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Autocomplete, AutocompleteItem, Button, Select, SelectItem, Selection, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
 import { Check, Info } from "@phosphor-icons/react";
 
@@ -22,6 +22,19 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
     appFilter[property]?.values || []
   );
+  const [multiSelect, setMultiSelect] = useState<string[]>(
+    appFilter[property]?.values || []
+  )
+
+  const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMultiSelect: string[] = e.target.value.split(",")
+    setMultiSelect(newMultiSelect);
+    dispatch({
+      type: "SET_DIMENSIONS",
+      property,
+      dimensions: newMultiSelect,
+    });
+  }
 
   const toggleDimension = (dimension: string) => {
     const newSelectedKeys = selectedKeys.includes(dimension)
@@ -34,6 +47,41 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       dimensions: newSelectedKeys,
     });
   };
+
+  if(property === "neighborhood") {
+    return (
+      <div className="pb-6">
+        <div className="flex items-center mb-2">
+          <div className="flex items-center">
+            <h2 className="heading-lg">{display}</h2>
+            <Tooltip content={tooltip} placement="top" showArrow color="primary">
+              <Info
+                alt="More Info"
+                className="h-5 w-9 text-gray-500 pl-2 pr-2 cursor-pointer"
+                tabIndex={0}
+              />
+            </Tooltip>
+          </div>
+        </div>
+        <div>
+          <Select
+            aria-label={display}
+            selectionMode="multiple"
+            placeholder="Select options"
+            selectedKeys={multiSelect}
+            className="space-x-2 min-h-[33.5px]"
+            onChange={handleSelectionChange}
+          >
+            {options.map((option) => (
+              <SelectItem key={option} value={option}>
+                {option}
+              </SelectItem>
+            ))}
+          </Select>
+        </div>
+      </div>
+    )
+  } 
 
   return (
     <div className="pb-6">
