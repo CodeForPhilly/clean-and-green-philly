@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState, FC } from "react";
-import { Autocomplete, AutocompleteItem, Button, Chip, Select, SelectItem, Selection, Tooltip } from "@nextui-org/react";
+import { Button, Chip, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
 import { Check, Info } from "@phosphor-icons/react";
+import { rcos_detail } from "./FilterOptions"
+import { MultiSelect, MultiSelectItem } from "./MultiSelectVariants"
 
 type DimensionFilterProps = {
   property: string;
@@ -29,20 +31,26 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newMultiSelect: string[] = e.target.value.split(",")
     setMultiSelect(newMultiSelect);
+    const newDimensions = (property === 'neighborhood') ? newMultiSelect : newMultiSelect.map((rco) => {
+      return rcos_detail[rco]
+    })
     dispatch({
       type: "SET_DIMENSIONS",
       property,
-      dimensions: newMultiSelect,
+      dimensions: newDimensions,
     });
   }
 
   const handleSelectionRemove = (removedOption: string | undefined) => {
     const newMultiSelect: string[] = multiSelect.filter(option => option !== removedOption)
     setMultiSelect(newMultiSelect)
+    const newDimensions = (property === 'neighborhood') ? newMultiSelect : newMultiSelect.map((rco) => {
+      return rcos_detail[rco]
+    })
     dispatch({
       type: "SET_DIMENSIONS",
       property,
-      dimensions: newMultiSelect,
+      dimensions: newDimensions,
     });
   }
 
@@ -57,6 +65,8 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       dimensions: newSelectedKeys,
     });
   };
+
+
 
   if (property === "neighborhood" || property === "rco_info") {
     return (
@@ -74,20 +84,17 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           </div>
         </div>
         <div className="space-x-2 min-h-[33.5px]">
-          <Select
+          <MultiSelect
             aria-label={display}
             items={options}
             variant="flat"
             size="sm"
-            radius="full"
+            radius="md"
             isMultiline={true}
             selectionMode="multiple"
             placeholder="Select options"
-            classNames={{
-              trigger: "bg-gray-100 h-6 px-2 py-0.5",
-              value: "text-gray-900"
-            }}
             selectedKeys={multiSelect}
+            disabledKeys={multiSelect}
             renderValue={(multiSelect) => {
               return (
                 <div className="flex flex-wrap gap-2">
@@ -100,11 +107,15 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             onChange={handleSelectionChange}
           >
             {options.map((option) => (
-              <SelectItem key={option} value={option}>
+              <MultiSelectItem 
+                key={option} 
+                value={option}
+                shouldHighlightOnFocus={false}
+              >
                 {option}
-              </SelectItem>
+              </MultiSelectItem>
             ))}
-          </Select>
+          </MultiSelect>
         </div>
         {}
       </div>

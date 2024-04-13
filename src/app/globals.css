@@ -246,6 +246,14 @@ a .bg-color-none {
   @apply ease-in h-6 bg-blue-400;
 }
 
+.multiSelect {
+  @apply h-6 px-2 py-0.5 bg-gray-100;
+}
+
+.multiSelectItem {
+  @apply h-6 px-2 py-0.5;
+}
+
 /* Space between search bar and sidepanel, especially for small screens */
 .mapboxgl-ctrl-geocoder {
   @apply mt-2;

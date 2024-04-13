@@ -3,7 +3,7 @@ import DimensionFilter from "./Filters/DimensionFilter";
 import { PiX } from "react-icons/pi";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton } from "./ThemeButton";
-import { rcos, neighborhoods } from "./Filters/Options";
+import { rcos, neighborhoods } from "./Filters/FilterOptions";
 
 
 const filters = [
