@@ -101,7 +101,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
               return (
                 <div className="flex flex-wrap gap-2">
                   {selectedKeys.map((option, index) => (
-                    <Chip key={index} className={"tagSelected"} onClose={() => handleSelectionRemove(option)}>{option}</Chip>
+                    <Chip key={index} classNames={{base:"multiSelectChip"}} onClose={() => handleSelectionRemove(option)}>{option}</Chip>
                   ))}
                 </div>
               )

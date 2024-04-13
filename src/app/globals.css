@@ -262,6 +262,14 @@ a .bg-color-none {
   @apply ease-in h-6 bg-gray-200;
 }
 
+.multiSelectChip {
+  @apply h-6 p-2 body-sm bg-blue-200 text-blue-800;
+}
+
+.multiSelectChip:hover {
+  @apply ease-in h-6 bg-blue-300;
+}
+
 /* Space between search bar and sidepanel, especially for small screens */
 .mapboxgl-ctrl-geocoder {
   @apply mt-2;
