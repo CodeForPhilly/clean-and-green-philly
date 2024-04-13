@@ -29,14 +29,14 @@ const filters = [
     property: "neighborhood",
     display: "Neighborhoods",
     options: neighborhoods,
-    tooltip: "",
+    tooltip: "Neighborhood mapping from OpenDataPhilly by Element 84 (formerly Azavea)",
   },
-  {
-    property: "rco_info",
-    display: "Community Organizations",
-    options: rcos,
-    tooltip: "",
-  },
+  // {
+  //   property: "rco_info",
+  //   display: "Community Organizations",
+  //   options: rcos,
+  //   tooltip: "RCO mapping from City of Philadelphia data",
+  // },
   {
     property: "tactical_urbanism",
     display: "Tactical Urbanism",
