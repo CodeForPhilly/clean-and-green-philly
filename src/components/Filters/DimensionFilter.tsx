@@ -5,7 +5,7 @@ import { Button, Chip, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
 import { Check, Info } from "@phosphor-icons/react";
 import { rcos_detail } from "./FilterOptions"
-import { MultiSelect, MultiSelectItem } from "./MultiSelectVariants"
+import { MultiSelect, MultiSelectItem, BlankSelectorIcon } from "./MultiSelectVariants"
 
 type DimensionFilterProps = {
   property: string;
@@ -24,13 +24,22 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
     appFilter[property]?.values || []
   );
-  const [multiSelect, setMultiSelect] = useState<string[]>(
-    appFilter[property]?.values || []
-  )
 
+  const toggleDimension = (dimension: string) => {
+    const newSelectedKeys = selectedKeys.includes(dimension)
+    ? selectedKeys.filter(key => key !== dimension)
+    : [...selectedKeys, dimension];
+    setSelectedKeys(newSelectedKeys);
+    dispatch({
+      type: "SET_DIMENSIONS",
+      property,
+      dimensions: newSelectedKeys,
+    });
+  };
+  
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newMultiSelect: string[] = e.target.value.split(",")
-    setMultiSelect(newMultiSelect);
+    setSelectedKeys(newMultiSelect);
     const newDimensions = (property === 'neighborhood') ? newMultiSelect : newMultiSelect.map((rco) => {
       return rcos_detail[rco]
     })
@@ -42,8 +51,8 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   }
 
   const handleSelectionRemove = (removedOption: string | undefined) => {
-    const newMultiSelect: string[] = multiSelect.filter(option => option !== removedOption)
-    setMultiSelect(newMultiSelect)
+    const newMultiSelect: string[] = selectedKeys.filter(option => option !== removedOption)
+    setSelectedKeys(newMultiSelect)
     const newDimensions = (property === 'neighborhood') ? newMultiSelect : newMultiSelect.map((rco) => {
       return rcos_detail[rco]
     })
@@ -53,20 +62,6 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       dimensions: newDimensions,
     });
   }
-
-  const toggleDimension = (dimension: string) => {
-    const newSelectedKeys = selectedKeys.includes(dimension)
-      ? selectedKeys.filter(key => key !== dimension)
-      : [...selectedKeys, dimension];
-    setSelectedKeys(newSelectedKeys);
-    dispatch({
-      type: "SET_DIMENSIONS",
-      property,
-      dimensions: newSelectedKeys,
-    });
-  };
-
-
 
   if (property === "neighborhood" || property === "rco_info") {
     return (
@@ -93,12 +88,13 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             isMultiline={true}
             selectionMode="multiple"
             placeholder="Select options"
-            selectedKeys={multiSelect}
-            disabledKeys={multiSelect}
-            renderValue={(multiSelect) => {
+            selectorIcon={<BlankSelectorIcon />}
+            selectedKeys={selectedKeys}
+            disabledKeys={selectedKeys}
+            renderValue={(selectedKeys) => {
               return (
                 <div className="flex flex-wrap gap-2">
-                  {multiSelect.map((option, index) => (
+                  {selectedKeys.map((option, index) => (
                     <Chip key={index} className={"tagSelected"} onClose={() => handleSelectionRemove(option.textValue)}>{option.textValue}</Chip>
                   ))}
                 </div>
@@ -110,6 +106,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
               <MultiSelectItem 
                 key={option} 
                 value={option}
+                selectedIcon={<BlankSelectorIcon />}
                 shouldHighlightOnFocus={false}
               >
                 {option}
