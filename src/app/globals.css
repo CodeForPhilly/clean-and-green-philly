@@ -250,8 +250,16 @@ a .bg-color-none {
   @apply h-6 px-2 py-0.5 bg-gray-100;
 }
 
+.multiSelect:hover {
+  @apply ease-in h-6 bg-gray-200;
+}
+
 .multiSelectItem {
   @apply h-6 px-2 py-0.5;
+}
+
+.multiSelectItem:hover {
+  @apply ease-in h-6 bg-gray-200;
 }
 
 /* Space between search bar and sidepanel, especially for small screens */

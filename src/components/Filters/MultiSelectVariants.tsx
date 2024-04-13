@@ -18,7 +18,7 @@ export const MultiSelectItem = extendVariants(SelectItem, {
     variants: {
         color: {
             gray: {
-                base: ["multiSelectItem", "data-[hover=true]:ease-in h-6 bg-gray-200"],
+                base: ["multiSelectItem", "data-[hover=true]:gray-200"],
                 value: ["text-gray-900"]
             }
         }
