@@ -64,6 +64,13 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   }
 
   if (property === "neighborhood" || property === "rco_info") {
+  
+    const multiSelectOptions = options.filter((option) => {
+      if (!selectedKeys.includes(option)) {
+        return option
+      }
+    })
+
     return (
       <div className="pb-6">
         <div className="flex items-center mb-2">
@@ -90,19 +97,18 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             placeholder="Select options"
             selectorIcon={<BlankSelectorIcon />}
             selectedKeys={selectedKeys}
-            disabledKeys={selectedKeys}
-            renderValue={(selectedKeys) => {
+            renderValue={() => {
               return (
                 <div className="flex flex-wrap gap-2">
                   {selectedKeys.map((option, index) => (
-                    <Chip key={index} className={"tagSelected"} onClose={() => handleSelectionRemove(option.textValue)}>{option.textValue}</Chip>
+                    <Chip key={index} className={"tagSelected"} onClose={() => handleSelectionRemove(option)}>{option}</Chip>
                   ))}
                 </div>
               )
             }}
             onChange={handleSelectionChange}
           >
-            {options.map((option) => (
+            {multiSelectOptions.map((option) => (
               <MultiSelectItem 
                 key={option} 
                 value={option}
