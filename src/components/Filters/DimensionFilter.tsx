@@ -40,26 +40,14 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newMultiSelect: string[] = e.target.value.split(",")
     setSelectedKeys(newMultiSelect);
-    const newDimensions = (property === 'neighborhood') ? newMultiSelect : newMultiSelect.map((rco) => {
-      return rcos_detail[rco]
-    })
+    // If the rco filter includes more than the rco name, 'newDimensions' should be passed to dispatch's 'dimensions' instead of newMultiSelect.  Also in that case, 'newDimensions' should also be added to 'toggleDimension' to filter out rco dimensions.
+    // const newDimensions = (property === 'neighborhood') ? newMultiSelect : newMultiSelect.map((rco) => {
+    //   return rcos_detail[rco]
+    // })
     dispatch({
       type: "SET_DIMENSIONS",
       property,
-      dimensions: newDimensions,
-    });
-  }
-
-  const handleSelectionRemove = (removedOption: string | undefined) => {
-    const newMultiSelect: string[] = selectedKeys.filter(option => option !== removedOption)
-    setSelectedKeys(newMultiSelect)
-    const newDimensions = (property === 'neighborhood') ? newMultiSelect : newMultiSelect.map((rco) => {
-      return rcos_detail[rco]
-    })
-    dispatch({
-      type: "SET_DIMENSIONS",
-      property,
-      dimensions: newDimensions,
+      dimensions: newMultiSelect,
     });
   }
 
@@ -101,7 +89,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
               return (
                 <div className="flex flex-wrap gap-2">
                   {selectedKeys.map((option, index) => (
-                    <Chip key={index} classNames={{base:"multiSelectChip"}} onClose={() => handleSelectionRemove(option)}>{option}</Chip>
+                    <Chip key={index} classNames={{base:"multiSelectChip"}} onClose={() => toggleDimension(option)}>{option}</Chip>
                   ))}
                 </div>
               )
