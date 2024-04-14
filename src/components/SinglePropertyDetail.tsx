@@ -1,5 +1,6 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
+import { Chip } from "@nextui-org/react";
 import {
   ArrowSquareOut,
   ArrowLeft,
@@ -21,6 +22,19 @@ interface PropertyDetailProps {
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
   updateCurrentView: (view: BarClickOptions) => void;
+}
+
+function getPriorityClass(priorityLevel: string) {
+  switch (priorityLevel) {
+    case "High":
+      return "bg-red-200 text-red-800"; // Style for High Priority
+    case "Medium":
+      return "bg-yellow-200 text-yellow-800"; // Style for Medium Priority
+    case "Low":
+      return "bg-green-200 text-green-800"; // Style for Low Priority
+    default:
+      return "bg-gray-500 border-gray-700"; // Default style
+  }
 }
 
 const SinglePropertyDetail = ({
@@ -52,9 +66,10 @@ const SinglePropertyDetail = ({
   } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphl/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
+  const priorityClass = getPriorityClass(priority_level);
 
   const priorityBgClassName = priority_level.includes("High")
-    ? "bg-priority-high"
+    ? "bg-red-200 text-red-800"
     : priority_level.includes("Medium")
     ? "bg-priority-medium"
     : priority_level.includes("Low")
@@ -133,10 +148,14 @@ const SinglePropertyDetail = ({
             <Th>Suggested Priority</Th>
             <td className="table-cell">
               <div className="flex gap-1 items-center">
-                <span
-                  className={`inline-block w-4 h-4 ${priorityBgClassName}`}
-                />
-                {priority_level}
+                <Chip
+                  classNames={{
+                    base: `${priorityClass} border-small border-white/50`,
+                    content: "body-sm",
+                  }}
+                >
+                  {priority_level + " Priority"}
+                </Chip>
               </div>
             </td>
           </tr>
@@ -153,7 +172,7 @@ const SinglePropertyDetail = ({
 
       <table aria-label="Land Information" className="w-full mb-4">
         <tbody>
-          <tr style={{ display: "none" }}>
+          <tr>
             <Th>Access Process</Th>
             <td className="table-cell">{access_process}</td>
           </tr>
