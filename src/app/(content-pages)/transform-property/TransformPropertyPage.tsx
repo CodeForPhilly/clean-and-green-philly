@@ -153,7 +153,7 @@ export default function TransformPropertyPage() {
           but not for a playground. Likewise, you wouldn't want to start a
           community garden in a vacant lot that doesn't get any sun. To better
           understand what your options are for a specific property, try filling
-          out the
+          out the{" "}
           <a
             href="https://detroitfuturecity.com/whatwedo/land-use/DFC-lots/"
             className="link"
@@ -165,10 +165,10 @@ export default function TransformPropertyPage() {
           remember to think about other constraints, like how much funding you
           have, and how much maintenance you're willing or able to do. There are
           many ways to imagine transforming a vacant property if you want to
-          work with funding and community support. Check out our
+          work with funding and community support. Check out our{" "}
           <a href="/resources" className="link">
             Resources Page
-          </a>
+          </a>{" "}
           to explore more like these:
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-1 gap-6 py-6">
