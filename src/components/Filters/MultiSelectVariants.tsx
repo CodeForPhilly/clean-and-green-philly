@@ -1,6 +1,6 @@
 import { extendVariants, Chip, Select, SelectItem } from "@nextui-org/react";
 
-export const MultiSelect = extendVariants(Select, {
+export const SelectFilter = extendVariants(Select, {
     variants: {
         color: {
             gray: {
@@ -19,7 +19,7 @@ export const MultiSelect = extendVariants(Select, {
     }
 })
 
-export const MultiSelectItem = extendVariants(SelectItem, {
+export const SelectFilterItem = extendVariants(SelectItem, {
     variants: {
         color: {
             gray: {
@@ -39,7 +39,7 @@ export const MultiSelectItem = extendVariants(SelectItem, {
     }
 })
 
-export const FilterChip = extendVariants(Chip, {
+export const SelectFilterChip = extendVariants(Chip, {
     variants: {
         color: {
             gray: {
