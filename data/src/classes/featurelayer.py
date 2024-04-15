@@ -14,8 +14,8 @@ from google.cloud import storage
 key = os.environ["CLEAN_GREEN_GOOGLE_KEY"]
 credentials_path = os.path.expanduser("/app/service-account-key.json")
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-bucket_name = "cleanandgreenphilly"
-storage_client = storage.Client(project="helpful-graph-407400")
+bucket_name = "cleanandgreenphl"
+storage_client = storage.Client(project="clean-and-green-philly")
 bucket = storage_client.bucket(bucket_name)
 
 
@@ -83,13 +83,14 @@ class FeatureLayer:
                 print(f"Loading data for {self.name} from psql...")
                 self.gdf = psql_table
                 return True
-        except:
+        except Exception as e:
+            print(f"Error loading data for {self.name}: {e}")
             return False
 
     def load_data(self):
         print(f"Loading data for {self.name} from {self.type}...")
         if self.type == "gdf":
-            self.gdf = gdf
+            pass
         else:
             try:
                 if self.type == "esri":
@@ -195,10 +196,9 @@ class FeatureLayer:
             try:
                 other_layer.rebuild_gdf()
 
-            except:
-                raise ValueError(
-                    "other_layer.gdf must be a GeoDataFrame or a DataFrame with x and y columns."
-                )
+            except Exception as e:
+                print(f"Error converting other_layer to GeoDataFrame: {e}")
+                return
 
         self.gdf = gpd.sjoin(self.gdf, other_layer.gdf, how=how, predicate=predicate)
         self.gdf.drop(columns=["index_right"], inplace=True)
