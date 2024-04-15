@@ -1,6 +1,5 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import VACANT_PROPS_LAYERS_TO_LOAD
-from config.psql import conn
 
 
 def vacant_properties():
