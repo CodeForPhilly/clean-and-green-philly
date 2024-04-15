@@ -14,13 +14,13 @@ def rco_geoms(primary_featurelayer):
         "PRIMARY_PHONE",
     ]
 
-    rco_use_cols = ["rco_info", "rco_ids", "geometry"]
+    rco_use_cols = ["rco_info", "rco_names", "geometry"]
 
     rco_geoms.gdf["rco_info"] = rco_geoms.gdf[rco_aggregate_cols].apply(
         lambda x: "; ".join(map(str, x)), axis=1
     )
 
-    rco_geoms.gdf["rco_ids"] = rco_geoms.gdf["LNI_ID"]
+    rco_geoms.gdf["rco_names"] = rco_geoms.gdf["ORGANIZATION_NAME"]
 
     rco_geoms.gdf = rco_geoms.gdf[rco_use_cols]
     rco_geoms.rebuild_gdf()
@@ -39,9 +39,7 @@ def rco_geoms(primary_featurelayer):
         .agg(
             {
                 "rco_info": lambda x: "|".join(map(str, x)),
-                "rco_ids": lambda x: "|".join(
-                    [str(int(y)) if not np.isnan(y) else "" for y in x]
-                ),
+                "rco_names": lambda x: "|".join(map(str, x)),
                 "geometry": "first",
             }
         )
