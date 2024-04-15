@@ -1,7 +1,5 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import PHS_LAYERS_TO_LOAD
-import pandas as pd
-from config.psql import conn
 
 
 def phs_properties(primary_featurelayer):
