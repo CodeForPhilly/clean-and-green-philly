@@ -247,23 +247,23 @@ a .bg-color-none {
 }
 
 .multiSelect {
-  @apply h-6 px-2 py-0.5 bg-gray-100;
+  @apply bg-gray-100;
 }
 
 .multiSelectItem {
-  @apply h-6 px-2 py-0.5;
+  @apply pl-3 py-2;
 }
 
 .multiSelectItem:hover {
-  @apply ease-in h-6 bg-gray-200;
+  @apply bg-gray-200;
 }
 
 .multiSelectChip {
-  @apply h-6 p-2 body-sm bg-blue-200 text-blue-800;
+  @apply bg-blue-200 text-blue-800;
 }
 
 .multiSelectChip:hover {
-  @apply ease-in h-6 bg-blue-300;
+  @apply bg-blue-300;
 }
 
 /* Space between search bar and sidepanel, especially for small screens */

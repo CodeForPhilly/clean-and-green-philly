@@ -3,9 +3,9 @@
 import React, { useState, FC } from "react";
 import { Button, Chip, Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
-import { Check, Info } from "@phosphor-icons/react";
+import { Check, Info, X } from "@phosphor-icons/react";
 import { rcos_detail } from "./FilterOptions"
-import { MultiSelect, MultiSelectItem, BlankSelectorIcon } from "./MultiSelectVariants"
+import { FilterChip, MultiSelect, MultiSelectItem, BlankSelectorIcon } from "./MultiSelectVariants"
 
 type DimensionFilterProps = {
   property: string;
@@ -78,18 +78,18 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             aria-label={display}
             items={options}
             variant="flat"
-            size="sm"
+            size="md"
             radius="md"
             isMultiline={true}
             selectionMode="multiple"
-            placeholder="Select options"
+            placeholder="Select options..."
             selectorIcon={<BlankSelectorIcon />}
             selectedKeys={selectedKeys}
             renderValue={() => {
               return (
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-y-2">
                   {selectedKeys.map((option, index) => (
-                    <Chip key={index} classNames={{base:"multiSelectChip"}} onClose={() => toggleDimension(option)}>{option}</Chip>
+                    <FilterChip key={index} classNames={{base:"multiSelectChip"}} endContent={<X />} onClose={() => toggleDimension(option)}>{option}</FilterChip>
                   ))}
                 </div>
               )
@@ -100,6 +100,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
               <MultiSelectItem 
                 key={option} 
                 value={option}
+                classNames={{base:"multiSelectItem"}}
                 selectedIcon={<BlankSelectorIcon />}
                 shouldHighlightOnFocus={false}
               >
