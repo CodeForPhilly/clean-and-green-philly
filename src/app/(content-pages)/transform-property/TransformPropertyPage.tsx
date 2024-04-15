@@ -1,33 +1,19 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
 import Image from "next/image";
-import Link from "next/link";
 import beforeAfter from "@/images/beforeAfter.png";
-import cleanup from "@/images/transform/lot-cleanup.png";
-import plant from "@/images/transform/plant-trees.jpeg";
-import maintain from "@/images/transform/maintain.jpeg";
-import fence from "@/images/transform/fence.png";
-import pollinators from "@/images/transform/flowers.png";
-import garden from "@/images/transform/community-garden.jpeg";
-import meadow from "@/images/transform/meadow.jpeg";
-import bikeracks from "@/images/transform/bike-rack.jpeg";
-import stormwater from "@/images/transform/stormwater.png";
-import restaurant from "@/images/transform/restaurant.jpeg";
-import housing from "@/images/transform/housing.png";
-import park from "@/images/transform/install-a-park.jpeg";
-import { ThemeButton, ThemeButtonLink } from "../../../components/ThemeButton";
-import { ArrowUpRight } from "@phosphor-icons/react";
+import cleanup from "@/images/lot-cleanup.png";
+import plant from "@/images/plant-trees.jpeg";
+import maintain from "@/images/maintain.jpeg";
+import fence from "@/images/fence.png";
+import pollinators from "@/images/flowers.png";
+import garden from "@/images/community-garden.jpeg";
+import meadow from "@/images/meadow.jpeg";
+import bikeracks from "@/images/bike-rack.jpeg";
+import stormwater from "@/images/stormwater.png";
+import restaurant from "@/images/restaurant.jpeg";
+import housing from "@/images/housing.png";
+import park from "@/images/install-a-park.jpeg";
 import ContentCard from "../../../components/ContentCard";
-import {
-  ArrowSquareOut,
-  ArrowLeft,
-  HandWaving,
-  Handshake,
-  Money,
-  Tree,
-  ProhibitInset,
-  PiggyBank,
-  ArrowsOut,
-} from "@phosphor-icons/react";
 
 export default function TransformPropertyPage() {
   return (
@@ -60,23 +46,22 @@ export default function TransformPropertyPage() {
           highly effective; even something as simple as cleaning up trash can
           have a big impact.
         </p>
-        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-1 gap-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 py-6">
           <ContentCard
-            hasLink={true}
-            image={
-              <Image
-                src={cleanup}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={cleanup}
+            alt=""
             title="Clean Garbage & Debris"
             body="Organizing a community clean-up or hiring a waste removal service to clean a lot, enhances its appearance, lifts mental health, and eliminates potential hazards."
-            label="Cost:"
-            description="Low"
-            labelUpkeep="Upkeep:"
-            upkeepLevel="None"
+            details={[
+              {
+                label: "Cost:",
+                data: "Low",
+              },
+              {
+                label: "Upkeep:",
+                data: "None",
+              },
+            ]}
             links={[
               {
                 url: "https://nkcdc.org/community/cleaning-greening/community-cleanup-resources/",
@@ -86,21 +71,20 @@ export default function TransformPropertyPage() {
           />
 
           <ContentCard
-            hasLink={true}
-            image={
-              <Image
-                src={plant}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={plant}
+            alt=""
             title="Plant Trees"
             body="Planting trees not only adds beauty and shade to the lot but also contributes to urban cooling, air purification, and habitat for wildlife."
-            label="Cost:"
-            description="Low"
-            labelUpkeep="Upkeep:"
-            upkeepLevel="Low"
+            details={[
+              {
+                label: "Cost:",
+                data: "Low",
+              },
+              {
+                label: "Upkeep:",
+                data: "Low",
+              },
+            ]}
             links={[
               {
                 url: "https://treephilly.org/yard-trees-2/",
@@ -110,39 +94,37 @@ export default function TransformPropertyPage() {
           />
 
           <ContentCard
-            hasLink={false}
-            image={
-              <Image
-                src={maintain}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={maintain}
+            alt=""
             title="Maintain regularly"
             body="Mowing grass, raking leaves, and clearing trash regularly ensures the lot remains clean, safe, and attractive, promoting community pride and deterring illegal activities."
-            label="Cost:"
-            description="Low"
-            labelUpkeep="Upkeep:"
-            upkeepLevel="Low"
+            details={[
+              {
+                label: "Cost:",
+                data: "Low",
+              },
+              {
+                label: "Upkeep:",
+                data: "Low",
+              },
+            ]}
           />
 
           <ContentCard
-            hasLink={false}
-            image={
-              <Image
-                src={fence}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={fence}
+            alt=""
             title="Install Low Fences"
             body="Hiring a contractor to install low fences defines boundaries, enhances safety, and improves aesthetics while allowing for easy access and integration with the neighborhood."
-            label="Cost:"
-            description="Low"
-            labelUpkeep="Upkeep:"
-            upkeepLevel="Low"
+            details={[
+              {
+                label: "Cost:",
+                data: "Medium",
+              },
+              {
+                label: "Upkeep:",
+                data: "Low",
+              },
+            ]}
           />
         </div>
 
@@ -171,17 +153,10 @@ export default function TransformPropertyPage() {
           </a>{" "}
           to explore more like these:
         </p>
-        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-1 gap-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 py-6">
           <ContentCard
-            hasLink={true}
-            image={
-              <Image
-                src={pollinators}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={pollinators}
+            alt=""
             title="Plant Pollinator Garden"
             body="Creating a pollinator garden promotes biodiversity, supports local ecosystems, and beautifies the lot with colorful flowers."
             links={[
@@ -193,15 +168,8 @@ export default function TransformPropertyPage() {
           />
 
           <ContentCard
-            hasLink={true}
-            image={
-              <Image
-                src={garden}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={garden}
+            alt=""
             title="Establish a Community Garden"
             body="Establishing a community garden provides fresh produce, promotes social interaction, and transforms the lot into a productive and vibrant space for residents."
             links={[
@@ -213,15 +181,8 @@ export default function TransformPropertyPage() {
           />
 
           <ContentCard
-            hasLink={true}
-            image={
-              <Image
-                src={meadow}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={meadow}
+            alt=""
             title="Plant a Meadow"
             body="Planting native wildflowers and grasses brings natural beauty, supports local wildlife, and requires less maintenance than traditional landscaping."
             links={[
@@ -233,15 +194,8 @@ export default function TransformPropertyPage() {
           />
 
           <ContentCard
-            hasLink={true}
-            image={
-              <Image
-                src={bikeracks}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={bikeracks}
+            alt=""
             title="Install Bike Parking"
             body="Installing bike parking encourages sustainable transportation, reduces congestion, and supports a healthier lifestyle for community members."
             links={[
@@ -257,15 +211,8 @@ export default function TransformPropertyPage() {
           />
 
           <ContentCard
-            hasLink={true}
-            image={
-              <Image
-                src={stormwater}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={stormwater}
+            alt=""
             title="Install Green Stormwater Infrastructure"
             body="Rain gardens and other infrastructure reduces stormwater runoff, prevents flooding, and improves water quality while adding greenery to the urban landscape."
             links={[
@@ -277,15 +224,8 @@ export default function TransformPropertyPage() {
           />
 
           <ContentCard
-            hasLink={true}
-            image={
-              <Image
-                src={restaurant}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={restaurant}
+            alt=""
             title="Offer Outdoor Restaurant Space"
             body="Providing seating and shade to local  restaurants attracts businesses, creates a lively atmosphere, and encourages community gathering and economic growth. "
             links={[
@@ -301,15 +241,8 @@ export default function TransformPropertyPage() {
           />
 
           <ContentCard
-            hasLink={true}
-            image={
-              <Image
-                src={housing}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={housing}
+            alt=""
             title="Affordable Housing"
             body="Developing affordable housing addresses housing needs, promotes diversity, and helps revitalize the neighborhood while providing homes for residents."
             links={[
@@ -329,15 +262,8 @@ export default function TransformPropertyPage() {
           />
 
           <ContentCard
-            hasLink={true}
-            image={
-              <Image
-                src={park}
-                alt={""}
-                placeholder="blur"
-                className="rounded-t-md w-full h-44 object-cover object-center"
-              />
-            }
+            image={park}
+            alt=""
             title="Install a Park"
             body="Providing seating, green spaces, and walking paths offers recreational space, improves public health, and enhances quality of life."
             links={[
