@@ -9,7 +9,11 @@ import {
   SetStateAction,
   ReactElement,
 } from "react";
-import { maptilerApiKey, mapboxAccessToken } from "../config/config";
+import {
+  maptilerApiKey,
+  mapboxAccessToken,
+  useStagingTiles,
+} from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import Map, {
   Source,
@@ -364,7 +368,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
         )}
         <Source
           type="vector"
-          url="pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles.pmtiles"
+          url={`pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles${
+            useStagingTiles ? "_staging" : ""
+          }.pmtiles`}
           id="vacant_properties_tiles"
         >
           <Layer {...layerStylePoints} />
