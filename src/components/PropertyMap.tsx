@@ -47,7 +47,6 @@ import { createPortal } from "react-dom";
 import { Tooltip } from "@nextui-org/react";
 import { Info } from "@phosphor-icons/react";
 import { centroid } from "@turf/centroid";
-import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 
 const MIN_MAP_ZOOM = 10;
 const MAX_MAP_ZOOM = 20;
