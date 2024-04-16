@@ -170,7 +170,7 @@
     -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav {
-    @apply px-0 text-base max-h-52 overflow-hidden fixed left-2/4 top-20 w-full z-50 shadow-2xl rounded-md border-1 border-gray-200 bg-gray-0;
+    @apply px-0 text-base max-h-52 overflow-hidden fixed w-full z-50 shadow-2xl rounded-md border-1 border-gray-200 bg-gray-0;
     -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav:hover {

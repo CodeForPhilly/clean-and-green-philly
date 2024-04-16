@@ -17,12 +17,12 @@ const MobileNav: FC = () => {
 
   return (
     <Navbar
-      className="min-[850px]:hidden h-24"
+      className="min-[850px]:hidden bg-white h-24"
       isBlurred={false}
       onMenuOpenChange={setIsMenuOpen}
       maxWidth="full"
     >
-      <NavbarContent>
+      <NavbarContent className="max-sm:px-0">
         <NavbarBrand>
           <Link href="/">
             <Image
@@ -38,14 +38,15 @@ const MobileNav: FC = () => {
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="min-[850px]:hidden flex-end w-fit"
           icon={
-            <div className="flex">
-              <PiList className="h-6 w-6" /> Menu
-            </div>
+              <>
+              <PiList className="h-6 w-6 linkIcon" /> Menu
+              </>
           }
-        ></NavbarMenuToggle>
+        > </NavbarMenuToggle>
       </NavbarContent>
-
-      <NavbarMenu className="left-2/4 z-75 px-0 w-fit mobileIconLinkNav">
+      
+      {/* 181.1 (width of menu) + 48px offset padding + 6px = 235.1 */}
+      <NavbarMenu className="top-20 left-[calc(100vw-235.1px)] z-75 px-0 w-fit mobileIconLinkNav">
         <IconLink
           icon={<PiBinoculars className="h-6 w-6" />}
           text="Find Properties"

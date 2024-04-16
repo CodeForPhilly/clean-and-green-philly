@@ -12,16 +12,11 @@ import MobileNav from "./MobileNav";
 
 
 const Header = () => (
-  //blurred here? 
-  <Navbar maxWidth="full" position="sticky" height="auto" isBordered className="max-[850px]:backdrop-blur-none">
+  //keeps background blurred >= 850 px
+  <Navbar maxWidth="full" position="sticky" height="auto" isBordered className="max-[850px]:bg-white max-[850px]:backdrop-blur-none">
     <MobileNav />
     <NavbarContent
-      className="hidden min-[850px]:flex basis-1/5 sm:basis-full"
-      style={{
-        paddingTop: "16px",
-        paddingBottom: "16px",
-        paddingLeft: "32px"
-      }}
+      className="hidden min-[850px]:flex basis-1/5 sm:basis-full pl-8 py-4"
       justify="start"
     >
       <NavbarBrand>
