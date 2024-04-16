@@ -9,16 +9,20 @@ import {
   SetStateAction,
   ReactElement,
 } from "react";
-import { maptilerApiKey, mapboxAccessToken } from "../config/config";
+import {
+  maptilerApiKey,
+  mapboxAccessToken,
+  useStagingTiles,
+} from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import Map, {
   Source,
   Layer,
   Popup,
   NavigationControl,
-  FullscreenControl,
   ScaleControl,
   GeolocateControl,
+  ViewState,
 } from "react-map-gl/maplibre";
 import maplibregl, {
   Map as MaplibreMap,
@@ -38,8 +42,6 @@ import mapboxgl from "mapbox-gl";
 import { Protocol } from "pmtiles";
 import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
 import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import ZoomModal from "./ZoomModal";
-import { Coordinates } from "../app/types";
 import { MapLegendControl } from "./MapLegendControl";
 import { createPortal } from "react-dom";
 import { Tooltip } from "@nextui-org/react";
@@ -101,9 +103,8 @@ let summaryInfo: ReactElement | null = null;
 
 const MapControls = () => (
   <>
-    <GeolocateControl position="bottom-right" />
-    <FullscreenControl position="bottom-right" />
     <NavigationControl showCompass={false} position="bottom-right" />
+    <GeolocateControl position="bottom-right" />
     <ScaleControl />
     <MapLegendControl position="bottom-left" layerStyle={layerStylePolygon} />
   </>
@@ -116,6 +117,7 @@ interface PropertyMapProps {
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
   setSmallScreenMode: Dispatch<SetStateAction<string>>;
+  initialViewState: ViewState;
 }
 const PropertyMap: FC<PropertyMapProps> = ({
   setFeaturesInView,
@@ -123,12 +125,12 @@ const PropertyMap: FC<PropertyMapProps> = ({
   selectedProperty,
   setSelectedProperty,
   setFeatureCount,
-  setSmallScreenMode
+  setSmallScreenMode,
+  initialViewState,
 }) => {
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
-  const [zoom, setZoom] = useState<number>(13);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
 
   useEffect(() => {
@@ -200,9 +202,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
     if (!["moveend", "sourcedata"].includes(event.type)) return;
     if (!map) return;
     setLoading(true);
-
-    const zoom_ = map.getZoom();
-    setZoom(zoom_);
 
     let bbox: [PointLike, PointLike] | undefined = undefined;
 
@@ -334,11 +333,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
     <div className="customized-map relative max-sm:min-h-[calc(100svh-100px)] max-sm:max-h-[calc(100svh-100px) h-full overflow-auto w-full">
       <Map
         mapLib={maplibregl as any}
-        initialViewState={{
-          longitude: -75.15975924194129,
-          latitude: 39.9910071520824,
-          zoom,
-        }}
+        initialViewState={initialViewState}
         mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
         onMouseEnter={(e) => changeCursor(e, "pointer")}
         onMouseLeave={(e) => changeCursor(e, "default")}
@@ -371,14 +366,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
         )}
         <Source
           type="vector"
-          url="pmtiles://https://storage.googleapis.com/cleanandgreenphilly/vacant_properties_tiles.pmtiles"
+          url={`pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles${
+            useStagingTiles ? "_staging" : ""
+          }.pmtiles`}
           id="vacant_properties_tiles"
         >
           <Layer {...layerStylePoints} />
           <Layer {...layerStylePolygon} />
         </Source>
       </Map>
-      {summaryInfo /* Render the summary info icon using createPortal */}
+      {summaryInfo}
     </div>
   );
 };

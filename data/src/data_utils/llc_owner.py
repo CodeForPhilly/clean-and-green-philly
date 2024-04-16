@@ -1,6 +1,3 @@
-import pandas as pd
-
-
 def llc_owner(primary_featurelayer):
     llc_owners = []
 

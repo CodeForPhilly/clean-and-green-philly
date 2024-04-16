@@ -1,4 +1,6 @@
 import { Accordion, AccordionItem } from "@nextui-org/react";
+import Image from "next/image";
+import beforeAfter from "@/images/beforeAfter.png";
 
 export default function TransformPropertyPage() {
   return (
@@ -14,6 +16,17 @@ export default function TransformPropertyPage() {
           ways to transform a vacant property into something that positively
           impacts the neighborhood around it.
         </p>
+
+        <div className="grid grid-cols-1 md:grid-cols-1 gap-6 md:gap-10">
+          <Image
+            src={beforeAfter}
+            alt={
+              "A Philadelphia lot before a clean up and the same lot, filled with trees and greenery after a clean up."
+            }
+            placeholder="blur"
+            className="w-full mt-6 overflow-hidden rounded-[20px] aspect-video md:aspect-auto object-cover object-center"
+          />
+        </div>
 
         <h2 className="heading-2xl font-bold mt-8">Types of Interventions</h2>
         <p className="body-md">

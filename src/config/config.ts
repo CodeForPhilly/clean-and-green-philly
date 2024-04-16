@@ -6,3 +6,5 @@ export const mapboxAccessToken =
 
 export const maptilerApiKey =
   process.env.NEXT_PUBLIC_MAPTILER_KEY || EMPTY_STRING;
+
+export const useStagingTiles = false;

@@ -82,13 +82,13 @@ For example, if your repository is located at `user/Documents/vacant-lots-proj`,
 #### Windows
 
 1. Make sure Docker is running by opening the Docker Desktop app.
-2. Open the command prompt. Navigate to the location of the `vacant-lots-proj` repository. Run `cd data` and then `docker-compose up`.
+2. Open the command prompt. Navigate to the location of the `vacant-lots-proj` repository. Run `cd data` and then `docker-compose run vacant-lots-proj`.
 3. When the script is done running, you’ll get a notification. When you’re done, to shut up off the Docker container (which uses memory), run `docker-compose down`.
 
 #### Linux
 
 1. In the terminal, navigate to your repository location using `cd path/to/repository`. Then run `cd data` to move into the `data` directory.
-2. Run `sudo docker-compose up`. Enter your password if requested. If you run into an error message related to "KEY_ID" or something like similar, you may have to do the following:
+2. Run `sudo docker-compose run vacant-lots-proj`. Enter your password if requested. If you run into an error message related to "KEY_ID" or something like similar, you may have to do the following:
 
 - Hard-code your VACANT_LOTS_DB variable in `docker-compose.yml`.
 - Also in `docker-compose.yml`, add `extra_hosts: -"host.docker.internal:host-gateway"`
@@ -100,7 +100,7 @@ For example, if your repository is located at `user/Documents/vacant-lots-proj`,
 
 #### macOS
 
-In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker-compose up`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker-compose down`.S
+In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker-compose run vacant-lots-proj`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker-compose down`.
 
 #### Making code changes
 
@@ -108,7 +108,7 @@ Changes to our codebase should always address an [issue](https://github.com/Code
 
 #### Formatting
 
-For Python, `black` will run automatically in `docker-compose` when the main script is run. If you want to just format the files, you can run:
+Format all python files by running:
 
 ```
 docker-compose run formatter
@@ -117,3 +117,15 @@ docker-compose run formatter
 #### Google Cloud
 
 The map data is converted to the [pmtiles](https://docs.protomaps.com/pmtiles/) format and served from Google Cloud. For access to production credentials, contact the project lead. If you'd like to test the tile build locally, create your own credentials using their free trial.
+
+The python script loads the tiles to Google Cloud as `vacant_properties_tiles_staging.pmtiles`. You can check this tileset by changing the config setting on the frontend `useStagingTiles` to `true`. If the tiles look OK, manually change the name in Google Cloud to remove the `_staging` and archive the previous copy.
+
+#### Google Streetview
+
+To update streetview images, after running the full data script run:
+
+```
+docker-compose run streetview
+```
+
+The script should only load new images that aren't in the bucket already (new properties added to list).
