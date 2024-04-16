@@ -118,6 +118,8 @@ docker-compose run formatter
 
 The map data is converted to the [pmtiles](https://docs.protomaps.com/pmtiles/) format and served from Google Cloud. For access to production credentials, contact the project lead. If you'd like to test the tile build locally, create your own credentials using their free trial.
 
+The python script loads the tiles to Google Cloud as `vacant_properties_tiles_staging.pmtiles`. You can check this tileset by changing the config setting on the frontend `useStagingTiles` to `true`. If the tiles look OK, manually change the name in Google Cloud to remove the `_staging` and archive the previous copy.
+
 #### Google Streetview
 
 To update streetview images, after running the full data script run:

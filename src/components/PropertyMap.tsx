@@ -9,14 +9,17 @@ import {
   SetStateAction,
   ReactElement,
 } from "react";
-import { maptilerApiKey, mapboxAccessToken } from "../config/config";
+import {
+  maptilerApiKey,
+  mapboxAccessToken,
+  useStagingTiles,
+} from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import Map, {
   Source,
   Layer,
   Popup,
   NavigationControl,
-  FullscreenControl,
   ScaleControl,
   GeolocateControl,
   ViewState,
@@ -100,9 +103,8 @@ let summaryInfo: ReactElement | null = null;
 
 const MapControls = () => (
   <>
-    <GeolocateControl position="bottom-right" />
-    <FullscreenControl position="bottom-right" />
     <NavigationControl showCompass={false} position="bottom-right" />
+    <GeolocateControl position="bottom-right" />
     <ScaleControl />
     <MapLegendControl position="bottom-left" layerStyle={layerStylePolygon} />
   </>
@@ -364,7 +366,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
         )}
         <Source
           type="vector"
-          url="pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles.pmtiles"
+          url={`pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles${
+            useStagingTiles ? "_staging" : ""
+          }.pmtiles`}
           id="vacant_properties_tiles"
         >
           <Layer {...layerStylePoints} />
