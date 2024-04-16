@@ -17,8 +17,7 @@ const MobileNav: FC = () => {
 
   return (
     <Navbar
-      className="min-[850px]:hidden bg-white h-24"
-      isBlurred={false}
+      className="min-[850px]:hidden h-24 px-6"
       onMenuOpenChange={setIsMenuOpen}
       maxWidth="full"
     >
@@ -47,8 +46,8 @@ const MobileNav: FC = () => {
         </NavbarMenuToggle>
       </NavbarContent>
 
-      {/* 181.1 (width of menu) + 48px offset padding = 235.1 */}
-      <NavbarMenu className="top-20 left-[calc(100vw-229.1px)] z-75 px-0 w-fit mobileIconLinkNav">
+      {/* (181.1 (width of menu) + 48px offset padding = 235.1) - 12px */}
+      <NavbarMenu className="top-20 left-[calc(100vw-223.1px)] z-75 px-0 w-fit mobileIconLinkNav">
         <IconLink
           icon={<PiBinoculars className="h-6 w-6" />}
           text="Find Properties"
