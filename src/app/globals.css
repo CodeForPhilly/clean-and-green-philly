@@ -189,10 +189,6 @@
   padding: 2px;
 }
 
-#main .maplibregl-ctrl-bottom-left {
-  left: 20px;
-}
-
 .table-cell {
   @apply p-2 border border-gray-300 text-left font-normal;
 }
@@ -217,13 +213,6 @@
 /* TODO: If we decide to get rid of the default option in the legend, we can remove this */
 .mapboxgl-ctrl-legend-pane ul.list li:last-child {
   display: none;
-}
-
-/* shift map search bar down and to the left 20px */
-
-#main .maplibregl-ctrl-top-right {
-  top: 20px;
-  right: 20px;
 }
 
 /* Remove white background on menu item to display active page state */
@@ -267,6 +256,11 @@ a .bg-color-none {
 
 .tagSelected:active {
   @apply ease-in h-6 bg-blue-400;
+}
+
+/* Space between search bar and sidepanel, especially for small screens */
+.mapboxgl-ctrl-geocoder {
+  @apply mt-2;
 }
 
 /* Centers the properties for small screens only, tailwind breakpoint */
