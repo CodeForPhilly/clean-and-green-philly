@@ -3,6 +3,7 @@ import Image from "next/image";
 import {
   ArrowSquareOut,
   ArrowLeft,
+  BookmarkSimple,
   HandWaving,
   Handshake,
   Money,
@@ -69,7 +70,7 @@ const SinglePropertyDetail = ({
 
   return (
     <div className="w-full px-6 pb-6">
-      <div className="sticky top-0 py-4 z-10 bg-white">
+      <div className="flex justify-between sticky top-0 py-4 z-10 bg-white">
         <ThemeButton
           color="tertiary"
           label="Back"
@@ -79,6 +80,14 @@ const SinglePropertyDetail = ({
             updateCurrentView("detail");
             history.replaceState(null, "", `/find-properties`);
           }}
+        />
+
+        {/* TODO: Add/remove property to Web browser's localStorage on click,
+and toggle label between "Save" and "Saved." See Issue 415. */}
+        <ThemeButton
+          color="tertiary"
+          label="Save"
+          startContent={<BookmarkSimple />}
         />
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
