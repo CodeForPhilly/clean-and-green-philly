@@ -38,13 +38,15 @@ const MobileNav: FC = () => {
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="min-[850px]:hidden flex-end w-fit"
           icon={
-              <>
+            <>
               <PiList className="h-6 w-6 linkIcon" /> Menu
-              </>
+            </>
           }
-        > </NavbarMenuToggle>
+        >
+          {" "}
+        </NavbarMenuToggle>
       </NavbarContent>
-      
+
       {/* 181.1 (width of menu) + 48px offset padding + 6px = 235.1 */}
       <NavbarMenu className="top-20 left-[calc(100vw-235.1px)] z-75 px-0 w-fit mobileIconLinkNav">
         <IconLink

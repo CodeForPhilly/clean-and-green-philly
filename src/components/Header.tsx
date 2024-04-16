@@ -10,10 +10,15 @@ import MobileNav from "./MobileNav";
 //   large ? styles.large : ""
 // }`;
 
-
 const Header = () => (
   //keeps background blurred >= 850 px
-  <Navbar maxWidth="full" position="sticky" height="auto" isBordered className="max-[850px]:bg-white max-[850px]:backdrop-blur-none">
+  <Navbar
+    maxWidth="full"
+    position="sticky"
+    height="auto"
+    isBordered
+    className="max-[850px]:bg-white max-[850px]:backdrop-blur-none"
+  >
     <MobileNav />
     <NavbarContent
       className="hidden min-[850px]:flex basis-1/5 sm:basis-full pl-8 py-4"
