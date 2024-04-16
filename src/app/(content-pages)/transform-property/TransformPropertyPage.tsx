@@ -25,12 +25,12 @@ export default function TransformPropertyPage() {
 
         <h2 className="heading-2xl font-bold mt-8 mb-6">Basic Interventions</h2>
         <p className="body-md">
-          The original research that Clean & Green Philly is based on promotes
-          “cleaning and greening.” This includes removing trash, grading the
-          land, planting trees, installing low fences, and maintaining the
-          property. These are low-cost interventions and have been proven to be
-          highly effective; even something as simple as cleaning up trash can
-          have a big impact.
+          The original research that Clean &amp; Green Philly is based on
+          promotes “cleaning and greening.” This includes removing trash,
+          grading the land, planting trees, installing low fences, and
+          maintaining the property. These are low-cost interventions and have
+          been proven to be highly effective; even something as simple as
+          cleaning up trash can have a big impact.
         </p>
         {/* Four basic interventions green cards go here */}
 
