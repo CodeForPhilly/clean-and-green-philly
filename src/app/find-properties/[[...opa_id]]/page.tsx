@@ -41,7 +41,7 @@ const MapPage = ({ params }: MapPageProps) => {
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
   const sizeRef = useRef(0);
-  const prevCoordinateRef = useRef([]);
+  const prevCoordinateRef = useRef<Position | null>(null);
   const linkedPropertyRef = useRef<string | null>(null);
   const [initialViewState, setInitialViewState] = useState<ViewState>({
     longitude: -75.1628565788269,
@@ -129,7 +129,7 @@ const MapPage = ({ params }: MapPageProps) => {
       window.innerWidth < 640 &&
       (view === "filter" ||
         (Object.keys(params).length === 0 &&
-          prevCoordinateRef.current.length !== 0))
+          prevCoordinateRef.current))
     ) {
       setSmallScreenMode((prev: string) =>
         prev === "map" ? "properties" : "map"
@@ -221,7 +221,7 @@ const MapPage = ({ params }: MapPageProps) => {
                   setFeatureCount={setFeatureCount}
                   initialViewState={initialViewState}
                   prevCoordinate={prevCoordinateRef.current}
-                  setPrevCoordinate={() => (prevCoordinateRef.current = [])}
+                  setPrevCoordinate={() => (prevCoordinateRef.current = null)}
                 />
               ) : (
                 <div className="flex w-full h-full justify-center">

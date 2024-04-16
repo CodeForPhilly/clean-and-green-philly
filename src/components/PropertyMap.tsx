@@ -47,6 +47,7 @@ import { createPortal } from "react-dom";
 import { Tooltip } from "@nextui-org/react";
 import { Info } from "@phosphor-icons/react";
 import { centroid } from "@turf/centroid";
+import { Position } from "geojson";
 
 const MIN_MAP_ZOOM = 10;
 const MAX_MAP_ZOOM = 20;
@@ -117,7 +118,7 @@ interface PropertyMapProps {
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
   initialViewState: ViewState;
-  prevCoordinate: number[];
+  prevCoordinate: Position | null;
   setPrevCoordinate: () => void;
 }
 const PropertyMap: FC<PropertyMapProps> = ({
@@ -309,8 +310,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
     if (!map) return;
     if (!selectedProperty) {
       setPopupInfo(null);
-      if (window.innerWidth < 640 && prevCoordinate.length !== 0) {
-        map.setCenter(prevCoordinate);
+      if (window.innerWidth < 640 && prevCoordinate) {
+        map.setCenter(prevCoordinate as LngLatLike);
         setPrevCoordinate();
       }
     } else {
