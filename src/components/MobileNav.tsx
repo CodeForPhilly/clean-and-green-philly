@@ -47,8 +47,8 @@ const MobileNav: FC = () => {
         </NavbarMenuToggle>
       </NavbarContent>
 
-      {/* 181.1 (width of menu) + 48px offset padding + 6px = 235.1 */}
-      <NavbarMenu className="top-20 left-[calc(100vw-235.1px)] z-75 px-0 w-fit mobileIconLinkNav">
+      {/* 181.1 (width of menu) + 48px offset padding = 235.1 */}
+      <NavbarMenu className="top-20 left-[calc(100vw-229.1px)] z-75 px-0 w-fit mobileIconLinkNav">
         <IconLink
           icon={<PiBinoculars className="h-6 w-6" />}
           text="Find Properties"
