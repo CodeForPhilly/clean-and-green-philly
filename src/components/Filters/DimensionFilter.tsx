@@ -49,7 +49,27 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     });
   }
 
-  const filter = (type === "buttonGroup") ? <ButtonGroup options={options} selectedKeys={selectedKeys} toggleDimension={toggleDimension} /> : <MultiSelect display={display} options={options} selectedKeys={selectedKeys} toggleDimension={toggleDimension} handleSelectionChange={handleSelectionChange}/>;
+  const filter = () => {
+    if (type === "buttonGroup") {
+      return (
+        <ButtonGroup 
+          options={options} 
+          selectedKeys={selectedKeys} 
+          toggleDimension={toggleDimension} 
+        /> 
+      )
+    } else {
+      return (
+        <MultiSelect 
+          display={display} 
+          options={options} 
+          selectedKeys={selectedKeys} 
+          toggleDimension={toggleDimension} 
+          handleSelectionChange={handleSelectionChange}
+        />
+      )
+    }
+  }
 
   return (
     <div className="pb-6">
@@ -65,7 +85,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           </Tooltip>
         </div>
       </div>
-      {filter}
+      {filter()}
     </div>
   );
 };

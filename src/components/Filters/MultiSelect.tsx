@@ -2,7 +2,7 @@
 
 import React, { FC } from "react";
 import { X } from "@phosphor-icons/react";
-import { SelectFilter, SelectFilterItem, SelectFilterChip, BlankSelectorIcon } from "./MultiSelectVariants"
+import { SelectFilter, SelectFilterItem, SelectFilterChip, BlankSelectorIcon } from "./MultiSelectVariants";
 
 
 type MultiSelectProps = {
@@ -43,24 +43,23 @@ const MultiSelect: FC<MultiSelectProps> = ({
                 renderValue={() => {
                 return (
                     <div className="flex flex-wrap gap-y-2">
-                    {selectedKeys.map((option, index) => (
-                        <SelectFilterChip key={index} classNames={{base:"multiSelectChip"}} endContent={<X />} onClose={() => toggleDimension(option)}>{option}</SelectFilterChip>
-                    ))}
+                        {selectedKeys.map((option, index) => (
+                            <SelectFilterChip key={index} classNames={{base:"multiSelectChip"}} endContent={<X />} onClose={() => toggleDimension(option)}>{option}</SelectFilterChip>
+                        ))}
                     </div>
                 )
                 }}
                 onChange={handleSelectionChange}
             >
                 {multiSelectOptions.map((option) => (
-                <SelectFilterItem 
-                    key={option} 
-                    value={option}
-                    classNames={{base:"multiSelectItem"}}
-                    selectedIcon={<BlankSelectorIcon />}
-                    shouldHighlightOnFocus={false}
-                >
-                    {option}
-                </SelectFilterItem>
+                    <SelectFilterItem 
+                        key={option} 
+                        value={option}
+                        classNames={{base:"multiSelectItem"}}
+                        shouldHighlightOnFocus={false}
+                    >
+                        {option}
+                    </SelectFilterItem>
                 ))}
             </SelectFilter>
         </div>
