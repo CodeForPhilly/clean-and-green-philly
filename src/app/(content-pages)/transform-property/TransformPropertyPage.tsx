@@ -1,8 +1,14 @@
 import Image from "next/image";
 import beforeAfter from "@/images/beforeAfter.png";
 import { ArrowUpRight } from "@phosphor-icons/react";
+import { ThemeButtonLink } from "@/components/ThemeButton";
 
 export default function TransformPropertyPage() {
+  const parkInATruckUrl =
+    "https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html";
+  // update below url
+  const jumpStartUrl = "#";
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flew-grow container mx-auto pt-20">
@@ -81,15 +87,16 @@ export default function TransformPropertyPage() {
             training and technical support to help communities create and
             maintain their parks.
           </p>
-          <a
+          <ThemeButtonLink
+            className="text-[#0070F0] inline-flex"
+            href={parkInATruckUrl}
             target="_blank"
-            rel="noopener noreferrer nofollow"
-            href="https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html"
-            className="link inline-flex items-center leading-5"
-          >
-            Park in a Truck
-            <ArrowUpRight className="mt-1" size={20} aria-hidden="true" />
-          </a>
+            rel="noopener noreferrer"
+            color="secondary"
+            label="Park in a Truck"
+            endContent={<ArrowUpRight aria-hidden="true" />}
+            aria-label="Open Park in a Truck in a new tab"
+          />
         </div>
 
         <div className="bg-gray-100 rounded-lg p-8 mt-8">
@@ -103,15 +110,16 @@ export default function TransformPropertyPage() {
             bank, we’re a non-traditional, community-driven lender ready to see
             you succeed.
           </p>
-          <a
+          <ThemeButtonLink
+            className="text-[#0070F0] inline-flex"
+            href={jumpStartUrl}
             target="_blank"
-            rel="noopener noreferrer nofollow"
-            //add hyperlink here in place of #  -> href="#"
-            className="link inline-flex items-center leading-5"
-          >
-            Jump Start
-            <ArrowUpRight className="mt-1" size={20} aria-hidden="true" />
-          </a>
+            rel="noopener noreferrer"
+            color="secondary"
+            label="Jump Start"
+            endContent={<ArrowUpRight aria-hidden="true" />}
+            aria-label="Open Jump Start in a new tab"
+          />
         </div>
 
         <div className="bg-gray-100 rounded-lg p-8 mt-8">
