@@ -42,6 +42,7 @@ const MapPage = ({ params }: MapPageProps) => {
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
   const sizeRef = useRef(0);
+  const prevCoordinateRef = useRef([]);
   const linkedPropertyRef = useRef<string | null>(null);
   const [initialViewState, setInitialViewState] = useState<ViewState>({
     longitude: -75.15975924194129,
@@ -106,11 +107,12 @@ const MapPage = ({ params }: MapPageProps) => {
         feature.properties.OPA_ID.toString() ===
         linkedPropertyRef?.current?.toString()
     );
+
     if (
       linkedProperty &&
       linkedProperty.properties.OPA_ID !== selectedProperty?.properties.OPA_ID
     ) {
-      setSelectedProperty(linkedProperty);
+      setSelectedProperty(linkedProperty); 
       linkedPropertyRef.current = null;
     }
   }, [featuresInView, linkedPropertyRef.current]);
@@ -123,11 +125,10 @@ const MapPage = ({ params }: MapPageProps) => {
 
   const updateCurrentView = (view: BarClickOptions) => {
     setCurrentView(view === currentView ? "detail" : view);
-
     if (
       prevRef.current === "map" &&
       window.innerWidth < 640 &&
-      view === "filter"
+      (view === "filter" || (Object.keys(params).length === 0 && prevCoordinateRef.current.length !== 0))
     ) {
       setSmallScreenMode((prev: string) =>
         prev === "map" ? "properties" : "map"
@@ -180,6 +181,12 @@ const MapPage = ({ params }: MapPageProps) => {
     if (!selectedProperty) return;
     const propCentroid = centroid(selectedProperty.geometry);
     setStreetViewLocation(propCentroid.geometry.coordinates);
+
+    if (window.innerWidth < 640 && prevRef.current === "map") {
+      prevCoordinateRef.current = propCentroid.geometry.coordinates;
+      setSmallScreenMode("properties");
+    }  
+
   }, [selectedProperty]);
 
   return (
@@ -212,8 +219,9 @@ const MapPage = ({ params }: MapPageProps) => {
                   selectedProperty={selectedProperty}
                   setSelectedProperty={setSelectedProperty}
                   setFeatureCount={setFeatureCount}
-                  setSmallScreenMode={setSmallScreenMode}
                   initialViewState={initialViewState}
+                  prevCoordinate={prevCoordinateRef.current}
+                  setPrevCoordinate={() => prevCoordinateRef.current = []}
                 />
               ) : (
                 <div className="flex w-full h-full justify-center">
