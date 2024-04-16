@@ -45,9 +45,9 @@ const MapPage = ({ params }: MapPageProps) => {
   const prevCoordinateRef = useRef([]);
   const linkedPropertyRef = useRef<string | null>(null);
   const [initialViewState, setInitialViewState] = useState<ViewState>({
-    longitude: -75.15975924194129,
-    latitude: 39.9910071520824,
-    zoom: 13,
+    longitude: -75.1628565788269,
+    latitude: 39.97008211622267,
+    zoom: 11,
     bearing: 0,
     pitch: 0,
     padding: { top: 0, bottom: 0, left: 0, right: 0 },
