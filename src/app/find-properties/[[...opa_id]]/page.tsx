@@ -36,9 +36,8 @@ const MapPage = ({ params }: MapPageProps) => {
     useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
-  const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
-    null
-  );
+  const [streetViewLocation, setStreetViewLocation] =
+    useState<Position | null>(null);
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
   const sizeRef = useRef(0);
@@ -112,7 +111,7 @@ const MapPage = ({ params }: MapPageProps) => {
       linkedProperty &&
       linkedProperty.properties.OPA_ID !== selectedProperty?.properties.OPA_ID
     ) {
-      setSelectedProperty(linkedProperty); 
+      setSelectedProperty(linkedProperty);
       linkedPropertyRef.current = null;
     }
   }, [featuresInView, linkedPropertyRef.current]);
@@ -128,7 +127,9 @@ const MapPage = ({ params }: MapPageProps) => {
     if (
       prevRef.current === "map" &&
       window.innerWidth < 640 &&
-      (view === "filter" || (Object.keys(params).length === 0 && prevCoordinateRef.current.length !== 0))
+      (view === "filter" ||
+        (Object.keys(params).length === 0 &&
+          prevCoordinateRef.current.length !== 0))
     ) {
       setSmallScreenMode((prev: string) =>
         prev === "map" ? "properties" : "map"
@@ -185,8 +186,7 @@ const MapPage = ({ params }: MapPageProps) => {
     if (window.innerWidth < 640 && prevRef.current === "map") {
       prevCoordinateRef.current = propCentroid.geometry.coordinates;
       setSmallScreenMode("properties");
-    }  
-
+    }
   }, [selectedProperty]);
 
   return (
@@ -221,7 +221,7 @@ const MapPage = ({ params }: MapPageProps) => {
                   setFeatureCount={setFeatureCount}
                   initialViewState={initialViewState}
                   prevCoordinate={prevCoordinateRef.current}
-                  setPrevCoordinate={() => prevCoordinateRef.current = []}
+                  setPrevCoordinate={() => (prevCoordinateRef.current = [])}
                 />
               ) : (
                 <div className="flex w-full h-full justify-center">
