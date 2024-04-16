@@ -10,11 +10,13 @@ import MobileNav from "./MobileNav";
 //   large ? styles.large : ""
 // }`;
 
+
 const Header = () => (
-  <Navbar maxWidth="full" position="sticky" height="auto" isBordered>
+  //blurred here? 
+  <Navbar maxWidth="full" position="sticky" height="auto" isBordered className="max-[850px]:backdrop-blur-none">
     <MobileNav />
     <NavbarContent
-      className="hidden sm:flex basis-1/5 sm:basis-full"
+      className="hidden min-[850px]:flex basis-1/5 sm:basis-full"
       style={{
         paddingTop: "16px",
         paddingBottom: "16px",
@@ -26,7 +28,7 @@ const Header = () => (
         <Link href="/">
           <Image
             src="/logo.svg"
-            alt="Clean & Green Philly Logo"
+            alt="Clean &amp; Green Philly Logo"
             width={112}
             height={67}
           />
@@ -35,7 +37,7 @@ const Header = () => (
     </NavbarContent>
 
     <NavbarContent
-      className="hidden sm:flex basis-1/5 sm:basis-full"
+      className="hidden min-[850px]:flex basis-1/5 sm:basis-full"
       justify="end"
     >
       <IconLink

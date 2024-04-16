@@ -17,16 +17,17 @@ const MobileNav: FC = () => {
 
   return (
     <Navbar
-      className="sm:hidden h-24"
+      className="min-[850px]:hidden h-24"
       isBlurred={false}
       onMenuOpenChange={setIsMenuOpen}
+      maxWidth="full"
     >
       <NavbarContent>
         <NavbarBrand>
           <Link href="/">
             <Image
               src="/logo.svg"
-              alt="Clean & Green Philly Logo"
+              alt="Clean &amp; Green Philly Logo"
               width={100}
               height={65}
             />
@@ -35,7 +36,7 @@ const MobileNav: FC = () => {
 
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
-          className="sm:hidden flex-end w-fit"
+          className="min-[850px]:hidden flex-end w-fit"
           icon={
             <div className="flex">
               <PiList className="h-6 w-6" /> Menu
