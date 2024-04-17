@@ -20,9 +20,10 @@ const MobileNav: FC = () => {
       className="sm:hidden h-24"
       isBlurred={false}
       onMenuOpenChange={setIsMenuOpen}
+      as="div"
     >
-      <NavbarContent>
-        <NavbarBrand>
+      <NavbarContent as="div">
+        <NavbarBrand as="div">
           <Link href="/">
             <Image
               src="/logo.svg"
@@ -34,6 +35,7 @@ const MobileNav: FC = () => {
         </NavbarBrand>
 
         <NavbarMenuToggle
+          as="nav"
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden flex-end w-fit"
           icon={
@@ -44,7 +46,11 @@ const MobileNav: FC = () => {
         ></NavbarMenuToggle>
       </NavbarContent>
 
-      <NavbarMenu className="left-2/4 z-75 px-0 w-fit mobileIconLinkNav">
+      <NavbarMenu
+        className="left-2/4 z-75 px-0 w-fit mobileIconLinkNav"
+        as="nav"
+        aria-label="primary"
+      >
         <IconLink
           icon={<PiBinoculars className="h-6 w-6" />}
           text="Find Properties"
