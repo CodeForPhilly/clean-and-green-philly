@@ -62,11 +62,13 @@ const filters = [
   },
 ];
 
-type FilterViewProps = {
+interface FilterViewProps {
   updateCurrentView: (view: BarClickOptions) => void;
 };
 
+
 const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
+
   return (
     <div className="relative p-6">
       <ThemeButton

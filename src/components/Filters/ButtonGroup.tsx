@@ -18,7 +18,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({
 }) => {
 
     return (
-        <div className="space-x-2 min-h-[33.5px]">
+        <div className="flex flex-wrap gap-x-2 min-h-[33.5px]">
             {options.map((option, index) => (
                 <Button
                     key={index}
@@ -27,7 +27,9 @@ const ButtonGroup: FC<ButtonGroupProps> = ({
                     size="sm"
                     color={selectedKeys.includes(option) ? "success" : "default"}
                     className={
-                        selectedKeys.includes(option) ? "tagSelected" : "tagDefault"
+                        (selectedKeys.includes(option) ? "tagSelected" : "tagDefault")
+                        + 
+                        (option === "Private Land Use Agreement" ? " max-[475px]:mt-2 sm:max-[1103px]:mt-2" : "")
                     }
                     radius="full"
                     aria-pressed={selectedKeys.includes(option)}
