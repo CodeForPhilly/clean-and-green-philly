@@ -207,6 +207,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
       const features = map.queryRenderedFeatures(map.project(coordinates), {
         layers,
       });
+
       if (features.length > 0) {
         setSelectedProperty(features[0]);
       } else {
@@ -312,7 +313,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           map.easeTo({
             center: e.result.center,
           });
-          handleMapSearch(e.result.center, address)
+          setTimeout(handleMapSearch, 500, e.result.center, address)
         });
       }
     }
