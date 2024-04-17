@@ -50,9 +50,9 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
         className="cursor-pointer max-w-sm w-full h-full"
         onClick={handleClick}
       >
-        <div className="bg-white h-full flex flex-col rounded-md overflow-hidden p-2 hover:bg-gray-100">
+        <div className="bg-white h-full flex flex-col rounded-lg overflow-hidden p-3 hover:bg-gray-100">
           <div
-            className="relative w-full rounded-lg overflow-hidden"
+            className="relative w-full rounded-md overflow-hidden"
             style={{ height: "160px", width: "auto" }}
           >
             <Image
@@ -63,7 +63,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
               unoptimized
             />
           </div>
-          <div className="grow p-2">
+          <div className="my-3">
             <button className="font-bold heading-lg" onKeyDown={handleKeyDown}>
               {formattedAddress}
             </button>
@@ -71,16 +71,14 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
               {guncrime_density} Gun Crime Rate
             </div>
           </div>
-          <div className="px-1">
-            <Chip
-              classNames={{
-                base: `${priorityClass} border-small border-white/50`,
-                content: "body-sm",
-              }}
-            >
-              {priority_level + " Priority"}
-            </Chip>
-          </div>
+          <Chip
+            classNames={{
+              base: `${priorityClass} border-small border-white/50`,
+              content: "body-sm",
+            }}
+          >
+            {priority_level + " Priority"}
+          </Chip>
         </div>
       </div>
     </div>
