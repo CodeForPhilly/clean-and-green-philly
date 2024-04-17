@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState, FC } from "react";
-import { Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
-import { Info } from "@phosphor-icons/react";
 import ButtonGroup from "./ButtonGroup";
 import MultiSelect from "./MultiSelect";
 
@@ -11,7 +9,6 @@ type DimensionFilterProps = {
   property: string;
   display: string;
   options: string[];
-  tooltip: string;
   type: string;
 };
 
@@ -19,7 +16,6 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   property,
   display,
   options,
-  tooltip,
   type,
 }) => {
   const { dispatch, appFilter } = useFilter();
