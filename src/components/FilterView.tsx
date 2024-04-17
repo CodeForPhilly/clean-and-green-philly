@@ -9,16 +9,9 @@ import { rcos, neighborhoods } from "./Filters/FilterOptions";
 const filters = [
   {
     property: "priority_level",
-    display: "Priority Level",
+    display: "Suggested Priority",
     options: ["Low", "Medium", "High"],
     tooltip: "For information on how this is calculated, see the About page",
-    type: "buttonGroup",
-  },
-  {
-    property: "parcel_type",
-    display: "Parcel Type",
-    options: ["Land", "Building"],
-    tooltip: "Parcel type from City of Philadelphia data",
     type: "buttonGroup",
   },
   {
@@ -41,6 +34,13 @@ const filters = [
     options: rcos,
     tooltip: "RCO mapping from City of Philadelphia data",
     type: "multiSelect",
+  },
+  {
+    property: "parcel_type",
+    display: "Parcel Type",
+    options: ["Land", "Building"],
+    tooltip: "Parcel type from City of Philadelphia data",
+    type: "buttonGroup",
   },
   {
     property: "tactical_urbanism",

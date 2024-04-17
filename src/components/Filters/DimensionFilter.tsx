@@ -74,16 +74,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   return (
     <div className="pb-6">
       <div className="flex items-center mb-2">
-        <div className="flex items-center">
-          <h2 className="heading-lg">{display}</h2>
-          <Tooltip content={tooltip} placement="top" showArrow color="primary">
-            <Info
-              alt="More Info"
-              className="h-5 w-9 text-gray-500 pl-2 pr-2 cursor-pointer"
-              tabIndex={0}
-            />
-          </Tooltip>
-        </div>
+        <h2 className="heading-lg">{display}</h2>
       </div>
       {filter()}
     </div>
