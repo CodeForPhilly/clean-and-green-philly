@@ -36,37 +36,36 @@ const Header = () => (
       </NavbarBrand>
     </NavbarContent>
 
-      <NavbarContent
-        className="hidden min-[850px]:flex basis-1/5 sm:basis-full"
-        justify="end"
+    <NavbarContent
+      className="hidden min-[850px]:flex basis-1/5 sm:basis-full"
+      justify="end"
       as="nav"
       aria-label="primary"
-      >
+    >
       <ul className="flex flex-row">
-          <IconLink
-            icon={<PiBinoculars className="h-6 w-6" />}
-            text="Find Properties"
-            href="/find-properties"
-          />
-          <IconLink
-            icon={<PiKey className="h-6 w-6" />}
-            text="Get Access"
-            href="/get-access"
-          />
-          <IconLink
-            icon={<PiTree className="h-6 w-6" />}
-            text="Transform"
-            href="/transform-property"
-          />
-          <IconLink
-            icon={<PiInfo className="h-6 w-6" />}
-            text="About"
-            href="/about"
-          />
+        <IconLink
+          icon={<PiBinoculars className="h-6 w-6" />}
+          text="Find Properties"
+          href="/find-properties"
+        />
+        <IconLink
+          icon={<PiKey className="h-6 w-6" />}
+          text="Get Access"
+          href="/get-access"
+        />
+        <IconLink
+          icon={<PiTree className="h-6 w-6" />}
+          text="Transform"
+          href="/transform-property"
+        />
+        <IconLink
+          icon={<PiInfo className="h-6 w-6" />}
+          text="About"
+          href="/about"
+        />
       </ul>
-      </NavbarContent>
-    </Navbar>
-  </>
+    </NavbarContent>
+  </Navbar>
 );
 
 export default Header;
