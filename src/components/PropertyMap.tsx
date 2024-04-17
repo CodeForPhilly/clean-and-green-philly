@@ -187,22 +187,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
     }
   };
 
-  const handleMapClick = (clickPoint: LngLat) => {
-    if (map) {
-      const features = map.queryRenderedFeatures(map.project(clickPoint), {
-        layers,
-      });
-
-      if (features.length > 0) {
-        setSelectedProperty(features[0]);
-      } else {
-        setSelectedProperty(null);
-        setPopupInfo(null);
-        }
-      }
-    };
-
-  const handleMapSearch = (coordinates: [number, number], address: string) => {
+  const handleMapClick = (coordinates: LngLat | [number, number], address: string = '') => {
     if (map) {
       const features = map.queryRenderedFeatures(map.project(coordinates), {
         layers,
@@ -211,15 +196,19 @@ const PropertyMap: FC<PropertyMapProps> = ({
       if (features.length > 0) {
         setSelectedProperty(features[0]);
       } else {
-        setSelectedProperty(null)
-        setPopupInfo({
-          longitude: coordinates[0],
-          latitude: coordinates[1],
-          feature: {address: address},
-        });
+        setSelectedProperty(null);
+        if (coordinates instanceof LngLat) {
+          setPopupInfo(null);
+        } else {
+          setPopupInfo({
+            longitude: coordinates[0],
+            latitude: coordinates[1],
+            feature: {address: address},
+          });
+        }
+        }
       }
-    }
-  }
+    };
 
   const handleSetFeatures = (event: any) => {
     if (!["moveend", "sourcedata"].includes(event.type)) return;
@@ -313,7 +302,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           map.easeTo({
             center: e.result.center,
           });
-          setTimeout(handleMapSearch, 500, e.result.center, address)
+          setTimeout(handleMapClick, 500, e.result.center, address)
         });
       }
     }
