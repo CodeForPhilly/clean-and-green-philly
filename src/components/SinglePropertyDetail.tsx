@@ -1,6 +1,8 @@
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
 import { Chip } from "@nextui-org/react";
+import { Check, Info } from "@phosphor-icons/react";
+import { Button, Tooltip } from "@nextui-org/react";
 import {
   ArrowSquareOut,
   ArrowLeft,
@@ -181,12 +183,6 @@ const SinglePropertyDetail = ({
             <td className="table-cell">
               <p>{owner_1}</p>
               {owner_2 && <p>{owner_2}</p>}
-            </td>
-          </tr>
-          <tr>
-            <Th>Parcel Type</Th>
-            <td className="table-cell">
-              <p>{parcel_type}</p>
             </td>
           </tr>
           <tr>
