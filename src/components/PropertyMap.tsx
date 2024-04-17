@@ -201,24 +201,24 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }
       }
     };
-    
-    const handleMapSearch = (coordinates: [number, number], address: string) => {
-      if (map) {
-        const features = map.queryRenderedFeatures(map.project(coordinates), {
-          layers,
+
+  const handleMapSearch = (coordinates: [number, number], address: string) => {
+    if (map) {
+      const features = map.queryRenderedFeatures(map.project(coordinates), {
+        layers,
+      });
+      if (features.length > 0) {
+        setSelectedProperty(features[0]);
+      } else {
+        setSelectedProperty(null)
+        setPopupInfo({
+          longitude: coordinates[0],
+          latitude: coordinates[1],
+          feature: {address: address},
         });
-        if (features.length > 0) {
-          setSelectedProperty(features[0]);
-        } else {
-          setSelectedProperty(null)
-          setPopupInfo({
-            longitude: coordinates[0],
-            latitude: coordinates[1],
-            feature: {address: address},
-          });
-        }
       }
     }
+  }
 
   const handleSetFeatures = (event: any) => {
     if (!["moveend", "sourcedata"].includes(event.type)) return;
@@ -308,9 +308,11 @@ const PropertyMap: FC<PropertyMapProps> = ({
         map.addControl(geocoderRef.current as unknown as IControl, "top-right");
 
         geocoderRef.current.on("result", (e) => {
-          const coordinates: [number, number] = e.result.center
           const address = e.result.place_name.split(',')[0]
-          handleMapSearch(coordinates, address)
+          map.easeTo({
+            center: e.result.center,
+          });
+          handleMapSearch(e.result.center, address)
         });
       }
     }
