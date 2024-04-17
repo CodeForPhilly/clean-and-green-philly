@@ -1,15 +1,18 @@
 "use client";
 
 import React, { useState, FC } from "react";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
-import { Check, Info } from "@phosphor-icons/react";
+import { Info } from "@phosphor-icons/react";
+import ButtonGroup from "./ButtonGroup";
+import MultiSelect from "./MultiSelect";
 
 type DimensionFilterProps = {
   property: string;
   display: string;
   options: string[];
   tooltip: string;
+  type: string;
 };
 
 const DimensionFilter: FC<DimensionFilterProps> = ({
@@ -17,6 +20,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   display,
   options,
   tooltip,
+  type,
 }) => {
   const { dispatch, appFilter } = useFilter();
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
@@ -25,8 +29,8 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
 
   const toggleDimension = (dimension: string) => {
     const newSelectedKeys = selectedKeys.includes(dimension)
-      ? selectedKeys.filter(key => key !== dimension)
-      : [...selectedKeys, dimension];
+    ? selectedKeys.filter(key => key !== dimension)
+    : [...selectedKeys, dimension];
     setSelectedKeys(newSelectedKeys);
     dispatch({
       type: "SET_DIMENSIONS",
@@ -34,6 +38,38 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       dimensions: newSelectedKeys,
     });
   };
+  
+  const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newMultiSelect: string[] = e.target.value.split(",")
+    setSelectedKeys(newMultiSelect);
+    dispatch({
+      type: "SET_DIMENSIONS",
+      property,
+      dimensions: newMultiSelect,
+    });
+  }
+
+  const filter = () => {
+    if (type === "buttonGroup") {
+      return (
+        <ButtonGroup 
+          options={options} 
+          selectedKeys={selectedKeys} 
+          toggleDimension={toggleDimension} 
+        /> 
+      )
+    } else {
+      return (
+        <MultiSelect 
+          display={display} 
+          options={options} 
+          selectedKeys={selectedKeys} 
+          toggleDimension={toggleDimension} 
+          handleSelectionChange={handleSelectionChange}
+        />
+      )
+    }
+  }
 
   return (
     <div className="pb-6">
@@ -49,29 +85,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           </Tooltip>
         </div>
       </div>
-      <div className="space-x-2 min-h-[33.5px]">
-        {options.map((option, index) => (
-          <Button
-            key={index}
-            disableAnimation
-            onPress={() => toggleDimension(option)}
-            size="sm"
-            color={selectedKeys.includes(option) ? "success" : "default"}
-            className={
-              selectedKeys.includes(option) ? "tagSelected" : "tagDefault"
-            }
-            radius="full"
-            aria-pressed={selectedKeys.includes(option)}
-            startContent={
-              selectedKeys.includes(option) ? (
-                <Check className="w-3 w-3.5 max-h-6" />
-              ) : undefined
-            }
-          >
-            {option}
-          </Button>
-        ))}
-      </div>
+      {filter()}
     </div>
   );
 };

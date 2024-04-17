@@ -36,17 +36,17 @@ const MapPage = ({ params }: MapPageProps) => {
     useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
-  const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
-    null
-  );
+  const [streetViewLocation, setStreetViewLocation] =
+    useState<Position | null>(null);
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
   const sizeRef = useRef(0);
+  const prevCoordinateRef = useRef<Position | null>(null);
   const linkedPropertyRef = useRef<string | null>(null);
   const [initialViewState, setInitialViewState] = useState<ViewState>({
-    longitude: -75.15975924194129,
-    latitude: 39.9910071520824,
-    zoom: 13,
+    longitude: -75.1628565788269,
+    latitude: 39.97008211622267,
+    zoom: 11,
     bearing: 0,
     pitch: 0,
     padding: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -106,6 +106,7 @@ const MapPage = ({ params }: MapPageProps) => {
         feature.properties.OPA_ID.toString() ===
         linkedPropertyRef?.current?.toString()
     );
+
     if (
       linkedProperty &&
       linkedProperty.properties.OPA_ID !== selectedProperty?.properties.OPA_ID
@@ -123,11 +124,12 @@ const MapPage = ({ params }: MapPageProps) => {
 
   const updateCurrentView = (view: BarClickOptions) => {
     setCurrentView(view === currentView ? "detail" : view);
-
     if (
       prevRef.current === "map" &&
       window.innerWidth < 640 &&
-      view === "filter"
+      (view === "filter" ||
+        (Object.keys(params).length === 0 &&
+          prevCoordinateRef.current))
     ) {
       setSmallScreenMode((prev: string) =>
         prev === "map" ? "properties" : "map"
@@ -180,6 +182,11 @@ const MapPage = ({ params }: MapPageProps) => {
     if (!selectedProperty) return;
     const propCentroid = centroid(selectedProperty.geometry);
     setStreetViewLocation(propCentroid.geometry.coordinates);
+
+    if (window.innerWidth < 640 && prevRef.current === "map") {
+      prevCoordinateRef.current = propCentroid.geometry.coordinates;
+      setSmallScreenMode("properties");
+    }
   }, [selectedProperty]);
 
   return (
@@ -212,8 +219,9 @@ const MapPage = ({ params }: MapPageProps) => {
                   selectedProperty={selectedProperty}
                   setSelectedProperty={setSelectedProperty}
                   setFeatureCount={setFeatureCount}
-                  setSmallScreenMode={setSmallScreenMode}
                   initialViewState={initialViewState}
+                  prevCoordinate={prevCoordinateRef.current}
+                  setPrevCoordinate={() => (prevCoordinateRef.current = null)}
                 />
               ) : (
                 <div className="flex w-full h-full justify-center">

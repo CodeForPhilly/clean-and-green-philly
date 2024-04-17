@@ -9,14 +9,17 @@ import {
   SetStateAction,
   ReactElement,
 } from "react";
-import { maptilerApiKey, mapboxAccessToken } from "../config/config";
+import {
+  maptilerApiKey,
+  mapboxAccessToken,
+  useStagingTiles,
+} from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import Map, {
   Source,
   Layer,
   Popup,
   NavigationControl,
-  FullscreenControl,
   ScaleControl,
   GeolocateControl,
   ViewState,
@@ -44,6 +47,7 @@ import { createPortal } from "react-dom";
 import { Tooltip } from "@nextui-org/react";
 import { Info } from "@phosphor-icons/react";
 import { centroid } from "@turf/centroid";
+import { Position } from "geojson";
 
 const MIN_MAP_ZOOM = 10;
 const MAX_MAP_ZOOM = 20;
@@ -100,9 +104,8 @@ let summaryInfo: ReactElement | null = null;
 
 const MapControls = () => (
   <>
-    <GeolocateControl position="bottom-right" />
-    <FullscreenControl position="bottom-right" />
     <NavigationControl showCompass={false} position="bottom-right" />
+    <GeolocateControl position="bottom-right" />
     <ScaleControl />
     <MapLegendControl position="bottom-left" layerStyle={layerStylePolygon} />
   </>
@@ -114,8 +117,9 @@ interface PropertyMapProps {
   selectedProperty: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
-  setSmallScreenMode: Dispatch<SetStateAction<string>>;
   initialViewState: ViewState;
+  prevCoordinate: Position | null;
+  setPrevCoordinate: () => void;
 }
 const PropertyMap: FC<PropertyMapProps> = ({
   setFeaturesInView,
@@ -123,8 +127,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
   selectedProperty,
   setSelectedProperty,
   setFeatureCount,
-  setSmallScreenMode,
   initialViewState,
+  prevCoordinate,
+  setPrevCoordinate,
 }) => {
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
@@ -305,6 +310,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
     if (!map) return;
     if (!selectedProperty) {
       setPopupInfo(null);
+      if (window.innerWidth < 640 && prevCoordinate) {
+        map.setCenter(prevCoordinate as LngLatLike);
+        setPrevCoordinate();
+      }
     } else {
       const propCentroid = centroid(selectedProperty.geometry);
       moveMap(propCentroid.geometry.coordinates as LngLatLike);
@@ -364,7 +373,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
         )}
         <Source
           type="vector"
-          url="pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles.pmtiles"
+          url={`pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles${
+            useStagingTiles ? "_staging" : ""
+          }.pmtiles`}
           id="vacant_properties_tiles"
         >
           <Layer {...layerStylePoints} />

@@ -56,6 +56,7 @@ print(f"Found {len(blobs)} images in bucket")
 
 # Remove from properties any value of OPA_ID that is in blobs
 properties = properties[~properties.OPA_ID.astype(str).isin(blobs)]
+print(f"Found {len(properties)} images to fetch")
 
 
 for idx, row in properties.iterrows():

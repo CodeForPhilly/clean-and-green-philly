@@ -1,24 +1,26 @@
 import { Handshake, Money, Gavel, Tag, XCircle } from "@phosphor-icons/react";
 
 export default function GetAccessPage() {
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="flew-grow container mx-auto pt-20">
         <h1 className="heading-3xl font-bold mb-6">Get Access to a Property</h1>
-        <p className="body-lg mb-6">
+        <h2 className="body-lg font-normal mb-6">
           In order to intervene in a property, you need to have some kind of
           legal access to do so.
-        </p>
-        <p className="body-md">
+        </h2>
+        <p className="body-md mb-12">
           This means either becoming the owner of the property yourself or
           reaching a legal agreement with the owner to allow you to transform
-          the property. For every vacant property in Philadelphia, Clean & Green
-          Philly highlights what we think the legal options are to get access to
-          it. Below, we explain in more detail what these options are and how
-          you can get help with each.
+          the property. For every vacant property in Philadelphia, Clean &amp;
+          Green Philly highlights what we think the legal options are to get
+          access to it. Below, we explain in more detail what these options are
+          and how you can get help with each.
         </p>
-        <h2 className="heading-2xl font-bold mt-8 mb-6">Methods</h2>
-        <p className="body-md">
+
+        <h2 className="heading-2xl font-bold mb-6">Methods</h2>
+        <p className="body-md mb-6">
           Although there are other possible ways to get access to a property
           (see below), these four routes are the most common and the only ones
           that we can infer from publicly-available data. Remember also that
@@ -146,17 +148,24 @@ export default function GetAccessPage() {
         </div>
 
         <h2 className="heading-2xl font-bold mt-8 mb-6">Other Methods</h2>
-        <p>
+        <p className="body-md mb-6">
           The four options mentioned above are not a complete list of ways to
           get access to a vacant property in Philadelphia. There are several
           others worth considering. However, the criteria for these options
-          depend completely on your individual circumstances. Since Clean &
+          depend completely on your individual circumstances. Since Clean &amp;
           Green Philly only uses public data, we have no way of knowing whether
           you specifically qualify for these programs. However, if you think you
           might qualify for one of these options, we encourage you to consult a
-          tool like Grounded in Philly’s pathways quiz
-          [https://groundedinphilly.org/#pathways], which can better help you
-          understand if you qualify.
+          tool like{" "}
+          <a
+            href="https://groundedinphilly.org/#pathways"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link"
+          >
+            Grounded in Philly’s pathways quiz
+          </a>
+          , which can better help you understand if you qualify.
         </p>
 
         <div className="bg-gray-100 rounded-lg p-8 mt-8">
