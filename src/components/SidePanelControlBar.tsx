@@ -8,7 +8,6 @@ import {
   Funnel,
   GlobeHemisphereWest,
   SquaresFour,
-  Table,
 } from "@phosphor-icons/react";
 import { ThemeButton } from "./ThemeButton";
 import { useFilter } from "@/context/FilterContext";
@@ -86,16 +85,6 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             className="max-lg:min-w-[4rem]"
             data-hover={false}
             ref={filterRef}
-          />
-
-          <ThemeButton
-            color="tertiary"
-            aria-label="View"
-            onPress={() => updateCurrentView("detail")}
-            startContent={<Table />}
-            className={`max-lg:min-w-[4rem] ${
-              smallScreenMode === "map" ? "max-sm:hidden" : ""
-            }`}
           />
 
           <ThemeButton

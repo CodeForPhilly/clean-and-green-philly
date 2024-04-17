@@ -311,5 +311,5 @@ class FeatureLayer:
             subprocess.run(command)
 
         # Upload to Google Cloud Storage
-        blob = bucket.blob(f"{tileset_id}.pmtiles")
+        blob = bucket.blob(f"{tileset_id}_staging.pmtiles")
         blob.upload_from_filename(temp_merged_pmtiles)
