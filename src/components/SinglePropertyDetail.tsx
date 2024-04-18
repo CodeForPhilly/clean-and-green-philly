@@ -6,15 +6,17 @@ import {
   HandWaving,
   Handshake,
   Money,
+  Share,
   Tree,
   ProhibitInset,
   PiggyBank,
   ArrowsOut,
 } from "@phosphor-icons/react";
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
+import { Tooltip } from "@nextui-org/react";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -29,6 +31,9 @@ const SinglePropertyDetail = ({
   setIsStreetViewModalOpen,
   updateCurrentView,
 }: PropertyDetailProps) => {
+  const [shareLabel, setShareLabel] = useState<boolean>(false);
+  const [hover, setHover] = useState<boolean>(false);
+
   if (!property) return null;
   const { properties } = property;
   if (!properties) return null;
@@ -69,7 +74,7 @@ const SinglePropertyDetail = ({
 
   return (
     <div className="w-full px-6 pb-6">
-      <div className="sticky top-0 py-4 z-10 bg-white">
+      <div className="flex justify-between sticky top-0 py-4 z-10 bg-white">
         <ThemeButton
           color="tertiary"
           label="Back"
@@ -80,6 +85,28 @@ const SinglePropertyDetail = ({
             history.replaceState(null, "", `/find-properties`);
           }}
         />
+        <Tooltip
+          disableAnimation
+          closeDelay={100}
+          placement="top"
+          content={shareLabel ? "Link Copied" : "Copy Link"}
+          isOpen={hover}
+          classNames={{
+            content: "bg-gray-900 rounded-[14px] text-white relative top-1",
+          }}
+        >
+          <ThemeButton
+            color="tertiary"
+            label="Share"
+            startContent={<Share />}
+            onPress={() => {
+              navigator.clipboard.writeText(window.location.href);
+              setShareLabel(true);
+            }}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+          />
+        </Tooltip>
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
