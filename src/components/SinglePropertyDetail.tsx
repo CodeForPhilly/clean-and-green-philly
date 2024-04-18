@@ -14,11 +14,14 @@ import {
   ProhibitInset,
   PiggyBank,
   ArrowsOut,
+  CaretRight,
 } from "@phosphor-icons/react";
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 import { Dispatch, SetStateAction, useState } from "react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
+import ContentCard from "./ContentCard";
+import cleanup from "@/images/transform-a-property.png";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -289,22 +292,16 @@ const SinglePropertyDetail = ({
         </a>
       </p>
 
-      <h3 className="font-bold mb-2 py-2 heading-xl">
-        Ways to transform the lot
-      </h3>
-      <p className="mb-4">
-        To see different ways in which you might transform this property, see
-        <a
-          href="/transform-property"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="link"
-        >
-          {" "}
-          our <Tree className="inline h-6 w-6" aria-hidden="true" /> Transform a
-          Property page.
-        </a>
-      </p>
+      <h3 className="font-bold mb-2 py-2 heading-xl">Transform a Property</h3>
+      <a href="/transform-property">
+        <ContentCard
+          image={cleanup}
+          alt=""
+          title="Transform a Property"
+          body="We guide you through the most common, convenient and affordable ways to transform properties and resources on how to do it."
+          hasArrow={true}
+        />
+      </a>
 
       {/*
       <div className="flex mb-4 px-2 gap-4">
