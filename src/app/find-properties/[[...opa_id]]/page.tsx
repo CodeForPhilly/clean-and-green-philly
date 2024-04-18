@@ -214,6 +214,7 @@ const MapPage = ({ params }: MapPageProps) => {
               </div>
               {isLinkedPropertyParsed ? (
                 <PropertyMap
+                  featuresInView={featuresInView}
                   setFeaturesInView={setFeaturesInView}
                   setLoading={setLoading}
                   selectedProperty={selectedProperty}
