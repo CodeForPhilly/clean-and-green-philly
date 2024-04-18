@@ -170,7 +170,7 @@
     -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav {
-    @apply px-0 text-base max-h-52 overflow-hidden fixed left-2/4 top-20 w-full z-50 shadow-2xl rounded-md border-1 border-gray-200 bg-gray-0;
+    @apply px-0 text-base max-h-52 overflow-hidden fixed w-full z-50 shadow-2xl rounded-md border-1 border-gray-200 bg-gray-0;
     -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav:hover {
@@ -187,6 +187,10 @@
 .mapboxgl-ctrl-legend {
   @apply p-5 w-full;
   padding: 2px;
+}
+
+#main .maplibregl-ctrl-bottom-left {
+  left: 20px;
 }
 
 .table-cell {
@@ -213,6 +217,13 @@
 /* TODO: If we decide to get rid of the default option in the legend, we can remove this */
 .mapboxgl-ctrl-legend-pane ul.list li:last-child {
   display: none;
+}
+
+/* shift map search bar down and to the left 20px */
+
+#main .maplibregl-ctrl-top-right {
+  top: 20px;
+  right: 20px;
 }
 
 /* Remove white background on menu item to display active page state */
@@ -258,9 +269,24 @@ a .bg-color-none {
   @apply ease-in h-6 bg-blue-400;
 }
 
-/* Space between search bar and sidepanel, especially for small screens */
-.mapboxgl-ctrl-geocoder {
-  @apply mt-2;
+.multiSelect {
+  @apply bg-gray-100;
+}
+
+.multiSelectItem {
+  @apply pl-3 py-2;
+}
+
+.multiSelectItem:hover {
+  @apply bg-gray-200;
+}
+
+.multiSelectChip {
+  @apply bg-blue-200 text-blue-800;
+}
+
+.multiSelectChip:hover {
+  @apply bg-blue-300;
 }
 
 /* Centers the properties for small screens only, tailwind breakpoint */

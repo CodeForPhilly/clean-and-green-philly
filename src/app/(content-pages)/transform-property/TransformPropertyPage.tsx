@@ -2,6 +2,19 @@ import Image from "next/image";
 import beforeAfter from "@/images/beforeAfter.png";
 import { ArrowUpRight } from "@phosphor-icons/react";
 import { ThemeButtonLink } from "@/components/ThemeButton";
+import cleanup from "@/images/lot-cleanup.png";
+import plant from "@/images/plant-trees.jpeg";
+import maintain from "@/images/maintain.jpeg";
+import fence from "@/images/fence.png";
+import pollinators from "@/images/flowers.png";
+import garden from "@/images/community-garden.jpeg";
+import meadow from "@/images/meadow.jpeg";
+import bikeracks from "@/images/bike-rack.jpeg";
+import stormwater from "@/images/stormwater.png";
+import restaurant from "@/images/restaurant.jpeg";
+import housing from "@/images/housing.png";
+import park from "@/images/install-a-park.jpeg";
+import ContentCard from "../../../components/ContentCard";
 
 export default function TransformPropertyPage() {
   const parkInATruckUrl =
@@ -38,7 +51,87 @@ export default function TransformPropertyPage() {
           been proven to be highly effective; even something as simple as
           cleaning up trash can have a big impact.
         </p>
-        {/* Four basic interventions green cards go here */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 py-6">
+          <ContentCard
+            image={cleanup}
+            alt=""
+            title="Clean Garbage & Debris"
+            body="Organizing a community clean-up or hiring a waste removal service to clean a lot, enhances its appearance, lifts mental health, and eliminates potential hazards."
+            details={[
+              {
+                label: "Cost:",
+                data: "Low",
+              },
+              {
+                label: "Upkeep:",
+                data: "None",
+              },
+            ]}
+            links={[
+              {
+                url: "https://nkcdc.org/community/cleaning-greening/community-cleanup-resources/",
+                text: "Resources on NKCDC",
+              },
+            ]}
+          />
+
+          <ContentCard
+            image={plant}
+            alt=""
+            title="Plant Trees"
+            body="Planting trees not only adds beauty and shade to the lot but also contributes to urban cooling, air purification, and habitat for wildlife."
+            details={[
+              {
+                label: "Cost:",
+                data: "Low",
+              },
+              {
+                label: "Upkeep:",
+                data: "Low",
+              },
+            ]}
+            links={[
+              {
+                url: "https://treephilly.org/yard-trees-2/",
+                text: "Help on Tree Philly",
+              },
+            ]}
+          />
+
+          <ContentCard
+            image={maintain}
+            alt=""
+            title="Maintain regularly"
+            body="Mowing grass, raking leaves, and clearing trash regularly ensures the lot remains clean, safe, and attractive, promoting community pride and deterring illegal activities."
+            details={[
+              {
+                label: "Cost:",
+                data: "Low",
+              },
+              {
+                label: "Upkeep:",
+                data: "Low",
+              },
+            ]}
+          />
+
+          <ContentCard
+            image={fence}
+            alt=""
+            title="Install Low Fences"
+            body="Hiring a contractor to install low fences defines boundaries, enhances safety, and improves aesthetics while allowing for easy access and integration with the neighborhood."
+            details={[
+              {
+                label: "Cost:",
+                data: "Medium",
+              },
+              {
+                label: "Upkeep:",
+                data: "Low",
+              },
+            ]}
+          />
+        </div>
 
         <h2 className="heading-2xl font-bold mt-8 mb-6">
           Advanced Interventions
@@ -46,8 +139,8 @@ export default function TransformPropertyPage() {
         <p className="body-md mb-4">
           Different properties have different opportunities and different
           challenges. Some properties might be a great spot for a rain garden
-          but not for a playground. Likewise, you wouldn’t want to start a
-          community garden in a vacant lot that doesn’t get any sun. To better
+          but not for a playground. Likewise, you wouldn't want to start a
+          community garden in a vacant lot that doesn't get any sun. To better
           understand what your options are for a specific property, try filling
           out the
           <a
@@ -65,12 +158,133 @@ export default function TransformPropertyPage() {
         </p>
         <p className="body-md mb-4">
           There are many ways to imagine transforming a vacant property if you
-          want to work with funding and community support. Check out our
-          Resources Page to explore more like these:
-          {/* Resources Link Needed */}
+          want to work with funding and community support. Check out our{" "}
+          <a href="/resources" className="link">
+            Resources Page
+          </a>{" "}
+          to explore more like these:
         </p>
+        <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 py-6">
+          <ContentCard
+            image={pollinators}
+            alt=""
+            title="Plant Pollinator Garden"
+            body="Creating a pollinator garden promotes biodiversity, supports local ecosystems, and beautifies the lot with colorful flowers."
+            links={[
+              {
+                url: "https://phsonline.org/uploads/attachments/ckacmpaca1evpj7rasp7ty5aq-pollinator-gardens-infosheet.pdf",
+                text: "Help from PHS",
+              },
+            ]}
+          />
 
-        {/* Eight Advanced interventions green cards go here */}
+          <ContentCard
+            image={garden}
+            alt=""
+            title="Establish a Community Garden"
+            body="Establishing a community garden provides fresh produce, promotes social interaction, and transforms the lot into a productive and vibrant space for residents."
+            links={[
+              {
+                url: "https://groundedinphilly.org/",
+                text: "Resources from Grounded in Philly",
+              },
+            ]}
+          />
+
+          <ContentCard
+            image={meadow}
+            alt=""
+            title="Plant a Meadow"
+            body="Planting native wildflowers and grasses brings natural beauty, supports local wildlife, and requires less maintenance than traditional landscaping."
+            links={[
+              {
+                url: "https://extension.psu.edu/meadows-and-prairies-wildlife-friendly-alternatives-to-lawn",
+                text: "Instructions from Penn State",
+              },
+            ]}
+          />
+
+          <ContentCard
+            image={bikeracks}
+            alt=""
+            title="Install Bike Parking"
+            body="Installing bike parking encourages sustainable transportation, reduces congestion, and supports a healthier lifestyle for community members."
+            links={[
+              {
+                url: "https://streetboxphl.com/",
+                text: "Help from StreetBoxPHL",
+              },
+              {
+                url: "https://www.phila.gov/media/20211109093815/OTIS-bike-corral-application.pdf",
+                text: "Guidelines from City of Phila",
+              },
+            ]}
+          />
+
+          <ContentCard
+            image={stormwater}
+            alt=""
+            title="Install Green Stormwater Infrastructure"
+            body="Rain gardens and other infrastructure reduces stormwater runoff, prevents flooding, and improves water quality while adding greenery to the urban landscape."
+            links={[
+              {
+                url: "https://groundedinphilly.org/",
+                text: "Help from Phila Water Department",
+              },
+            ]}
+          />
+
+          <ContentCard
+            image={restaurant}
+            alt=""
+            title="Offer Outdoor Restaurant Space"
+            body="Providing seating and shade to local  restaurants attracts businesses, creates a lively atmosphere, and encourages community gathering and economic growth. "
+            links={[
+              {
+                url: "https://streetboxphl.com/",
+                text: "Help from StreetBoxPHL",
+              },
+              {
+                url: "https://www.phila.gov/services/permits-violations-licenses/get-a-license/business-licenses/food-businesses/get-a-streetery-license/",
+                text: "Guidelines from City of Phila",
+              },
+            ]}
+          />
+
+          <ContentCard
+            image={housing}
+            alt=""
+            title="Affordable Housing"
+            body="Developing affordable housing addresses housing needs, promotes diversity, and helps revitalize the neighborhood while providing homes for residents."
+            links={[
+              {
+                url: "https://phdcphila.org/land/buy-land/propose-affordable-housing-project/",
+                text: "Help from PHDC",
+              },
+              {
+                url: "https://www.habitatphiladelphia.org/homeownership-program/",
+                text: "Help from Habitat from Humanity",
+              },
+              {
+                url: "https://www.lisc.org/philly/our-priorities/affordable-housing/",
+                text: "Help from LISC",
+              },
+            ]}
+          />
+
+          <ContentCard
+            image={park}
+            alt=""
+            title="Install a Park"
+            body="Providing seating, green spaces, and walking paths offers recreational space, improves public health, and enhances quality of life."
+            links={[
+              {
+                url: "https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html",
+                text: "Help from Park in a Truck",
+              },
+            ]}
+          />
+        </div>
 
         <h2 className="heading-2xl font-bold mt-8 mb-6">Get Help</h2>
         <p className="body-md">
