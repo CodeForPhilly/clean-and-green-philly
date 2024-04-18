@@ -23,7 +23,7 @@ export interface PropertyAccessOption {
   icon: IconType | React.ComponentType<any>;
   header: string;
   description: string;
-  slug: string;
+  slug?: string;
 }
 
 export const access_options: Record<PropertyAccess, PropertyAccessOption> = {
@@ -39,7 +39,6 @@ export const access_options: Record<PropertyAccess, PropertyAccessOption> = {
     header: "Quick Cleaning",
     description:
       "Properties likely safe enough to clean without express permission from the owner.",
-    slug: "/get-access",
   },
   [PropertyAccess.BUY_FROM_OWNER]: {
     icon: PiMoney,

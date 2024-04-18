@@ -3,6 +3,7 @@ import { Chip } from "@nextui-org/react";
 import Link from "next/link";
 import React from "react";
 import { PiCaretRight, PiCheck, PiHouse, PiStar, PiX } from "react-icons/pi";
+import clsx from "clsx";
 
 interface Props {
   type: "best" | "available" | "neighbors" | "unavailable";
@@ -80,9 +81,8 @@ const PropertyAccessOptionCard = ({ type, option }: Props) => {
   const Chip = getChip(type);
   const bgColor = getBackgroundStyle(type);
 
-  return (
-    <Link
-      href={option.slug}
+  const Card = () => (
+    <div
       className={`flex flex-row items-center rounded-md p-3 space-x-3 ${bgColor}`}
     >
       <div className="flex-1">
@@ -96,9 +96,22 @@ const PropertyAccessOptionCard = ({ type, option }: Props) => {
         <div className="ml-2 sm:ml-0 sm:mt-2 lg:ml-2">{Chip}</div>
       </div>
       <div className="flex-1">
-        <PiCaretRight aria-hidden={true} className="size-6" />
+        <PiCaretRight
+          aria-hidden={true}
+          className={clsx("size-6", {
+            ["invisible"]: !option.slug,
+          })}
+        />
       </div>
+    </div>
+  );
+
+  return option.slug ? (
+    <Link href={option.slug}>
+      <Card />
     </Link>
+  ) : (
+    <Card />
   );
 };
 

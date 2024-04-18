@@ -12,6 +12,7 @@ import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import PropertyAccessOptionContainer from "./PropertyAccessOptionContainer";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
+import Link from "next/link";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -235,8 +236,10 @@ const SinglePropertyDetail = ({
       <p className="mb-4">
         Before you can transform this property, you need to get legal access to
         it. Here are the possible options for this property including which are
-        available, not available and likely the best option. Learn more on Get
-        Access.
+        available, not available and likely the best option.{" "}
+        <Link href="/get-access" className="link">
+          Learn more on Get Access.
+        </Link>
       </p>
 
       <div className="mb-4">
