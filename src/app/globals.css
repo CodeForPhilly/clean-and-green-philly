@@ -142,6 +142,13 @@
     @apply underline text-blue hover:text-blue-800 visited:text-purple-600;
   }
 
+  table {
+    border-collapse: collapse;
+    border-radius: 6px;
+    border-style: hidden; /* hide standard table (collapsed) border */
+    box-shadow: 0 0 0 1px #ccdce3; /* this draws the table border  */
+  }
+
   /* added webkit transform to remove icon movement in safari */
 
   .iconLink {
@@ -194,7 +201,7 @@
 }
 
 .table-cell {
-  @apply p-2 border border-gray-300 text-left font-normal;
+  @apply p-2 border border-gray-200 rounded-md text-left font-normal;
 }
 
 .link {
