@@ -19,7 +19,6 @@ import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
 import { Dispatch, SetStateAction, useState } from "react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
-import { Tooltip } from "@nextui-org/react";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
