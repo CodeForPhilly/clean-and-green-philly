@@ -1,9 +1,7 @@
 "use client";
 
 import React, { useState, FC } from "react";
-import { Tooltip } from "@nextui-org/react";
 import { useFilter } from "@/context/FilterContext";
-import { Info } from "@phosphor-icons/react";
 import ButtonGroup from "./ButtonGroup";
 import MultiSelect from "./MultiSelect";
 
@@ -11,7 +9,6 @@ type DimensionFilterProps = {
   property: string;
   display: string;
   options: string[];
-  tooltip: string;
   type: string;
 };
 
@@ -19,7 +16,6 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   property,
   display,
   options,
-  tooltip,
   type,
 }) => {
   const { dispatch, appFilter } = useFilter();
@@ -29,8 +25,8 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
 
   const toggleDimension = (dimension: string) => {
     const newSelectedKeys = selectedKeys.includes(dimension)
-    ? selectedKeys.filter(key => key !== dimension)
-    : [...selectedKeys, dimension];
+      ? selectedKeys.filter((key) => key !== dimension)
+      : [...selectedKeys, dimension];
     setSelectedKeys(newSelectedKeys);
     dispatch({
       type: "SET_DIMENSIONS",
@@ -38,52 +34,66 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       dimensions: newSelectedKeys,
     });
   };
-  
+
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newMultiSelect: string[] = e.target.value.split(",")
+    const newMultiSelect: string[] = e.target.value.split(",");
     setSelectedKeys(newMultiSelect);
     dispatch({
       type: "SET_DIMENSIONS",
       property,
       dimensions: newMultiSelect,
     });
-  }
+  };
 
   const filter = () => {
     if (type === "buttonGroup") {
       return (
-        <ButtonGroup 
-          options={options} 
-          selectedKeys={selectedKeys} 
-          toggleDimension={toggleDimension} 
-        /> 
-      )
+        <ButtonGroup
+          options={options}
+          selectedKeys={selectedKeys}
+          toggleDimension={toggleDimension}
+        />
+      );
     } else {
       return (
-        <MultiSelect 
-          display={display} 
-          options={options} 
-          selectedKeys={selectedKeys} 
-          toggleDimension={toggleDimension} 
+        <MultiSelect
+          display={display}
+          options={options}
+          selectedKeys={selectedKeys}
+          toggleDimension={toggleDimension}
           handleSelectionChange={handleSelectionChange}
         />
-      )
+      );
     }
-  }
+  };
 
+  const filterDescription =
+    property === "priority_level"
+      ? {
+          desc: "Find properties based on how much they can reduce gun violence considering the gun violence, cleanliness, and tree canopy nearby. ",
+          linkFragment: "priority-method",
+        }
+      : {
+          desc: "Find properties based on what we think is the easiest method to get legal access to them, based on the data available to us. ",
+          linkFragment: "access-method",
+        };
+  // text-gray-500, 600 ? or #586266 (figma)?
   return (
-    <div className="pb-6">
-      <div className="flex items-center mb-2">
-        <div className="flex items-center">
-          <h2 className="heading-lg">{display}</h2>
-          <Tooltip content={tooltip} placement="top" showArrow color="primary">
-            <Info
-              alt="More Info"
-              className="h-5 w-9 text-gray-500 pl-2 pr-2 cursor-pointer"
-              tabIndex={0}
-            />
-          </Tooltip>
-        </div>
+    <div className="pt-3 pb-6">
+      <div className="flex flex-col mb-2">
+        <h2 className="heading-lg">{display}</h2>
+        {(property === "access_process" || property === "priority_level") && (
+          <p className="body-sm text-gray-500 w-[90%] my-1">
+            {filterDescription.desc}
+            <a
+              href={`/methodology/#${filterDescription.linkFragment}`}
+              className="link"
+              aria-label={`Goes to methodology page for ${property}`}
+            >
+              Learn more{" "}
+            </a>
+          </p>
+        )}
       </div>
       {filter()}
     </div>
