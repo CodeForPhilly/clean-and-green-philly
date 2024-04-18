@@ -1,23 +1,16 @@
-import { MapGeoJSONFeature } from "maplibre-gl";
-import Image from "next/image";
-import { Chip } from "@nextui-org/react";
-import { Check, Info } from "@phosphor-icons/react";
-import { Button, Tooltip } from "@nextui-org/react";
+import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
+import { Chip, Tooltip } from "@nextui-org/react";
 import {
-  ArrowSquareOut,
   ArrowLeft,
-  HandWaving,
-  Handshake,
-  Money,
+  ArrowSquareOut,
+  ArrowsOut,
   Share,
   Tree,
-  ProhibitInset,
-  PiggyBank,
-  ArrowsOut,
 } from "@phosphor-icons/react";
-import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
+import { MapGeoJSONFeature } from "maplibre-gl";
+import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
-import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
+import PropertyAccessOptionContainer from "./PropertyAccessOptionContainer";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
 
 interface PropertyDetailProps {
@@ -225,7 +218,7 @@ const SinglePropertyDetail = ({
           </tr>
           <tr>
             <Th>Market Value</Th>
-            <td className="table-cell">${market_value.toLocaleString()}</td>
+            <td className="table-cell">${market_value}</td>
           </tr>
           <tr>
             <Th>Tax Delinquency</Th>
@@ -240,54 +233,15 @@ const SinglePropertyDetail = ({
 
       <h3 className="font-bold mb-2 py-2 heading-xl">Getting Access</h3>
       <p className="mb-4">
-        Based on the information about this property, we believe that you can
-        get access to this property through:
+        Before you can transform this property, you need to get legal access to
+        it. Here are the possible options for this property including which are
+        available, not available and likely the best option. Learn more on Get
+        Access.
       </p>
 
-      <div className="flex mb-4 px-2 gap-4">
-        {access_process === "Private Land Use Agreement" && (
-          <SinglePropertyInfoCard
-            title="Private Land Use Agreement"
-            body="Given the price and ownership of this property, we believe the easiest way to get access to this property is through a land use agreement with its owner."
-            icon={<Handshake className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
-        {access_process === "Buy Property" && (
-          <SinglePropertyInfoCard
-            title="Buying a Property"
-            body="This property is cheap enough that we believe you can buy it outright."
-            icon={<Money className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
-        {access_process === "Do Nothing (Too Complicated)" && (
-          <SinglePropertyInfoCard
-            title="Do Nothing (Too Complicated)"
-            body="We believe access this property legally is too complicated to justify the effort."
-            icon={<ProhibitInset className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
-        {access_process === "Land Bank" && (
-          <SinglePropertyInfoCard
-            title="Land Bank"
-            body="You may be able to acquire this property for a nominal or discounted price from the Land Bank."
-            icon={<PiggyBank className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
+      <div className="mb-4">
+        <PropertyAccessOptionContainer property={properties} />
       </div>
-
-      <p>
-        {" "}
-        To learn more about what this means, visit{" "}
-        <a
-          href="/get-access"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="link"
-        >
-          our <HandWaving className="inline h-6 w-6" aria-hidden="true" /> Get
-          Access page.
-        </a>
-      </p>
 
       <h3 className="font-bold mb-2 py-2 heading-xl">
         Ways to transform the lot
