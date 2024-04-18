@@ -30,7 +30,10 @@ export default function GetAccessPage() {
         property or properties where you can have the biggest impact.
       </p>
 
-      <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+      <div
+        id="private-land-use"
+        className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start"
+      >
         <div className="mr-6 flex-shrink-0">
           <Handshake size={60} aria-hidden="true" />
         </div>
@@ -50,7 +53,10 @@ export default function GetAccessPage() {
         </div>
       </div>
 
-      <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+      <div
+        id="buy-from-owner"
+        className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start"
+      >
         <div className="mr-6 flex-shrink-0">
           <Money size={60} aria-hidden="true" />
         </div>
@@ -66,7 +72,10 @@ export default function GetAccessPage() {
         </div>
       </div>
 
-      <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+      <div
+        id="conservatorship"
+        className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start"
+      >
         <div className="mr-6 flex-shrink-0">
           <Gavel size={60} aria-hidden="true" />
         </div>
@@ -95,7 +104,10 @@ export default function GetAccessPage() {
         </div>
       </div>
 
-      <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+      <div
+        id="land-bank"
+        className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start"
+      >
         <div className="mr-6 flex-shrink-0">
           <Tag size={60} aria-hidden="true" />
         </div>
@@ -122,7 +134,10 @@ export default function GetAccessPage() {
         </div>
       </div>
 
-      <div className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start">
+      <div
+        id="do-nothing"
+        className="bg-[#E5F8FF] rounded-lg p-8 mt-8 flex items-start"
+      >
         <div className="mr-6 flex-shrink-0">
           <XCircle size={60} aria-hidden="true" />
         </div>
@@ -143,7 +158,9 @@ export default function GetAccessPage() {
         </div>
       </div>
 
-      <h2 className="heading-2xl font-bold mt-8 mb-6">Other Methods</h2>
+      <h2 id="other-methods" className="heading-2xl font-bold mt-8 mb-6">
+        Other Methods
+      </h2>
       <p className="body-md mb-6">
         The four options mentioned above are not a complete list of ways to get
         access to a vacant property in Philadelphia. There are several others
@@ -164,7 +181,7 @@ export default function GetAccessPage() {
         , which can better help you understand if you qualify.
       </p>
 
-      <div className="bg-gray-100 rounded-lg p-8 mt-8">
+      <div id="tangled-titles" className="bg-gray-100 rounded-lg p-8 mt-8">
         <h3 className="heading-xl font-bold mb-4">Tangled Titles</h3>
         <p>
           A tangled title is a situation in which the deed to a property lists
@@ -181,7 +198,7 @@ export default function GetAccessPage() {
         </p>
       </div>
 
-      <div className="bg-gray-100 rounded-lg p-8 mt-8">
+      <div id="adverse-possession" className="bg-gray-100 rounded-lg p-8 mt-8">
         <h3 className="heading-xl font-bold mb-4">Adverse Possession</h3>
         <p>
           If you have been using a specific vacant property for a long time
@@ -198,7 +215,7 @@ export default function GetAccessPage() {
         </p>
       </div>
 
-      <div className="bg-gray-100 rounded-lg p-8 mt-8">
+      <div id="side-yard" className="bg-gray-100 rounded-lg p-8 mt-8">
         <h3 className="heading-xl font-bold mb-4">The Side Yard Program</h3>
         <p>
           If you live next to a vacant property, you may be able to buy it from
