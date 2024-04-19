@@ -11,7 +11,7 @@ import { IconType } from "react-icons";
 
 export enum PropertyAccess {
   PRIVATE_LAND_USE = "PRIVATE_LAND_USE",
-  QUICK_CLEANING = "QUICK_CLEANING",
+  TACTICAL_URBANISM = "TACTICAL_URBANISM",
   BUY_FROM_OWNER = "BUY_FROM_OWNER",
   SIDE_YARD = "SIDE_YARD",
   LAND_BANK = "LAND_BANK",
@@ -34,9 +34,9 @@ export const access_options: Record<PropertyAccess, PropertyAccessOption> = {
       'Properties, given the price an owner, getting a "private land use agreement" seems best.',
     slug: "/get-access#private-land-use",
   },
-  [PropertyAccess.QUICK_CLEANING]: {
+  [PropertyAccess.TACTICAL_URBANISM]: {
     icon: Rake,
-    header: "Quick Cleaning",
+    header: "Tactical Urbanism",
     description:
       "Properties likely safe enough to clean without express permission from the owner.",
   },

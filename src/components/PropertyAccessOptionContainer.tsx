@@ -4,40 +4,59 @@ import PropertyAccessOptionCard from "./PropertyAccessOptionCard";
 const determineCardEnums = (property: any) => {
   let best;
   let neighbor;
-  let available = [];
-  let unavailable = [];
+  let available = new Set();
+  let unavailable = new Set();
 
-  property.access_process === "Private Land Use Agreement"
-    ? (best = PropertyAccess.PRIVATE_LAND_USE)
-    : unavailable.push(PropertyAccess.PRIVATE_LAND_USE);
+  if (property.access_process === "Private Land Use Agreement") {
+    best = PropertyAccess.PRIVATE_LAND_USE;
+    available.add(PropertyAccess.BUY_FROM_OWNER);
+  }
+
+  if (property.access_process === "Buy Property") {
+    best = PropertyAccess.BUY_FROM_OWNER;
+    available.add(PropertyAccess.PRIVATE_LAND_USE);
+  }
+
+  if (
+    !available.has(PropertyAccess.BUY_FROM_OWNER) &&
+    best !== PropertyAccess.BUY_FROM_OWNER &&
+    property.market_value <= 1000
+  ) {
+    available.add(PropertyAccess.BUY_FROM_OWNER);
+  } else {
+    unavailable.add(PropertyAccess.BUY_FROM_OWNER);
+  }
+
+  if (
+    !available.has(PropertyAccess.PRIVATE_LAND_USE) &&
+    best !== PropertyAccess.PRIVATE_LAND_USE
+  ) {
+    unavailable.add(PropertyAccess.PRIVATE_LAND_USE);
+  }
 
   property.access_process === "Land Bank"
     ? (best = PropertyAccess.LAND_BANK)
-    : unavailable.push(PropertyAccess.LAND_BANK);
-
-  property.access_process === "Buy Property"
-    ? (best = PropertyAccess.BUY_FROM_OWNER)
-    : property.market_value <= 1000
-    ? available.push(PropertyAccess.BUY_FROM_OWNER)
-    : unavailable.push(PropertyAccess.BUY_FROM_OWNER);
+    : unavailable.add(PropertyAccess.LAND_BANK);
 
   property.side_yard_eligible === "Yes"
     ? (neighbor = PropertyAccess.SIDE_YARD)
-    : unavailable.push(PropertyAccess.SIDE_YARD);
+    : unavailable.add(PropertyAccess.SIDE_YARD);
 
   property.tactical_urbanism === "Yes"
-    ? available.push(PropertyAccess.QUICK_CLEANING)
-    : unavailable.push(PropertyAccess.QUICK_CLEANING);
+    ? available.add(PropertyAccess.TACTICAL_URBANISM)
+    : unavailable.add(PropertyAccess.TACTICAL_URBANISM);
 
   property.conservatorship === "Yes"
-    ? available.push(PropertyAccess.CONSERVATORSHIP)
-    : unavailable.push(PropertyAccess.CONSERVATORSHIP);
+    ? available.add(PropertyAccess.CONSERVATORSHIP)
+    : unavailable.add(PropertyAccess.CONSERVATORSHIP);
+
+  debugger;
 
   return {
     best,
-    available,
+    available: Array.from(available),
     neighbor,
-    unavailable,
+    unavailable: Array.from(unavailable),
   };
 };
 
