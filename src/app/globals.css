@@ -335,7 +335,7 @@ a .bg-color-none {
 }
 
 .mapboxgl-popup-tip {
-  border: 10px solid transparent;
+  border: 8px solid transparent;
   height: 0;
   width: 0;
   z-index: 1;
