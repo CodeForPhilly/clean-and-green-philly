@@ -13,6 +13,7 @@ import {
   maptilerApiKey,
   mapboxAccessToken,
   useStagingTiles,
+  googleCloudBucketName
 } from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import Map, {
@@ -62,7 +63,6 @@ const layers = [
   "vacant_properties_tiles_polygons",
   "vacant_properties_tiles_points",
 ];
-
 const colorScheme: DataDrivenPropertyValueSpecification<ColorSpecification> = [
   "match",
   ["get", "priority_level"], // get the value of the guncrime_density property
@@ -408,7 +408,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         )}
         <Source
           type="vector"
-          url={`pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles${
+          url={`pmtiles://https://storage.googleapis.com/${googleCloudBucketName}/vacant_properties_tiles${
             useStagingTiles ? "_staging" : ""
           }.pmtiles`}
           id="vacant_properties_tiles"
