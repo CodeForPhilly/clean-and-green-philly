@@ -52,6 +52,7 @@ const MapPage = ({ params }: MapPageProps) => {
     padding: { top: 0, bottom: 0, left: 0, right: 0 },
   });
   const [isLinkedPropertyParsed, setIsLinkedPropertyParsed] = useState(false);
+  const [savedPropertyCount, setSavedPropertyCount] = useState(0);
 
   const router = useRouter();
 
@@ -169,6 +170,7 @@ const MapPage = ({ params }: MapPageProps) => {
     currentView,
     featureCount,
     loading,
+    savedPropertyCount,
     smallScreenMode,
     updateCurrentView,
     updateSmallScreenMode,
@@ -181,6 +183,21 @@ const MapPage = ({ params }: MapPageProps) => {
     const propCentroid = centroid(selectedProperty.geometry);
     setStreetViewLocation(propCentroid.geometry.coordinates);
   }, [selectedProperty]);
+
+  // Get number of property IDs cached in Web browser's localStorage.
+  // In the future, localStorage caching might be replaced by an HTTP call to an API or database.
+  useEffect(() => {
+    const opa_ids = localStorage.getItem("opa_ids");
+
+    if (opa_ids && JSON.parse(opa_ids).count) {
+      setSavedPropertyCount(JSON.parse(opa_ids).count);
+    } else {
+      localStorage.setItem("opa_ids", JSON.stringify({ count: 0 }));
+      setSavedPropertyCount(0);
+    }
+    // TODO: Delete console.log before submitting PR. See Issue 415.
+    // console.log(currentView, selectedProperty);
+  }, [currentView, selectedProperty]);
 
   return (
     <FilterProvider>
