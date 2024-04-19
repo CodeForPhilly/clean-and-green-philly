@@ -2,10 +2,10 @@ import { access_options, PropertyAccess } from "@/config/propertyAccessOptions";
 import PropertyAccessOptionCard from "./PropertyAccessOptionCard";
 
 const determineCardEnums = (property: any) => {
-  let best;
-  let neighbor;
-  let available = new Set();
-  let unavailable = new Set();
+  let best: PropertyAccess | undefined;
+  let neighbor: PropertyAccess | undefined;
+  let available = new Set<PropertyAccess>();
+  let unavailable = new Set<PropertyAccess>();
 
   if (property.access_process === "Private Land Use Agreement") {
     best = PropertyAccess.PRIVATE_LAND_USE;
