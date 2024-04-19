@@ -2,7 +2,7 @@ import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
 import { Chip } from "@nextui-org/react";
 import { Check, Info } from "@phosphor-icons/react";
-import { Button, Tooltip } from "@nextui-org/react";
+import { Button, Tooltip, Link } from "@nextui-org/react";
 import {
   ArrowSquareOut,
   ArrowLeft,
@@ -293,7 +293,11 @@ const SinglePropertyDetail = ({
       </p>
 
       <h3 className="font-bold mb-2 py-2 heading-xl">Transform a Property</h3>
-      <a href="/transform-property">
+      <Link
+        href="/transform-property"
+        color="foreground"
+        className="hover:opacity-100"
+      >
         <ContentCard
           image={cleanup}
           alt=""
@@ -301,7 +305,7 @@ const SinglePropertyDetail = ({
           body="We guide you through the most common, convenient and affordable ways to transform properties and resources on how to do it."
           hasArrow={true}
         />
-      </a>
+      </Link>
 
       {/*
       <div className="flex mb-4 px-2 gap-4">

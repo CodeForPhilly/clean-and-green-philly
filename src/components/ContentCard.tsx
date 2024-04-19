@@ -47,7 +47,7 @@ const ContentCard: FC<ContentCardProps> = ({
     <div
       className={
         hasArrow
-          ? "bg-green-100 rounded-md hover:bg-green-200"
+          ? "bg-green-100 rounded-md hover:bg-green-200 transition-colors duration-[250ms]"
           : "bg-green-100 rounded-md"
       }
     >
