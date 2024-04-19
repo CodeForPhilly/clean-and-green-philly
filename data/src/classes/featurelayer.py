@@ -14,7 +14,7 @@ from google.cloud import storage
 key = os.environ["CLEAN_GREEN_GOOGLE_KEY"]
 credentials_path = os.path.expanduser("/app/service-account-key.json")
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-bucket_name = "cleanandgreenphl"
+bucket_name = os.environ["GOOGLE_CLOUD_BUCKET_NAME"] if os.environ["GOOGLE_CLOUD_BUCKET_NAME"] != None else "cleanandgreenphl"
 storage_client = storage.Client(project="clean-and-green-philly")
 bucket = storage_client.bucket(bucket_name)
 
