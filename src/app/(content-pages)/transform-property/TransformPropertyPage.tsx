@@ -19,8 +19,7 @@ import ContentCard from "../../../components/ContentCard";
 export default function TransformPropertyPage() {
   const parkInATruckUrl =
     "https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html";
-  // update below url
-  const jumpStartUrl = "#";
+  const jumpStartUrl = "https://www.jumpstartphilly.com/";
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -142,15 +141,15 @@ export default function TransformPropertyPage() {
           but not for a playground. Likewise, you wouldn't want to start a
           community garden in a vacant lot that doesn't get any sun. To better
           understand what your options are for a specific property, try filling
-          out the
+          out the{" "}
           <a
             target="_blank"
             rel="noopener noreferrer nofollow"
             href="https://detroitfuturecity.com/whatwedo/land-use/DFC-lots/"
-            className="link mx-1"
+            className="link"
           >
             Detroit Future City vacant property quiz
-          </a>
+          </a>{" "}
           (the recommendations work for Philadelphia too!). It’s meant to help
           users understand the best options for their specific properties. Also,
           remember to think about other constraints, like how much funding you
@@ -158,11 +157,12 @@ export default function TransformPropertyPage() {
         </p>
         <p className="body-md mb-4">
           There are many ways to imagine transforming a vacant property if you
-          want to work with funding and community support. Check out our{" "}
+          want to work with funding and community support.
+          {/* Check out our{" "}
           <a href="/resources" className="link">
             Resources Page
           </a>{" "}
-          to explore more like these:
+          to explore more like these: */}
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 py-6">
           <ContentCard
@@ -357,7 +357,7 @@ export default function TransformPropertyPage() {
             from local government and non-profit funders, public-private
             partners, and crowd-sourced fundraising. In the future, we plan to
             add a page to list common funding sources and explain how to use
-            data from Clean & Green Philly to support a grant application.
+            data from Clean &amp; Green Philly to support a grant application.
           </p>
           <p className="body-md mb-4">
             Any amount of funding can be useful. Many effective interventions
@@ -403,7 +403,8 @@ export default function TransformPropertyPage() {
             that may inadvertently increase property values, increase rental
             prices and displace already-marginalized Philadelphians. We are
             working to avoid this by meeting extensively with community groups
-            and responding to their concerns. Read more about this topic.
+            and responding to their concerns.
+            {/* Read more about this topic. */}
             {/* Link to gentrification page */}
           </p>
         </div>
