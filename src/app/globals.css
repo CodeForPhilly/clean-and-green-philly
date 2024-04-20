@@ -46,6 +46,7 @@
   html {
     @apply font-body;
     scroll-behavior: smooth;
+    scroll-padding-top: 108px; /* header height + extra padding — allows hashlinks to account for sticky header on scroll */
   }
 
   @media (prefers-reduced-motion: reduce) {
