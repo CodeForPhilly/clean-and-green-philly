@@ -403,9 +403,10 @@ export default function TransformPropertyPage() {
             that may inadvertently increase property values, increase rental
             prices and displace already-marginalized Philadelphians. We are
             working to avoid this by meeting extensively with community groups
-            and responding to their concerns.
-            {/* Read more about this topic. */}
-            {/* Link to gentrification page */}
+            and responding to their concerns.{" "}
+            <a href="/gentrification" className="link">
+              Read more about this topic.
+            </a>{" "}
           </p>
         </div>
       </div>
