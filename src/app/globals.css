@@ -348,5 +348,5 @@ a .bg-color-none {
 }
 
 .mapboxgl-popup-close-button {
-  display: none;
+  display: none !important;
 }
