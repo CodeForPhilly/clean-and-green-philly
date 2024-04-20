@@ -410,7 +410,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         )}
         <Source
           type="vector"
-          url={`pmtiles://https://storage.googleapis.com/${googleCloudBucketName}/vacant_properties_tiles${
+          url={`pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles${
             useStagingTiles ? '_staging' : ''
           }.pmtiles`}
           id="vacant_properties_tiles"
