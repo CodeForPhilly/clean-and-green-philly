@@ -1,7 +1,7 @@
 import { FC, ReactNode } from "react";
 import Image, { StaticImageData } from "next/image";
 import { ThemeButtonLink } from "./ThemeButton";
-import { ArrowUpRight } from "@phosphor-icons/react";
+import { ArrowUpRight, CaretRight } from "@phosphor-icons/react";
 
 interface Link {
   url: string;
@@ -25,6 +25,7 @@ type ContentCardProps = {
   linktext?: string;
   links?: Link[]; // Array of links
   details?: Detail[]; // Array of detail content
+  hasArrow?: boolean;
 };
 
 const ContentCard: FC<ContentCardProps> = ({
@@ -40,9 +41,16 @@ const ContentCard: FC<ContentCardProps> = ({
   upkeepLevel,
   links,
   details,
+  hasArrow,
 }) => {
   return (
-    <div className="bg-green-100 rounded-md">
+    <div
+      className={
+        hasArrow
+          ? "bg-green-100 rounded-md hover:bg-green-200 transition-colors duration-[250ms]"
+          : "bg-green-100 rounded-md"
+      }
+    >
       <div>
         <Image
           src={image.src}
@@ -86,6 +94,11 @@ const ContentCard: FC<ContentCardProps> = ({
                 />
               ))}
           </div>
+        </div>
+        <div>
+          {hasArrow ? (
+            <CaretRight className="h-8 w-8" aria-hidden="true" />
+          ) : null}
         </div>
       </div>
     </div>

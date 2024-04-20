@@ -1,18 +1,20 @@
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
-import { Chip, Tooltip } from "@nextui-org/react";
+import { Chip, Tooltip, Link } from "@nextui-org/react";
 import {
   ArrowLeft,
   ArrowSquareOut,
   ArrowsOut,
   Share,
   Tree,
+  CaretRight,
 } from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useState } from "react";
 import PropertyAccessOptionContainer from "./PropertyAccessOptionContainer";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
-import Link from "next/link";
+import ContentCard from "./ContentCard";
+import cleanup from "@/images/transform-a-property.png";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -246,22 +248,20 @@ const SinglePropertyDetail = ({
         <PropertyAccessOptionContainer property={properties} />
       </div>
 
-      <h3 className="font-bold mb-2 py-2 heading-xl">
-        Ways to transform the lot
-      </h3>
-      <p className="mb-4">
-        To see different ways in which you might transform this property, see
-        <a
-          href="/transform-property"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="link"
-        >
-          {" "}
-          our <Tree className="inline h-6 w-6" aria-hidden="true" /> Transform a
-          Property page.
-        </a>
-      </p>
+      <h3 className="font-bold mb-2 py-2 heading-xl">Transform a Property</h3>
+      <Link
+        href="/transform-property"
+        color="foreground"
+        className="hover:opacity-100"
+      >
+        <ContentCard
+          image={cleanup}
+          alt=""
+          title="Transform a Property"
+          body="We guide you through the most common, convenient and affordable ways to transform properties and resources on how to do it."
+          hasArrow={true}
+        />
+      </Link>
 
       {/*
       <div className="flex mb-4 px-2 gap-4">
