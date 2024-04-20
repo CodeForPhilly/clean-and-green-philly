@@ -48,6 +48,7 @@ import { Tooltip } from "@nextui-org/react";
 import { Info } from "@phosphor-icons/react";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
+import { toTitleCase } from '../utilities/toTitleCase';
 
 type SearchedProperty = {
   coordinates: [number, number],
@@ -377,8 +378,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
         mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
-        onMouseEnter={(e) => changeCursor(e, "pointer")}
-        onMouseLeave={(e) => changeCursor(e, "default")}
+        onMouseEnter={(e) => changeCursor(e, 'pointer')}
+        onMouseLeave={(e) => changeCursor(e, 'default')}
         onClick={onMapClick}
         minZoom={MIN_MAP_ZOOM}
         maxZoom={MAX_MAP_ZOOM}
@@ -401,7 +402,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           >
             <div>
               <p className="font-semibold body-md p-1">
-                {popupInfo.feature.address}
+                {toTitleCase(popupInfo.feature.address)}
               </p>
             </div>
           </Popup>
@@ -409,7 +410,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         <Source
           type="vector"
           url={`pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles${
-            useStagingTiles ? "_staging" : ""
+            useStagingTiles ? '_staging' : ''
           }.pmtiles`}
           id="vacant_properties_tiles"
         >
