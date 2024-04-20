@@ -45,9 +45,10 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { MapLegendControl } from "./MapLegendControl";
 import { createPortal } from "react-dom";
 import { Tooltip } from "@nextui-org/react";
-import { Info } from "@phosphor-icons/react";
+import { Info, X } from '@phosphor-icons/react';
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
+import { toTitleCase } from '../utilities/toTitleCase';
 
 type SearchedProperty = {
   coordinates: [number, number],
@@ -377,8 +378,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
         mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
-        onMouseEnter={(e) => changeCursor(e, "pointer")}
-        onMouseLeave={(e) => changeCursor(e, "default")}
+        onMouseEnter={(e) => changeCursor(e, 'pointer')}
+        onMouseLeave={(e) => changeCursor(e, 'default')}
         onClick={onMapClick}
         minZoom={MIN_MAP_ZOOM}
         maxZoom={MAX_MAP_ZOOM}
@@ -399,17 +400,18 @@ const PropertyMap: FC<PropertyMapProps> = ({
             closeOnClick={false}
             onClose={() => setPopupInfo(null)}
           >
-            <div>
-              <p className="font-semibold body-md p-1">
-                {popupInfo.feature.address}
+            <div className="flex justify-between nowrap">
+              <p className="font-normal text-sm px-0.5 py-0 rounded-full">
+                {toTitleCase(popupInfo.feature.address)}
               </p>
+              <X size={16} weight="light" />
             </div>
           </Popup>
         )}
         <Source
           type="vector"
           url={`pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles${
-            useStagingTiles ? "_staging" : ""
+            useStagingTiles ? '_staging' : ''
           }.pmtiles`}
           id="vacant_properties_tiles"
         >
