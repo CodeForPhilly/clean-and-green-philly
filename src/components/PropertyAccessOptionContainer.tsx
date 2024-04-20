@@ -9,19 +9,12 @@ const determineCardEnums = (property: any) => {
 
   if (property.access_process === "Private Land Use Agreement") {
     best = PropertyAccess.PRIVATE_LAND_USE;
-    available.add(PropertyAccess.BUY_FROM_OWNER);
   }
 
   if (property.access_process === "Buy Property") {
     best = PropertyAccess.BUY_FROM_OWNER;
     available.add(PropertyAccess.PRIVATE_LAND_USE);
-  }
-
-  if (
-    !available.has(PropertyAccess.BUY_FROM_OWNER) &&
-    best !== PropertyAccess.BUY_FROM_OWNER &&
-    property.market_value <= 1000
-  ) {
+  } else if (property.market_value <= 1000) {
     available.add(PropertyAccess.BUY_FROM_OWNER);
   } else {
     unavailable.add(PropertyAccess.BUY_FROM_OWNER);
