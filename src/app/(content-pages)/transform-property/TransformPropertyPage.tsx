@@ -20,6 +20,7 @@ export default function TransformPropertyPage() {
   const parkInATruckUrl =
     "https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html";
   const jumpStartUrl = "https://www.jumpstartphilly.com/";
+  const localRepresentativesUrl = "https://phlcouncil.com/council-members/";
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -48,14 +49,14 @@ export default function TransformPropertyPage() {
           grading the land, planting trees, installing low fences, and
           maintaining the property. These are low-cost interventions and have
           been proven to be highly effective; even something as simple as
-          cleaning up trash can have a big impact.
+          picking up trash can have a big impact.
         </p>
         <div className="grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 gap-6 py-6">
           <ContentCard
             image={cleanup}
             alt=""
             title="Clean Garbage & Debris"
-            body="Organizing a community clean-up or hiring a waste removal service to clean a lot, enhances its appearance, lifts mental health, and eliminates potential hazards."
+            body="Organizing a community clean-up or hiring a waste removal service to clean a property enhances its appearance, improves residents' mental health, and eliminates potential hazards."
             details={[
               {
                 label: "Cost:",
@@ -78,7 +79,7 @@ export default function TransformPropertyPage() {
             image={plant}
             alt=""
             title="Plant Trees"
-            body="Planting trees not only adds beauty and shade to the lot but also contributes to urban cooling, air purification, and habitat for wildlife."
+            body="Planting trees not only adds beauty and shade to the property but also contributes to urban cooling, cleaner air, and habitat for wildlife."
             details={[
               {
                 label: "Cost:",
@@ -100,7 +101,7 @@ export default function TransformPropertyPage() {
           <ContentCard
             image={maintain}
             alt=""
-            title="Maintain regularly"
+            title="Maintain Regularly"
             body="Mowing grass, raking leaves, and clearing trash regularly ensures the lot remains clean, safe, and attractive, promoting community pride and deterring illegal activities."
             details={[
               {
@@ -150,14 +151,14 @@ export default function TransformPropertyPage() {
           >
             Detroit Future City vacant property quiz
           </a>{" "}
-          (the recommendations work for Philadelphia too!). It’s meant to help
+          (the recommendations work for Philadelphia, too). It’s meant to help
           users understand the best options for their specific properties. Also,
           remember to think about other constraints, like how much funding you
           have, and how much maintenance you’re willing or able to do.
         </p>
         <p className="body-md mb-4">
-          There are many ways to imagine transforming a vacant property if you
-          want to work with funding and community support.
+          With funding and community support, there are many ways to transform a
+          vacant property. We list several ideas below.
           {/* Check out our{" "}
           <a href="/resources" className="link">
             Resources Page
@@ -169,7 +170,7 @@ export default function TransformPropertyPage() {
             image={pollinators}
             alt=""
             title="Plant Pollinator Garden"
-            body="Creating a pollinator garden promotes biodiversity, supports local ecosystems, and beautifies the lot with colorful flowers."
+            body="Creating a pollinator garden promotes biodiversity and beautifies the lot with colorful flowers."
             links={[
               {
                 url: "https://phsonline.org/uploads/attachments/ckacmpaca1evpj7rasp7ty5aq-pollinator-gardens-infosheet.pdf",
@@ -182,7 +183,7 @@ export default function TransformPropertyPage() {
             image={garden}
             alt=""
             title="Establish a Community Garden"
-            body="Establishing a community garden provides fresh produce, promotes social interaction, and transforms the lot into a productive and vibrant space for residents."
+            body="Establishing a community garden provides fresh produce, promotes social interaction, and transforms the lot into a vibrant space for residents."
             links={[
               {
                 url: "https://groundedinphilly.org/",
@@ -208,7 +209,7 @@ export default function TransformPropertyPage() {
             image={bikeracks}
             alt=""
             title="Install Bike Parking"
-            body="Installing bike parking encourages sustainable transportation, reduces congestion, and supports a healthier lifestyle for community members."
+            body="Installing bike parking encourages sustainable transportation, reduces traffic, and supports a healthier lifestyle for community members."
             links={[
               {
                 url: "https://streetboxphl.com/",
@@ -225,7 +226,7 @@ export default function TransformPropertyPage() {
             image={stormwater}
             alt=""
             title="Install Green Stormwater Infrastructure"
-            body="Rain gardens and other infrastructure reduces stormwater runoff, prevents flooding, and improves water quality while adding greenery to the urban landscape."
+            body="Rain gardens and other infrastructure reduces stormwater runoff, prevents flooding, and improves water quality while adding greenery to the landscape."
             links={[
               {
                 url: "https://groundedinphilly.org/",
@@ -238,7 +239,7 @@ export default function TransformPropertyPage() {
             image={restaurant}
             alt=""
             title="Offer Outdoor Restaurant Space"
-            body="Providing seating and shade to local  restaurants attracts businesses, creates a lively atmosphere, and encourages community gathering and economic growth. "
+            body="Providing seating and shade to restaurants supports local business while creating a dynamic street life."
             links={[
               {
                 url: "https://streetboxphl.com/",
@@ -255,7 +256,7 @@ export default function TransformPropertyPage() {
             image={housing}
             alt=""
             title="Affordable Housing"
-            body="Developing affordable housing addresses housing needs, promotes diversity, and helps revitalize the neighborhood while providing homes for residents."
+            body="Developing affordable housing helps address Philadelphia's housing crisis and can combat gentrification by enabling residents to stay in their neighborhood."
             links={[
               {
                 url: "https://phdcphila.org/land/buy-land/propose-affordable-housing-project/",
@@ -289,7 +290,8 @@ export default function TransformPropertyPage() {
         <h2 className="heading-2xl font-bold mt-8 mb-6">Get Help</h2>
         <p className="body-md">
           Many organizations in Philadelphia offer support transforming vacant
-          properties. See our resources page for more information!
+          properties. Currently, we list a handful here. We hope to add more
+          documentation for this in the future.
         </p>
 
         <div className="bg-gray-100 rounded-lg p-8 mt-8">
@@ -316,13 +318,13 @@ export default function TransformPropertyPage() {
         <div className="bg-gray-100 rounded-lg p-8 mt-8">
           <h3 className="heading-xl font-bold mb-4">Jump Start</h3>
           <p className="body-md mb-4">
-            Jump Start is a source of short term financing that guides you along
-            the way, and moves quickly, to help you succeed in a competitive
-            real estate market. Jumpstart Philly offers acquisition and
-            construction financing for residential and mixed-use investment
-            projects throughout the City of Philadelphia. We are more than a
-            bank, we’re a non-traditional, community-driven lender ready to see
-            you succeed.
+            Jump Start is a community-oriented lender that offers acquisition
+            and construction financing for residential and mixed-use investment
+            projects throughout the City of Philadelphia. They provide
+            mentorship and training to Black and Brown developers to help them
+            succeed in a competitive real estate market while also reducing
+            blight, building local wealth, and encouraging a mix of affordable
+            and market-rate housing in historically neglected neighborhoods.
           </p>
           <ThemeButtonLink
             className="text-[#0070F0] inline-flex"
@@ -339,10 +341,22 @@ export default function TransformPropertyPage() {
         <div className="bg-gray-100 rounded-lg p-8 mt-8">
           <h3 className="heading-xl font-bold mb-4">Local Representatives</h3>
           <p className="body-md">
-            Local representatives can also support you, especially if you're
-            facing red tape. Bring them a solid plan and show how your project
-            can improve the community.
+            Your local representatives will be crucially allies in helping you
+            push your project forward and cut through red tape. Contact them
+            with an explanation of what you want to do and why, and ask for
+            their support. They can help you navigate the legal process, find
+            funding, and connect you with other resources.
           </p>
+          <ThemeButtonLink
+            className="text-[#0070F0] inline-flex"
+            href={localRepresentativesUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            color="secondary"
+            label="City Council Directory"
+            endContent={<ArrowUpRight aria-hidden="true" />}
+            aria-label="Open City Council directory in a new tab"
+          />
         </div>
 
         <h2 className="heading-2xl font-bold mt-8 mb-6">
@@ -399,14 +413,15 @@ export default function TransformPropertyPage() {
           <h3 className="heading-xl font-bold mb-4">Gentrification </h3>
           <p className="body-md">
             Our goal is to help community groups reduce violence through
-            cleaning and greening methods in their neighborhoods. We recognize
-            that may inadvertently increase property values, increase rental
-            prices and displace already-marginalized Philadelphians. We are
-            working to avoid this by meeting extensively with community groups
-            and responding to their concerns.{" "}
+            cleaning and greening in their neighborhoods. We recognize that this
+            may lead to increased property values and rental prices, which can
+            put already-marginalized Philadelphians at risk of displacement. To
+            understand how we're working to migitate the risk of "green
+            gentrification,"{" "}
             <a href="/gentrification" className="link">
-              Read more about this topic.
-            </a>{" "}
+              click here to read more
+            </a>
+            .
           </p>
         </div>
       </div>

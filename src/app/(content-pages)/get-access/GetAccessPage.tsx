@@ -46,9 +46,16 @@ export default function GetAccessPage() {
             access to a property, provided that you are able to find the owner
             of the property. When creating such an agreement, you must define
             the rights and responsibilities of yourself and the property owner.
-            Grounded in Philly provides a good list of key considerations
-            [https://groundedinphilly.org/make-agreement-private-landowner/] as
-            well as sample agreement language.
+            Grounded in Philly provides{" "}
+            <a
+              href="https://groundedinphilly.org/make-agreement-private-landowner/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link"
+            >
+              a good list of key considerations
+            </a>{" "}
+            as well as sample agreement language.
           </p>
         </div>
       </div>
@@ -84,20 +91,26 @@ export default function GetAccessPage() {
             Get through Conservatorship
           </h3>
           <p>
-            Act 135 conservatorship can be a potential faster route than other
+            Act 135 conservatorship can potentially be a faster route than other
             legal options but is complicated and requires a lot of resources. In
             short, if a property meets certain specific criteria, it can be
             turned over to a court-appointed conservator for remediation.
             According to the law, it must be unoccupied, abandoned by its owner,
-            and unsafe and unhealthy. (For more information, consult this
-            explanation of Act 135.
-            [https://www.vanderslicelaw.com/service_index/real-estate/act-135/].)
-            If those criteria are met, a private individual can petition a judge
-            to appoint them as the conservator of the property. The conservator
-            is then the owner of the property and can improve it as they see
-            fit. However, as mentioned, taking this approach requires legal
-            support and significant financial resources. It is therefore not an
-            ideal route for small organizations, but may be an option for
+            and unsafe and unhealthy. (For more information, consult{" "}
+            <a
+              href="https://www.vanderslicelaw.com/service_index/real-estate/act-135/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link"
+            >
+              this explanation of Act 135
+            </a>
+            .) If those criteria are met, a private individual can petition a
+            judge to appoint them as the conservator of the property. The
+            conservator is then the owner of the property and can improve it as
+            they see fit. However, as mentioned, taking this approach requires
+            legal support and significant financial resources. It is therefore
+            not an ideal route for small organizations, but may be an option for
             better-resourced organizations such as affordable housing
             developers.
           </p>
@@ -114,22 +127,38 @@ export default function GetAccessPage() {
         <div>
           <h3 className="heading-xl font-bold mb-4">Get through Land Bank</h3>
           <p className="mb-4">
-            The Philadelphia Land Bank [https://phdcphila.org/] is part of the
-            Philadelphia Housing Development Corporation. It works to
-            redistribute publicly-owned land and return vacant properties to
-            productive use. Vacant properties owned by the Land Bank can often
-            be acquired for nominal or discounted prices for certain kinds of
-            uses or projects.
+            The{" "}
+            <a
+              href="https://phdcphila.org/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link"
+            >
+              Philadelphia Land Bank
+            </a>{" "}
+            is part of the Philadelphia Housing Development Corporation. It
+            works to redistribute publicly-owned land and return vacant
+            properties to productive use. Vacant properties owned by the Land
+            Bank can often be acquired for nominal or discounted prices for
+            certain kinds of uses or projects.
           </p>
           <p>
-            The advantage of this process is that it offers grassroots
+            The advantage of this process is that it enables grassroots
             organizations and other community-oriented groups to get access to
             land through a non-competitive disposition process at little to no
             cost. However, one is still required to go through the Land Bank’s
             process, which also requires the support of the City Council member
             in whose district the property falls. Grounded in Philly provides a
-            good overview of how to get permission to use City land
-            [https://groundedinphilly.org/get-permission-to-use-land-city/ ].
+            good overview of how to{" "}
+            <a
+              href="https://groundedinphilly.org/get-permission-to-use-land-city/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="link"
+            >
+              get permission to use City land
+            </a>
+            .
           </p>
         </div>
       </div>
@@ -146,8 +175,8 @@ export default function GetAccessPage() {
           <p>
             Although most properties have at least one reasonable way to get
             access to them, in some cases, a property may have a particular
-            combination of factors that make it difficult to impossible to get
-            access to. For example, it may be a valuable property owned by a
+            combination of factors that make it difficult or even impossible to
+            get access to. For example, it may be a valuable property owned by a
             company that is planning to develop the property at a later date. If
             the company is unwilling to sell the property or negotiate a private
             land use agreement, there is basically no way to legally get access
@@ -193,8 +222,16 @@ export default function GetAccessPage() {
           are also difficult to resolve without legal support. If you are the
           rightful owner of a property with a tangled title, or if you believe
           that a vacant property in your neighborhood is the result of a tangled
-          title, consider reaching out to Philadelphia Legal Assistance for help
-          [https://philalegal.org/services/tangled-title].
+          title, consider reaching out to{" "}
+          <a
+            href="https://philalegal.org/services/tangled-title"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link"
+          >
+            Philadelphia Legal Assistance
+          </a>{" "}
+          for help.
         </p>
       </div>
 
@@ -209,8 +246,15 @@ export default function GetAccessPage() {
           a member of a community garden). However, be aware that this is a very
           complicated process. It usually requires a lawyer and can require
           taking on years of unpaid property taxes. If you believe you may
-          qualify for adverse possession, we recommend reaching out to the
-          Garden Justice Legal Initiative [https://groundedinphilly.org/press/]
+          qualify for adverse possession, we recommend reaching out to the{" "}
+          <a
+            href="https://groundedinphilly.org/press/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link"
+          >
+            Garden Justice Legal Initiative
+          </a>{" "}
           for help.
         </p>
       </div>
@@ -223,9 +267,16 @@ export default function GetAccessPage() {
           quick and easy way to make productive use of a vacant property, and we
           indicate in our dashboard whether or not a property is eligible for
           this program. If you believe you have the opportunity to acquire a
-          vacant property through the side yard program, please consult the Land
-          Bank’s guide to the side yard acquisition process
-          [https://phdcphila.org/land/buy-land/side-or-rear-yards/].
+          vacant property through the side yard program, please consult the{" "}
+          <a
+            href="https://phdcphila.org/land/buy-land/side-or-rear-yards/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="link"
+          >
+            Land Bank’s guide to the side yard acquisition process
+          </a>
+          .
         </p>
       </div>
     </>

@@ -34,7 +34,7 @@ export default function MethodologyPage() {
           out to us at{" "}
           <a href="mailto:cleanandgreenphl@gmail.com" className="link">
             {" "}
-            cleangreenphilly@gmail.com
+            cleanandgreenphl@gmail.com
           </a>
           .
         </p>
@@ -64,7 +64,7 @@ export default function MethodologyPage() {
               <p>
                 <span className="font-bold"> Cleanliness. </span>
                 We use L&I data on various kinds of unclean or hazardous
-                conditions (e.g., illegal dumping or abandoned cars)
+                conditions (e.g., illegal dumping or abandoned cars).
               </p>
             </li>
             <li>
@@ -97,9 +97,9 @@ export default function MethodologyPage() {
                   Pennsylvania Horticultural Society's LandCare Program
                 </a>{" "}
                 data to determine if the property is either in Community
-                LandCare or Philadelphia LandCare initiatives. which is
-                Philadelphia’s original cleaning and greening initiative and the
-                basis for Dr. South’s research.
+                LandCare or Philadelphia LandCare initiatives, which are
+                Philadelphia’s original cleaning and greening initiatives and
+                the basis for Dr. South’s research.
               </p>
             </li>
           </ol>
@@ -160,7 +160,7 @@ export default function MethodologyPage() {
             >
               Grounded in Philly’s
             </a>{" "}
-            workand
+            work and{" "}
             <a
               href="https://k05f3c.p3cdn1.secureserver.net/wp-content/uploads/Resources/Philadelphia-Land-Bank-Disposition-Policies-2020.pdf"
               target="_blank"
@@ -254,7 +254,7 @@ export default function MethodologyPage() {
             aria-label="GitHub repository, link opens in a new window"
           >
             GitHub repository.
-          </a>
+          </a>{" "}
           We welcome feature requests, bug reports, code contributions, and
           more.
         </p>
@@ -272,9 +272,9 @@ export default function MethodologyPage() {
             className="link"
             aria-label="GitHub repository, link opens in a new window"
           >
-            GitHub repository.
+            our GitHub repository
           </a>
-          our We hope to continue to build out this documentation in the future.
+          . We hope to continue to build out this documentation in the future.
         </p>
       </div>
     </>
