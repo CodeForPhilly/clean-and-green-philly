@@ -1,5 +1,3 @@
-import json
-
 from classes.featurelayer import FeatureLayer
 from constants.services import RCOS_LAYERS_TO_LOAD
 
@@ -39,14 +37,12 @@ def rco_geoms(primary_featurelayer):
         .agg(
             {
                 "rco_info": lambda x: "|".join(map(str, x)),
-                "rco_names": lambda x: list(map(str, x)),
+                "rco_names": lambda x: "|".join(map(str, x)),
                 "geometry": "first",
             }
         )
         .reset_index()
     )
-
-    primary_featurelayer.gdf['rco_names'] = primary_featurelayer.gdf['rco_names'].apply(json.dumps)
 
     primary_featurelayer.gdf.drop_duplicates(inplace=True)
     primary_featurelayer.rebuild_gdf()
