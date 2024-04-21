@@ -414,16 +414,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
         <MapControls />
         {popupInfo && (
           <Popup
+            className="customized-map-popup"
             longitude={popupInfo.longitude}
             latitude={popupInfo.latitude}
             closeOnClick={false}
             onClose={() => setPopupInfo(null)}
           >
-            <div className="flex justify-between nowrap">
-              <p className="font-normal text-sm px-0.5 py-0 rounded-full">
-                {toTitleCase(popupInfo.feature.address)}
-              </p>
-              <X size={16} weight="light" />
+            <div className="flex flex-row items-center nowrap space-x-1">
+              <span>{toTitleCase(popupInfo.feature.address)}</span>
+              {/* keeping invisible to maintain spacing for built-in close button */}
+              <X size={16} className="invisible" />
             </div>
           </Popup>
         )}

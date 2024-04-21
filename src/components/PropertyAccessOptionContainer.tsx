@@ -43,8 +43,6 @@ const determineCardEnums = (property: any) => {
     ? available.add(PropertyAccess.CONSERVATORSHIP)
     : unavailable.add(PropertyAccess.CONSERVATORSHIP);
 
-  debugger;
-
   return {
     best,
     available: Array.from(available),
