@@ -17,7 +17,7 @@ const MobileNav: FC = () => {
 
   return (
     <Navbar
-      className="min-[850px]:hidden h-24 px-6"
+      className="min-[850px]:hidden h-24 px-3"
       onMenuOpenChange={setIsMenuOpen}
       as="div"
       maxWidth="full"
