@@ -13,7 +13,7 @@ import {
   ArrowsOut,
 } from "@phosphor-icons/react";
 import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
 
@@ -68,7 +68,8 @@ const SinglePropertyDetail = ({
     </th>
   );
 
-  let isPropertySaved = false;
+  const [isPropertySavedToLocalStorage, setIsPropertySavedToLocalStorage] =
+    useState(false);
 
   const onClickSaveButton = () => {
     const opa_ids = localStorage.getItem("opa_ids");
@@ -78,11 +79,11 @@ const SinglePropertyDetail = ({
     if (propertyId) {
       localStorage.removeItem(OPA_ID);
       savedPropertyCount--;
-      isPropertySaved = false;
+      setIsPropertySavedToLocalStorage(false);
     } else {
       localStorage.setItem(OPA_ID, JSON.stringify({ isSaved: true }));
       savedPropertyCount++;
-      isPropertySaved = true;
+      setIsPropertySavedToLocalStorage(true);
     }
 
     localStorage.setItem(
@@ -90,6 +91,13 @@ const SinglePropertyDetail = ({
       JSON.stringify({ count: savedPropertyCount })
     );
   };
+
+  useEffect(() => {
+    const propertyId = localStorage.getItem(OPA_ID);
+    propertyId
+      ? setIsPropertySavedToLocalStorage(true)
+      : setIsPropertySavedToLocalStorage(false);
+  }, []);
 
   return (
     <div className="w-full px-6 pb-6">
@@ -105,16 +113,14 @@ const SinglePropertyDetail = ({
           }}
         />
 
-        {/* TODO: Change button label text and background color (isSelected) based on whether isPropertySaved is true. 
-         Currently, the UI is not updating the text or color when the value of isPropertySaved changes. See Issue 415. */}
         <ThemeButton
           color="tertiary"
-          label={isPropertySaved ? "Saved" : "Save"}
+          label={isPropertySavedToLocalStorage ? "Saved" : "Save"}
           startContent={<BookmarkSimple />}
           onPress={() => {
             onClickSaveButton();
           }}
-          isSelected={isPropertySaved}
+          isSelected={isPropertySavedToLocalStorage}
         />
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
