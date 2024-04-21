@@ -12,23 +12,19 @@ import MobileNav from "./MobileNav";
 // }`;
 
 const Header = () => (
-  <Navbar maxWidth="full" position="sticky" height="auto" as="div" isBordered>
-    <MobileNav />
+  <>
+  <MobileNav />
+  <Navbar maxWidth="full" position="sticky" height="auto" as="div" isBordered> 
     <NavbarContent
       as="div"
-      className="hidden sm:flex basis-1/5 sm:basis-full"
-      style={{
-        paddingTop: "16px",
-        paddingBottom: "16px",
-        paddingLeft: "32px",
-      }}
+      className="hidden min-[850px]:flex basis-1/5 sm:basis-full pl-8 py-4"
       justify="start"
     >
       <NavbarBrand>
         <Link href="/">
           <Image
             src="/logo.svg"
-            alt="Clean & Green Philly Logo"
+            alt="Clean &amp; Green Philly Logo"
             width={112}
             height={67}
           />
@@ -66,6 +62,7 @@ const Header = () => (
       </ul>
     </NavbarContent>
   </Navbar>
+  </>
 );
 
 export default Header;
