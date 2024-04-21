@@ -45,13 +45,14 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { MapLegendControl } from "./MapLegendControl";
 import { createPortal } from "react-dom";
 import { Tooltip } from "@nextui-org/react";
-import { Info } from "@phosphor-icons/react";
+import { Info, X } from "@phosphor-icons/react";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
+import { toTitleCase } from "../utilities/toTitleCase";
 
 type SearchedProperty = {
-  coordinates: [number, number],
-  address: string,
+  coordinates: [number, number];
+  address: string;
 };
 
 const MIN_MAP_ZOOM = 10;
@@ -142,7 +143,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
-  const [searchedProperty, setSearchedProperty] = useState<SearchedProperty>({coordinates: [-75.1628565788269, 39.97008211622267], address: ''});
+  const [searchedProperty, setSearchedProperty] = useState<SearchedProperty>({
+    coordinates: [-75.1628565788269, 39.97008211622267],
+    address: "",
+  });
 
   useEffect(() => {
     let protocol = new Protocol();
@@ -171,7 +175,19 @@ const PropertyMap: FC<PropertyMapProps> = ({
     const mapFilter = Object.entries(appFilter).reduce(
       (acc, [property, filterItem]) => {
         if (filterItem.values.length) {
-          acc.push(["in", property, ...filterItem.values]);
+          if (filterItem.useIndexOfFilter) {
+            const useIndexOfFilterFilter: any = ["any"];
+            filterItem.values.map((item) => {
+              useIndexOfFilterFilter.push([
+                ">=",
+                ["index-of", item, ["get", property]],
+                0,
+              ]);
+            });
+            acc.push(useIndexOfFilterFilter);
+          } else {
+            acc.push(["in", property, ...filterItem.values]);
+          }
         }
 
         return acc;
@@ -255,25 +271,29 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   useEffect(() => {
     // This useEffect sets selectedProperty and map popup information after a property has been searched in the map's search form
-    if (!featuresInView || selectedProperty || searchedProperty.address === '') return;
+    if (!featuresInView || selectedProperty || searchedProperty.address === "")
+      return;
 
     if (map) {
-      const features = map.queryRenderedFeatures(map.project(searchedProperty.coordinates), {
-        layers,
-      });
+      const features = map.queryRenderedFeatures(
+        map.project(searchedProperty.coordinates),
+        {
+          layers,
+        }
+      );
       if (features.length > 0) {
-        setSelectedProperty(features[0])
-        setSearchedProperty({...searchedProperty, address: ''})
+        setSelectedProperty(features[0]);
+        setSearchedProperty({ ...searchedProperty, address: "" });
       } else {
         setSelectedProperty(null);
         setPopupInfo({
           longitude: searchedProperty.coordinates[0],
           latitude: searchedProperty.coordinates[1],
-          feature: {address: searchedProperty.address},
+          feature: { address: searchedProperty.address },
         });
       }
     }
-  }, [featuresInView, selectedProperty])
+  }, [featuresInView, selectedProperty]);
 
   useEffect(() => {
     if (map) {
@@ -319,12 +339,12 @@ const PropertyMap: FC<PropertyMapProps> = ({
         map.addControl(geocoderRef.current as unknown as IControl, "top-right");
 
         geocoderRef.current.on("result", (e) => {
-          const address = e.result.place_name.split(',')[0]
-          setSelectedProperty(null)
+          const address = e.result.place_name.split(",")[0];
+          setSelectedProperty(null);
           setSearchedProperty({
             coordinates: e.result.center,
-            address: address
-          })
+            address: address,
+          });
           map.easeTo({
             center: e.result.center,
           });
@@ -394,15 +414,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
         <MapControls />
         {popupInfo && (
           <Popup
+            className="customized-map-popup"
             longitude={popupInfo.longitude}
             latitude={popupInfo.latitude}
             closeOnClick={false}
             onClose={() => setPopupInfo(null)}
           >
-            <div>
-              <p className="font-semibold body-md p-1">
-                {popupInfo.feature.address}
-              </p>
+            <div className="flex flex-row items-center nowrap space-x-1">
+              <span>{toTitleCase(popupInfo.feature.address)}</span>
+              {/* keeping invisible to maintain spacing for built-in close button */}
+              <X size={16} className="invisible" />
             </div>
           </Popup>
         )}

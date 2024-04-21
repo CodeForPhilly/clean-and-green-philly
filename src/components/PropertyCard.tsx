@@ -1,19 +1,10 @@
 import Image from "next/image";
 import { Chip } from "@nextui-org/react";
+import { toTitleCase } from "../utilities/toTitleCase";
 
 interface PropertyCardProps {
   feature: any;
   setSelectedProperty: (feature: any) => void;
-}
-
-function toTitleCase(str: string) {
-  return str
-    .toLowerCase()
-    .split(" ")
-    .map(function (word) {
-      return word.charAt(0).toUpperCase() + word.slice(1);
-    })
-    .join(" ");
 }
 
 function getPriorityClass(priorityLevel: string) {

@@ -3,7 +3,7 @@ import DimensionFilter from "./Filters/DimensionFilter";
 import { PiX } from "react-icons/pi";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton } from "./ThemeButton";
-import { rcos, neighborhoods } from "./Filters/FilterOptions";
+import { rcos, neighborhoods } from "./Filters/filterOptions";
 
 const filters = [
   {
@@ -29,6 +29,7 @@ const filters = [
     display: "Community Organizations",
     options: rcos,
     type: "multiSelect",
+    useIndexOfFilter: true,
   },
   {
     property: "parcel_type",

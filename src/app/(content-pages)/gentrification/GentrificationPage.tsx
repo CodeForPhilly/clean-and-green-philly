@@ -4,7 +4,7 @@ export default function GentrificationPage() {
 
   return (
     <>
-      <h1 className="heading-3xl font-bold mb-6">Gentrification</h1>
+      <h1 className="heading-3xl font-bold mb-6">Green Gentrification</h1>
       <p className="body-md mb-4">
         In cities around the world, new green infrastructure often comes with an
         unwanted tradeoff: as property values rise in response to the new
