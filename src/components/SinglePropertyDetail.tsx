@@ -5,8 +5,6 @@ import {
   ArrowSquareOut,
   ArrowsOut,
   Share,
-  Tree,
-  CaretRight,
 } from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
@@ -59,7 +57,7 @@ const SinglePropertyDetail = ({
     open_violations_past_year,
     owner_1,
     owner_2,
-    parcel_type,
+    rco_names,
     priority_level,
     total_due,
     tree_canopy_gap,
@@ -212,8 +210,12 @@ const SinglePropertyDetail = ({
             <td className="table-cell">{zipcode}</td>
           </tr>
           <tr>
-            <Th>RCO</Th>
+            <Th>Neighborhood</Th>
             <td className="table-cell">{neighborhood}</td>
+          </tr>
+          <tr>
+            <Th>RCO</Th>
+            <td className="table-cell">{rco_names.split("|").join(", ")}</td>
           </tr>
           <tr>
             <Th>Council District</Th>
