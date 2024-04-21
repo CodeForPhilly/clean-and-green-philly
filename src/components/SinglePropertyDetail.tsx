@@ -68,6 +68,29 @@ const SinglePropertyDetail = ({
     </th>
   );
 
+  let isPropertySaved = false;
+
+  const onClickSaveButton = () => {
+    const opa_ids = localStorage.getItem("opa_ids");
+    const propertyId = localStorage.getItem(OPA_ID);
+    let savedPropertyCount = opa_ids ? JSON.parse(opa_ids).count : 0;
+
+    if (propertyId) {
+      localStorage.removeItem(OPA_ID);
+      savedPropertyCount--;
+      isPropertySaved = false;
+    } else {
+      localStorage.setItem(OPA_ID, JSON.stringify({ isSaved: true }));
+      savedPropertyCount++;
+      isPropertySaved = true;
+    }
+
+    localStorage.setItem(
+      "opa_ids",
+      JSON.stringify({ count: savedPropertyCount })
+    );
+  };
+
   return (
     <div className="w-full px-6 pb-6">
       <div className="flex justify-between sticky top-0 py-4 z-10 bg-white">
@@ -82,12 +105,16 @@ const SinglePropertyDetail = ({
           }}
         />
 
-        {/* TODO: Add/remove property to Web browser's localStorage on click,
-and toggle label between "Save" and "Saved." See Issue 415. */}
+        {/* TODO: Change button label text and background color (isSelected) based on whether isPropertySaved is true. 
+         Currently, the UI is not updating the text or color when the value of isPropertySaved changes. See Issue 415. */}
         <ThemeButton
           color="tertiary"
-          label="Save"
+          label={isPropertySaved ? "Saved" : "Save"}
           startContent={<BookmarkSimple />}
+          onPress={() => {
+            onClickSaveButton();
+          }}
+          isSelected={isPropertySaved}
         />
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
