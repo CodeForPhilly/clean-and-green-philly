@@ -29,6 +29,7 @@ const filters = [
     display: "Community Organizations",
     options: rcos,
     type: "multiSelect",
+    useIndexOfFilter: true,
   },
   {
     property: "parcel_type",
