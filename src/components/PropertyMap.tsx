@@ -13,7 +13,7 @@ import {
   maptilerApiKey,
   mapboxAccessToken,
   useStagingTiles,
-  googleCloudBucketName
+  googleCloudBucketName,
 } from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import Map, {
@@ -163,7 +163,19 @@ const PropertyMap: FC<PropertyMapProps> = ({
     const mapFilter = Object.entries(appFilter).reduce(
       (acc, [property, filterItem]) => {
         if (filterItem.values.length) {
-          acc.push(["in", property, ...filterItem.values]);
+          if (filterItem.multipleMatches) {
+            const multipleMatchesFilter: any = ["any"];
+            filterItem.values.map((item) => {
+              multipleMatchesFilter.push([
+                ">=",
+                ["index-of", item, ["get", property]],
+                0,
+              ]);
+            });
+            acc.push(multipleMatchesFilter);
+          } else {
+            acc.push(["in", property, ...filterItem.values]);
+          }
         }
 
         return acc;

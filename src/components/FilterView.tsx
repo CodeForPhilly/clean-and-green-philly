@@ -87,16 +87,19 @@ const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
         startContent={<PiX />}
         onPress={() => updateCurrentView("filter")}
       />
-      {filters.map(({ property, display, options, tooltip, type }) => (
-        <DimensionFilter
-          key={property}
-          property={property}
-          options={options}
-          display={display}
-          tooltip={tooltip}
-          type={type}
-        />
-      ))}
+      {filters.map(
+        ({ property, display, options, tooltip, type, multipleMatches }) => (
+          <DimensionFilter
+            key={property}
+            property={property}
+            options={options}
+            display={display}
+            tooltip={tooltip}
+            multipleMatches={multipleMatches}
+            type={type}
+          />
+        )
+      )}
     </div>
   );
 };

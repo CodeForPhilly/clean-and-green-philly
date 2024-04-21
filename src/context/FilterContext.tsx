@@ -9,6 +9,7 @@ import React, {
 export interface DimensionFilter {
   type: "dimension";
   values: string[];
+  multipleMatches?: boolean;
 }
 
 interface FilterState {
@@ -24,6 +25,7 @@ type FilterAction = {
   type: "SET_DIMENSIONS";
   property: string;
   dimensions: string[];
+  multipleMatches?: boolean;
 };
 
 const filterReducer = (
@@ -41,6 +43,7 @@ const filterReducer = (
         [action.property]: {
           type: "dimension",
           values: action.dimensions,
+          multipleMatches: action.multipleMatches || false,
         },
       };
     default:
