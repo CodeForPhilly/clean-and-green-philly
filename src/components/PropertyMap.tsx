@@ -175,7 +175,19 @@ const PropertyMap: FC<PropertyMapProps> = ({
     const mapFilter = Object.entries(appFilter).reduce(
       (acc, [property, filterItem]) => {
         if (filterItem.values.length) {
-          acc.push(["in", property, ...filterItem.values]);
+          if (filterItem.useIndexOfFilter) {
+            const useIndexOfFilterFilter: any = ["any"];
+            filterItem.values.map((item) => {
+              useIndexOfFilterFilter.push([
+                ">=",
+                ["index-of", item, ["get", property]],
+                0,
+              ]);
+            });
+            acc.push(useIndexOfFilterFilter);
+          } else {
+            acc.push(["in", property, ...filterItem.values]);
+          }
         }
 
         return acc;
