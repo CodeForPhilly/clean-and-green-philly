@@ -195,8 +195,6 @@ const MapPage = ({ params }: MapPageProps) => {
       localStorage.setItem("opa_ids", JSON.stringify({ count: 0 }));
       setSavedPropertyCount(0);
     }
-    // TODO: Delete console.log before submitting PR. See Issue 415.
-    // console.log(currentView, selectedProperty);
   }, [currentView, selectedProperty]);
 
   return (
