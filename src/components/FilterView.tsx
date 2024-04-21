@@ -3,8 +3,7 @@ import DimensionFilter from "./Filters/DimensionFilter";
 import { PiX } from "react-icons/pi";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton } from "./ThemeButton";
-import { rcos, neighborhoods } from "./Filters/FilterOptions";
-
+import { rcos, neighborhoods } from "./Filters/filterOptions";
 
 const filters = [
   {
@@ -32,7 +31,8 @@ const filters = [
     property: "neighborhood",
     display: "Neighborhoods",
     options: neighborhoods,
-    tooltip: "Neighborhood mapping from OpenDataPhilly by Element 84 (formerly Azavea)",
+    tooltip:
+      "Neighborhood mapping from OpenDataPhilly by Element 84 (formerly Azavea)",
     type: "multiSelect",
   },
   {
@@ -41,6 +41,7 @@ const filters = [
     options: rcos,
     tooltip: "RCO mapping from City of Philadelphia data",
     type: "multiSelect",
+    multipleMatches: true,
   },
   {
     property: "tactical_urbanism",

@@ -29,8 +29,8 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
 
   const toggleDimension = (dimension: string) => {
     const newSelectedKeys = selectedKeys.includes(dimension)
-    ? selectedKeys.filter(key => key !== dimension)
-    : [...selectedKeys, dimension];
+      ? selectedKeys.filter((key) => key !== dimension)
+      : [...selectedKeys, dimension];
     setSelectedKeys(newSelectedKeys);
     dispatch({
       type: "SET_DIMENSIONS",
@@ -38,38 +38,38 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       dimensions: newSelectedKeys,
     });
   };
-  
+
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newMultiSelect: string[] = e.target.value.split(",")
+    const newMultiSelect: string[] = e.target.value.split(",");
     setSelectedKeys(newMultiSelect);
     dispatch({
       type: "SET_DIMENSIONS",
       property,
       dimensions: newMultiSelect,
     });
-  }
+  };
 
   const filter = () => {
     if (type === "buttonGroup") {
       return (
-        <ButtonGroup 
-          options={options} 
-          selectedKeys={selectedKeys} 
-          toggleDimension={toggleDimension} 
-        /> 
-      )
+        <ButtonGroup
+          options={options}
+          selectedKeys={selectedKeys}
+          toggleDimension={toggleDimension}
+        />
+      );
     } else {
       return (
-        <MultiSelect 
-          display={display} 
-          options={options} 
-          selectedKeys={selectedKeys} 
-          toggleDimension={toggleDimension} 
+        <MultiSelect
+          display={display}
+          options={options}
+          selectedKeys={selectedKeys}
+          toggleDimension={toggleDimension}
           handleSelectionChange={handleSelectionChange}
         />
-      )
+      );
     }
-  }
+  };
 
   return (
     <div className="pb-6">
