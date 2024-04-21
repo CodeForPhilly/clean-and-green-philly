@@ -13,7 +13,7 @@ type DimensionFilterProps = {
   options: string[];
   tooltip: string;
   type: string;
-  multipleMatches?: boolean;
+  useIndexOfFilter?: boolean;
 };
 
 const DimensionFilter: FC<DimensionFilterProps> = ({
@@ -22,7 +22,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   options,
   tooltip,
   type,
-  multipleMatches,
+  useIndexOfFilter,
 }) => {
   const { dispatch, appFilter } = useFilter();
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
@@ -48,7 +48,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       type: "SET_DIMENSIONS",
       property,
       dimensions: newMultiSelect,
-      multipleMatches,
+      useIndexOfFilter,
     });
   };
 

@@ -41,7 +41,7 @@ const filters = [
     options: rcos,
     tooltip: "RCO mapping from City of Philadelphia data",
     type: "multiSelect",
-    multipleMatches: true,
+    useIndexOfFilter: true,
   },
   {
     property: "tactical_urbanism",
@@ -88,14 +88,14 @@ const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
         onPress={() => updateCurrentView("filter")}
       />
       {filters.map(
-        ({ property, display, options, tooltip, type, multipleMatches }) => (
+        ({ property, display, options, tooltip, type, useIndexOfFilter }) => (
           <DimensionFilter
             key={property}
             property={property}
             options={options}
             display={display}
             tooltip={tooltip}
-            multipleMatches={multipleMatches}
+            useIndexOfFilter={useIndexOfFilter}
             type={type}
           />
         )

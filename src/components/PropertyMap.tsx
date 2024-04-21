@@ -163,16 +163,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
     const mapFilter = Object.entries(appFilter).reduce(
       (acc, [property, filterItem]) => {
         if (filterItem.values.length) {
-          if (filterItem.multipleMatches) {
-            const multipleMatchesFilter: any = ["any"];
+          if (filterItem.useIndexOfFilter) {
+            const useIndexOfFilterFilter: any = ["any"];
             filterItem.values.map((item) => {
-              multipleMatchesFilter.push([
+              useIndexOfFilterFilter.push([
                 ">=",
                 ["index-of", item, ["get", property]],
                 0,
               ]);
             });
-            acc.push(multipleMatchesFilter);
+            acc.push(useIndexOfFilterFilter);
           } else {
             acc.push(["in", property, ...filterItem.values]);
           }
