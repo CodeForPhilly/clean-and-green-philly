@@ -43,6 +43,7 @@ const SinglePropertyDetail = ({
     open_violations_past_year,
     owner_1,
     owner_2,
+    rco_names,
     parcel_type,
     priority_level,
     total_due,
@@ -176,6 +177,10 @@ const SinglePropertyDetail = ({
           </tr>
           <tr>
             <Th>RCO</Th>
+            <td className="table-cell">{rco_names.split("|").join(", ")}</td>
+          </tr>
+          <tr>
+            <Th>Neighborhood</Th>
             <td className="table-cell">{neighborhood}</td>
           </tr>
           <tr>
