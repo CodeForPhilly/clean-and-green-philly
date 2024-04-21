@@ -4,6 +4,7 @@ import React, { FC, useRef } from "react";
 import { Button } from "@nextui-org/react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import {
+  BookmarkSimple,
   DownloadSimple,
   Funnel,
   GlobeHemisphereWest,
@@ -17,6 +18,7 @@ type SidePanelControlBarProps = {
   currentView: string;
   featureCount: number;
   loading: boolean;
+  savedPropertyCount: number;
   smallScreenMode: string;
   updateCurrentView: (view: BarClickOptions) => void;
   updateSmallScreenMode: () => void;
@@ -26,11 +28,13 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   currentView,
   featureCount,
   loading,
+  savedPropertyCount,
   smallScreenMode,
   updateCurrentView,
   updateSmallScreenMode,
 }) => {
   const filterRef = useRef<HTMLButtonElement | null>(null);
+  const savedRef = useRef<HTMLButtonElement | null>(null);
   const { appFilter } = useFilter();
   const filterCount = Object.keys(appFilter).length;
 
@@ -66,6 +70,30 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           role="region"
           aria-label="controls"
         >
+          {/* TODO: Add click handler to Saved button to filter list to properties saved in localStorage.
+              TODO: Change background color (isSelected) when user clicks button. See Issue 415. */}
+          {savedPropertyCount > 0 ? (
+            <ThemeButton
+              color="tertiary"
+              label={
+                <div className="lg:space-x-1 body-md">
+                  <span className="max-lg:hidden">Saved</span>
+                </div>
+              }
+              onPress={() => {
+                if (savedRef.current && currentView === "detail") {
+                  savedRef.current.blur();
+                }
+              }}
+              startContent={<BookmarkSimple />}
+              className={`max-lg:min-w-[4rem] ${
+                smallScreenMode === "map" ? "max-sm:hidden" : ""
+              }`}
+              ref={savedRef}
+            />
+          ) : (
+            <></>
+          )}
           <ThemeButton
             color="tertiary"
             label={
@@ -87,7 +115,6 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             data-hover={false}
             ref={filterRef}
           />
-
           <ThemeButton
             color="tertiary"
             aria-label="View"
@@ -97,7 +124,6 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
               smallScreenMode === "map" ? "max-sm:hidden" : ""
             }`}
           />
-
           <ThemeButton
             color="tertiary"
             aria-label="Download"
