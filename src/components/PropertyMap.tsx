@@ -45,14 +45,14 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { MapLegendControl } from "./MapLegendControl";
 import { createPortal } from "react-dom";
 import { Tooltip } from "@nextui-org/react";
-import { Info, X } from '@phosphor-icons/react';
+import { Info, X } from "@phosphor-icons/react";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
-import { toTitleCase } from '../utilities/toTitleCase';
+import { toTitleCase } from "../utilities/toTitleCase";
 
 type SearchedProperty = {
-  coordinates: [number, number],
-  address: string,
+  coordinates: [number, number];
+  address: string;
 };
 
 const MIN_MAP_ZOOM = 10;
@@ -143,7 +143,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
-  const [searchedProperty, setSearchedProperty] = useState<SearchedProperty>({coordinates: [-75.1628565788269, 39.97008211622267], address: ''});
+  const [searchedProperty, setSearchedProperty] = useState<SearchedProperty>({
+    coordinates: [-75.1628565788269, 39.97008211622267],
+    address: "",
+  });
 
   useEffect(() => {
     let protocol = new Protocol();
@@ -256,25 +259,29 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   useEffect(() => {
     // This useEffect sets selectedProperty and map popup information after a property has been searched in the map's search form
-    if (!featuresInView || selectedProperty || searchedProperty.address === '') return;
+    if (!featuresInView || selectedProperty || searchedProperty.address === "")
+      return;
 
     if (map) {
-      const features = map.queryRenderedFeatures(map.project(searchedProperty.coordinates), {
-        layers,
-      });
+      const features = map.queryRenderedFeatures(
+        map.project(searchedProperty.coordinates),
+        {
+          layers,
+        }
+      );
       if (features.length > 0) {
-        setSelectedProperty(features[0])
-        setSearchedProperty({...searchedProperty, address: ''})
+        setSelectedProperty(features[0]);
+        setSearchedProperty({ ...searchedProperty, address: "" });
       } else {
         setSelectedProperty(null);
         setPopupInfo({
           longitude: searchedProperty.coordinates[0],
           latitude: searchedProperty.coordinates[1],
-          feature: {address: searchedProperty.address},
+          feature: { address: searchedProperty.address },
         });
       }
     }
-  }, [featuresInView, selectedProperty])
+  }, [featuresInView, selectedProperty]);
 
   useEffect(() => {
     if (map) {
@@ -320,12 +327,12 @@ const PropertyMap: FC<PropertyMapProps> = ({
         map.addControl(geocoderRef.current as unknown as IControl, "top-right");
 
         geocoderRef.current.on("result", (e) => {
-          const address = e.result.place_name.split(',')[0]
-          setSelectedProperty(null)
+          const address = e.result.place_name.split(",")[0];
+          setSelectedProperty(null);
           setSearchedProperty({
             coordinates: e.result.center,
-            address: address
-          })
+            address: address,
+          });
           map.easeTo({
             center: e.result.center,
           });
@@ -378,8 +385,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
         mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
-        onMouseEnter={(e) => changeCursor(e, 'pointer')}
-        onMouseLeave={(e) => changeCursor(e, 'default')}
+        onMouseEnter={(e) => changeCursor(e, "pointer")}
+        onMouseLeave={(e) => changeCursor(e, "default")}
         onClick={onMapClick}
         minZoom={MIN_MAP_ZOOM}
         maxZoom={MAX_MAP_ZOOM}
@@ -411,9 +418,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
         <Source
           type="vector"
           url={`pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles${
-            useStagingTiles ? '_staging' : ''
+            useStagingTiles ? "_staging" : ""
           }.pmtiles`}
-          id="vacant_properties_tiles"
+          id="vacant_properties_tiles_1"
         >
           <Layer {...layerStylePoints} />
           <Layer {...layerStylePolygon} />
