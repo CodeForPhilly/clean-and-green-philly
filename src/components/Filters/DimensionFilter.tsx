@@ -10,6 +10,7 @@ type DimensionFilterProps = {
   display: string;
   options: string[];
   type: string;
+  useIndexOfFilter?: boolean;
 };
 
 const DimensionFilter: FC<DimensionFilterProps> = ({
@@ -17,6 +18,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   display,
   options,
   type,
+  useIndexOfFilter,
 }) => {
   const { dispatch, appFilter } = useFilter();
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
@@ -42,6 +44,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       type: "SET_DIMENSIONS",
       property,
       dimensions: newMultiSelect,
+      useIndexOfFilter,
     });
   };
 
