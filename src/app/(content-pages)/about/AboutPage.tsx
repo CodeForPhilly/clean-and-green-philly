@@ -108,7 +108,7 @@ export default function AboutPage() {
                 Dr. Eugenia South and her colleagues, as well as many
                 conversations with stakeholders, including community residents,
                 CDCs, City government offices, academic researchers, and more.
-                We analyzed and combined many data sets on crime, green-space,
+                We analyzed and combined many data sets on crime, green space,
                 and properties.
               </>
             ),
@@ -130,7 +130,7 @@ export default function AboutPage() {
           Clean & Green Philly was built by a team of Code for Philly
           volunteers. The project was created and led by{" "}
           <a
-            href="https://www.nlebovits.github.io"
+            href="https://nlebovits.github.io/"
             target="_blank"
             rel="noopener noreferrer"
             className="link"
@@ -198,21 +198,12 @@ export default function AboutPage() {
       <div className="my-6">
         <h2 className="heading-2xl font-semibold mb-4">Removing Properties</h2>
         <p className="body-md mb-4">
-          If you find issues If you would like to request that we remove a
-          property from the dashboard, please see our
+          If you would like to request that we remove a property from the
+          dashboard, please see our{" "}
           <a href="/request-removal" className="link">
             Request Removal
           </a>{" "}
-          page in this website or would like to offer us feedback, please reach
-          out to us at
-          <a
-            href="mailto:cleanandgreenphl@gmail.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link"
-          >
-            cleanandgreenphl@gmail.com.
-          </a>
+          page.
         </p>
       </div>
     </>
