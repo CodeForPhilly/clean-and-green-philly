@@ -90,7 +90,7 @@ const LandingPage: FC = () => {
                   href="https://controller.phila.gov/philadelphia-audits/fy23-anti-violence-budget/#/"
                   className="default"
                 >
-                  nearly 80% of the City of Philadelphia's anti-violence
+                  nearly 80% of the City of Philadelphia&rsquo;s anti-violence
                   spending
                 </a>
                 , but immediate, actionable approaches are also needed.

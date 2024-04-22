@@ -244,7 +244,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }
         return acc;
       },
-      0
+      0,
     );
 
     setFeatureCount(clusteredFeatureCount);
@@ -279,7 +279,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         map.project(searchedProperty.coordinates),
         {
           layers,
-        }
+        },
       );
       if (features.length > 0) {
         setSelectedProperty(features[0]);
@@ -319,7 +319,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
               tabIndex={0}
             />
           </Tooltip>,
-          legendSummary
+          legendSummary,
         );
       }
 
@@ -338,7 +338,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
         map.addControl(geocoderRef.current as unknown as IControl, "top-right");
 
-        geocoderRef.current.on("result", (e) => {
+        geocoderRef.current.on("result", e => {
           const address = e.result.place_name.split(",")[0];
           setSelectedProperty(null);
           setSearchedProperty({
@@ -397,16 +397,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
         mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
-        onMouseEnter={(e) => changeCursor(e, "pointer")}
-        onMouseLeave={(e) => changeCursor(e, "default")}
+        onMouseEnter={e => changeCursor(e, "pointer")}
+        onMouseLeave={e => changeCursor(e, "default")}
         onClick={onMapClick}
         minZoom={MIN_MAP_ZOOM}
         maxZoom={MAX_MAP_ZOOM}
         interactiveLayerIds={layers}
-        onLoad={(e) => {
+        onLoad={e => {
           setMap(e.target);
         }}
-        onSourceData={(e) => {
+        onSourceData={e => {
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}

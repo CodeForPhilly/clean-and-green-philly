@@ -34,9 +34,9 @@ export default function TakeActionOverviewPage() {
 
       <p className="body-md">
         The cost for these kinds of projects is usually low, about $5 per square
-        yard, with maintenance around $0.50 per square yard. Even if you can't
-        do everything, small steps like putting up a fence, planting some trees,
-        or just keeping the area clean can make a big difference.
+        yard, with maintenance around $0.50 per square yard. Even if you
+        can&rsquo;t do everything, small steps like putting up a fence, planting
+        some trees, or just keeping the area clean can make a big difference.
       </p>
 
       <h2 className="heading-2xl font-bold mt-8">

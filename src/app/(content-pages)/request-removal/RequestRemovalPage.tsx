@@ -1,7 +1,7 @@
 export default function RequestRemovalPage() {
   return (
     <>
-      <h1 className="text-4xl font-bold mb-6">
+      <h1 className="heading-2xl font-bold mb-6">
         Request to Remove a Property Listing
       </h1>
 

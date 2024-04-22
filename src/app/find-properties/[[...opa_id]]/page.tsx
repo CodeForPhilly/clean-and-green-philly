@@ -36,8 +36,9 @@ const MapPage = ({ params }: MapPageProps) => {
     useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
-  const [streetViewLocation, setStreetViewLocation] =
-    useState<Position | null>(null);
+  const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
+    null,
+  );
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
   const sizeRef = useRef(0);
@@ -79,7 +80,7 @@ const MapPage = ({ params }: MapPageProps) => {
     // Get property metadata
     try {
       const objectMetadataResponse = await fetch(
-        `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`
+          `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`,
       );
       const objectMetadata = await objectMetadataResponse.json();
       const { metadata } = objectMetadata;
@@ -102,9 +103,9 @@ const MapPage = ({ params }: MapPageProps) => {
     if (!featuresInView || !linkedPropertyRef.current) return;
 
     const linkedProperty = featuresInView.find(
-      (feature) =>
+      feature =>
         feature.properties.OPA_ID.toString() ===
-        linkedPropertyRef?.current?.toString()
+        linkedPropertyRef?.current?.toString(),
     );
 
     if (
@@ -128,11 +129,10 @@ const MapPage = ({ params }: MapPageProps) => {
       prevRef.current === "map" &&
       window.innerWidth < 640 &&
       (view === "filter" ||
-        (Object.keys(params).length === 0 &&
-          prevCoordinateRef.current))
+        (Object.keys(params).length === 0 && prevCoordinateRef.current))
     ) {
       setSmallScreenMode((prev: string) =>
-        prev === "map" ? "properties" : "map"
+        prev === "map" ? "properties" : "map",
       );
     }
   };
@@ -154,7 +154,7 @@ const MapPage = ({ params }: MapPageProps) => {
     sizeRef.current = window.innerWidth;
     const updateWindowDimensions = () => {
       if (sizeRef.current >= 640 && window.innerWidth < 640) {
-        setCurrentView((c) => {
+        setCurrentView(c => {
           setSmallScreenMode(c !== "detail" ? "properties" : prevRef.current);
           return c;
         });
@@ -241,7 +241,9 @@ const MapPage = ({ params }: MapPageProps) => {
               )}
               {currentView === "download" ? (
                 <div className="p-4 mt-8 text-center">
-                  <h2 className="text-2xl font-bold mb-4">Access Our Data</h2>
+                  <h2 className="heading-xl font-semibold mb-4">
+                    Access Our Data
+                  </h2>
                   <p>
                     If you are interested in accessing the data behind this
                     dashboard, please reach out to us at
@@ -295,7 +297,7 @@ const StreetViewModal: React.FC<{
         // return focus
         document.getElementById("outside-iframe-element")?.focus();
         const outsideElement = document.getElementById(
-          "outside-iframe-element"
+          "outside-iframe-element",
         );
         outsideElement?.focus();
       } else if (event.key === "Tab") {
@@ -304,7 +306,7 @@ const StreetViewModal: React.FC<{
         if (container && !container.contains(document.activeElement)) {
           // If focus goes outside the container, bring it back to the first focusable element inside the container
           const focusableElements = container.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
           );
           if (focusableElements.length > 0) {
             event.preventDefault();
@@ -324,7 +326,7 @@ const StreetViewModal: React.FC<{
         // return focus
         document.getElementById("outside-iframe-element")?.focus();
         const outsideElement = document.getElementById(
-          "outside-iframe-element"
+          "outside-iframe-element",
         );
         outsideElement?.focus();
       }
