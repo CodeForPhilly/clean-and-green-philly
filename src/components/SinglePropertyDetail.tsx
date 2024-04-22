@@ -13,6 +13,7 @@ import PropertyAccessOptionContainer from "./PropertyAccessOptionContainer";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
 import ContentCard from "./ContentCard";
 import cleanup from "@/images/transform-a-property.png";
+import { PiEyeSlash } from "react-icons/pi";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -270,30 +271,17 @@ const SinglePropertyDetail = ({
         />
       </Link>
 
-      {/*
-      <div className="flex mb-4 px-2 gap-4">
-        <SinglePropertyInfoCard
-          title="Lot Cleanup"
-          body="In a day, clean up with a street crew and PHS!"
-          icon={<Broom className="h-12 w-12" aria-hidden="true" />}
-        />
-        <SinglePropertyInfoCard
-          title="Community Garden"
-          body="Set up a longer term, sustainable green space."
-          icon={<PottedPlant className="h-12 w-12" aria-hidden="true" />}
-        />
+      <div className="flex flex-col space-y-6 mt-[72px]">
+        <p>You can request that we remove this property from the dashboard.</p>
+        <div className="flex">
+          <ThemeButtonLink
+            color="secondary"
+            href="/request-removal"
+            startContent={<PiEyeSlash />}
+            label={"Request we hide this property"}
+          />
+        </div>
       </div>
-      */}
-
-      <h3 className="font-bold mb-2 py-2 heading-xl">Remove This Property</h3>
-      <p>
-        If you would like to request that we remove this property from the
-        dashboard, please see our{" "}
-        <a href="/request-removal" className="link">
-          Request Removal page
-        </a>
-        .
-      </p>
     </div>
   );
 };
