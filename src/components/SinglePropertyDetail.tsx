@@ -1,20 +1,18 @@
+import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
+import { Chip, Tooltip, Link } from "@nextui-org/react";
+import {
+  ArrowLeft,
+  ArrowSquareOut,
+  ArrowsOut,
+  Share,
+} from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
-import {
-  ArrowSquareOut,
-  ArrowLeft,
-  HandWaving,
-  Handshake,
-  Money,
-  Tree,
-  ProhibitInset,
-  PiggyBank,
-  ArrowsOut,
-} from "@phosphor-icons/react";
-import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
-import { Dispatch, SetStateAction } from "react";
-import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
+import { Dispatch, SetStateAction, useState } from "react";
+import PropertyAccessOptionContainer from "./PropertyAccessOptionContainer";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
+import ContentCard from "./ContentCard";
+import cleanup from "@/images/transform-a-property.png";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -23,12 +21,28 @@ interface PropertyDetailProps {
   updateCurrentView: (view: BarClickOptions) => void;
 }
 
+function getPriorityClass(priorityLevel: string) {
+  switch (priorityLevel) {
+    case "High":
+      return "bg-red-200 text-red-800"; // Style for High Priority
+    case "Medium":
+      return "bg-yellow-200 text-yellow-800"; // Style for Medium Priority
+    case "Low":
+      return "bg-green-200 text-green-800"; // Style for Low Priority
+    default:
+      return "bg-gray-500 border-gray-700"; // Default style
+  }
+}
+
 const SinglePropertyDetail = ({
   property,
   setSelectedProperty,
   setIsStreetViewModalOpen,
   updateCurrentView,
 }: PropertyDetailProps) => {
+  const [shareLabel, setShareLabel] = useState<boolean>(false);
+  const [hover, setHover] = useState<boolean>(false);
+
   if (!property) return null;
   const { properties } = property;
   if (!properties) return null;
@@ -43,7 +57,7 @@ const SinglePropertyDetail = ({
     open_violations_past_year,
     owner_1,
     owner_2,
-    parcel_type,
+    rco_names,
     priority_level,
     total_due,
     tree_canopy_gap,
@@ -52,9 +66,10 @@ const SinglePropertyDetail = ({
   } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphl/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
+  const priorityClass = getPriorityClass(priority_level);
 
   const priorityBgClassName = priority_level.includes("High")
-    ? "bg-priority-high"
+    ? "bg-red-200 text-red-800"
     : priority_level.includes("Medium")
     ? "bg-priority-medium"
     : priority_level.includes("Low")
@@ -69,7 +84,7 @@ const SinglePropertyDetail = ({
 
   return (
     <div className="w-full px-6 pb-6">
-      <div className="sticky top-0 py-4 z-10 bg-white">
+      <div className="flex justify-between sticky top-0 py-4 z-10 bg-white">
         <ThemeButton
           color="tertiary"
           label="Back"
@@ -80,6 +95,28 @@ const SinglePropertyDetail = ({
             history.replaceState(null, "", `/find-properties`);
           }}
         />
+        <Tooltip
+          disableAnimation
+          closeDelay={100}
+          placement="top"
+          content={shareLabel ? "Link Copied" : "Copy Link"}
+          isOpen={hover}
+          classNames={{
+            content: "bg-gray-900 rounded-[14px] text-white relative top-1",
+          }}
+        >
+          <ThemeButton
+            color="tertiary"
+            label="Share"
+            startContent={<Share />}
+            onPress={() => {
+              navigator.clipboard.writeText(window.location.href);
+              setShareLabel(true);
+            }}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+          />
+        </Tooltip>
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
@@ -133,10 +170,14 @@ const SinglePropertyDetail = ({
             <Th>Suggested Priority</Th>
             <td className="table-cell">
               <div className="flex gap-1 items-center">
-                <span
-                  className={`inline-block w-4 h-4 ${priorityBgClassName}`}
-                />
-                {priority_level}
+                <Chip
+                  classNames={{
+                    base: `${priorityClass} border-small border-white/50`,
+                    content: "body-sm",
+                  }}
+                >
+                  {priority_level + " Priority"}
+                </Chip>
               </div>
             </td>
           </tr>
@@ -153,7 +194,7 @@ const SinglePropertyDetail = ({
 
       <table aria-label="Land Information" className="w-full mb-4">
         <tbody>
-          <tr style={{ display: "none" }}>
+          <tr>
             <Th>Access Process</Th>
             <td className="table-cell">{access_process}</td>
           </tr>
@@ -165,18 +206,16 @@ const SinglePropertyDetail = ({
             </td>
           </tr>
           <tr>
-            <Th>Parcel Type</Th>
-            <td className="table-cell">
-              <p>{parcel_type}</p>
-            </td>
-          </tr>
-          <tr>
             <Th>Zip Code</Th>
             <td className="table-cell">{zipcode}</td>
           </tr>
           <tr>
-            <Th>RCO</Th>
+            <Th>Neighborhood</Th>
             <td className="table-cell">{neighborhood}</td>
+          </tr>
+          <tr>
+            <Th>RCO</Th>
+            <td className="table-cell">{rco_names.split("|").join(", ")}</td>
           </tr>
           <tr>
             <Th>Council District</Th>
@@ -184,7 +223,7 @@ const SinglePropertyDetail = ({
           </tr>
           <tr>
             <Th>Market Value</Th>
-            <td className="table-cell">${market_value.toLocaleString()}</td>
+            <td className="table-cell">${market_value}</td>
           </tr>
           <tr>
             <Th>Tax Delinquency</Th>
@@ -199,71 +238,32 @@ const SinglePropertyDetail = ({
 
       <h3 className="font-bold mb-2 py-2 heading-xl">Getting Access</h3>
       <p className="mb-4">
-        Based on the information about this property, we believe that you can
-        get access to this property through:
+        Before you can transform this property, you need to get legal access to
+        it. Here are the possible options for this property including which are
+        available, not available and likely the best option.{" "}
+        <Link href="/get-access" className="link">
+          Learn more on Get Access.
+        </Link>
       </p>
 
-      <div className="flex mb-4 px-2 gap-4">
-        {access_process === "Private Land Use Agreement" && (
-          <SinglePropertyInfoCard
-            title="Private Land Use Agreement"
-            body="Given the price and ownership of this property, we believe the easiest way to get access to this property is through a land use agreement with its owner."
-            icon={<Handshake className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
-        {access_process === "Buy Property" && (
-          <SinglePropertyInfoCard
-            title="Buying a Property"
-            body="This property is cheap enough that we believe you can buy it outright."
-            icon={<Money className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
-        {access_process === "Do Nothing (Too Complicated)" && (
-          <SinglePropertyInfoCard
-            title="Do Nothing (Too Complicated)"
-            body="We believe access this property legally is too complicated to justify the effort."
-            icon={<ProhibitInset className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
-        {access_process === "Land Bank" && (
-          <SinglePropertyInfoCard
-            title="Land Bank"
-            body="You may be able to acquire this property for a nominal or discounted price from the Land Bank."
-            icon={<PiggyBank className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
+      <div className="mb-4">
+        <PropertyAccessOptionContainer property={properties} />
       </div>
 
-      <p>
-        {" "}
-        To learn more about what this means, visit{" "}
-        <a
-          href="/get-access"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="link"
-        >
-          our <HandWaving className="inline h-6 w-6" aria-hidden="true" /> Get
-          Access page.
-        </a>
-      </p>
-
-      <h3 className="font-bold mb-2 py-2 heading-xl">
-        Ways to transform the lot
-      </h3>
-      <p className="mb-4">
-        To see different ways in which you might transform this property, see
-        <a
-          href="/transform-property"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="link"
-        >
-          {" "}
-          our <Tree className="inline h-6 w-6" aria-hidden="true" /> Transform a
-          Property page.
-        </a>
-      </p>
+      <h3 className="font-bold mb-2 py-2 heading-xl">Transform a Property</h3>
+      <Link
+        href="/transform-property"
+        color="foreground"
+        className="hover:opacity-100"
+      >
+        <ContentCard
+          image={cleanup}
+          alt=""
+          title="Transform a Property"
+          body="We guide you through the most common, convenient and affordable ways to transform properties and resources on how to do it."
+          hasArrow={true}
+        />
+      </Link>
 
       {/*
       <div className="flex mb-4 px-2 gap-4">

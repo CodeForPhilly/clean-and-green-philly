@@ -1,5 +1,3 @@
-import numpy as np
-
 from classes.featurelayer import FeatureLayer
 from constants.services import RCOS_LAYERS_TO_LOAD
 

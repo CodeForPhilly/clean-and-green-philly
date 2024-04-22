@@ -1,4 +1,3 @@
-import { Footer, Header, Hotjar } from "@/components";
 import type { Metadata } from "next";
 import "./globals.css";
 
