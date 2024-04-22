@@ -92,6 +92,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             aria-label="Download"
             onPress={() => updateCurrentView("download")}
             startContent={<DownloadSimple />}
+            label={<span className="body-md max-lg:hidden">Download</span>}
             className={`max-md:min-w-[4rem] ${
               smallScreenMode === "map" ? "max-sm:hidden" : ""
             }`}
