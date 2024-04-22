@@ -225,6 +225,7 @@
 #main .maplibregl-ctrl-top-right {
   top: 20px;
   right: 20px;
+  pointer-events: bounding-box;
 }
 
 /* Remove white background on menu item to display active page state */
