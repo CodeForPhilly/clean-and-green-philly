@@ -1,142 +1,142 @@
-"use client";
+'use client';
 
-import React, { FC, useRef } from "react";
-import { Button } from "@nextui-org/react";
-import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
+import React, { FC, useRef } from 'react';
+import { Button } from '@nextui-org/react';
+import { BarClickOptions } from '@/app/find-properties/[[...opa_id]]/page';
 import {
-  BookmarkSimple,
-  DownloadSimple,
-  Funnel,
-  GlobeHemisphereWest,
-  SquaresFour,
-  Table,
-} from "@phosphor-icons/react";
-import { ThemeButton } from "./ThemeButton";
-import { useFilter } from "@/context/FilterContext";
+    BookmarkSimple,
+    DownloadSimple,
+    Funnel,
+    GlobeHemisphereWest,
+    SquaresFour
+} from '@phosphor-icons/react';
+import { ThemeButton } from './ThemeButton';
+import { useFilter } from '@/context/FilterContext';
 
 type SidePanelControlBarProps = {
-  currentView: string;
-  featureCount: number;
-  loading: boolean;
-  savedPropertyCount: number;
-  smallScreenMode: string;
-  updateCurrentView: (view: BarClickOptions) => void;
-  updateSmallScreenMode: () => void;
+    currentView: string;
+    featureCount: number;
+    loading: boolean;
+    savedPropertyCount: number;
+    smallScreenMode: string;
+    updateCurrentView: (view: BarClickOptions) => void;
+    updateSmallScreenMode: () => void;
 };
 
 const SearchBarComponent: FC<SidePanelControlBarProps> = ({
-  currentView,
-  featureCount,
-  loading,
-  savedPropertyCount,
-  smallScreenMode,
-  updateCurrentView,
-  updateSmallScreenMode,
+    currentView,
+    featureCount,
+    loading,
+    savedPropertyCount,
+    smallScreenMode,
+    updateCurrentView,
+    updateSmallScreenMode
 }) => {
-  const filterRef = useRef<HTMLButtonElement | null>(null);
-  const savedRef = useRef<HTMLButtonElement | null>(null);
-  const { appFilter } = useFilter();
-  const filterCount = Object.keys(appFilter).length;
+    const filterRef = useRef<HTMLButtonElement | null>(null);
+    const savedRef = useRef<HTMLButtonElement | null>(null);
+    const { appFilter } = useFilter();
+    const filterCount = Object.keys(appFilter).length;
 
-  return loading ? (
-    <div>{/* Keep empty while loading */}</div>
-  ) : (
-    <>
-      <div className="flex justify-between items-center bg-white border-b-[1px] border-[#12121215] p-2 h-14">
-        {/* Left-aligned content: Total Properties in View */}
-        <ThemeButton
-          color="tertiary"
-          aria-label={`Change to ${smallScreenMode}`}
-          className="sm:hidden max-md:min-w-[4rem]"
-          onPress={updateSmallScreenMode}
-          startContent={
-            smallScreenMode === "map" ? (
-              <SquaresFour />
-            ) : (
-              <GlobeHemisphereWest />
-            )
-          }
-        />
-        <div className="sm:px-4 py-2">
-          <h1 className="body-md">
-            <span className="font-bold">{featureCount.toLocaleString()} </span>
-            Properties <span className="max-xl:hidden"> in View </span>
-          </h1>
-        </div>
-
-        {/* Right-aligned content: Buttons */}
-        <div
-          className="flex items-center space-x-2"
-          role="region"
-          aria-label="controls"
-        >
-          {/* TODO: Add click handler to Saved button to filter list to properties saved in localStorage.
-              TODO: Change background color (isSelected) when user clicks button. See Issue 415. */}
-          {savedPropertyCount > 0 ? (
-            <ThemeButton
-              color="tertiary"
-              label={
-                <div className="lg:space-x-1 body-md">
-                  <span className="max-lg:hidden">Saved</span>
+    return loading ? (
+        <div>{/* Keep empty while loading */}</div>
+    ) : (
+        <>
+            <div className='flex justify-between items-center bg-white border-b-[1px] border-[#12121215] p-2 h-14'>
+                {/* Left-aligned content: Total Properties in View */}
+                <ThemeButton
+                    color='tertiary'
+                    aria-label={`Change to ${smallScreenMode}`}
+                    className='sm:hidden max-md:min-w-[4rem]'
+                    onPress={updateSmallScreenMode}
+                    startContent={
+                        smallScreenMode === 'map' ? (
+                            <SquaresFour />
+                        ) : (
+                            <GlobeHemisphereWest />
+                        )
+                    }
+                />
+                <div className='sm:px-4 py-2'>
+                    <h1 className='body-md'>
+                        <span className='font-bold'>
+                            {featureCount.toLocaleString()}{' '}
+                        </span>
+                        Properties{' '}
+                        <span className='max-xl:hidden'> in View </span>
+                    </h1>
                 </div>
-              }
-              onPress={() => {
-                if (savedRef.current && currentView === "detail") {
-                  savedRef.current.blur();
-                }
-              }}
-              startContent={<BookmarkSimple />}
-              className={`max-lg:min-w-[4rem] ${
-                smallScreenMode === "map" ? "max-sm:hidden" : ""
-              }`}
-              ref={savedRef}
-            />
-          ) : (
-            <></>
-          )}
-          <ThemeButton
-            color="tertiary"
-            label={
-              <div className="lg:space-x-1 body-md">
-                <span className="max-lg:hidden">Filter</span>
-                {filterCount !== 0 && <span>({filterCount})</span>}
-              </div>
-            }
-            onPress={() => {
-              if (filterRef.current && currentView === "filter") {
-                filterRef.current.blur();
-              }
 
-              updateCurrentView("filter");
-            }}
-            isSelected={currentView === "filter" || filterCount !== 0}
-            startContent={<Funnel />}
-            className="max-lg:min-w-[4rem]"
-            data-hover={false}
-            ref={filterRef}
-          />
-          <ThemeButton
-            color="tertiary"
-            aria-label="View"
-            onPress={() => updateCurrentView("detail")}
-            startContent={<Table />}
-            className={`max-lg:min-w-[4rem] ${
-              smallScreenMode === "map" ? "max-sm:hidden" : ""
-            }`}
-          />
-          <ThemeButton
-            color="tertiary"
-            aria-label="Download"
-            onPress={() => updateCurrentView("download")}
-            startContent={<DownloadSimple />}
-            className={`max-md:min-w-[4rem] ${
-              smallScreenMode === "map" ? "max-sm:hidden" : ""
-            }`}
-          />
-        </div>
-      </div>
-    </>
-  );
+                {/* Right-aligned content: Buttons */}
+                <div
+                    className='flex items-center space-x-2'
+                    role='region'
+                    aria-label='controls'
+                >
+                    {/* TODO: Add click handler to Saved button to filter list to properties saved in localStorage.
+              TODO: Change background color (isSelected) when user clicks button. See Issue 415. */}
+                    {savedPropertyCount > 0 ? (
+                        <ThemeButton
+                            color='tertiary'
+                            label={
+                                <div className='lg:space-x-1 body-md'>
+                                    <span className='max-lg:hidden'>Saved</span>
+                                </div>
+                            }
+                            onPress={() => {
+                                if (
+                                    savedRef.current &&
+                                    currentView === 'detail'
+                                ) {
+                                    savedRef.current.blur();
+                                }
+                            }}
+                            startContent={<BookmarkSimple />}
+                            className={`max-lg:min-w-[4rem] ${
+                                smallScreenMode === 'map' ? 'max-sm:hidden' : ''
+                            }`}
+                            ref={savedRef}
+                        />
+                    ) : (
+                        <></>
+                    )}
+                    <ThemeButton
+                        color='tertiary'
+                        label={
+                            <div className='lg:space-x-1 body-md'>
+                                <span className='max-lg:hidden'>Filter</span>
+                                {filterCount !== 0 && (
+                                    <span>({filterCount})</span>
+                                )}
+                            </div>
+                        }
+                        onPress={() => {
+                            if (filterRef.current && currentView === 'filter') {
+                                filterRef.current.blur();
+                            }
+
+                            updateCurrentView('filter');
+                        }}
+                        isSelected={
+                            currentView === 'filter' || filterCount !== 0
+                        }
+                        startContent={<Funnel />}
+                        className='max-lg:min-w-[4rem]'
+                        data-hover={false}
+                        ref={filterRef}
+                    />
+                    <ThemeButton
+                        color='tertiary'
+                        aria-label='Download'
+                        onPress={() => updateCurrentView('download')}
+                        startContent={<DownloadSimple />}
+                        className={`max-md:min-w-[4rem] ${
+                            smallScreenMode === 'map' ? 'max-sm:hidden' : ''
+                        }`}
+                    />
+                </div>
+            </div>
+        </>
+    );
 };
 
 export default SearchBarComponent;

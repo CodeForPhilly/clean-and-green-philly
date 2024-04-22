@@ -37,16 +37,17 @@ const MapPage = ({ params }: MapPageProps) => {
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
   const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
-    null
+    null,
   );
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
   const sizeRef = useRef(0);
+  const prevCoordinateRef = useRef<Position | null>(null);
   const linkedPropertyRef = useRef<string | null>(null);
   const [initialViewState, setInitialViewState] = useState<ViewState>({
-    longitude: -75.15975924194129,
-    latitude: 39.9910071520824,
-    zoom: 13,
+    longitude: -75.1628565788269,
+    latitude: 39.97008211622267,
+    zoom: 11,
     bearing: 0,
     pitch: 0,
     padding: { top: 0, bottom: 0, left: 0, right: 0 },
@@ -60,6 +61,31 @@ const MapPage = ({ params }: MapPageProps) => {
   useEffect(() => {
     const { opa_id } = params;
 
+    const getLinkedPropertyDetails = async () => {
+      // Check if OPA ID is present in URL
+      // It should be the only URL parameter and a string-like collection of numbers between 8 and 9 characters
+
+      // Get property metadata
+      try {
+        const objectMetadataResponse = await fetch(
+          `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`,
+        );
+        const objectMetadata = await objectMetadataResponse.json();
+        const { metadata } = objectMetadata;
+        let { location } = metadata;
+        location = JSON.parse(location.replace(/'/g, '"'));
+        setInitialViewState({
+          ...initialViewState,
+          longitude: location.lng,
+          latitude: location.lat,
+          zoom: 18,
+        });
+        setIsLinkedPropertyParsed(true);
+      } catch {
+        router.push("/find-properties");
+      }
+    };
+
     if (!opa_id) {
       // do nothing, load map
       setIsLinkedPropertyParsed(true);
@@ -71,42 +97,18 @@ const MapPage = ({ params }: MapPageProps) => {
       // Invalid OPA ID- redirect to main map page
       router.push("/find-properties");
     }
-  }, []);
-
-  const getLinkedPropertyDetails = async () => {
-    // Check if OPA ID is present in URL
-    // It should be the only URL parameter and a string-like collection of numbers between 8 and 9 characters
-
-    // Get property metadata
-    try {
-      const objectMetadataResponse = await fetch(
-        `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`
-      );
-      const objectMetadata = await objectMetadataResponse.json();
-      const { metadata } = objectMetadata;
-      let { location } = metadata;
-      location = JSON.parse(location.replace(/'/g, '"'));
-      setInitialViewState({
-        ...initialViewState,
-        longitude: location.lng,
-        latitude: location.lat,
-        zoom: 18,
-      });
-      setIsLinkedPropertyParsed(true);
-    } catch {
-      router.push("/find-properties");
-    }
-  };
+  }, [initialViewState, params, router]);
 
   useEffect(() => {
     // This useEffect navigates to the linked property when it is loaded
     if (!featuresInView || !linkedPropertyRef.current) return;
 
     const linkedProperty = featuresInView.find(
-      (feature) =>
+      feature =>
         feature.properties.OPA_ID.toString() ===
-        linkedPropertyRef?.current?.toString()
+        linkedPropertyRef?.current?.toString(),
     );
+
     if (
       linkedProperty &&
       linkedProperty.properties.OPA_ID !== selectedProperty?.properties.OPA_ID
@@ -114,7 +116,7 @@ const MapPage = ({ params }: MapPageProps) => {
       setSelectedProperty(linkedProperty);
       linkedPropertyRef.current = null;
     }
-  }, [featuresInView, linkedPropertyRef.current]);
+  }, [featuresInView, selectedProperty?.properties.OPA_ID]);
 
   useEffect(() => {
     if (!selectedProperty) return;
@@ -124,14 +126,14 @@ const MapPage = ({ params }: MapPageProps) => {
 
   const updateCurrentView = (view: BarClickOptions) => {
     setCurrentView(view === currentView ? "detail" : view);
-
     if (
       prevRef.current === "map" &&
       window.innerWidth < 640 &&
-      view === "filter"
+      (view === "filter" ||
+        (Object.keys(params).length === 0 && prevCoordinateRef.current))
     ) {
       setSmallScreenMode((prev: string) =>
-        prev === "map" ? "properties" : "map"
+        prev === "map" ? "properties" : "map",
       );
     }
   };
@@ -153,7 +155,7 @@ const MapPage = ({ params }: MapPageProps) => {
     sizeRef.current = window.innerWidth;
     const updateWindowDimensions = () => {
       if (sizeRef.current >= 640 && window.innerWidth < 640) {
-        setCurrentView((c) => {
+        setCurrentView(c => {
           setSmallScreenMode(c !== "detail" ? "properties" : prevRef.current);
           return c;
         });
@@ -182,6 +184,11 @@ const MapPage = ({ params }: MapPageProps) => {
     if (!selectedProperty) return;
     const propCentroid = centroid(selectedProperty.geometry);
     setStreetViewLocation(propCentroid.geometry.coordinates);
+
+    if (window.innerWidth < 640 && prevRef.current === "map") {
+      prevCoordinateRef.current = propCentroid.geometry.coordinates;
+      setSmallScreenMode("properties");
+    }
   }, [selectedProperty]);
 
   // Get number of property IDs cached in Web browser's localStorage.
@@ -222,13 +229,15 @@ const MapPage = ({ params }: MapPageProps) => {
               </div>
               {isLinkedPropertyParsed ? (
                 <PropertyMap
+                  featuresInView={featuresInView}
                   setFeaturesInView={setFeaturesInView}
                   setLoading={setLoading}
                   selectedProperty={selectedProperty}
                   setSelectedProperty={setSelectedProperty}
                   setFeatureCount={setFeatureCount}
-                  setSmallScreenMode={setSmallScreenMode}
                   initialViewState={initialViewState}
+                  prevCoordinate={prevCoordinateRef.current}
+                  setPrevCoordinate={() => (prevCoordinateRef.current = null)}
                 />
               ) : (
                 <div className="flex w-full h-full justify-center">
@@ -247,7 +256,9 @@ const MapPage = ({ params }: MapPageProps) => {
               )}
               {currentView === "download" ? (
                 <div className="p-4 mt-8 text-center">
-                  <h2 className="text-2xl font-bold mb-4">Access Our Data</h2>
+                  <h2 className="heading-xl font-semibold mb-4">
+                    Access Our Data
+                  </h2>
                   <p>
                     If you are interested in accessing the data behind this
                     dashboard, please reach out to us at
@@ -301,7 +312,7 @@ const StreetViewModal: React.FC<{
         // return focus
         document.getElementById("outside-iframe-element")?.focus();
         const outsideElement = document.getElementById(
-          "outside-iframe-element"
+          "outside-iframe-element",
         );
         outsideElement?.focus();
       } else if (event.key === "Tab") {
@@ -310,7 +321,7 @@ const StreetViewModal: React.FC<{
         if (container && !container.contains(document.activeElement)) {
           // If focus goes outside the container, bring it back to the first focusable element inside the container
           const focusableElements = container.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
           );
           if (focusableElements.length > 0) {
             event.preventDefault();
@@ -330,7 +341,7 @@ const StreetViewModal: React.FC<{
         // return focus
         document.getElementById("outside-iframe-element")?.focus();
         const outsideElement = document.getElementById(
-          "outside-iframe-element"
+          "outside-iframe-element",
         );
         outsideElement?.focus();
       }

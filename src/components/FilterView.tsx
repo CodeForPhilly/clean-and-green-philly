@@ -3,55 +3,75 @@ import DimensionFilter from "./Filters/DimensionFilter";
 import { PiX } from "react-icons/pi";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton } from "./ThemeButton";
+import { rcos, neighborhoods, zoning } from "./Filters/filterOptions";
 
 const filters = [
   {
     property: "priority_level",
-    display: "Priority Level",
+    display: "Suggested Priority",
     options: ["Low", "Medium", "High"],
-    tooltip: "For information on how this is calculated, see the About page",
-  },
-  {
-    property: "parcel_type",
-    display: "Parcel Type",
-    options: ["Land", "Building"],
-    tooltip: "Parcel type from City of Philadelphia data",
+    type: "buttonGroup",
   },
   {
     property: "access_process",
     display: "Access Process",
     options: ["Buy Property", "Land Bank", "Private Land Use Agreement"],
-    tooltip: "For information on what these mean, see the Get Access page",
+    type: "buttonGroup",
+  },
+  {
+    property: "neighborhood",
+    display: "Neighborhoods",
+    options: neighborhoods,
+    type: "multiSelect",
+  },
+  {
+    property: "rco_names",
+    display: "Community Organizations",
+    options: rcos,
+    type: "multiSelect",
+    useIndexOfFilter: true,
+  },
+  {
+    property: "zoning_base_district",
+    display: "Zoning",
+    options: zoning,
+    type: "multiSelect",
+  },
+  {
+    property: "parcel_type",
+    display: "Parcel Type",
+    options: ["Land", "Building"],
+    type: "buttonGroup",
   },
   {
     property: "tactical_urbanism",
     display: "Tactical Urbanism",
     options: ["Yes", "No"],
-    tooltip: "For an explanation of this, see the Get Access page",
+    type: "buttonGroup",
   },
   {
     property: "conservatorship",
     display: "Conservatorship Eligible",
     options: ["Yes", "No"],
-    tooltip: "For an explanation of this, see the Get Access page",
+    type: "buttonGroup",
   },
   {
     property: "side_yard_eligible",
     display: "Side Yard Eligible",
     options: ["Yes", "No"],
-    tooltip: "For an explanation of this, see the Get Access page",
+    type: "buttonGroup",
   },
   {
     property: "llc_owner",
     display: "LLC Owner",
     options: ["Yes", "No"],
-    tooltip: "For an explanation of this, see the Get Access page",
+    type: "buttonGroup",
   },
 ];
 
-type FilterViewProps = {
+interface FilterViewProps {
   updateCurrentView: (view: BarClickOptions) => void;
-};
+}
 
 const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
   return (
@@ -63,14 +83,8 @@ const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
         startContent={<PiX />}
         onPress={() => updateCurrentView("filter")}
       />
-      {filters.map(({ property, display, options, tooltip }) => (
-        <DimensionFilter
-          key={property}
-          property={property}
-          options={options}
-          display={display}
-          tooltip={tooltip}
-        />
+      {filters.map((attr) => (
+        <DimensionFilter key={attr.property} {...attr} />
       ))}
     </div>
   );

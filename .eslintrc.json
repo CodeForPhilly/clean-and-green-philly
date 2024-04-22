@@ -5,14 +5,17 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "plugins": [
-    "eslint-plugin-custom-rules"
-  ],
+  "extends": ["next/core-web-vitals", "plugin:react/recommended", "prettier"],
   "rules": {
+    "react/react-in-jsx-scope": "off",
+    "react/prop-types": "off",
     "custom-rules/no-text-size-class": "warn"
   },
-  "ignorePatterns": [
-    "next.config.js",
-    "postcss.config.js"
-  ]
+  "plugins": ["react", "eslint-plugin-custom-rules"],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "ignorePatterns": ["next.config.js", "postcss.config.js"]
 }

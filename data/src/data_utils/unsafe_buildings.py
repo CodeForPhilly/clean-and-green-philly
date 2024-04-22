@@ -1,6 +1,5 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import UNSAFE_BUILDINGS_QUERY
-import pandas as pd
 
 
 def unsafe_buildings(primary_featurelayer):
