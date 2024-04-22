@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "~mapbox-gl/dist/mapbox-gl.css";
-
 @font-face {
   font-family: "HK Grotesk";
   src: url("/fonts/hkgrotesk-bold-webfont.woff2") format("woff2"),
@@ -153,17 +151,20 @@
   /* added webkit transform to remove icon movement in safari */
 
   .iconLink {
-    @apply text-gray-900 items-center items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
+    @apply text-gray-900 items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
 
   .linkIcon {
     @apply w-5 h-5 mr-2;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
 
   .iconButton {
     @apply h-6 w-6;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
 
@@ -175,15 +176,18 @@
   .activeIconLinkNav {
     @apply flex relative h-full items-center rounded-medium;
     @apply data-[active=true]:bottom-0 data-[active=true]:left-0 data-[active=true]:right-0 data-[active=true]:h-full data-[active=true]:rounded-[12px] data-[active=true]:bg-[#E9FFE5] data-[active=true]:text-[#E9FFE5] data-[active=true]:rounded-medium;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav {
     @apply px-0 text-base max-h-52 overflow-hidden fixed w-full z-50 shadow-2xl rounded-md border-1 border-gray-200 bg-gray-0;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav:hover {
     @apply bg-gray-0;
     -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 }
 
@@ -330,7 +334,7 @@ a .bg-color-none {
 .customized-map-popup {
   .maplibregl-popup-content {
     border-radius: 14px;
-    @apply bg-gray-900;
+    background-color: #03141b;
     color: white;
     padding: 3px 4px 3px 8px;
   }

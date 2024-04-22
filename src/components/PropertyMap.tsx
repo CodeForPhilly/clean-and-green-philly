@@ -156,49 +156,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
     };
   }, []);
 
-  // filter function
-  // update filters on both layers for ease of switching between layers
-  const updateFilter = () => {
-    if (!map) return;
-
-    const isAnyFilterEmpty = Object.values(appFilter).some((filterItem) => {
-      return filterItem.values.length === 0;
-    });
-
-    if (isAnyFilterEmpty) {
-      map.setFilter("vacant_properties_tiles_points", ["==", ["id"], ""]);
-      map.setFilter("vacant_properties_tiles_polygons", ["==", ["id"], ""]);
-
-      return;
-    }
-
-    const mapFilter = Object.entries(appFilter).reduce(
-      (acc, [property, filterItem]) => {
-        if (filterItem.values.length) {
-          const thisFilterGroup: any = ["any"];
-          filterItem.values.forEach((item) => {
-            if (filterItem.useIndexOfFilter) {
-              thisFilterGroup.push([
-                ">=",
-                ["index-of", item, ["get", property]],
-                0,
-              ]);
-            } else {
-              thisFilterGroup.push(["in", ["get", property], item]);
-            }
-          });
-
-          acc.push(thisFilterGroup);
-        }
-        return acc;
-      },
-      [] as any[]
-    );
-
-    map.setFilter("vacant_properties_tiles_points", ["all", ...mapFilter]);
-    map.setFilter("vacant_properties_tiles_polygons", ["all", ...mapFilter]);
-  };
-
   const onMapClick = (e: MapMouseEvent) => {
     handleMapClick(e.lngLat);
   };
@@ -244,7 +201,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }
         return acc;
       },
-      0
+      0,
     );
 
     setFeatureCount(clusteredFeatureCount);
@@ -279,7 +236,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         map.project(searchedProperty.coordinates),
         {
           layers,
-        }
+        },
       );
       if (features.length > 0) {
         setSelectedProperty(features[0]);
@@ -293,6 +250,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [featuresInView, selectedProperty]);
 
   useEffect(() => {
@@ -319,7 +277,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
               tabIndex={0}
             />
           </Tooltip>,
-          legendSummary
+          legendSummary,
         );
       }
 
@@ -338,7 +296,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
         map.addControl(geocoderRef.current as unknown as IControl, "top-right");
 
-        geocoderRef.current.on("result", (e) => {
+        geocoderRef.current.on("result", e => {
           const address = e.result.place_name.split(",")[0];
           setSelectedProperty(null);
           setSearchedProperty({
@@ -359,7 +317,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         geocoderRef.current = null;
       }
     };
-  }, [map]);
+  }, [map, setSelectedProperty]);
 
   useEffect(() => {
     if (!map) return;
@@ -378,9 +336,53 @@ const PropertyMap: FC<PropertyMapProps> = ({
         feature: selectedProperty.properties,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProperty]);
 
   useEffect(() => {
+    // filter function
+    // update filters on both layers for ease of switching between layers
+    const updateFilter = () => {
+      if (!map) return;
+
+      const isAnyFilterEmpty = Object.values(appFilter).some(filterItem => {
+        return filterItem.values.length === 0;
+      });
+
+      if (isAnyFilterEmpty) {
+        map.setFilter("vacant_properties_tiles_points", ["==", ["id"], ""]);
+        map.setFilter("vacant_properties_tiles_polygons", ["==", ["id"], ""]);
+
+        return;
+      }
+
+      const mapFilter = Object.entries(appFilter).reduce(
+        (acc, [property, filterItem]) => {
+          if (filterItem.values.length) {
+            const thisFilterGroup: any = ["any"];
+            filterItem.values.forEach(item => {
+              if (filterItem.useIndexOfFilter) {
+                thisFilterGroup.push([
+                  ">=",
+                  ["index-of", item, ["get", property]],
+                  0,
+                ]);
+              } else {
+                thisFilterGroup.push(["in", ["get", property], item]);
+              }
+            });
+
+            acc.push(thisFilterGroup);
+          }
+          return acc;
+        },
+        [] as any[],
+      );
+
+      map.setFilter("vacant_properties_tiles_points", ["all", ...mapFilter]);
+      map.setFilter("vacant_properties_tiles_polygons", ["all", ...mapFilter]);
+    };
+
     if (map) {
       updateFilter();
     }
@@ -397,16 +399,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
         mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
-        onMouseEnter={(e) => changeCursor(e, "pointer")}
-        onMouseLeave={(e) => changeCursor(e, "default")}
+        onMouseEnter={e => changeCursor(e, "pointer")}
+        onMouseLeave={e => changeCursor(e, "default")}
         onClick={onMapClick}
         minZoom={MIN_MAP_ZOOM}
         maxZoom={MAX_MAP_ZOOM}
         interactiveLayerIds={layers}
-        onLoad={(e) => {
+        onLoad={e => {
           setMap(e.target);
         }}
-        onSourceData={(e) => {
+        onSourceData={e => {
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}

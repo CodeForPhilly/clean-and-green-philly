@@ -138,9 +138,10 @@ export default function TransformPropertyPage() {
       <p className="body-md mb-4">
         Different properties have different opportunities and different
         challenges. Some properties might be a great spot for a rain garden but
-        not for a playground. Likewise, you wouldn't want to start a community
-        garden in a vacant lot that doesn't get any sun. To better understand
-        what your options are for a specific property, try filling out the{" "}
+        not for a playground. Likewise, you wouldn&rsquo;t want to start a
+        community garden in a vacant lot that doesn&rsquo;t get any sun. To
+        better understand what your options are for a specific property, try
+        filling out the{" "}
         <a
           target="_blank"
           rel="noopener noreferrer nofollow"
@@ -149,10 +150,10 @@ export default function TransformPropertyPage() {
         >
           Detroit Future City vacant property quiz
         </a>{" "}
-        (the recommendations work for Philadelphia, too). It’s meant to help
-        users understand the best options for their specific properties. Also,
-        remember to think about other constraints, like how much funding you
-        have, and how much maintenance you’re willing or able to do.
+        (the recommendations work for Philadelphia, too). It&rsquo;s meant to
+        help users understand the best options for their specific properties.
+        Also, remember to think about other constraints, like how much funding
+        you have, and how much maintenance you&rsquo;re willing or able to do.
       </p>
       <p className="body-md mb-4">
         With funding and community support, there are many ways to transform a
@@ -296,10 +297,10 @@ export default function TransformPropertyPage() {
         <h3 className="heading-xl font-bold mb-4">Park in a Truck</h3>
         <p className="body-md mb-4">
           Park in a Truck supports community residents in quickly building
-          custom parks. They've developed a toolkit that helps community groups
-          design and build parks that fit their needs. They also offer training
-          and technical support to help communities create and maintain their
-          parks.
+          custom parks. They&rsquo;ve developed a toolkit that helps community
+          groups design and build parks that fit their needs. They also offer
+          training and technical support to help communities create and maintain
+          their parks.
         </p>
         <ThemeButtonLink
           className="text-[#0070F0] inline-flex"
@@ -390,8 +391,8 @@ export default function TransformPropertyPage() {
       <div className="bg-gray-100 rounded-lg p-8 mt-8">
         <h3 className="heading-xl font-bold mb-4">Maintenance</h3>
         <p className="body-md mb-4">
-          Transforming a vacant property isn’t a one-and-done event. In fact,
-          many properties that are currently vacant were transformed years
+          Transforming a vacant property isn&rsquo;t a one-and-done event. In
+          fact, many properties that are currently vacant were transformed years
           ago—but not maintained in the decades since. In order to make sure
           that your intervention is high-impact and long-lived, make sure to
           have a maintenance plan in place.
@@ -413,8 +414,8 @@ export default function TransformPropertyPage() {
           and greening in their neighborhoods. We recognize that this may lead
           to increased property values and rental prices, which can put
           already-marginalized Philadelphians at risk of displacement. To
-          understand how we're working to migitate the risk of "green
-          gentrification,"{" "}
+          understand how we&rsquo;re working to mitigate the risk of
+          &ldquo;green gentrification,&rdquo;{" "}
           <a href="/gentrification" className="link">
             click here to read more
           </a>

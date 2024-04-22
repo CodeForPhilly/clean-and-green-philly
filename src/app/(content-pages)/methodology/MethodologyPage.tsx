@@ -41,7 +41,7 @@ export default function MethodologyPage() {
 
         <div className="container mx-auto md:my-12">
           <h2 className="heading-2xl font-semibold mb-4">
-            How did we determine “priority"?
+            How did we determine &ldquo;priority&rdquo;?
           </h2>
 
           <p className="body-md mb-4">
@@ -94,12 +94,12 @@ export default function MethodologyPage() {
                   className="link"
                   aria-label="Pennsylvania Horticultural Society's LandCare Program, link opens in a new window"
                 >
-                  Pennsylvania Horticultural Society's LandCare Program
+                  Pennsylvania Horticultural Society&rsquo;s LandCare Program
                 </a>{" "}
                 data to determine if the property is either in Community
-                LandCare or Philadelphia LandCare initiatives, which are
-                Philadelphia’s original cleaning and greening initiatives and
-                the basis for Dr. South’s research.
+                LandCare or Philadelphia LandCare initiatives. which is
+                Philadelphia&rsquo;s original cleaning and greening initiative
+                and the basis for Dr. South&rsquo;s research.
               </p>
             </li>
           </ol>
@@ -115,7 +115,7 @@ export default function MethodologyPage() {
 
         <div className="container mx-auto md:my-12">
           <h2 className="heading-2xl font-semibold mb-4">
-            How did we determine "access process"?
+            How did we determine &ldquo;access process&rdquo;?
           </h2>
 
           <p className="body-md mb-4">
@@ -158,7 +158,7 @@ export default function MethodologyPage() {
               className="link"
               aria-label="Grounded in Philly, link opens in a new window"
             >
-              Grounded in Philly’s
+              Grounded in Philly&rsquo;s
             </a>{" "}
             work and{" "}
             <a
@@ -168,7 +168,7 @@ export default function MethodologyPage() {
               className="link"
               aria-label="the Philadelphia Land Bank, opens in a new window"
             >
-              the Philadelphia Land Bank’s
+              the Philadelphia Land Bank&rsquo;s
             </a>{" "}
             disposition policies.
           </p>
@@ -202,12 +202,12 @@ export default function MethodologyPage() {
             in mind, we have done our best to estimate the spatial intensity of
             gun violence in Philadelphia in a way that is 1) statistically
             rigorous and 2) as sensitive to local experience as possible.
-            Following Dr. South’s original research, we use a kernel density
-            estimate to calculate the intensity of gun crime at any given point
-            in Philadelphia. Specifically, we use an adaptive bandwidth to
-            better capture the local nuances of gun crime at small spatial
-            scales. (For more on this, please see this memo from the data
-            analysis team at the{" "}
+            Following Dr. South&rsquo;s original research, we use a kernel
+            density estimate to calculate the intensity of gun crime at any
+            given point in Philadelphia. Specifically, we use an adaptive
+            bandwidth to better capture the local nuances of gun crime at small
+            spatial scales. (For more on this, please see this memo from the
+            data analysis team at the{" "}
             <a
               href="##"
               target="_blank"
@@ -215,7 +215,7 @@ export default function MethodologyPage() {
               className="link"
               aria-label="District Attorney’s Office, link opens in a new window"
             >
-              District Attorney’s Office
+              District Attorney&rsquo;s Office
             </a>
             .)
           </p>
@@ -245,7 +245,7 @@ export default function MethodologyPage() {
         <p className="body-md mb-4">
           Clean & Green Philly was created by a Code for Philly team. In keeping
           with the open source ethos of Code for Philly, all of the code used to
-          build this tool is available on our{" "}
+          build this tool is available on our{" "}
           <a
             href="https://github.com/CodeForPhilly/vacant-lots-proj"
             target="_blank"
