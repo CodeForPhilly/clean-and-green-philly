@@ -60,6 +60,31 @@ const MapPage = ({ params }: MapPageProps) => {
   useEffect(() => {
     const { opa_id } = params;
 
+    const getLinkedPropertyDetails = async () => {
+      // Check if OPA ID is present in URL
+      // It should be the only URL parameter and a string-like collection of numbers between 8 and 9 characters
+
+      // Get property metadata
+      try {
+        const objectMetadataResponse = await fetch(
+          `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`,
+        );
+        const objectMetadata = await objectMetadataResponse.json();
+        const { metadata } = objectMetadata;
+        let { location } = metadata;
+        location = JSON.parse(location.replace(/'/g, '"'));
+        setInitialViewState({
+          ...initialViewState,
+          longitude: location.lng,
+          latitude: location.lat,
+          zoom: 18,
+        });
+        setIsLinkedPropertyParsed(true);
+      } catch {
+        router.push("/find-properties");
+      }
+    };
+
     if (!opa_id) {
       // do nothing, load map
       setIsLinkedPropertyParsed(true);
@@ -71,32 +96,7 @@ const MapPage = ({ params }: MapPageProps) => {
       // Invalid OPA ID- redirect to main map page
       router.push("/find-properties");
     }
-  }, []);
-
-  const getLinkedPropertyDetails = async () => {
-    // Check if OPA ID is present in URL
-    // It should be the only URL parameter and a string-like collection of numbers between 8 and 9 characters
-
-    // Get property metadata
-    try {
-      const objectMetadataResponse = await fetch(
-          `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`,
-      );
-      const objectMetadata = await objectMetadataResponse.json();
-      const { metadata } = objectMetadata;
-      let { location } = metadata;
-      location = JSON.parse(location.replace(/'/g, '"'));
-      setInitialViewState({
-        ...initialViewState,
-        longitude: location.lng,
-        latitude: location.lat,
-        zoom: 18,
-      });
-      setIsLinkedPropertyParsed(true);
-    } catch {
-      router.push("/find-properties");
-    }
-  };
+  }, [initialViewState, params, router]);
 
   useEffect(() => {
     // This useEffect navigates to the linked property when it is loaded
@@ -115,7 +115,7 @@ const MapPage = ({ params }: MapPageProps) => {
       setSelectedProperty(linkedProperty);
       linkedPropertyRef.current = null;
     }
-  }, [featuresInView, linkedPropertyRef.current]);
+  }, [featuresInView, selectedProperty?.properties.OPA_ID]);
 
   useEffect(() => {
     if (!selectedProperty) return;

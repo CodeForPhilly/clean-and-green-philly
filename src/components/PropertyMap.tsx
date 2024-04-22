@@ -156,49 +156,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
     };
   }, []);
 
-  // filter function
-  // update filters on both layers for ease of switching between layers
-  const updateFilter = () => {
-    if (!map) return;
-
-    const isAnyFilterEmpty = Object.values(appFilter).some((filterItem) => {
-      return filterItem.values.length === 0;
-    });
-
-    if (isAnyFilterEmpty) {
-      map.setFilter("vacant_properties_tiles_points", ["==", ["id"], ""]);
-      map.setFilter("vacant_properties_tiles_polygons", ["==", ["id"], ""]);
-
-      return;
-    }
-
-    const mapFilter = Object.entries(appFilter).reduce(
-      (acc, [property, filterItem]) => {
-        if (filterItem.values.length) {
-          const thisFilterGroup: any = ["any"];
-          filterItem.values.forEach((item) => {
-            if (filterItem.useIndexOfFilter) {
-              thisFilterGroup.push([
-                ">=",
-                ["index-of", item, ["get", property]],
-                0,
-              ]);
-            } else {
-              thisFilterGroup.push(["in", ["get", property], item]);
-            }
-          });
-
-          acc.push(thisFilterGroup);
-        }
-        return acc;
-      },
-      [] as any[]
-    );
-
-    map.setFilter("vacant_properties_tiles_points", ["all", ...mapFilter]);
-    map.setFilter("vacant_properties_tiles_polygons", ["all", ...mapFilter]);
-  };
-
   const onMapClick = (e: MapMouseEvent) => {
     handleMapClick(e.lngLat);
   };
@@ -293,6 +250,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         });
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [featuresInView, selectedProperty]);
 
   useEffect(() => {
@@ -359,7 +317,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         geocoderRef.current = null;
       }
     };
-  }, [map]);
+  }, [map, setSelectedProperty]);
 
   useEffect(() => {
     if (!map) return;
@@ -378,9 +336,53 @@ const PropertyMap: FC<PropertyMapProps> = ({
         feature: selectedProperty.properties,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProperty]);
 
   useEffect(() => {
+    // filter function
+    // update filters on both layers for ease of switching between layers
+    const updateFilter = () => {
+      if (!map) return;
+
+      const isAnyFilterEmpty = Object.values(appFilter).some(filterItem => {
+        return filterItem.values.length === 0;
+      });
+
+      if (isAnyFilterEmpty) {
+        map.setFilter("vacant_properties_tiles_points", ["==", ["id"], ""]);
+        map.setFilter("vacant_properties_tiles_polygons", ["==", ["id"], ""]);
+
+        return;
+      }
+
+      const mapFilter = Object.entries(appFilter).reduce(
+        (acc, [property, filterItem]) => {
+          if (filterItem.values.length) {
+            const thisFilterGroup: any = ["any"];
+            filterItem.values.forEach(item => {
+              if (filterItem.useIndexOfFilter) {
+                thisFilterGroup.push([
+                  ">=",
+                  ["index-of", item, ["get", property]],
+                  0,
+                ]);
+              } else {
+                thisFilterGroup.push(["in", ["get", property], item]);
+              }
+            });
+
+            acc.push(thisFilterGroup);
+          }
+          return acc;
+        },
+        [] as any[],
+      );
+
+      map.setFilter("vacant_properties_tiles_points", ["all", ...mapFilter]);
+      map.setFilter("vacant_properties_tiles_polygons", ["all", ...mapFilter]);
+    };
+
     if (map) {
       updateFilter();
     }
