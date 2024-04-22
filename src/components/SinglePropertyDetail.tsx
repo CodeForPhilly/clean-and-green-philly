@@ -58,6 +58,7 @@ const SinglePropertyDetail = ({
     owner_1,
     owner_2,
     rco_names,
+    zoning_base_district,
     priority_level,
     total_due,
     tree_canopy_gap,
@@ -216,6 +217,10 @@ const SinglePropertyDetail = ({
           <tr>
             <Th>RCO</Th>
             <td className="table-cell">{rco_names.split("|").join(", ")}</td>
+          </tr>
+          <tr>
+            <Th>Zoning</Th>
+            <td className="table-cell">{zoning_base_district}</td>
           </tr>
           <tr>
             <Th>Council District</Th>
