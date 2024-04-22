@@ -311,17 +311,17 @@ const PropertyDetailTable = ({
       aria-label={tableLabel}
       className="w-full mb-3 border-y border-gray-200"
     >
-      <tbody className="body-sm divide-y divide-gray-200">
+      <tbody className="body-md divide-y divide-gray-200">
         {rows.length > 0 &&
           rows.map((row, index) => (
             <tr key={index}>
               <th
                 scope="row"
-                className="text-left py-1 px-0 w-1/3 sm:w-1/2 lg:w-1/3 pr-4"
+                className="text-left py-2 px-0 w-1/3 sm:w-1/2 lg:w-1/3 pr-4"
               >
                 {row.label}
               </th>
-              <td className="py-1 px-0">
+              <td className="py-2 px-0">
                 <div className="flex items-center">{row.content}</div>
               </td>
             </tr>
