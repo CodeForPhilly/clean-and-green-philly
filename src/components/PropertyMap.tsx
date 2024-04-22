@@ -175,21 +175,21 @@ const PropertyMap: FC<PropertyMapProps> = ({
     const mapFilter = Object.entries(appFilter).reduce(
       (acc, [property, filterItem]) => {
         if (filterItem.values.length) {
-          if (filterItem.useIndexOfFilter) {
-            const useIndexOfFilterFilter: any = ["any"];
-            filterItem.values.map((item) => {
-              useIndexOfFilterFilter.push([
+          const thisFilterGroup: any = ["any"];
+          filterItem.values.forEach((item) => {
+            if (filterItem.useIndexOfFilter) {
+              thisFilterGroup.push([
                 ">=",
                 ["index-of", item, ["get", property]],
                 0,
               ]);
-            });
-            acc.push(useIndexOfFilterFilter);
-          } else {
-            acc.push(["in", property, ...filterItem.values]);
-          }
-        }
+            } else {
+              thisFilterGroup.push(["in", ["get", property], item]);
+            }
+          });
 
+          acc.push(thisFilterGroup);
+        }
         return acc;
       },
       [] as any[]
