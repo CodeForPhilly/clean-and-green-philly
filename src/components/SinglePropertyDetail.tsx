@@ -48,7 +48,6 @@ const SinglePropertyDetail = ({
   if (!properties) return null;
 
   const {
-    access_process,
     address,
     council_district,
     guncrime_density,
@@ -64,6 +63,7 @@ const SinglePropertyDetail = ({
     tree_canopy_gap,
     zipcode,
     OPA_ID,
+    phs_partner_agency,
   } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphl/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
@@ -76,12 +76,6 @@ const SinglePropertyDetail = ({
     : priority_level.includes("Low")
     ? "bg-priority-low"
     : "";
-
-  const Th = ({ children }: { children: React.ReactNode }) => (
-    <th scope="row" className="table-cell whitespace-nowrap w-1/3">
-      {children}
-    </th>
-  );
 
   return (
     <div className="w-full px-6 pb-6">
@@ -161,85 +155,88 @@ const SinglePropertyDetail = ({
         </div>
       </div>
 
-      <table aria-label="Community Impact" className="w-full mb-3">
-        <tbody
-          style={{
-            fontSize: "16px",
-          }}
-        >
-          <tr>
-            <Th>Suggested Priority</Th>
-            <td className="table-cell">
-              <div className="flex gap-1 items-center">
-                <Chip
-                  classNames={{
-                    base: `${priorityClass} border-small border-white/50`,
-                    content: "body-sm",
-                  }}
-                >
-                  {priority_level + " Priority"}
-                </Chip>
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <Th>Gun Crime Rate</Th>
-            <td className="table-cell">{guncrime_density}</td>
-          </tr>
-          <tr>
-            <Th>Tree Canopy Gap</Th>
-            <td className="table-cell">{Math.round(tree_canopy_gap * 100)}%</td>
-          </tr>
-        </tbody>
-      </table>
+      <PropertyDetailTable
+        tableLabel="Community Impact"
+        rows={[
+          {
+            label: "Gun Crime Rate",
+            content: guncrime_density,
+          },
+          {
+            label: "Tree Canopy Gap",
+            content: `${Math.round(tree_canopy_gap * 100)}%`,
+          },
+          {
+            label: "L&I Violations",
+            content: open_violations_past_year,
+          },
+          {
+            label: "PHS LandCare",
+            content: phs_partner_agency,
+          },
+          {
+            label: "Suggested Priority",
+            content: (
+              <Chip
+                classNames={{
+                  base: `${priorityClass} border-small border-white/50`,
+                  content: "body-sm",
+                }}
+              >
+                {priority_level + " Priority"}
+              </Chip>
+            ),
+          },
+        ]}
+      />
 
-      <table aria-label="Land Information" className="w-full mb-4">
-        <tbody>
-          <tr>
-            <Th>Access Process</Th>
-            <td className="table-cell">{access_process}</td>
-          </tr>
-          <tr>
-            <Th>Owner</Th>
-            <td className="table-cell">
-              <p>{owner_1}</p>
-              {owner_2 && <p>{owner_2}</p>}
-            </td>
-          </tr>
-          <tr>
-            <Th>Zip Code</Th>
-            <td className="table-cell">{zipcode}</td>
-          </tr>
-          <tr>
-            <Th>Neighborhood</Th>
-            <td className="table-cell">{neighborhood}</td>
-          </tr>
-          <tr>
-            <Th>RCO</Th>
-            <td className="table-cell">{rco_names.split("|").join(", ")}</td>
-          </tr>
-          <tr>
-            <Th>Zoning</Th>
-            <td className="table-cell">{zoning_base_district}</td>
-          </tr>
-          <tr>
-            <Th>Council District</Th>
-            <td className="table-cell">{council_district}</td>
-          </tr>
-          <tr>
-            <Th>Market Value</Th>
-            <td className="table-cell">${market_value}</td>
-          </tr>
-          <tr>
-            <Th>Tax Delinquency</Th>
-            <td className="table-cell">{total_due ? "Yes" : "No"}</td>
-          </tr>
-          <tr>
-            <Th>L&I Violations</Th>
-            <td className="table-cell">{open_violations_past_year}</td>
-          </tr>
-        </tbody>
-      </table>
+      <PropertyDetailTable
+        tableLabel="Land Information"
+        rows={[
+          {
+            label: "Owner",
+            content: (
+              <div className="flex flex-col">
+                <span>{owner_1}</span>
+                {owner_2 && <span>{owner_2}</span>}
+              </div>
+            ),
+          },
+          {
+            label: "Zip Code",
+            content: zipcode,
+          },
+          {
+            label: "Neighborhood",
+            content: neighborhood,
+          },
+          {
+            label: "Registered Community Orgs",
+            content: rco_names.split("|").join(", "),
+          },
+          {
+            label: "Zoning",
+            content: zoning_base_district,
+          },
+          {
+            label: "Council District",
+            content: council_district,
+          },
+          {
+            label: "Market Value",
+            content: new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }).format(market_value),
+          },
+          {
+            label: "Tax Delinquency",
+            content: total_due ? "Yes" : "No",
+          },
+        ]}
+      />
 
       <h3 className="font-bold mb-2 py-2 heading-xl">Getting Access</h3>
       <p className="mb-4">
@@ -295,6 +292,42 @@ const SinglePropertyDetail = ({
         .
       </p>
     </div>
+  );
+};
+
+const PropertyDetailTable = ({
+  tableLabel,
+  rows,
+}: {
+  tableLabel: string;
+  rows: {
+    label: string;
+    tooltip?: React.ReactNode;
+    content: string | React.ReactNode;
+  }[];
+}) => {
+  return (
+    <table
+      aria-label={tableLabel}
+      className="w-full mb-3 border-y border-gray-200"
+    >
+      <tbody className="body-sm divide-y divide-gray-200">
+        {rows.length > 0 &&
+          rows.map((row, index) => (
+            <tr key={index}>
+              <th
+                scope="row"
+                className="text-left py-1 px-0 w-1/3 sm:w-1/2 lg:w-1/3 pr-4"
+              >
+                {row.label}
+              </th>
+              <td className="py-1 px-0">
+                <div className="flex items-center">{row.content}</div>
+              </td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
   );
 };
 
