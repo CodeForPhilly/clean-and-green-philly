@@ -79,7 +79,7 @@ const SinglePropertyDetail = ({
 
   return (
     <div className="w-full px-6 pb-6">
-      <div className="flex justify-between sticky top-0 py-4 z-10 bg-white">
+      <div className="flex justify-between sticky -mx-6 px-6 top-0 py-4 z-10 bg-white">
         <ThemeButton
           color="tertiary"
           label="Back"
