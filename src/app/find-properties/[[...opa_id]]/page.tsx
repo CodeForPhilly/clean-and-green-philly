@@ -18,6 +18,7 @@ import { Position } from "geojson";
 import { ThemeButton } from "../../../components/ThemeButton";
 import { useRouter } from "next/navigation";
 import { ViewState } from "react-map-gl";
+import { PiX } from "react-icons/pi";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
@@ -240,24 +241,33 @@ const MapPage = ({ params }: MapPageProps) => {
                 </div>
               )}
               {currentView === "download" ? (
-                <div className="p-4 mt-8 text-center">
-                  <h2 className="heading-xl font-semibold mb-4">
-                    Access Our Data
-                  </h2>
-                  <p>
-                    If you are interested in accessing the data behind this
-                    dashboard, please reach out to us at
-                    <a
-                      href="mailto:cleanandgreenphl@gmail.com"
-                      className="text-blue-600 hover:text-blue-800 underline"
-                    >
-                      {" "}
-                      cleanandgreenphl@gmail.com
-                    </a>
-                    . Let us know who you are and why you want the data. We are
-                    happy to share the data with anyone with community-oriented
-                    interests.
-                  </p>
+                <div className="relative">
+                  <ThemeButton
+                    color="secondary"
+                    className="right-4 lg:right-[24px] absolute top-8 min-w-[3rem]"
+                    aria-label="Close download panel"
+                    startContent={<PiX />}
+                    onPress={() => updateCurrentView("detail")}
+                  />
+                  <div className="p-4 mt-8 text-center">
+                    <h2 className="heading-xl font-semibold mb-4">
+                      Access Our Data
+                    </h2>
+                    <p>
+                      If you are interested in accessing the data behind this
+                      dashboard, please reach out to us at
+                      <a
+                        href="mailto:cleanandgreenphl@gmail.com"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        {" "}
+                        cleanandgreenphl@gmail.com
+                      </a>
+                      . Let us know who you are and why you want the data. We
+                      are happy to share the data with anyone with
+                      community-oriented interests.
+                    </p>
+                  </div>
                 </div>
               ) : currentView === "filter" ? (
                 <FilterView updateCurrentView={updateCurrentView} />
