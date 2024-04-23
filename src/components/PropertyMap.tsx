@@ -174,6 +174,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         layers,
       });
 
+      setSearchedProperty({...searchedProperty, address: "" })
       if (features.length > 0) {
         setSelectedProperty(features[0]);
       } else {
