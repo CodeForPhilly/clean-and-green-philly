@@ -40,7 +40,19 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
 
   const filterCount = Object.keys(appFilter).length;
 
+  const getPropertyIdsFromLocalStorage = (): string[] => {
+    let data = localStorage.getItem("opa_ids");
+
+    if (data) {
+      return Object.keys(JSON.parse(data).opa_ids);
+    } else {
+      return [];
+    }
+  };
+
   const onClickSavedButton = () => {
+    let propertyIds = getPropertyIdsFromLocalStorage();
+
     if (shouldFilterSavedProperties) {
       setShouldFilterSavedProperties(false);
       dispatch({
@@ -53,8 +65,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       dispatch({
         type: "SET_DIMENSIONS",
         property: "OPA_ID",
-        // TODO: Replace hardcoded array of OPA IDs with IDs from localStorage.  See Issue 415.
-        dimensions: ["885610460", "42079400"],
+        dimensions: [...propertyIds],
       });
     }
   };

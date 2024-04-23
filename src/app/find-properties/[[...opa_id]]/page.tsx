@@ -37,7 +37,7 @@ const MapPage = ({ params }: MapPageProps) => {
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
   const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
-    null,
+    null
   );
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
@@ -68,7 +68,7 @@ const MapPage = ({ params }: MapPageProps) => {
       // Get property metadata
       try {
         const objectMetadataResponse = await fetch(
-          `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`,
+          `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`
         );
         const objectMetadata = await objectMetadataResponse.json();
         const { metadata } = objectMetadata;
@@ -104,9 +104,9 @@ const MapPage = ({ params }: MapPageProps) => {
     if (!featuresInView || !linkedPropertyRef.current) return;
 
     const linkedProperty = featuresInView.find(
-      feature =>
+      (feature) =>
         feature.properties.OPA_ID.toString() ===
-        linkedPropertyRef?.current?.toString(),
+        linkedPropertyRef?.current?.toString()
     );
 
     if (
@@ -133,7 +133,7 @@ const MapPage = ({ params }: MapPageProps) => {
         (Object.keys(params).length === 0 && prevCoordinateRef.current))
     ) {
       setSmallScreenMode((prev: string) =>
-        prev === "map" ? "properties" : "map",
+        prev === "map" ? "properties" : "map"
       );
     }
   };
@@ -155,7 +155,7 @@ const MapPage = ({ params }: MapPageProps) => {
     sizeRef.current = window.innerWidth;
     const updateWindowDimensions = () => {
       if (sizeRef.current >= 640 && window.innerWidth < 640) {
-        setCurrentView(c => {
+        setCurrentView((c) => {
           setSmallScreenMode(c !== "detail" ? "properties" : prevRef.current);
           return c;
         });
@@ -199,7 +199,6 @@ const MapPage = ({ params }: MapPageProps) => {
     if (opa_ids && JSON.parse(opa_ids).count) {
       setSavedPropertyCount(JSON.parse(opa_ids).count);
     } else {
-      localStorage.setItem("opa_ids", JSON.stringify({ count: 0 }));
       setSavedPropertyCount(0);
     }
   }, [currentView, selectedProperty]);
@@ -312,7 +311,7 @@ const StreetViewModal: React.FC<{
         // return focus
         document.getElementById("outside-iframe-element")?.focus();
         const outsideElement = document.getElementById(
-          "outside-iframe-element",
+          "outside-iframe-element"
         );
         outsideElement?.focus();
       } else if (event.key === "Tab") {
@@ -321,7 +320,7 @@ const StreetViewModal: React.FC<{
         if (container && !container.contains(document.activeElement)) {
           // If focus goes outside the container, bring it back to the first focusable element inside the container
           const focusableElements = container.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
           );
           if (focusableElements.length > 0) {
             event.preventDefault();
@@ -341,7 +340,7 @@ const StreetViewModal: React.FC<{
         // return focus
         document.getElementById("outside-iframe-element")?.focus();
         const outsideElement = document.getElementById(
-          "outside-iframe-element",
+          "outside-iframe-element"
         );
         outsideElement?.focus();
       }
