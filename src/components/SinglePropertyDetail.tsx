@@ -1,20 +1,19 @@
+import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
+import { Chip, Tooltip, Link } from "@nextui-org/react";
+import {
+  ArrowLeft,
+  ArrowSquareOut,
+  ArrowsOut,
+  Share,
+} from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
-import {
-  ArrowSquareOut,
-  ArrowLeft,
-  HandWaving,
-  Handshake,
-  Money,
-  Tree,
-  ProhibitInset,
-  PiggyBank,
-  ArrowsOut,
-} from "@phosphor-icons/react";
-import SinglePropertyInfoCard from "./SinglePropertyInfoCard";
-import { Dispatch, SetStateAction } from "react";
-import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
+import { Dispatch, SetStateAction, useState } from "react";
+import PropertyAccessOptionContainer from "./PropertyAccessOptionContainer";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
+import ContentCard from "./ContentCard";
+import cleanup from "@/images/transform-a-property.png";
+import { PiEyeSlash } from "react-icons/pi";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -23,18 +22,33 @@ interface PropertyDetailProps {
   updateCurrentView: (view: BarClickOptions) => void;
 }
 
+function getPriorityClass(priorityLevel: string) {
+  switch (priorityLevel) {
+    case "High":
+      return "bg-red-200 text-red-800"; // Style for High Priority
+    case "Medium":
+      return "bg-yellow-200 text-yellow-800"; // Style for Medium Priority
+    case "Low":
+      return "bg-green-200 text-green-800"; // Style for Low Priority
+    default:
+      return "bg-gray-500 border-gray-700"; // Default style
+  }
+}
+
 const SinglePropertyDetail = ({
   property,
   setSelectedProperty,
   setIsStreetViewModalOpen,
   updateCurrentView,
 }: PropertyDetailProps) => {
+  const [shareLabel, setShareLabel] = useState<boolean>(false);
+  const [hover, setHover] = useState<boolean>(false);
+
   if (!property) return null;
   const { properties } = property;
   if (!properties) return null;
 
   const {
-    access_process,
     address,
     council_district,
     guncrime_density,
@@ -43,33 +57,30 @@ const SinglePropertyDetail = ({
     open_violations_past_year,
     owner_1,
     owner_2,
-    parcel_type,
+    rco_names,
+    zoning_base_district,
     priority_level,
     total_due,
     tree_canopy_gap,
     zipcode,
     OPA_ID,
+    phs_partner_agency,
   } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphl/${OPA_ID}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
+  const priorityClass = getPriorityClass(priority_level);
 
   const priorityBgClassName = priority_level.includes("High")
-    ? "bg-priority-high"
+    ? "bg-red-200 text-red-800"
     : priority_level.includes("Medium")
     ? "bg-priority-medium"
     : priority_level.includes("Low")
     ? "bg-priority-low"
     : "";
 
-  const Th = ({ children }: { children: React.ReactNode }) => (
-    <th scope="row" className="table-cell whitespace-nowrap w-1/3">
-      {children}
-    </th>
-  );
-
   return (
     <div className="w-full px-6 pb-6">
-      <div className="sticky top-0 py-4 z-10 bg-white">
+      <div className="flex justify-between sticky -mx-6 px-6 top-0 py-4 z-10 bg-white">
         <ThemeButton
           color="tertiary"
           label="Back"
@@ -80,6 +91,28 @@ const SinglePropertyDetail = ({
             history.replaceState(null, "", `/find-properties`);
           }}
         />
+        <Tooltip
+          disableAnimation
+          closeDelay={100}
+          placement="top"
+          content={shareLabel ? "Link Copied" : "Copy Link"}
+          isOpen={hover}
+          classNames={{
+            content: "bg-gray-900 rounded-[14px] text-white relative top-1",
+          }}
+        >
+          <ThemeButton
+            color="tertiary"
+            label="Share"
+            startContent={<Share />}
+            onPress={() => {
+              navigator.clipboard.writeText(window.location.href);
+              setShareLabel(true);
+            }}
+            onMouseEnter={() => setHover(true)}
+            onMouseLeave={() => setHover(false)}
+          />
+        </Tooltip>
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
@@ -123,173 +156,166 @@ const SinglePropertyDetail = ({
         </div>
       </div>
 
-      <table aria-label="Community Impact" className="w-full mb-3">
-        <tbody
-          style={{
-            fontSize: "16px",
-          }}
-        >
-          <tr>
-            <Th>Suggested Priority</Th>
-            <td className="table-cell">
-              <div className="flex gap-1 items-center">
-                <span
-                  className={`inline-block w-4 h-4 ${priorityBgClassName}`}
-                />
-                {priority_level}
-              </div>
-            </td>
-          </tr>
-          <tr>
-            <Th>Gun Crime Rate</Th>
-            <td className="table-cell">{guncrime_density}</td>
-          </tr>
-          <tr>
-            <Th>Tree Canopy Gap</Th>
-            <td className="table-cell">{Math.round(tree_canopy_gap * 100)}%</td>
-          </tr>
-        </tbody>
-      </table>
+      <PropertyDetailTable
+        tableLabel="Community Impact"
+        rows={[
+          {
+            label: "Gun Crime Rate",
+            content: guncrime_density,
+          },
+          {
+            label: "Tree Canopy Gap",
+            content: `${Math.round(tree_canopy_gap * 100)}%`,
+          },
+          {
+            label: "L&I Violations",
+            content: open_violations_past_year,
+          },
+          {
+            label: "PHS LandCare",
+            content: phs_partner_agency,
+          },
+          {
+            label: "Suggested Priority",
+            content: (
+              <Chip
+                classNames={{
+                  base: `${priorityClass} border-small border-white/50`,
+                  content: "body-sm",
+                }}
+              >
+                {priority_level + " Priority"}
+              </Chip>
+            ),
+          },
+        ]}
+      />
 
-      <table aria-label="Land Information" className="w-full mb-4">
-        <tbody>
-          <tr style={{ display: "none" }}>
-            <Th>Access Process</Th>
-            <td className="table-cell">{access_process}</td>
-          </tr>
-          <tr>
-            <Th>Owner</Th>
-            <td className="table-cell">
-              <p>{owner_1}</p>
-              {owner_2 && <p>{owner_2}</p>}
-            </td>
-          </tr>
-          <tr>
-            <Th>Parcel Type</Th>
-            <td className="table-cell">
-              <p>{parcel_type}</p>
-            </td>
-          </tr>
-          <tr>
-            <Th>Zip Code</Th>
-            <td className="table-cell">{zipcode}</td>
-          </tr>
-          <tr>
-            <Th>RCO</Th>
-            <td className="table-cell">{neighborhood}</td>
-          </tr>
-          <tr>
-            <Th>Council District</Th>
-            <td className="table-cell">{council_district}</td>
-          </tr>
-          <tr>
-            <Th>Market Value</Th>
-            <td className="table-cell">${market_value.toLocaleString()}</td>
-          </tr>
-          <tr>
-            <Th>Tax Delinquency</Th>
-            <td className="table-cell">{total_due ? "Yes" : "No"}</td>
-          </tr>
-          <tr>
-            <Th>L&I Violations</Th>
-            <td className="table-cell">{open_violations_past_year}</td>
-          </tr>
-        </tbody>
-      </table>
+      <PropertyDetailTable
+        tableLabel="Land Information"
+        rows={[
+          {
+            label: "Owner",
+            content: (
+              <div className="flex flex-col">
+                <span>{owner_1}</span>
+                {owner_2 && <span>{owner_2}</span>}
+              </div>
+            ),
+          },
+          {
+            label: "Zip Code",
+            content: zipcode,
+          },
+          {
+            label: "Neighborhood",
+            content: neighborhood,
+          },
+          {
+            label: "Registered Community Orgs",
+            content: rco_names.split("|").join(", "),
+          },
+          {
+            label: "Zoning",
+            content: zoning_base_district,
+          },
+          {
+            label: "Council District",
+            content: council_district,
+          },
+          {
+            label: "Market Value",
+            content: new Intl.NumberFormat("en-US", {
+              style: "currency",
+              currency: "USD",
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 0,
+            }).format(market_value),
+          },
+          {
+            label: "Tax Delinquency",
+            content: total_due ? "Yes" : "No",
+          },
+        ]}
+      />
 
       <h3 className="font-bold mb-2 py-2 heading-xl">Getting Access</h3>
       <p className="mb-4">
-        Based on the information about this property, we believe that you can
-        get access to this property through:
+        Before you can transform this property, you need to get legal access to
+        it. Here are the possible options for this property including which are
+        available, not available and likely the best option.{" "}
+        <Link href="/get-access" className="link">
+          Learn more on Get Access.
+        </Link>
       </p>
 
-      <div className="flex mb-4 px-2 gap-4">
-        {access_process === "Private Land Use Agreement" && (
-          <SinglePropertyInfoCard
-            title="Private Land Use Agreement"
-            body="Given the price and ownership of this property, we believe the easiest way to get access to this property is through a land use agreement with its owner."
-            icon={<Handshake className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
-        {access_process === "Buy Property" && (
-          <SinglePropertyInfoCard
-            title="Buying a Property"
-            body="This property is cheap enough that we believe you can buy it outright."
-            icon={<Money className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
-        {access_process === "Do Nothing (Too Complicated)" && (
-          <SinglePropertyInfoCard
-            title="Do Nothing (Too Complicated)"
-            body="We believe access this property legally is too complicated to justify the effort."
-            icon={<ProhibitInset className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
-        {access_process === "Land Bank" && (
-          <SinglePropertyInfoCard
-            title="Land Bank"
-            body="You may be able to acquire this property for a nominal or discounted price from the Land Bank."
-            icon={<PiggyBank className="h-12 w-12" aria-hidden="true" />}
-          />
-        )}
+      <div className="mb-4">
+        <PropertyAccessOptionContainer property={properties} />
       </div>
 
-      <p>
-        {" "}
-        To learn more about what this means, visit{" "}
-        <a
-          href="/get-access"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="link"
-        >
-          our <HandWaving className="inline h-6 w-6" aria-hidden="true" /> Get
-          Access page.
-        </a>
-      </p>
-
-      <h3 className="font-bold mb-2 py-2 heading-xl">
-        Ways to transform the lot
-      </h3>
-      <p className="mb-4">
-        To see different ways in which you might transform this property, see
-        <a
-          href="/transform-property"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="link"
-        >
-          {" "}
-          our <Tree className="inline h-6 w-6" aria-hidden="true" /> Transform a
-          Property page.
-        </a>
-      </p>
-
-      {/*
-      <div className="flex mb-4 px-2 gap-4">
-        <SinglePropertyInfoCard
-          title="Lot Cleanup"
-          body="In a day, clean up with a street crew and PHS!"
-          icon={<Broom className="h-12 w-12" aria-hidden="true" />}
+      <h3 className="font-bold mb-2 py-2 heading-xl">Transform a Property</h3>
+      <Link
+        href="/transform-property"
+        color="foreground"
+        className="hover:opacity-100"
+      >
+        <ContentCard
+          image={cleanup}
+          alt=""
+          title="Transform a Property"
+          body="We guide you through the most common, convenient and affordable ways to transform properties and resources on how to do it."
+          hasArrow={true}
         />
-        <SinglePropertyInfoCard
-          title="Community Garden"
-          body="Set up a longer term, sustainable green space."
-          icon={<PottedPlant className="h-12 w-12" aria-hidden="true" />}
-        />
+      </Link>
+
+      <div className="flex flex-col space-y-6 mt-[72px]">
+        <p>You can request that we remove this property from the dashboard.</p>
+        <div className="flex">
+          <ThemeButtonLink
+            color="secondary"
+            href="/request-removal"
+            startContent={<PiEyeSlash />}
+            label={"Request we hide this property"}
+          />
+        </div>
       </div>
-      */}
-
-      <h3 className="font-bold mb-2 py-2 heading-xl">Remove This Property</h3>
-      <p>
-        If you would like to request that we remove this property from the
-        dashboard, please see our{" "}
-        <a href="/request-removal" className="link">
-          Request Removal page
-        </a>
-        .
-      </p>
     </div>
+  );
+};
+
+const PropertyDetailTable = ({
+  tableLabel,
+  rows,
+}: {
+  tableLabel: string;
+  rows: {
+    label: string;
+    tooltip?: React.ReactNode;
+    content: string | React.ReactNode;
+  }[];
+}) => {
+  return (
+    <table
+      aria-label={tableLabel}
+      className="w-full mb-3 border-y border-gray-200"
+    >
+      <tbody className="body-md divide-y divide-gray-200">
+        {rows.length > 0 &&
+          rows.map((row, index) => (
+            <tr key={index}>
+              <th
+                scope="row"
+                className="text-left py-2 px-0 w-1/3 sm:w-1/2 lg:w-1/3 pr-4"
+              >
+                {row.label}
+              </th>
+              <td className="py-2 px-0">
+                <div className="flex items-center">{row.content}</div>
+              </td>
+            </tr>
+          ))}
+      </tbody>
+    </table>
   );
 };
 

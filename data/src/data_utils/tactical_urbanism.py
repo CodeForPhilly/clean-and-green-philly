@@ -1,11 +1,8 @@
-import pandas as pd
-
-unsafe_words = [
-    "dangerous",
-]
-
-
 def tactical_urbanism(dataset):
+    unsafe_words = [
+        "dangerous",
+    ]
+
     tactical_urbanism_values = []
 
     for idx, row in dataset.gdf.iterrows():

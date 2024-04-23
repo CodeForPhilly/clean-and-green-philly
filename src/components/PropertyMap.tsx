@@ -9,14 +9,18 @@ import {
   SetStateAction,
   ReactElement,
 } from "react";
-import { maptilerApiKey, mapboxAccessToken } from "../config/config";
+import {
+  maptilerApiKey,
+  mapboxAccessToken,
+  useStagingTiles,
+  googleCloudBucketName
+} from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import Map, {
   Source,
   Layer,
   Popup,
   NavigationControl,
-  FullscreenControl,
   ScaleControl,
   GeolocateControl,
   ViewState,
@@ -42,8 +46,15 @@ import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
 import { MapLegendControl } from "./MapLegendControl";
 import { createPortal } from "react-dom";
 import { Tooltip } from "@nextui-org/react";
-import { Info } from "@phosphor-icons/react";
+import { Info, X } from "@phosphor-icons/react";
 import { centroid } from "@turf/centroid";
+import { Position } from "geojson";
+import { toTitleCase } from "../utilities/toTitleCase";
+
+type SearchedProperty = {
+  coordinates: [number, number];
+  address: string;
+};
 
 const MIN_MAP_ZOOM = 10;
 const MAX_MAP_ZOOM = 20;
@@ -53,7 +64,6 @@ const layers = [
   "vacant_properties_tiles_polygons",
   "vacant_properties_tiles_points",
 ];
-
 const colorScheme: DataDrivenPropertyValueSpecification<ColorSpecification> = [
   "match",
   ["get", "priority_level"], // get the value of the guncrime_density property
@@ -100,36 +110,43 @@ let summaryInfo: ReactElement | null = null;
 
 const MapControls = () => (
   <>
-    <GeolocateControl position="bottom-right" />
-    <FullscreenControl position="bottom-right" />
     <NavigationControl showCompass={false} position="bottom-right" />
+    <GeolocateControl position="bottom-right" />
     <ScaleControl />
     <MapLegendControl position="bottom-left" layerStyle={layerStylePolygon} />
   </>
 );
 
 interface PropertyMapProps {
+  featuresInView: MapGeoJSONFeature[];
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
   selectedProperty: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
-  setSmallScreenMode: Dispatch<SetStateAction<string>>;
   initialViewState: ViewState;
+  prevCoordinate: Position | null;
+  setPrevCoordinate: () => void;
 }
 const PropertyMap: FC<PropertyMapProps> = ({
+  featuresInView,
   setFeaturesInView,
   setLoading,
   selectedProperty,
   setSelectedProperty,
   setFeatureCount,
-  setSmallScreenMode,
   initialViewState,
+  prevCoordinate,
+  setPrevCoordinate,
 }) => {
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
+  const [searchedProperty, setSearchedProperty] = useState<SearchedProperty>({
+    coordinates: [-75.1628565788269, 39.97008211622267],
+    address: "",
+  });
 
   useEffect(() => {
     let protocol = new Protocol();
@@ -138,37 +155,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
       maplibregl.removeProtocol("pmtiles");
     };
   }, []);
-
-  // filter function
-  // update filters on both layers for ease of switching between layers
-  const updateFilter = () => {
-    if (!map) return;
-
-    const isAnyFilterEmpty = Object.values(appFilter).some((filterItem) => {
-      return filterItem.values.length === 0;
-    });
-
-    if (isAnyFilterEmpty) {
-      map.setFilter("vacant_properties_tiles_points", ["==", ["id"], ""]);
-      map.setFilter("vacant_properties_tiles_polygons", ["==", ["id"], ""]);
-
-      return;
-    }
-
-    const mapFilter = Object.entries(appFilter).reduce(
-      (acc, [property, filterItem]) => {
-        if (filterItem.values.length) {
-          acc.push(["in", property, ...filterItem.values]);
-        }
-
-        return acc;
-      },
-      [] as any[]
-    );
-
-    map.setFilter("vacant_properties_tiles_points", ["all", ...mapFilter]);
-    map.setFilter("vacant_properties_tiles_polygons", ["all", ...mapFilter]);
-  };
 
   const onMapClick = (e: MapMouseEvent) => {
     handleMapClick(e.lngLat);
@@ -215,7 +201,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }
         return acc;
       },
-      0
+      0,
     );
 
     setFeatureCount(clusteredFeatureCount);
@@ -241,6 +227,33 @@ const PropertyMap: FC<PropertyMapProps> = ({
   };
 
   useEffect(() => {
+    // This useEffect sets selectedProperty and map popup information after a property has been searched in the map's search form
+    if (!featuresInView || selectedProperty || searchedProperty.address === "")
+      return;
+
+    if (map) {
+      const features = map.queryRenderedFeatures(
+        map.project(searchedProperty.coordinates),
+        {
+          layers,
+        },
+      );
+      if (features.length > 0) {
+        setSelectedProperty(features[0]);
+        setSearchedProperty({ ...searchedProperty, address: "" });
+      } else {
+        setSelectedProperty(null);
+        setPopupInfo({
+          longitude: searchedProperty.coordinates[0],
+          latitude: searchedProperty.coordinates[1],
+          feature: { address: searchedProperty.address },
+        });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [featuresInView, selectedProperty]);
+
+  useEffect(() => {
     if (map) {
       // Add info icon to legend on map load
       const legendSummary = document.getElementById("legend-summary");
@@ -264,7 +277,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
               tabIndex={0}
             />
           </Tooltip>,
-          legendSummary
+          legendSummary,
         );
       }
 
@@ -283,10 +296,15 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
         map.addControl(geocoderRef.current as unknown as IControl, "top-right");
 
-        geocoderRef.current.on("result", (e) => {
+        geocoderRef.current.on("result", e => {
+          const address = e.result.place_name.split(",")[0];
+          setSelectedProperty(null);
+          setSearchedProperty({
+            coordinates: e.result.center,
+            address: address,
+          });
           map.easeTo({
             center: e.result.center,
-            zoom: MAX_TILE_ZOOM,
           });
         });
       }
@@ -299,12 +317,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
         geocoderRef.current = null;
       }
     };
-  }, [map]);
+  }, [map, setSelectedProperty]);
 
   useEffect(() => {
     if (!map) return;
     if (!selectedProperty) {
-      setPopupInfo(null);
+      // setPopupInfo(null);
+      if (window.innerWidth < 640 && prevCoordinate) {
+        map.setCenter(prevCoordinate as LngLatLike);
+        setPrevCoordinate();
+      }
     } else {
       const propCentroid = centroid(selectedProperty.geometry);
       moveMap(propCentroid.geometry.coordinates as LngLatLike);
@@ -314,9 +336,53 @@ const PropertyMap: FC<PropertyMapProps> = ({
         feature: selectedProperty.properties,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedProperty]);
 
   useEffect(() => {
+    // filter function
+    // update filters on both layers for ease of switching between layers
+    const updateFilter = () => {
+      if (!map) return;
+
+      const isAnyFilterEmpty = Object.values(appFilter).some(filterItem => {
+        return filterItem.values.length === 0;
+      });
+
+      if (isAnyFilterEmpty) {
+        map.setFilter("vacant_properties_tiles_points", ["==", ["id"], ""]);
+        map.setFilter("vacant_properties_tiles_polygons", ["==", ["id"], ""]);
+
+        return;
+      }
+
+      const mapFilter = Object.entries(appFilter).reduce(
+        (acc, [property, filterItem]) => {
+          if (filterItem.values.length) {
+            const thisFilterGroup: any = ["any"];
+            filterItem.values.forEach(item => {
+              if (filterItem.useIndexOfFilter) {
+                thisFilterGroup.push([
+                  ">=",
+                  ["index-of", item, ["get", property]],
+                  0,
+                ]);
+              } else {
+                thisFilterGroup.push(["in", ["get", property], item]);
+              }
+            });
+
+            acc.push(thisFilterGroup);
+          }
+          return acc;
+        },
+        [] as any[],
+      );
+
+      map.setFilter("vacant_properties_tiles_points", ["all", ...mapFilter]);
+      map.setFilter("vacant_properties_tiles_polygons", ["all", ...mapFilter]);
+    };
+
     if (map) {
       updateFilter();
     }
@@ -333,16 +399,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
         mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
-        onMouseEnter={(e) => changeCursor(e, "pointer")}
-        onMouseLeave={(e) => changeCursor(e, "default")}
+        onMouseEnter={e => changeCursor(e, "pointer")}
+        onMouseLeave={e => changeCursor(e, "default")}
         onClick={onMapClick}
         minZoom={MIN_MAP_ZOOM}
         maxZoom={MAX_MAP_ZOOM}
         interactiveLayerIds={layers}
-        onLoad={(e) => {
+        onLoad={e => {
           setMap(e.target);
         }}
-        onSourceData={(e) => {
+        onSourceData={e => {
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}
@@ -350,21 +416,24 @@ const PropertyMap: FC<PropertyMapProps> = ({
         <MapControls />
         {popupInfo && (
           <Popup
+            className="customized-map-popup"
             longitude={popupInfo.longitude}
             latitude={popupInfo.latitude}
             closeOnClick={false}
             onClose={() => setPopupInfo(null)}
           >
-            <div>
-              <p className="font-semibold body-md p-1">
-                {popupInfo.feature.address}
-              </p>
+            <div className="flex flex-row items-center nowrap space-x-1">
+              <span>{toTitleCase(popupInfo.feature.address)}</span>
+              {/* keeping invisible to maintain spacing for built-in close button */}
+              <X size={16} className="invisible" />
             </div>
           </Popup>
         )}
         <Source
           type="vector"
-          url="pmtiles://https://storage.googleapis.com/cleanandgreenphl/vacant_properties_tiles.pmtiles"
+          url={`pmtiles://https://storage.googleapis.com/${googleCloudBucketName}/vacant_properties_tiles${
+            useStagingTiles ? "_staging" : ""
+          }.pmtiles`}
           id="vacant_properties_tiles"
         >
           <Layer {...layerStylePoints} />

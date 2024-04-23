@@ -28,6 +28,10 @@ Navigate to the root directory of the repository. Install dependencies by runnin
 
 You'll need to set up a free [MapTiler](https://www.maptiler.com/) and get an API key. Once you have this, set it as en environment variable called `NEXT_PUBLIC_MAPTILER_KEY`.
 
+### Google Cloud (GCP)
+
+If you are running your own backend and you want to use the tiles file from your own Google cloud bucket, put the bucket name in an environment variable called `GOOGLE_CLOUD_BUCKET_NAME`.  See the backend setup docs for more information on GCP.
+
 #### Formatting
 
 For js/ts, install [Prettier](https://prettier.io/) and enable it for your [editor](https://prettier.io/docs/en/editors.html). For VSCode, enable [Format on Save](https://www.robinwieruch.de/how-to-use-prettier-vscode/) for best experience.
