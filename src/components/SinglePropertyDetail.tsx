@@ -51,6 +51,24 @@ const SinglePropertyDetail = ({
 }: PropertyDetailProps) => {
   const [shareLabel, setShareLabel] = useState<boolean>(false);
   const [hover, setHover] = useState<boolean>(false);
+  const [isPropertySavedToLocalStorage, setIsPropertySavedToLocalStorage] =
+    useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem("opa_ids")) {
+      initializeLocalStorage();
+    }
+
+    const localStorageData = localStorage.getItem("opa_ids");
+    const parsedLocalStorageData = localStorageData
+      ? JSON.parse(localStorageData)
+      : {};
+
+    const propertyId = parsedLocalStorageData.opa_ids[OPA_ID];
+    propertyId
+      ? setIsPropertySavedToLocalStorage(true)
+      : setIsPropertySavedToLocalStorage(false);
+  }, []);
 
   if (!property) return null;
   const { properties } = property;
@@ -85,9 +103,6 @@ const SinglePropertyDetail = ({
     : priority_level.includes("Low")
     ? "bg-priority-low"
     : "";
-
-  const [isPropertySavedToLocalStorage, setIsPropertySavedToLocalStorage] =
-    useState(false);
 
   const savePropertyIdToLocalStorage = (localCache: PropertyIdLocalStorage) => {
     let newLocalCache: PropertyIdLocalStorage = {
@@ -129,22 +144,6 @@ const SinglePropertyDetail = ({
       setIsPropertySavedToLocalStorage(true);
     }
   };
-
-  useEffect(() => {
-    if (!localStorage.getItem("opa_ids")) {
-      initializeLocalStorage();
-    }
-
-    const localStorageData = localStorage.getItem("opa_ids");
-    const parsedLocalStorageData = localStorageData
-      ? JSON.parse(localStorageData)
-      : {};
-
-    const propertyId = parsedLocalStorageData.opa_ids[OPA_ID];
-    propertyId
-      ? setIsPropertySavedToLocalStorage(true)
-      : setIsPropertySavedToLocalStorage(false);
-  }, []);
 
   return (
     <div className="w-full px-6 pb-6">
