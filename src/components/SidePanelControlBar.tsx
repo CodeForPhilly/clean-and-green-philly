@@ -34,18 +34,28 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
 }) => {
   const filterRef = useRef<HTMLButtonElement | null>(null);
   const savedRef = useRef<HTMLButtonElement | null>(null);
-  const { appFilter } = useFilter();
+  const { dispatch, appFilter } = useFilter();
   const [shouldFilterSavedProperties, setShouldFilterSavedProperties] =
     useState(false);
 
   const filterCount = Object.keys(appFilter).length;
 
-  // TODO: Add logic for filtering list to properties saved in localStorage. See Issue 415.
   const onClickSavedButton = () => {
     if (shouldFilterSavedProperties) {
       setShouldFilterSavedProperties(false);
+      dispatch({
+        type: "SET_DIMENSIONS",
+        property: "OPA_ID",
+        dimensions: [],
+      });
     } else {
       setShouldFilterSavedProperties(true);
+      dispatch({
+        type: "SET_DIMENSIONS",
+        property: "OPA_ID",
+        // TODO: Replace hardcoded array of OPA IDs with IDs from localStorage.  See Issue 415.
+        dimensions: ["885610460", "42079400"],
+      });
     }
   };
 
