@@ -196,6 +196,7 @@
 
 #main .maplibregl-ctrl-bottom-left {
   left: 20px;
+  pointer-events: bounding-box;
 }
 
 .link {
