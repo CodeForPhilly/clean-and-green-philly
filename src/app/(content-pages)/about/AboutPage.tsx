@@ -10,7 +10,7 @@ export default function AboutPage() {
   return (
     <>
       <h1 className="heading-3xl font-bold mb-6">About This Project</h1>
-      <p className="body-lg mb-12">
+      <p className="body-lg mb-6">
         Philadelphia has a gun violence problem. Clean & Green Philly empowers
         Philadelphians to take action to solve it.
       </p>
