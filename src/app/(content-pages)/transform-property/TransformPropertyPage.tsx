@@ -25,7 +25,7 @@ export default function TransformPropertyPage() {
   return (
     <>
       <h1 className="heading-3xl font-bold mb-6">Transform a Property</h1>
-      <p className="body-lg">
+      <p className="body-lg mb-12">
         After gaining access to the property, you can transform a property to
         improve the quality of life in the neighborhood.
       </p>
@@ -37,7 +37,7 @@ export default function TransformPropertyPage() {
             "A Philadelphia lot before a clean up and the same lot, filled with trees and greenery after a clean up."
           }
           placeholder="blur"
-          className="w-full mt-6 overflow-hidden rounded-[20px] aspect-video md:aspect-auto object-cover object-center"
+          className="w-full overflow-hidden rounded-[20px] aspect-video md:aspect-auto object-cover object-center"
         />
       </div>
 
