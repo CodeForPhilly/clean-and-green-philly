@@ -12,6 +12,7 @@ import {
 } from "@phosphor-icons/react";
 import { ThemeButton } from "./ThemeButton";
 import { useFilter } from "@/context/FilterContext";
+import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
 
 type SidePanelControlBarProps = {
   currentView: string;
@@ -39,16 +40,6 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
     useState(false);
 
   const filterCount = Object.keys(appFilter).length;
-
-  const getPropertyIdsFromLocalStorage = (): string[] => {
-    let data = localStorage.getItem("opa_ids");
-
-    if (data) {
-      return Object.keys(JSON.parse(data).opa_ids);
-    } else {
-      return [];
-    }
-  };
 
   const onClickSavedButton = () => {
     let propertyIds = getPropertyIdsFromLocalStorage();
