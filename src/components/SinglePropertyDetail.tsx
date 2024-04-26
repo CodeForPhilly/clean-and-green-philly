@@ -16,6 +16,7 @@ import ContentCard from "./ContentCard";
 import cleanup from "@/images/transform-a-property.png";
 import { PiEyeSlash } from "react-icons/pi";
 import { useFilter } from "@/context/FilterContext";
+import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -148,6 +149,13 @@ const SinglePropertyDetail = ({
           type: "SET_DIMENSIONS",
           property: "OPA_ID",
           dimensions: [],
+        });
+      } else {
+        let propertyIds = getPropertyIdsFromLocalStorage();
+        dispatch({
+          type: "SET_DIMENSIONS",
+          property: "OPA_ID",
+          dimensions: [...propertyIds],
         });
       }
     } else {
