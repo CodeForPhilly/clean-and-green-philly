@@ -15,6 +15,7 @@ import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
 import ContentCard from "./ContentCard";
 import cleanup from "@/images/transform-a-property.png";
 import { PiEyeSlash } from "react-icons/pi";
+import { useFilter } from "@/context/FilterContext";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -49,6 +50,8 @@ const SinglePropertyDetail = ({
   setIsStreetViewModalOpen,
   updateCurrentView,
 }: PropertyDetailProps) => {
+  const { dispatch } = useFilter();
+
   const [shareLabel, setShareLabel] = useState<boolean>(false);
   const [hover, setHover] = useState<boolean>(false);
   const [isPropertySavedToLocalStorage, setIsPropertySavedToLocalStorage] =
@@ -139,6 +142,14 @@ const SinglePropertyDetail = ({
     if (parsedLocalStorageData.opa_ids[OPA_ID]) {
       removePropertyIdFromLocalStorage(parsedLocalStorageData);
       setIsPropertySavedToLocalStorage(false);
+
+      if (parsedLocalStorageData.count === 0) {
+        dispatch({
+          type: "SET_DIMENSIONS",
+          property: "OPA_ID",
+          dimensions: [],
+        });
+      }
     } else {
       savePropertyIdToLocalStorage(parsedLocalStorageData);
       setIsPropertySavedToLocalStorage(true);
