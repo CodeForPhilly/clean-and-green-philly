@@ -10,13 +10,13 @@ export default function AboutPage() {
   return (
     <>
       <h1 className="heading-3xl font-bold mb-6">About This Project</h1>
-      <p className="body-md mb-4">
+      <p className="body-lg mb-6">
         Philadelphia has a gun violence problem. Clean & Green Philly empowers
         Philadelphians to take action to solve it.
       </p>
       <br></br>
 
-      <div id={"problem"} className="my-20">
+      <div id={"problem"} className="mb-20">
         <InfoGraphicSection
           header={{ text: "The Gun Violence Problem" }}
           body={{
