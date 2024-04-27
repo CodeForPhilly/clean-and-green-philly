@@ -4,6 +4,8 @@ import { PiX } from "react-icons/pi";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton } from "./ThemeButton";
 import { rcos, neighborhoods, zoning } from "./Filters/filterOptions";
+import { access_options, PropertyAccess } from "@/config/propertyAccessOptions";
+
 
 const filters = [
   {
@@ -13,6 +15,7 @@ const filters = [
     type: "buttonGroup",
   },
   {
+    // COMBINED FILTER
     property: "access_process",
     display: "Access Process",
     options: ["Buy Property", "Land Bank", "Private Land Use Agreement"],
@@ -44,18 +47,21 @@ const filters = [
     type: "buttonGroup",
   },
   {
+    // COMBINED FILTER
     property: "tactical_urbanism",
     display: "Tactical Urbanism",
     options: ["Yes", "No"],
     type: "buttonGroup",
   },
   {
+    // COMBINED FILTER
     property: "conservatorship",
     display: "Conservatorship Eligible",
     options: ["Yes", "No"],
     type: "buttonGroup",
   },
   {
+    // COMBINED FILTER
     property: "side_yard_eligible",
     display: "Side Yard Eligible",
     options: ["Yes", "No"],
@@ -66,6 +72,13 @@ const filters = [
     display: "LLC Owner",
     options: ["Yes", "No"],
     type: "buttonGroup",
+  },
+  {
+    // COMBINED FILTER --> "Get Permission from the Owner" (Private Land Use Agreement), "Buy Affordably from the Owner" (Buy Property), "Buy Through the Land Bank" (Land Bank)
+    property: "get_access",
+    display: "Get Access",
+    options: ["TACTICAL_URBANISM", "PRIVATE_LAND_USE", "BUY_FROM_OWNER", "SIDE_YARD", "LAND_BANK", "CONSERVATORSHIP"],
+    type: "panels",
   },
 ];
 
