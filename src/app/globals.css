@@ -297,7 +297,7 @@ a .bg-color-none {
 }
 
 .panelDefault:hover {
-  @apply ease-in bg-gray-200;
+  @apply ease-out bg-gray-200;
 }
 
 .panelDefault:active {
@@ -309,7 +309,7 @@ a .bg-color-none {
 }
 
 .panelSelected:hover {
-  @apply ease-in bg-blue-300;
+  @apply ease-out bg-blue-300;
 }
 
 .panelSelected:active {

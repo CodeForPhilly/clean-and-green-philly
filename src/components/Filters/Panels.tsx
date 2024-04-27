@@ -71,34 +71,14 @@ const Panels: FC<PanelsProps> = ({
     const optionPanels = options.map((option, index) => {
         const panel = panel_access_options[option]
         const Icon = panel.icon;
-        const panelStyle = () => {
-            if (selectedPanelKeys[panel.property]) {
-                if (selectedPanelKeys[panel.property].includes(panel.dimension)) {
-                    return "panelSelected"
-                } else {
-                    return "panelDefault"
-                }
-            } else {
-                return "panelDefault"
-            }
-        }
-        const checkMark = () => {
-            if (selectedPanelKeys[panel.property]) {
-                if (selectedPanelKeys[panel.property].includes(panel.dimension)) {
-                    return <Check className="self-end size-5" />
-                } else {
-                    return undefined
-                }
-            } else {
-                return undefined
-            }
-        }
+        const isSelected = (selectedPanelKeys[panel.property] && selectedPanelKeys[panel.property].includes(panel.dimension)) ? true : false;
 
         return (
             <Card
                 key={index}
-                className = { panelStyle() }
+                className = {isSelected ? "panelSelected " : "panelDefault"}
                 isPressable
+                isHoverable={false}
                 onPress={() => toggleDimensionForPanel(panel.dimension, panel.property)}
                 shadow="none"
             >
@@ -116,7 +96,7 @@ const Panels: FC<PanelsProps> = ({
 
                     </div>
                     <div >
-                        {checkMark()}
+                        {isSelected ? <Check className="self-end size-5" /> : undefined}
                     </div>
                 </CardBody>
             </Card>
