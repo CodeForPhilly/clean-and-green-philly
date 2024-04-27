@@ -23,22 +23,15 @@ export interface PropertyAccessOption {
   icon: IconType | React.ComponentType<any>;
   header: string;
   description: string;
-  alt_description?: string;
-  dimension: string;
-  property: string;
   slug?: string;
 }
 
-export const access_options: Record<PropertyAccess | string, PropertyAccessOption> = {
+export const access_options: Record<PropertyAccess, PropertyAccessOption> = {
   [PropertyAccess.PRIVATE_LAND_USE]: {
     icon: PiHandshake,
     header: "Get permission from Owner",
     description:
       'Properties, given the price an owner, getting a "private land use agreement" seems best.',
-    alt_description:
-      'Properties where you could get a "private land use agreement"',
-    dimension: 'Private Land Use Agreement',
-    property: 'access_process',
     slug: "/get-access#private-land-use",
   },
   [PropertyAccess.TACTICAL_URBANISM]: {
@@ -46,20 +39,12 @@ export const access_options: Record<PropertyAccess | string, PropertyAccessOptio
     header: "Tactical Urbanism",
     description:
       "Properties likely safe enough to clean without express permission from the owner.",
-    alt_description:
-      'Properties likely safe to quickly clean without express permission',
-    dimension: 'Yes',
-    property: 'tactical_urbanism'
   },
   [PropertyAccess.BUY_FROM_OWNER]: {
     icon: PiMoney,
     header: "Buy Affordably from Owner",
     description:
       "Properties cheap enough to buy, with an estimated market value under $1,000.",
-    alt_description:
-      'Properties with a market value under $1,000',
-    dimension: 'Buy Property',
-    property: 'access_process',
     slug: "/get-access#buy-from-owner",
   },
   [PropertyAccess.SIDE_YARD]: {
@@ -67,10 +52,6 @@ export const access_options: Record<PropertyAccess | string, PropertyAccessOptio
     header: "Purchase as a Side Yard",
     description:
       'If you live next to this property, you may purchase this through the "Side Yard Programs"',
-    alt_description:
-      'Properties eligible for the "Side Yard Program"',
-    dimension: 'Yes',
-    property: 'side_yard_eligible',
     slug: "/get-access#side-yard",
   },
   [PropertyAccess.LAND_BANK]: {
@@ -78,10 +59,6 @@ export const access_options: Record<PropertyAccess | string, PropertyAccessOptio
     header: "Gain through Land Bank",
     description:
       "Properties owned by the Land Bank and available to buy with discounted prices.",
-    alt_description:
-      'Properties available for discount prices from the Land Bank',
-    dimension: 'Land Bank',
-    property: 'access_process',
     slug: "/get-access#land-bank",
   },
   [PropertyAccess.CONSERVATORSHIP]: {
@@ -89,10 +66,6 @@ export const access_options: Record<PropertyAccess | string, PropertyAccessOptio
     header: "Get Through Conservatorship",
     description:
       'Properties, abandoned and unsafe, which can be gained through a legal "conservatorship"',
-    alt_description:
-      'Abandoned and unsafe properties you can gain through a legal process',
-    dimension: 'Yes',
-    property: 'conservatorship',
     slug: "/get-access#conservatorship",
   },
   [PropertyAccess.DO_NOTHING]: {
@@ -100,8 +73,6 @@ export const access_options: Record<PropertyAccess | string, PropertyAccessOptio
     header: "Do Nothing",
     description:
       "We believe access this property legally is too complicated to justify the effort.",
-    dimension: "",
-    property: "",
     slug: "/get-access#do-nothing",
   },
 };
