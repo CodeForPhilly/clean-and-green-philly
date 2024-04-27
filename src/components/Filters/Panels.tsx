@@ -1,7 +1,7 @@
 "use client";
 
 import React, { FC } from "react";
-import { Button, Card, Chip } from "@nextui-org/react";
+import { Button, Card, CardBody, Chip } from "@nextui-org/react";
 import { Check } from "@phosphor-icons/react";
 
 import { access_options, PropertyAccess, PropertyAccessOption } from "@/config/propertyAccessOptions";
@@ -21,32 +21,51 @@ const Panels: FC<PanelsProps> = ({
     const optionPanels = options.map((option) => {
         const panel = access_options[option]
         const Icon = panel.icon;
+        const panelStyle = () => {
+            if (selectedPanelKeys[panel.property]) {
+                if (selectedPanelKeys[panel.property].includes(panel.dimension)) {
+                    return "panelSelected"
+                } else {
+                    return "panelDefault"
+                }
+            } else {
+                return "panelDefault"
+            }
+        }
+        const checkMark = () => {
+            if (selectedPanelKeys[panel.property]) {
+                if (selectedPanelKeys[panel.property].includes(panel.dimension)) {
+                    return <Check className="w-3 w-3.5 max-h-6" />
+                } else {
+                    return undefined
+                }
+            } else {
+                return undefined
+            }
+        }
 
         return (
-            <Button
-                className={`flex flex-row items-center rounded-md p-3 space-x-3 bg-gray-100 text-gray-900`}
-                onClick={(e) => {
-                    toggleDimensionForPanel(panel.dimension, panel.property)
-                }}
+            <Card
+                className = { panelStyle() }
+                isPressable
+                onPress={() => toggleDimensionForPanel(panel.dimension, panel.property)}
             >
-                <div >
-                    <Icon aria-hidden={true} className="size-8" />
-                </div>
-                <div className="flex flex-row items-center sm:items-start sm:flex-col lg:flex-row lg:items-center">
-                    <div className="flex flex-col flex-0">
-                    <div className="heading-md">{panel.header}</div>
-                    <div className="body-sm">{panel.alt_description}</div>
+                <CardBody className="flex flex-row space-x-1 py-[0px] px-[0px]">
+                    <div >
+                        <Icon aria-hidden={true} className="size-8" />
                     </div>
-                </div>
-                {/* <div className="flex-1">
-                    <PiCaretRight
-                    aria-hidden={true}
-                    className={clsx("size-6", {
-                        ["invisible"]: !option.slug,
-                    })}
-                    />
-                </div> */}
-            </Button>
+                    <div className="flex flex-row items-center sm:items-start sm:flex-col lg:flex-row lg:items-center">
+                        <div className="flex flex-col flex-0">
+                        <div className="heading-md">{panel.header}</div>
+                        <div className="body-sm">{panel.alt_description}</div>
+                        </div>
+                    </div>
+                    <div >
+                        {checkMark()}
+                    </div>
+
+                </CardBody>
+            </Card>
         )
     })
 
