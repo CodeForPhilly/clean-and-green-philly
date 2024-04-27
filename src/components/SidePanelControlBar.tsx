@@ -1,7 +1,6 @@
 "use client";
 
-import React, { FC, useRef, useState } from "react";
-import { Button } from "@nextui-org/react";
+import React, { FC, useRef } from "react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import {
   BookmarkSimple,
@@ -19,7 +18,9 @@ type SidePanelControlBarProps = {
   featureCount: number;
   loading: boolean;
   savedPropertyCount: number;
+  shouldFilterSavedProperties: boolean;
   smallScreenMode: string;
+  setShouldFilterSavedProperties: (shouldFilter: boolean) => void;
   updateCurrentView: (view: BarClickOptions) => void;
   updateSmallScreenMode: () => void;
 };
@@ -29,15 +30,15 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   featureCount,
   loading,
   savedPropertyCount,
+  shouldFilterSavedProperties,
   smallScreenMode,
+  setShouldFilterSavedProperties,
   updateCurrentView,
   updateSmallScreenMode,
 }) => {
   const filterRef = useRef<HTMLButtonElement | null>(null);
   const savedRef = useRef<HTMLButtonElement | null>(null);
   const { dispatch, appFilter } = useFilter();
-  const [shouldFilterSavedProperties, setShouldFilterSavedProperties] =
-    useState(false);
 
   const filterCount = Object.keys(appFilter).length;
 

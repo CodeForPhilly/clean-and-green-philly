@@ -51,6 +51,7 @@ interface PropertyDetailSectionProps {
   selectedProperty: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
+  shouldFilterSavedProperties: boolean;
   smallScreenMode: string;
   updateCurrentView: (view: BarClickOptions) => void;
 }
@@ -62,6 +63,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   selectedProperty,
   setSelectedProperty,
   setIsStreetViewModalOpen,
+  shouldFilterSavedProperties,
   updateCurrentView,
   smallScreenMode,
 }) => {
@@ -181,6 +183,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       property={selectedProperty}
       setSelectedProperty={setSelectedProperty}
       setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+      shouldFilterSavedProperties={shouldFilterSavedProperties}
       updateCurrentView={updateCurrentView}
     />
   ) : (
@@ -196,7 +199,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             }}
           >
             <TableHeader>
-              {tableCols.map(column => (
+              {tableCols.map((column) => (
                 <TableColumn key={column.key}>{column.label}</TableColumn>
               ))}
             </TableHeader>
@@ -207,12 +210,13 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                   onClick={() => {
                     setSelectedProperty(
                       items.find(
-                        item => properties?.OPA_ID === item?.properties?.OPA_ID,
-                      ) || null,
+                        (item) =>
+                          properties?.OPA_ID === item?.properties?.OPA_ID
+                      ) || null
                     );
                   }}
                 >
-                  {columnKey => (
+                  {(columnKey) => (
                     <TableCell>{getKeyValue(properties, columnKey)}</TableCell>
                   )}
                 </TableRow>
@@ -237,7 +241,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 showControls
                 page={page}
                 total={pages}
-                onChange={newPage => setPage(newPage)}
+                onChange={(newPage) => setPage(newPage)}
                 className="shadow-none"
                 renderItem={renderItem}
                 disableCursorAnimation={true}

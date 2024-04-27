@@ -55,6 +55,8 @@ const MapPage = ({ params }: MapPageProps) => {
   });
   const [isLinkedPropertyParsed, setIsLinkedPropertyParsed] = useState(false);
   const [savedPropertyCount, setSavedPropertyCount] = useState(0);
+  const [shouldFilterSavedProperties, setShouldFilterSavedProperties] =
+    useState(false);
 
   const router = useRouter();
 
@@ -174,7 +176,9 @@ const MapPage = ({ params }: MapPageProps) => {
     featureCount,
     loading,
     savedPropertyCount,
+    shouldFilterSavedProperties,
     smallScreenMode,
+    setShouldFilterSavedProperties,
     updateCurrentView,
     updateSmallScreenMode,
   };
@@ -202,7 +206,7 @@ const MapPage = ({ params }: MapPageProps) => {
     } else {
       setSavedPropertyCount(0);
     }
-  }, [currentView, selectedProperty]);
+  }, [currentView, selectedProperty, shouldFilterSavedProperties]);
 
   return (
     <FilterProvider>
@@ -293,6 +297,7 @@ const MapPage = ({ params }: MapPageProps) => {
                   selectedProperty={selectedProperty}
                   setSelectedProperty={setSelectedProperty}
                   setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+                  shouldFilterSavedProperties={shouldFilterSavedProperties}
                   smallScreenMode={smallScreenMode}
                   updateCurrentView={updateCurrentView}
                 />
