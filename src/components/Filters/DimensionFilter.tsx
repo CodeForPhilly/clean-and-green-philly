@@ -2,7 +2,6 @@
 
 import React, { useState, FC } from "react";
 import { useFilter } from "@/context/FilterContext";
-import { PropertyAccess } from "@/config/propertyAccessOptions";
 import ButtonGroup from "./ButtonGroup";
 import MultiSelect from "./MultiSelect";
 import Panels from "./Panels";
@@ -113,7 +112,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     <div className="pt-3 pb-6">
       <div className="flex flex-col mb-2">
         <h2 className="heading-lg">{display}</h2>
-        {(property === "access_process" || property === "priority_level") && (
+        {(property === "get_access" || property === "priority_level") && (
           <p className="body-sm text-gray-500 w-[90%] my-1">
             {filterDescription.desc}
             <a

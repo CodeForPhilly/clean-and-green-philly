@@ -1,9 +1,8 @@
 "use client";
 
 import React, { FC } from "react";
-import { Button, Card, CardBody, Chip } from "@nextui-org/react";
+import { Card, CardBody } from "@nextui-org/react";
 import { Check } from "@phosphor-icons/react";
-
 import { access_options, PropertyAccess, PropertyAccessOption } from "@/config/propertyAccessOptions";
 
 type PanelFilterOptions = PropertyAccessOption & {
