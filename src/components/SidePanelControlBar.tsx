@@ -37,7 +37,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
     <div>{/* Keep empty while loading */}</div>
   ) : (
     <>
-      <div className="flex justify-between items-center bg-white border-b-[1px] border-[#12121215] p-2 h-14">
+      <div className="flex justify-between -mx-6 px-12 top-0 py-4 z-10 bg-white">
         {/* Left-aligned content: Total Properties in View */}
         <ThemeButton
           color="tertiary"
