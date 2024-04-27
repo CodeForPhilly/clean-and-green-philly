@@ -86,7 +86,7 @@ const Panels: FC<PanelsProps> = ({
         const checkMark = () => {
             if (selectedPanelKeys[panel.property]) {
                 if (selectedPanelKeys[panel.property].includes(panel.dimension)) {
-                    return <Check className="w-3 w-3.5 max-h-6" />
+                    return <Check className="self-end size-5" />
                 } else {
                     return undefined
                 }
@@ -101,21 +101,24 @@ const Panels: FC<PanelsProps> = ({
                 className = { panelStyle() }
                 isPressable
                 onPress={() => toggleDimensionForPanel(panel.dimension, panel.property)}
+                shadow="none"
             >
-                <CardBody className="flex flex-row space-x-1 py-[0px] px-[0px]">
-                    <div >
-                        <Icon aria-hidden={true} className="size-8" />
-                    </div>
-                    <div className="flex flex-row items-center sm:items-start sm:flex-col lg:flex-row lg:items-center">
-                        <div className="flex flex-col flex-0">
-                        <div className="heading-md">{panel.header}</div>
-                        <div className="body-sm">{panel.alt_description}</div>
+                <CardBody className="flex flex-row justify-between p-[0px]">
+                    <div className="flex flex-row space-x-1">
+                        <div >
+                            <Icon aria-hidden={true} className="size-8" />
                         </div>
+                        <div className="flex flex-row items-center sm:items-start sm:flex-col lg:flex-row lg:items-center">
+                            <div className="flex flex-col flex-0">
+                            <div className="heading-md">{panel.header}</div>
+                            <div className="body-sm">{panel.alt_description}</div>
+                            </div>
+                        </div>
+
                     </div>
                     <div >
                         {checkMark()}
                     </div>
-
                 </CardBody>
             </Card>
         )
