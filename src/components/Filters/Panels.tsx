@@ -91,8 +91,8 @@ const Panels: FC<PanelsProps> = ({
         shadow="none"
       >
         <CardBody className="flex flex-row justify-between p-[0px]">
-          <div className="flex flex-row space-x-1">
-            <div>
+          <div className="flex flex-row">
+            <div className="mr-3">
               <Icon aria-hidden={true} className="size-8" />
             </div>
             <div className="flex flex-row items-center sm:items-start sm:flex-col lg:flex-row lg:items-center">
