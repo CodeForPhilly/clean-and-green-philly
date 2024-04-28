@@ -40,7 +40,12 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   const savedRef = useRef<HTMLButtonElement | null>(null);
   const { dispatch, appFilter } = useFilter();
 
-  const filterCount = Object.keys(appFilter).length;
+  let filterCount = Object.keys(appFilter).length;
+
+  if (shouldFilterSavedProperties) {
+    // Exclude OPA_ID from filterCount, which counts OPA_ID as a filter by default
+    filterCount--;
+  }
 
   const onClickSavedButton = () => {
     let propertyIds = getPropertyIdsFromLocalStorage();
