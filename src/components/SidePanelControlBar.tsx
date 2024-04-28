@@ -1,9 +1,9 @@
 "use client";
 
 import React, { FC, useRef } from "react";
-import { Button } from "@nextui-org/react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import {
+  BookmarkSimple,
   DownloadSimple,
   Funnel,
   GlobeHemisphereWest,
@@ -11,12 +11,16 @@ import {
 } from "@phosphor-icons/react";
 import { ThemeButton } from "./ThemeButton";
 import { useFilter } from "@/context/FilterContext";
+import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
 
 type SidePanelControlBarProps = {
   currentView: string;
   featureCount: number;
   loading: boolean;
+  savedPropertyCount: number;
+  shouldFilterSavedProperties: boolean;
   smallScreenMode: string;
+  setShouldFilterSavedProperties: (shouldFilter: boolean) => void;
   updateCurrentView: (view: BarClickOptions) => void;
   updateSmallScreenMode: () => void;
 };
@@ -25,13 +29,38 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   currentView,
   featureCount,
   loading,
+  savedPropertyCount,
+  shouldFilterSavedProperties,
   smallScreenMode,
+  setShouldFilterSavedProperties,
   updateCurrentView,
   updateSmallScreenMode,
 }) => {
   const filterRef = useRef<HTMLButtonElement | null>(null);
-  const { appFilter } = useFilter();
+  const savedRef = useRef<HTMLButtonElement | null>(null);
+  const { dispatch, appFilter } = useFilter();
+
   const filterCount = Object.keys(appFilter).length;
+
+  const onClickSavedButton = () => {
+    let propertyIds = getPropertyIdsFromLocalStorage();
+
+    if (shouldFilterSavedProperties) {
+      setShouldFilterSavedProperties(false);
+      dispatch({
+        type: "SET_DIMENSIONS",
+        property: "OPA_ID",
+        dimensions: [],
+      });
+    } else {
+      setShouldFilterSavedProperties(true);
+      dispatch({
+        type: "SET_DIMENSIONS",
+        property: "OPA_ID",
+        dimensions: [...propertyIds],
+      });
+    }
+  };
 
   return loading ? (
     <div>{/* Keep empty while loading */}</div>
@@ -65,6 +94,25 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           role="region"
           aria-label="controls"
         >
+          {savedPropertyCount > 0 ? (
+            <ThemeButton
+              color="tertiary"
+              label={
+                <div className="lg:space-x-1 body-md">
+                  <span className="max-lg:hidden">Saved</span>
+                </div>
+              }
+              onPress={onClickSavedButton}
+              isSelected={shouldFilterSavedProperties}
+              startContent={<BookmarkSimple />}
+              className={`max-lg:min-w-[4rem] ${
+                smallScreenMode === "map" ? "max-sm:hidden" : ""
+              }`}
+              ref={savedRef}
+            />
+          ) : (
+            <></>
+          )}
           <ThemeButton
             color="tertiary"
             label={
@@ -86,7 +134,6 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             data-hover={false}
             ref={filterRef}
           />
-
           <ThemeButton
             color="tertiary"
             aria-label="Download"

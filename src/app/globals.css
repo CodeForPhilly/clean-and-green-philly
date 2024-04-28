@@ -292,6 +292,30 @@ a .bg-color-none {
   @apply bg-blue-300;
 }
 
+.panelDefault {
+  @apply flex flex-row items-center rounded-md p-3 space-x-3 bg-gray-100 text-gray-900;
+}
+
+.panelDefault:hover {
+  @apply ease-out bg-gray-200;
+}
+
+.panelDefault:active {
+  @apply ease-in bg-gray-300;
+}
+
+.panelSelected {
+  @apply flex flex-row items-center rounded-md p-3 space-x-3 bg-blue-200 text-blue-800;
+}
+
+.panelSelected:hover {
+  @apply ease-out bg-blue-300;
+}
+
+.panelSelected:active {
+  @apply ease-in bg-blue-400;
+}
+
 /* Centers the properties for small screens only, tailwind breakpoint */
 @media screen and (max-width: 639px) {
   .side-panel-container {
