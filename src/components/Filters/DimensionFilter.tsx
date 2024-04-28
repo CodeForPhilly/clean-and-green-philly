@@ -4,6 +4,7 @@ import React, { useState, FC } from "react";
 import { useFilter } from "@/context/FilterContext";
 import ButtonGroup from "./ButtonGroup";
 import MultiSelect from "./MultiSelect";
+import Panels from "./Panels";
 
 type DimensionFilterProps = {
   property: string;
@@ -24,6 +25,24 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
     appFilter[property]?.values || []
   );
+  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{[property: string]: string[]}>({})
+
+  const toggleDimensionForPanel = (dimension: string, panel_property: string) => {
+    let newSelectedPanelKeys
+    if (selectedPanelKeys[panel_property]) {
+      newSelectedPanelKeys = selectedPanelKeys[panel_property].includes(dimension)
+        ? selectedPanelKeys[panel_property].filter((key) => key !== dimension)
+        : [...selectedPanelKeys[panel_property], dimension];
+    } else {
+      newSelectedPanelKeys = [dimension]
+    }
+    setSelectedPanelkeys({...selectedPanelKeys, [panel_property]: newSelectedPanelKeys});
+    dispatch({
+      type: "SET_DIMENSIONS",
+      property: panel_property,
+      dimensions: newSelectedPanelKeys,
+    });
+  }
 
   const toggleDimension = (dimension: string) => {
     const newSelectedKeys = selectedKeys.includes(dimension)
@@ -57,6 +76,14 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           toggleDimension={toggleDimension}
         />
       );
+    } else if (type === "panels") {
+      return (
+        <Panels 
+          options={options}
+          selectedPanelKeys={selectedPanelKeys}
+          toggleDimensionForPanel={toggleDimensionForPanel}
+        />
+      )
     } else {
       return (
         <MultiSelect
@@ -85,7 +112,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     <div className="pt-3 pb-6">
       <div className="flex flex-col mb-2">
         <h2 className="heading-lg">{display}</h2>
-        {(property === "access_process" || property === "priority_level") && (
+        {(property === "get_access" || property === "priority_level") && (
           <p className="body-sm text-gray-500 w-[90%] my-1">
             {filterDescription.desc}
             <a
