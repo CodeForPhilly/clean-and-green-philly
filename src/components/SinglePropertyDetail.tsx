@@ -187,6 +187,16 @@ const SinglePropertyDetail = ({
 
         {/* Right-aligned content: Buttons */}
         <div className="flex items-center">
+          <ThemeButton
+            color="tertiary"
+            label={isPropertySavedToLocalStorage ? "Saved" : "Save"}
+            startContent={<BookmarkSimple />}
+            onPress={() => {
+              onClickSaveButton();
+            }}
+            isSelected={isPropertySavedToLocalStorage}
+          />
+
           <Tooltip
             disableAnimation
             closeDelay={100}
@@ -209,16 +219,6 @@ const SinglePropertyDetail = ({
               onMouseLeave={() => setHover(false)}
             />
           </Tooltip>
-
-          <ThemeButton
-            color="tertiary"
-            label={isPropertySavedToLocalStorage ? "Saved" : "Save"}
-            startContent={<BookmarkSimple />}
-            onPress={() => {
-              onClickSaveButton();
-            }}
-            isSelected={isPropertySavedToLocalStorage}
-          />
         </div>
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
