@@ -38,7 +38,7 @@ const MapPage = ({ params }: MapPageProps) => {
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
   const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
-    null,
+    null
   );
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
@@ -54,6 +54,9 @@ const MapPage = ({ params }: MapPageProps) => {
     padding: { top: 0, bottom: 0, left: 0, right: 0 },
   });
   const [isLinkedPropertyParsed, setIsLinkedPropertyParsed] = useState(false);
+  const [savedPropertyCount, setSavedPropertyCount] = useState(0);
+  const [shouldFilterSavedProperties, setShouldFilterSavedProperties] =
+    useState(false);
 
   const router = useRouter();
 
@@ -68,7 +71,7 @@ const MapPage = ({ params }: MapPageProps) => {
       // Get property metadata
       try {
         const objectMetadataResponse = await fetch(
-          `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`,
+          `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`
         );
         const objectMetadata = await objectMetadataResponse.json();
         const { metadata } = objectMetadata;
@@ -104,9 +107,9 @@ const MapPage = ({ params }: MapPageProps) => {
     if (!featuresInView || !linkedPropertyRef.current) return;
 
     const linkedProperty = featuresInView.find(
-      feature =>
+      (feature) =>
         feature.properties.OPA_ID.toString() ===
-        linkedPropertyRef?.current?.toString(),
+        linkedPropertyRef?.current?.toString()
     );
 
     if (
@@ -133,7 +136,7 @@ const MapPage = ({ params }: MapPageProps) => {
         (Object.keys(params).length === 0 && prevCoordinateRef.current))
     ) {
       setSmallScreenMode((prev: string) =>
-        prev === "map" ? "properties" : "map",
+        prev === "map" ? "properties" : "map"
       );
     }
   };
@@ -155,7 +158,7 @@ const MapPage = ({ params }: MapPageProps) => {
     sizeRef.current = window.innerWidth;
     const updateWindowDimensions = () => {
       if (sizeRef.current >= 640 && window.innerWidth < 640) {
-        setCurrentView(c => {
+        setCurrentView((c) => {
           setSmallScreenMode(c !== "detail" ? "properties" : prevRef.current);
           return c;
         });
@@ -172,7 +175,10 @@ const MapPage = ({ params }: MapPageProps) => {
     currentView,
     featureCount,
     loading,
+    savedPropertyCount,
+    shouldFilterSavedProperties,
     smallScreenMode,
+    setShouldFilterSavedProperties,
     updateCurrentView,
     updateSmallScreenMode,
   };
@@ -189,6 +195,18 @@ const MapPage = ({ params }: MapPageProps) => {
       setSmallScreenMode("properties");
     }
   }, [selectedProperty]);
+
+  // Get number of property IDs cached in Web browser's localStorage.
+  // In the future, localStorage caching might be replaced by an HTTP call to an API or database.
+  useEffect(() => {
+    const opa_ids = localStorage.getItem("opa_ids");
+
+    if (opa_ids && JSON.parse(opa_ids).count) {
+      setSavedPropertyCount(JSON.parse(opa_ids).count);
+    } else {
+      setSavedPropertyCount(0);
+    }
+  }, [currentView, selectedProperty, shouldFilterSavedProperties]);
 
   return (
     <FilterProvider>
@@ -279,6 +297,7 @@ const MapPage = ({ params }: MapPageProps) => {
                   selectedProperty={selectedProperty}
                   setSelectedProperty={setSelectedProperty}
                   setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+                  shouldFilterSavedProperties={shouldFilterSavedProperties}
                   smallScreenMode={smallScreenMode}
                   updateCurrentView={updateCurrentView}
                 />
@@ -307,7 +326,7 @@ const StreetViewModal: React.FC<{
         // return focus
         document.getElementById("outside-iframe-element")?.focus();
         const outsideElement = document.getElementById(
-          "outside-iframe-element",
+          "outside-iframe-element"
         );
         outsideElement?.focus();
       } else if (event.key === "Tab") {
@@ -316,7 +335,7 @@ const StreetViewModal: React.FC<{
         if (container && !container.contains(document.activeElement)) {
           // If focus goes outside the container, bring it back to the first focusable element inside the container
           const focusableElements = container.querySelectorAll(
-            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+            'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
           );
           if (focusableElements.length > 0) {
             event.preventDefault();
@@ -336,7 +355,7 @@ const StreetViewModal: React.FC<{
         // return focus
         document.getElementById("outside-iframe-element")?.focus();
         const outsideElement = document.getElementById(
-          "outside-iframe-element",
+          "outside-iframe-element"
         );
         outsideElement?.focus();
       }
