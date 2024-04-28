@@ -23,6 +23,7 @@ interface PropertyDetailProps {
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
   shouldFilterSavedProperties: boolean;
+  setShouldFilterSavedProperties: (shouldFilter: boolean) => void;
   updateCurrentView: (view: BarClickOptions) => void;
 }
 
@@ -51,6 +52,7 @@ const SinglePropertyDetail = ({
   setSelectedProperty,
   setIsStreetViewModalOpen,
   shouldFilterSavedProperties,
+  setShouldFilterSavedProperties,
   updateCurrentView,
 }: PropertyDetailProps) => {
   const { dispatch } = useFilter();
@@ -152,6 +154,7 @@ const SinglePropertyDetail = ({
           property: "OPA_ID",
           dimensions: [],
         });
+        setShouldFilterSavedProperties(false);
       } else {
         if (shouldFilterSavedProperties) {
           let propertyIds = getPropertyIdsFromLocalStorage();

@@ -83,11 +83,14 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         />
         <div className="sm:px-4 py-2">
           <h1 className="body-md">
-            <span className="font-bold">{featureCount.toLocaleString()} </span>
+            <span className="font-bold">
+              {shouldFilterSavedProperties
+                ? savedPropertyCount
+                : featureCount.toLocaleString()}{" "}
+            </span>
             Properties <span className="max-xl:hidden"> in View </span>
           </h1>
         </div>
-
         {/* Right-aligned content: Buttons */}
         <div
           className="flex items-center space-x-2"
