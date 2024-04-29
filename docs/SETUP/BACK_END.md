@@ -96,6 +96,8 @@ For example, if your repository is located at `user/Documents/vacant-lots-proj`,
 - In your `pg_hba.conf` file, add the following new lines: `host all all 10.0.0.0/24 md5` and `host all postgres 172.18.0.2/32 trust`. You may have to modify these based on your own IP address.
 - Finally, after restarting postgres, navigate back to the `data` subdirectory in the project and run `docker-compose --verbose up -d`. This should run successfuly; message
 
+The backend also works on WSL Ubuntu running Docker for Linux on Windows 10.
+
 3. When you're finished, and you want to shut down the Docker container, run `docker-compose down`.
 
 #### macOS
@@ -114,9 +116,14 @@ Format all python files by running:
 docker-compose run formatter
 ```
 
-#### Google Cloud
+#### Google Cloud (GCP)
 
-The map data is converted to the [pmtiles](https://docs.protomaps.com/pmtiles/) format and served from Google Cloud. For access to production credentials, contact the project lead. If you'd like to test the tile build locally, create your own credentials using their free trial.
+The map data is converted to the [pmtiles](https://docs.protomaps.com/pmtiles/) format and served from Google Cloud. For access to production credentials, contact the project lead.
+
+You can run the tile build locally with `docker-compose run vacant-lots-proj` to create a tile file and upload it to your own GCP bucket.  First, create your own GCP account using their free trial.  You will need to create the following assets in your GCP account and configure them in the environment variables in docker-compose.yml:
+- Under APIs and Services -> Credentials, create an API key and put that in the CLEAN_GREEN_GOOGLE_KEY variable
+- Under APIs and Services -> Credentials, create a service account.  After you create the service account you will download the service account private key file named like encoded-keyword-ddd-xxx.json.  Copy that to ~/.config/gcloud/application_default_credentials.json.  This path is specified by default in the volumes section of the docker compose file.
+- Go to Cloud storage -> Buckets and create a new bucket.  Name it logically, e.g. cleanandgreenphl-{your_initials}.  It has to be globally unique.  Grant access to at least write to the bucket to your service account.  Put your bucket name in the GOOGLE_CLOUD_BUCKET_NAME variable.  Make sure the tiles file in your bucket is publicly accessible by following Google's instructions online.
 
 The python script loads the tiles to Google Cloud as `vacant_properties_tiles_staging.pmtiles`. You can check this tileset by changing the config setting on the frontend `useStagingTiles` to `true`. If the tiles look OK, manually change the name in Google Cloud to remove the `_staging` and archive the previous copy.
 

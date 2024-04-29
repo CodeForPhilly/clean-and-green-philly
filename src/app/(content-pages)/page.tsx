@@ -36,8 +36,8 @@ const images = [
 
 const LandingPage: FC = () => {
   return (
-    <div className="container mx-auto px-4">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-10 my-10 md:mb-16">
+    <>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-10 mb-10 md:mb-16">
         <h1 className="heading-3xl font-extrabold leading-tight md:leading-[3rem] text-pretty text-left pr-9 col-span-2">
           Cleaning and greening vacant properties can{" "}
           <span className="text-green-600 font-extrabold">
@@ -90,7 +90,7 @@ const LandingPage: FC = () => {
                   href="https://controller.phila.gov/philadelphia-audits/fy23-anti-violence-budget/#/"
                   className="default"
                 >
-                  nearly 80% of the City of Philadelphia's anti-violence
+                  nearly 80% of the City of Philadelphia&rsquo;s anti-violence
                   spending
                 </a>
                 , but immediate, actionable approaches are also needed.
@@ -139,7 +139,7 @@ const LandingPage: FC = () => {
             text: "Community groups and organizations are taking action.",
           }}
           body={{
-            text: "Community groups have been cleaning up lots in their own neighborhoods for decades. Large organizations like the Pennsylvania Horticulture Society have cleaned, greened and now maintain thousands of lots. Their efforts have been instrumental in proving this works.",
+            text: "Community groups have been cleaning up lots in their own neighborhoods for decades. Large organizations like the Pennsylvania Horticulture Society have cleaned, greened and now maintain thousands of lots. Their efforts have been instrumental in proving this approach works.",
           }}
           image={{
             data: imageCleaning,
@@ -154,7 +154,7 @@ const LandingPage: FC = () => {
             text: "We are building the ultimate toolkit to help them.",
           }}
           body={{
-            text: "We are a passionate group of volunteers with a vision to empower citizens, groups, and organizations to do impactful data-driven environmental interventions in Philadelphia.",
+            text: "We are a group of volunteers with a vision to empower local residents and organizations to reduce gun violence through data-driven environmental interventions in Philadelphia.",
           }}
           component={
             <ol role="list" className="grid grid-cols-3 gap-5 w-full">
@@ -190,7 +190,7 @@ const LandingPage: FC = () => {
             as: "div",
           }}
           body={{
-            text: "You can search and find vacant properties that match your goals. Understand the data around that property and the surrounding neighborhoods.",
+            text: "You can search and find vacant properties that match your goals. Use our data to understand those properties and how to take action.",
           }}
           image={{
             data: imageStep1,
@@ -218,7 +218,7 @@ const LandingPage: FC = () => {
             as: "div",
           }}
           body={{
-            text: "How do you actually get access to the property legally? This is often confusing and baffling to people. We use the property data to suggest the most convenient options and provide guidance on the process.",
+            text: "Getting legal access to a property is often a barrier. We use our data to help you understand your options and get support.",
           }}
           image={{
             data: imageStep2,
@@ -244,7 +244,7 @@ const LandingPage: FC = () => {
             as: "div",
           }}
           body={{
-            text: "We guide you through the most common, convenient and affordable ways to transform properties and resources on how to do it.",
+            text: "We suggest a range of ways to transform properties to reduce gun violence, and connect you to resources to help you do it.",
           }}
           image={{
             data: imageStep3,
@@ -262,7 +262,7 @@ const LandingPage: FC = () => {
         <InfoGraphicSection
           header={{ text: "Let's Do This!" }}
           body={{
-            text: "There's groups and organizations throughout Philadelphia taking action and seeing impacts in their community and you can too.",
+            text: "Groups across Philadelphia are already taking action to reduce gun violence. Join them!",
           }}
           image={{
             data: imageGreened,
@@ -276,7 +276,7 @@ const LandingPage: FC = () => {
           }}
         />
       </div>
-    </div>
+    </>
   );
 };
 

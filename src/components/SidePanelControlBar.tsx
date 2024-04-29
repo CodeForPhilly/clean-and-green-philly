@@ -1,9 +1,9 @@
 "use client";
 
 import React, { FC, useRef } from "react";
-import { Button } from "@nextui-org/react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import {
+  BookmarkSimple,
   DownloadSimple,
   Funnel,
   GlobeHemisphereWest,
@@ -11,12 +11,16 @@ import {
 } from "@phosphor-icons/react";
 import { ThemeButton } from "./ThemeButton";
 import { useFilter } from "@/context/FilterContext";
+import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
 
 type SidePanelControlBarProps = {
   currentView: string;
   featureCount: number;
   loading: boolean;
+  savedPropertyCount: number;
+  shouldFilterSavedProperties: boolean;
   smallScreenMode: string;
+  setShouldFilterSavedProperties: (shouldFilter: boolean) => void;
   updateCurrentView: (view: BarClickOptions) => void;
   updateSmallScreenMode: () => void;
 };
@@ -25,13 +29,43 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   currentView,
   featureCount,
   loading,
+  savedPropertyCount,
+  shouldFilterSavedProperties,
   smallScreenMode,
+  setShouldFilterSavedProperties,
   updateCurrentView,
   updateSmallScreenMode,
 }) => {
   const filterRef = useRef<HTMLButtonElement | null>(null);
-  const { appFilter } = useFilter();
-  const filterCount = Object.keys(appFilter).length;
+  const savedRef = useRef<HTMLButtonElement | null>(null);
+  const { dispatch, appFilter } = useFilter();
+
+  let filterCount = Object.keys(appFilter).length;
+
+  if (shouldFilterSavedProperties) {
+    // Exclude OPA_ID from filterCount, which counts OPA_ID as a filter by default
+    filterCount--;
+  }
+
+  const onClickSavedButton = () => {
+    let propertyIds = getPropertyIdsFromLocalStorage();
+
+    if (shouldFilterSavedProperties) {
+      setShouldFilterSavedProperties(false);
+      dispatch({
+        type: "SET_DIMENSIONS",
+        property: "OPA_ID",
+        dimensions: [],
+      });
+    } else {
+      setShouldFilterSavedProperties(true);
+      dispatch({
+        type: "SET_DIMENSIONS",
+        property: "OPA_ID",
+        dimensions: [...propertyIds],
+      });
+    }
+  };
 
   return loading ? (
     <div>{/* Keep empty while loading */}</div>
@@ -54,19 +88,42 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         />
         <div className="sm:px-4 py-2">
           <h1 className="body-md">
-            <span className="font-bold">{featureCount.toLocaleString()} </span>
+            <span className="font-bold">
+              {shouldFilterSavedProperties
+                ? savedPropertyCount
+                : featureCount.toLocaleString()}{" "}
+            </span>
             Properties <span className="max-xl:hidden"> in View </span>
           </h1>
         </div>
-
         {/* Right-aligned content: Buttons */}
         <div
           className="flex items-center space-x-2"
           role="region"
           aria-label="controls"
         >
+          {savedPropertyCount > 0 ? (
+            <ThemeButton
+              color="tertiary"
+              label={
+                <div className="lg:space-x-1 body-md">
+                  <span className="max-lg:hidden">Saved</span>
+                </div>
+              }
+              onPress={onClickSavedButton}
+              isSelected={shouldFilterSavedProperties}
+              startContent={<BookmarkSimple />}
+              className={`max-lg:min-w-[4rem] ${
+                smallScreenMode === "map" ? "max-sm:hidden" : ""
+              }`}
+              ref={savedRef}
+            />
+          ) : (
+            <></>
+          )}
           <ThemeButton
             color="tertiary"
+            aria-label="Filter"
             label={
               <div className="lg:space-x-1 body-md">
                 <span className="max-lg:hidden">Filter</span>
@@ -86,12 +143,12 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             data-hover={false}
             ref={filterRef}
           />
-
           <ThemeButton
             color="tertiary"
             aria-label="Download"
             onPress={() => updateCurrentView("download")}
             startContent={<DownloadSimple />}
+            label={<span className="body-md max-lg:hidden">Download</span>}
             className={`max-md:min-w-[4rem] ${
               smallScreenMode === "map" ? "max-sm:hidden" : ""
             }`}

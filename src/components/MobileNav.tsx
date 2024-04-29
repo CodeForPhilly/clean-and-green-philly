@@ -17,12 +17,13 @@ const MobileNav: FC = () => {
 
   return (
     <Navbar
-      className="min-[850px]:hidden h-24 px-6"
+      className="min-[850px]:hidden h-24 -mx-1"
       onMenuOpenChange={setIsMenuOpen}
+      as="div"
       maxWidth="full"
     >
-      <NavbarContent className="max-sm:px-0">
-        <NavbarBrand>
+      <NavbarContent as="div" className="max-sm:px-0">
+        <NavbarBrand as="div">
           <Link href="/">
             <Image
               src="/logo.svg"
@@ -34,6 +35,7 @@ const MobileNav: FC = () => {
         </NavbarBrand>
 
         <NavbarMenuToggle
+          as="nav"
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="min-[850px]:hidden flex-end w-fit"
           icon={
@@ -47,7 +49,11 @@ const MobileNav: FC = () => {
       </NavbarContent>
 
       {/* (181.1 (width of menu) + 48px offset padding = 235.1) - 12px */}
-      <NavbarMenu className="top-20 left-[calc(100vw-223.1px)] z-75 px-0 w-fit mobileIconLinkNav">
+      <NavbarMenu
+        className="top-20 left-[calc(100vw-223.1px)] z-75 px-0 w-fit mobileIconLinkNav"
+        as="nav"
+        aria-label="primary"
+      >
         <IconLink
           icon={<PiBinoculars className="h-6 w-6" />}
           text="Find Properties"

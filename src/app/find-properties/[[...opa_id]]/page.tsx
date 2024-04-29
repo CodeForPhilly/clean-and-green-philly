@@ -18,6 +18,7 @@ import { Position } from "geojson";
 import { ThemeButton } from "../../../components/ThemeButton";
 import { useRouter } from "next/navigation";
 import { ViewState } from "react-map-gl";
+import { PiX } from "react-icons/pi";
 
 export type BarClickOptions = "filter" | "download" | "detail" | "list";
 
@@ -36,8 +37,9 @@ const MapPage = ({ params }: MapPageProps) => {
     useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
     useState<boolean>(false);
-  const [streetViewLocation, setStreetViewLocation] =
-    useState<Position | null>(null);
+  const [streetViewLocation, setStreetViewLocation] = useState<Position | null>(
+    null
+  );
   const [smallScreenMode, setSmallScreenMode] = useState("map");
   const prevRef = useRef("map");
   const sizeRef = useRef(0);
@@ -52,12 +54,40 @@ const MapPage = ({ params }: MapPageProps) => {
     padding: { top: 0, bottom: 0, left: 0, right: 0 },
   });
   const [isLinkedPropertyParsed, setIsLinkedPropertyParsed] = useState(false);
+  const [savedPropertyCount, setSavedPropertyCount] = useState(0);
+  const [shouldFilterSavedProperties, setShouldFilterSavedProperties] =
+    useState(false);
 
   const router = useRouter();
 
   // Handle Routing
   useEffect(() => {
     const { opa_id } = params;
+
+    const getLinkedPropertyDetails = async () => {
+      // Check if OPA ID is present in URL
+      // It should be the only URL parameter and a string-like collection of numbers between 8 and 9 characters
+
+      // Get property metadata
+      try {
+        const objectMetadataResponse = await fetch(
+          `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`
+        );
+        const objectMetadata = await objectMetadataResponse.json();
+        const { metadata } = objectMetadata;
+        let { location } = metadata;
+        location = JSON.parse(location.replace(/'/g, '"'));
+        setInitialViewState({
+          ...initialViewState,
+          longitude: location.lng,
+          latitude: location.lat,
+          zoom: 18,
+        });
+        setIsLinkedPropertyParsed(true);
+      } catch {
+        router.push("/find-properties");
+      }
+    };
 
     if (!opa_id) {
       // do nothing, load map
@@ -70,32 +100,7 @@ const MapPage = ({ params }: MapPageProps) => {
       // Invalid OPA ID- redirect to main map page
       router.push("/find-properties");
     }
-  }, []);
-
-  const getLinkedPropertyDetails = async () => {
-    // Check if OPA ID is present in URL
-    // It should be the only URL parameter and a string-like collection of numbers between 8 and 9 characters
-
-    // Get property metadata
-    try {
-      const objectMetadataResponse = await fetch(
-        `https://storage.googleapis.com/storage/v1/b/cleanandgreenphl/o/${linkedPropertyRef.current}.jpg`
-      );
-      const objectMetadata = await objectMetadataResponse.json();
-      const { metadata } = objectMetadata;
-      let { location } = metadata;
-      location = JSON.parse(location.replace(/'/g, '"'));
-      setInitialViewState({
-        ...initialViewState,
-        longitude: location.lng,
-        latitude: location.lat,
-        zoom: 18,
-      });
-      setIsLinkedPropertyParsed(true);
-    } catch {
-      router.push("/find-properties");
-    }
-  };
+  }, [initialViewState, params, router]);
 
   useEffect(() => {
     // This useEffect navigates to the linked property when it is loaded
@@ -114,7 +119,7 @@ const MapPage = ({ params }: MapPageProps) => {
       setSelectedProperty(linkedProperty);
       linkedPropertyRef.current = null;
     }
-  }, [featuresInView, linkedPropertyRef.current]);
+  }, [featuresInView, selectedProperty?.properties.OPA_ID]);
 
   useEffect(() => {
     if (!selectedProperty) return;
@@ -128,8 +133,7 @@ const MapPage = ({ params }: MapPageProps) => {
       prevRef.current === "map" &&
       window.innerWidth < 640 &&
       (view === "filter" ||
-        (Object.keys(params).length === 0 &&
-          prevCoordinateRef.current))
+        (Object.keys(params).length === 0 && prevCoordinateRef.current))
     ) {
       setSmallScreenMode((prev: string) =>
         prev === "map" ? "properties" : "map"
@@ -171,7 +175,10 @@ const MapPage = ({ params }: MapPageProps) => {
     currentView,
     featureCount,
     loading,
+    savedPropertyCount,
+    shouldFilterSavedProperties,
     smallScreenMode,
+    setShouldFilterSavedProperties,
     updateCurrentView,
     updateSmallScreenMode,
   };
@@ -188,6 +195,18 @@ const MapPage = ({ params }: MapPageProps) => {
       setSmallScreenMode("properties");
     }
   }, [selectedProperty]);
+
+  // Get number of property IDs cached in Web browser's localStorage.
+  // In the future, localStorage caching might be replaced by an HTTP call to an API or database.
+  useEffect(() => {
+    const opa_ids = localStorage.getItem("opa_ids");
+
+    if (opa_ids && JSON.parse(opa_ids).count) {
+      setSavedPropertyCount(JSON.parse(opa_ids).count);
+    } else {
+      setSavedPropertyCount(0);
+    }
+  }, [currentView, selectedProperty, shouldFilterSavedProperties]);
 
   return (
     <FilterProvider>
@@ -214,6 +233,7 @@ const MapPage = ({ params }: MapPageProps) => {
               </div>
               {isLinkedPropertyParsed ? (
                 <PropertyMap
+                  featuresInView={featuresInView}
                   setFeaturesInView={setFeaturesInView}
                   setLoading={setLoading}
                   selectedProperty={selectedProperty}
@@ -239,22 +259,33 @@ const MapPage = ({ params }: MapPageProps) => {
                 </div>
               )}
               {currentView === "download" ? (
-                <div className="p-4 mt-8 text-center">
-                  <h2 className="text-2xl font-bold mb-4">Access Our Data</h2>
-                  <p>
-                    If you are interested in accessing the data behind this
-                    dashboard, please reach out to us at
-                    <a
-                      href="mailto:cleanandgreenphl@gmail.com"
-                      className="text-blue-600 hover:text-blue-800 underline"
-                    >
-                      {" "}
-                      cleanandgreenphl@gmail.com
-                    </a>
-                    . Let us know who you are and why you want the data. We are
-                    happy to share the data with anyone with community-oriented
-                    interests.
-                  </p>
+                <div className="relative">
+                  <ThemeButton
+                    color="secondary"
+                    className="right-4 lg:right-[24px] absolute top-8 min-w-[3rem]"
+                    aria-label="Close download panel"
+                    startContent={<PiX />}
+                    onPress={() => updateCurrentView("detail")}
+                  />
+                  <div className="p-4 mt-8 text-center">
+                    <h2 className="heading-xl font-semibold mb-4">
+                      Access Our Data
+                    </h2>
+                    <p>
+                      If you are interested in accessing the data behind this
+                      dashboard, please reach out to us at
+                      <a
+                        href="mailto:cleanandgreenphl@gmail.com"
+                        className="text-blue-600 hover:text-blue-800 underline"
+                      >
+                        {" "}
+                        cleanandgreenphl@gmail.com
+                      </a>
+                      . Let us know who you are and why you want the data. We
+                      are happy to share the data with anyone with
+                      community-oriented interests.
+                    </p>
+                  </div>
                 </div>
               ) : currentView === "filter" ? (
                 <FilterView updateCurrentView={updateCurrentView} />
@@ -266,6 +297,10 @@ const MapPage = ({ params }: MapPageProps) => {
                   selectedProperty={selectedProperty}
                   setSelectedProperty={setSelectedProperty}
                   setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+                  shouldFilterSavedProperties={shouldFilterSavedProperties}
+                  setShouldFilterSavedProperties={
+                    setShouldFilterSavedProperties
+                  }
                   smallScreenMode={smallScreenMode}
                   updateCurrentView={updateCurrentView}
                 />

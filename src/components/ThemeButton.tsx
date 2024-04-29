@@ -31,7 +31,7 @@ const btnColorStyles = {
 const getButtonColorStyles = (
   color: string,
   isSelected: boolean,
-  isDisabled: boolean
+  isDisabled: boolean,
 ) => {
   let styles;
   if (color === "secondary") {
@@ -64,75 +64,73 @@ const getButtonColorStyles = (
   return styles;
 };
 
-const ThemeButton = forwardRef<Ref, ButtonProps>(
-  (
-    {
-      label,
-      onPress,
-      onClick,
-      startContent,
-      endContent,
-      className = "",
-      isSelected = false,
-      disabled = false,
-      isDisabled = false,
-      color = "primary",
-      isIconOnly = false,
-      ...restProps
-    },
-    ref
-  ) => {
-    if (!!onClick) {
-      throw new Error("onClick is deprecated. Please use onPress instead.");
-    }
-    const iconOnly = isIconOnly || !label;
-    isDisabled = isDisabled || disabled;
-
-    const colorStyles = getButtonColorStyles(color, isSelected, isDisabled);
-    const padding = iconOnly ? "p-0" : "py-2.5 px-3";
-    const disabledStyles = isDisabled
-      ? `cursor-not-allowed ${removedTransitionStyles}`
-      : "";
-    const iconStyles = "w-5 h-5 text-xl";
-
-    return (
-      <NextUIButton
-        disableRipple={isDisabled}
-        onPress={isDisabled ? undefined : onPress}
-        isIconOnly={iconOnly}
-        size="md"
-        className={`${basedStyles}  ${colorStyles} ${padding} ${disabledStyles} ${className}`}
-        ref={ref}
-        aria-disabled={isDisabled}
-        aria-current={isSelected ? "true" : undefined}
-        startContent={
-          startContent ? (
-            <span className={iconStyles}>{startContent}</span>
-          ) : undefined
-        }
-        endContent={
-          endContent ? (
-            <span className={iconStyles}>{endContent}</span>
-          ) : undefined
-        }
-        {...restProps}
-      >
-        {label && <span className="text-base leading-5">{label}</span>}
-      </NextUIButton>
-    );
+const ThemeButton = forwardRef<Ref, ButtonProps>(function ThemeButton(
+  {
+    label,
+    onPress,
+    onClick,
+    startContent,
+    endContent,
+    className = "",
+    isSelected = false,
+    disabled = false,
+    isDisabled = false,
+    color = "primary",
+    isIconOnly = false,
+    ...restProps
+  },
+  ref,
+) {
+  if (!!onClick) {
+    throw new Error("onClick is deprecated. Please use onPress instead.");
   }
-);
+  const iconOnly = isIconOnly || !label;
+  isDisabled = isDisabled || disabled;
+
+  const colorStyles = getButtonColorStyles(color, isSelected, isDisabled);
+  const padding = iconOnly ? "p-0" : "py-2.5 px-3";
+  const disabledStyles = isDisabled
+    ? `cursor-not-allowed ${removedTransitionStyles}`
+    : "";
+  const iconStyles = "w-5 h-5 text-xl";
+
+  return (
+    <NextUIButton
+      disableRipple={isDisabled}
+      onPress={isDisabled ? undefined : onPress}
+      isIconOnly={iconOnly}
+      size="md"
+      className={`${basedStyles}  ${colorStyles} ${padding} ${disabledStyles} ${className}`}
+      ref={ref}
+      aria-disabled={isDisabled}
+      aria-current={isSelected ? "true" : undefined}
+      startContent={
+        startContent ? (
+          <span className={iconStyles}>{startContent}</span>
+        ) : undefined
+      }
+      endContent={
+        endContent ? (
+          <span className={iconStyles}>{endContent}</span>
+        ) : undefined
+      }
+      {...restProps}
+    >
+      {label && <span className="text-base leading-5">{label}</span>}
+    </NextUIButton>
+  );
+});
 
 type ThemeButtonLinkProps = ButtonProps & {
   href: string;
 };
 
 const ThemeButtonLink = forwardRef<Ref, ThemeButtonLinkProps>(
-  ({ href, ...restProps }, ref) => {
+  function ThemeButtonLink({ href, ...restProps }, ref) {
     return (
       <ThemeButton as={Link} role="link" href={href} {...restProps} ref={ref} />
     );
-  }
+  },
 );
 
 export { ThemeButton, ThemeButtonLink };

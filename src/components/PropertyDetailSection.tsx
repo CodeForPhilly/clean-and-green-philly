@@ -51,6 +51,8 @@ interface PropertyDetailSectionProps {
   selectedProperty: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
+  shouldFilterSavedProperties: boolean;
+  setShouldFilterSavedProperties: (shouldFilter: boolean) => void;
   smallScreenMode: string;
   updateCurrentView: (view: BarClickOptions) => void;
 }
@@ -62,6 +64,8 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   selectedProperty,
   setSelectedProperty,
   setIsStreetViewModalOpen,
+  shouldFilterSavedProperties,
+  setShouldFilterSavedProperties,
   updateCurrentView,
   smallScreenMode,
 }) => {
@@ -181,6 +185,8 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       property={selectedProperty}
       setSelectedProperty={setSelectedProperty}
       setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+      shouldFilterSavedProperties={shouldFilterSavedProperties}
+      setShouldFilterSavedProperties={setShouldFilterSavedProperties}
       updateCurrentView={updateCurrentView}
     />
   ) : (

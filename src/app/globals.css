@@ -2,8 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-@import "~mapbox-gl/dist/mapbox-gl.css";
-
 @font-face {
   font-family: "HK Grotesk";
   src: url("/fonts/hkgrotesk-bold-webfont.woff2") format("woff2"),
@@ -46,6 +44,7 @@
   html {
     @apply font-body;
     scroll-behavior: smooth;
+    scroll-padding-top: 108px; /* header height + extra padding — allows hashlinks to account for sticky header on scroll */
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -145,17 +144,20 @@
   /* added webkit transform to remove icon movement in safari */
 
   .iconLink {
-    @apply text-gray-900 items-center items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
+    @apply text-gray-900 items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
 
   .linkIcon {
     @apply w-5 h-5 mr-2;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
 
   .iconButton {
     @apply h-6 w-6;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
 
@@ -167,15 +169,18 @@
   .activeIconLinkNav {
     @apply flex relative h-full items-center rounded-medium;
     @apply data-[active=true]:bottom-0 data-[active=true]:left-0 data-[active=true]:right-0 data-[active=true]:h-full data-[active=true]:rounded-[12px] data-[active=true]:bg-[#E9FFE5] data-[active=true]:text-[#E9FFE5] data-[active=true]:rounded-medium;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav {
     @apply px-0 text-base max-h-52 overflow-hidden fixed w-full z-50 shadow-2xl rounded-md border-1 border-gray-200 bg-gray-0;
+    transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
   .mobileIconLinkNav:hover {
     @apply bg-gray-0;
     -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
 }
 
@@ -191,10 +196,7 @@
 
 #main .maplibregl-ctrl-bottom-left {
   left: 20px;
-}
-
-.table-cell {
-  @apply p-2 border border-gray-300 text-left font-normal;
+  pointer-events: bounding-box;
 }
 
 .link {
@@ -224,6 +226,7 @@
 #main .maplibregl-ctrl-top-right {
   top: 20px;
   right: 20px;
+  pointer-events: bounding-box;
 }
 
 /* Remove white background on menu item to display active page state */
@@ -289,6 +292,30 @@ a .bg-color-none {
   @apply bg-blue-300;
 }
 
+.panelDefault {
+  @apply flex flex-row items-center rounded-md p-3 space-x-3 bg-gray-100 text-gray-900;
+}
+
+.panelDefault:hover {
+  @apply ease-out bg-gray-200;
+}
+
+.panelDefault:active {
+  @apply ease-in bg-gray-300;
+}
+
+.panelSelected {
+  @apply flex flex-row items-center rounded-md p-3 space-x-3 bg-blue-200 text-blue-800;
+}
+
+.panelSelected:hover {
+  @apply ease-out bg-blue-300;
+}
+
+.panelSelected:active {
+  @apply ease-in bg-blue-400;
+}
+
 /* Centers the properties for small screens only, tailwind breakpoint */
 @media screen and (max-width: 639px) {
   .side-panel-container {
@@ -316,4 +343,27 @@ a .bg-color-none {
 
 .maplibregl-ctrl button.maplibregl-ctrl-zoom-out .maplibregl-ctrl-icon {
   background-image: url('data:image/svg+xml,<svg width="16" height="2" viewBox="0 0 16 2" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 0.724609C15.5 0.89037 15.4342 1.04934 15.3169 1.16655C15.1997 1.28376 15.0408 1.34961 14.875 1.34961H1.125C0.95924 1.34961 0.800269 1.28376 0.683058 1.16655C0.565848 1.04934 0.5 0.89037 0.5 0.724609C0.5 0.558849 0.565848 0.399878 0.683058 0.282668C0.800269 0.165458 0.95924 0.0996094 1.125 0.0996094H14.875C15.0408 0.0996094 15.1997 0.165458 15.3169 0.282668C15.4342 0.399878 15.5 0.558849 15.5 0.724609Z" fill="%2303141B"/></svg>') !important;
+}
+
+/* styling for the map tooltip */
+.customized-map-popup {
+  .maplibregl-popup-content {
+    border-radius: 14px;
+    background-color: #03141b;
+    color: white;
+    padding: 3px 4px 3px 8px;
+  }
+
+  /* swaps the default white tooltip 'point' from white to black,
+     but will need to watch for if deafult ever changes from white */
+  .maplibregl-popup-tip {
+    filter: invert(1);
+  }
+
+  .maplibregl-popup-close-button {
+    font-size: 24px;
+    margin-top: -1px;
+    height: 24px;
+    width: 24px;
+  }
 }
