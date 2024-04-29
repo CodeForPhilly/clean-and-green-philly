@@ -86,7 +86,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             )
           }
         />
-        <div className="sm:px-4 py-2">
+        <div className="py-2">
           <h1 className="body-md">
             <span className="font-bold">
               {shouldFilterSavedProperties
@@ -151,7 +151,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             label={<span className="body-md max-lg:hidden">Download</span>}
             className={`max-md:min-w-[4rem] ${
               smallScreenMode === "map" ? "max-sm:hidden" : ""
-            }`}
+            } px-0`}
           />
         </div>
       </div>
