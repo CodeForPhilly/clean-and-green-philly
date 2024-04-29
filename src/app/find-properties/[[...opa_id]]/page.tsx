@@ -298,6 +298,9 @@ const MapPage = ({ params }: MapPageProps) => {
                   setSelectedProperty={setSelectedProperty}
                   setIsStreetViewModalOpen={setIsStreetViewModalOpen}
                   shouldFilterSavedProperties={shouldFilterSavedProperties}
+                  setShouldFilterSavedProperties={
+                    setShouldFilterSavedProperties
+                  }
                   smallScreenMode={smallScreenMode}
                   updateCurrentView={updateCurrentView}
                 />
