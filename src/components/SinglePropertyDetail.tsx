@@ -2,24 +2,36 @@ import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { Chip, Tooltip, Link } from "@nextui-org/react";
 import {
   ArrowLeft,
+  BookmarkSimple,
   ArrowSquareOut,
   ArrowsOut,
   Share,
 } from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import PropertyAccessOptionContainer from "./PropertyAccessOptionContainer";
 import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
 import ContentCard from "./ContentCard";
 import cleanup from "@/images/transform-a-property.png";
 import { PiEyeSlash } from "react-icons/pi";
+import { useFilter } from "@/context/FilterContext";
+import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
+  shouldFilterSavedProperties: boolean;
+  setShouldFilterSavedProperties: (shouldFilter: boolean) => void;
   updateCurrentView: (view: BarClickOptions) => void;
+}
+
+interface PropertyIdLocalStorage {
+  count: number;
+  opa_ids: {
+    [key: string]: any;
+  };
 }
 
 function getPriorityClass(priorityLevel: string) {
@@ -39,10 +51,32 @@ const SinglePropertyDetail = ({
   property,
   setSelectedProperty,
   setIsStreetViewModalOpen,
+  shouldFilterSavedProperties,
+  setShouldFilterSavedProperties,
   updateCurrentView,
 }: PropertyDetailProps) => {
+  const { dispatch } = useFilter();
+
   const [shareLabel, setShareLabel] = useState<boolean>(false);
   const [hover, setHover] = useState<boolean>(false);
+  const [isPropertySavedToLocalStorage, setIsPropertySavedToLocalStorage] =
+    useState(false);
+
+  useEffect(() => {
+    if (!localStorage.getItem("opa_ids")) {
+      initializeLocalStorage();
+    }
+
+    const localStorageData = localStorage.getItem("opa_ids");
+    const parsedLocalStorageData = localStorageData
+      ? JSON.parse(localStorageData)
+      : {};
+
+    const propertyId = parsedLocalStorageData.opa_ids[OPA_ID];
+    propertyId
+      ? setIsPropertySavedToLocalStorage(true)
+      : setIsPropertySavedToLocalStorage(false);
+  }, []);
 
   if (!property) return null;
   const { properties } = property;
@@ -78,6 +112,65 @@ const SinglePropertyDetail = ({
     ? "bg-priority-low"
     : "";
 
+  const savePropertyIdToLocalStorage = (localCache: PropertyIdLocalStorage) => {
+    let newLocalCache: PropertyIdLocalStorage = {
+      ...localCache,
+    };
+    newLocalCache.opa_ids[OPA_ID] = OPA_ID;
+    newLocalCache.count++;
+    localStorage.setItem("opa_ids", JSON.stringify(newLocalCache));
+  };
+
+  const removePropertyIdFromLocalStorage = (
+    localStorageData: PropertyIdLocalStorage
+  ) => {
+    delete localStorageData.opa_ids[OPA_ID];
+    localStorageData.count--;
+    localStorage.setItem("opa_ids", JSON.stringify(localStorageData));
+  };
+
+  const initializeLocalStorage = () => {
+    let opa_ids: PropertyIdLocalStorage = {
+      count: 0,
+      opa_ids: {},
+    };
+
+    localStorage.setItem("opa_ids", JSON.stringify(opa_ids));
+  };
+
+  const onClickSaveButton = () => {
+    const localStorageData = localStorage.getItem("opa_ids");
+    const parsedLocalStorageData = localStorageData
+      ? JSON.parse(localStorageData)
+      : {};
+
+    if (parsedLocalStorageData.opa_ids[OPA_ID]) {
+      removePropertyIdFromLocalStorage(parsedLocalStorageData);
+      setIsPropertySavedToLocalStorage(false);
+
+      if (parsedLocalStorageData.count === 0) {
+        dispatch({
+          type: "SET_DIMENSIONS",
+          property: "OPA_ID",
+          dimensions: [],
+        });
+        setShouldFilterSavedProperties(false);
+      } else {
+        if (shouldFilterSavedProperties) {
+          let propertyIds = getPropertyIdsFromLocalStorage();
+          dispatch({
+            type: "SET_DIMENSIONS",
+            property: "OPA_ID",
+            dimensions: [...propertyIds],
+          });
+        }
+      }
+    } else {
+      savePropertyIdToLocalStorage(parsedLocalStorageData);
+      setIsPropertySavedToLocalStorage(true);
+    }
+  };
+
   return (
     <div className="w-full px-6 pb-6">
       <div className="flex justify-between sticky -mx-6 px-6 top-0 py-4 z-10 bg-white">
@@ -91,28 +184,42 @@ const SinglePropertyDetail = ({
             history.replaceState(null, "", `/find-properties`);
           }}
         />
-        <Tooltip
-          disableAnimation
-          closeDelay={100}
-          placement="top"
-          content={shareLabel ? "Link Copied" : "Copy Link"}
-          isOpen={hover}
-          classNames={{
-            content: "bg-gray-900 rounded-[14px] text-white relative top-1",
-          }}
-        >
+
+        {/* Right-aligned content: Buttons */}
+        <div className="flex items-center">
           <ThemeButton
             color="tertiary"
-            label="Share"
-            startContent={<Share />}
+            label={isPropertySavedToLocalStorage ? "Saved" : "Save"}
+            startContent={<BookmarkSimple />}
             onPress={() => {
-              navigator.clipboard.writeText(window.location.href);
-              setShareLabel(true);
+              onClickSaveButton();
             }}
-            onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
+            isSelected={isPropertySavedToLocalStorage}
           />
-        </Tooltip>
+
+          <Tooltip
+            disableAnimation
+            closeDelay={100}
+            placement="top"
+            content={shareLabel ? "Link Copied" : "Copy Link"}
+            isOpen={hover}
+            classNames={{
+              content: "bg-gray-900 rounded-[14px] text-white relative top-1",
+            }}
+          >
+            <ThemeButton
+              color="tertiary"
+              label="Share"
+              startContent={<Share />}
+              onPress={() => {
+                navigator.clipboard.writeText(window.location.href);
+                setShareLabel(true);
+              }}
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+            />
+          </Tooltip>
+        </div>
       </div>
       <div className="bg-white rounded-lg overflow-hidden">
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
