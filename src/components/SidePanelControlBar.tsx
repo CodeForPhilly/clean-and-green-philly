@@ -86,7 +86,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             )
           }
         />
-        <div className="py-2">
+        <div className="sm:px-4 lg:px-0 py-2">
           <h1 className="body-md">
             <span className="font-bold">
               {shouldFilterSavedProperties
