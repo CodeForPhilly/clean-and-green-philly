@@ -36,7 +36,7 @@ Likewise, you can view the [very first iteration as an ArcGIS Storymap here](htt
 
 **Sept. 27, 2023** Nissim spoke with a reporter from WHYY who may be including our project in a longer piece about Philadelphians working on solutions to the gun violence crisis.
 
-## Current Tasks
+## Current Tasks and Project Roadmap
 
 At the moment, we are working on:
 
@@ -46,6 +46,8 @@ At the moment, we are working on:
 - Laying groundwork to apply for a grant to support our work
 
 Current tasks for the are visible under the [Issues](https://github.com/CodeForPhilly/vacant-lots-proj/issues) section.
+
+For a detailed project roadmap, please see our [ROADMAP.md](/docs/ROADMAP.md) document.
 
 ## Looking For
 
