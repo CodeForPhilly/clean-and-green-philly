@@ -86,7 +86,6 @@ const Panels: FC<PanelsProps> = ({
         key={index}
         className={isSelected ? "panelSelected " : "panelDefault"}
         isPressable
-        isHoverable={false}
         onPress={() => toggleDimensionForPanel(panel.dimension, panel.property)}
         shadow="none"
       >
