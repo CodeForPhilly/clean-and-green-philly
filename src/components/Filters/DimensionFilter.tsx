@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, FC } from "react";
+import React, { useMemo, useState, FC } from "react";
 import { useFilter } from "@/context/FilterContext";
 import ButtonGroup from "./ButtonGroup";
 import MultiSelect from "./MultiSelect";
@@ -67,35 +67,35 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     });
   };
 
-  const Filter = () => {
-    if (type === "buttonGroup") {
-      return (
-        <ButtonGroup
-          options={options}
-          selectedKeys={selectedKeys}
-          toggleDimension={toggleDimension}
-        />
-      );
-    } else if (type === "panels") {
-      return (
-        <Panels 
-          options={options}
-          selectedPanelKeys={selectedPanelKeys}
-          toggleDimensionForPanel={toggleDimensionForPanel}
-        />
-      )
-    } else {
-      return (
-        <MultiSelect
-          display={display}
-          options={options}
-          selectedKeys={selectedKeys}
-          toggleDimension={toggleDimension}
-          handleSelectionChange={handleSelectionChange}
-        />
-      );
-    }
-  };
+  const filter = useMemo(() => {
+      if (type === "buttonGroup") {
+        return (
+          <ButtonGroup
+            options={options}
+            selectedKeys={selectedKeys}
+            toggleDimension={toggleDimension}
+          />
+        );
+      } else if (type === "panels") {
+        return (
+          <Panels 
+            options={options}
+            selectedPanelKeys={selectedPanelKeys}
+            toggleDimensionForPanel={toggleDimensionForPanel}
+          />
+        )
+      } else {
+        return (
+          <MultiSelect
+            display={display}
+            options={options}
+            selectedKeys={selectedKeys}
+            toggleDimension={toggleDimension}
+            handleSelectionChange={handleSelectionChange}
+          />
+        );
+      }
+    }, [selectedKeys, selectedPanelKeys])
 
   const filterDescription =
     property === "priority_level"
@@ -125,7 +125,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           </p>
         )}
       </div>
-      <Filter />
+      {filter}
     </div>
   );
 };

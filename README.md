@@ -14,15 +14,17 @@ There are roughly 40,000 vaccant properties in Philadelphia. Identifying the hig
 
 You can view [the current build of the website here](https://www.cleanandgreenphilly.org/). We are building based off of a prototype which looks like this:
 
-![User prototype landing page](https://github.com/CodeForPhilly/vacant-lots-proj/assets/111617674/0776acde-9fe0-42a5-b8ab-6680525a31d7)
-
-![User prototype map](https://github.com/CodeForPhilly/vacant-lots-proj/assets/111617674/8cbf0b06-b299-49cd-8f9f-bbb714e55b44)
+![User prototype map](/docs/map.png)
 
 An older proptotype is also [available here](https://nlebovits.github.io/dashboard_demo_website/more_info.html), although it is now significantly out of date.
 
 Likewise, you can view the [very first iteration as an ArcGIS Storymap here](https://storymaps.arcgis.com/stories/551f77d85a584705b97c41db7711ba1b).
 
 ## Project Updates
+
+**April 26, 2024:** On behalf of Clean & Green Philly, Nissim gave testimony to a Philadelphia City Council hearing on the uses of data and tech to reduce gun violence through place-based interventions. His statement is [available here](/docs/City%20Council%20Testimony%20Final,%20April%2026,%202024.pdf).
+
+**April 21, 2024:** We have officially launched v1.0.0! The website is now live at [www.cleanandgreenphilly.org](https://www.cleanandgreenphilly.org/).
 
 **Feb. 1, 2024:** We have soft launched a minimum viable product! The website is functional at [www.cleanandgreenphilly.org](https://www.cleanandgreenphilly.org/).
 
@@ -34,7 +36,7 @@ Likewise, you can view the [very first iteration as an ArcGIS Storymap here](htt
 
 **Sept. 27, 2023** Nissim spoke with a reporter from WHYY who may be including our project in a longer piece about Philadelphians working on solutions to the gun violence crisis.
 
-## Current Tasks
+## Current Tasks and Project Roadmap
 
 At the moment, we are working on:
 
@@ -44,6 +46,8 @@ At the moment, we are working on:
 - Laying groundwork to apply for a grant to support our work
 
 Current tasks for the are visible under the [Issues](https://github.com/CodeForPhilly/vacant-lots-proj/issues) section.
+
+For a detailed project roadmap, please see our [ROADMAP.md](/docs/ROADMAP.md) document.
 
 ## Looking For
 
