@@ -62,7 +62,7 @@ const ContentCard: FC<ContentCardProps> = ({
       </div>
       <div className="flex items-center p-6">
         <div>
-          <h4 className="font-bold mb-2 heading-lg">{title}</h4>
+          <h3 className="font-bold mb-2 heading-lg">{title}</h3>
           <p>{body}</p>
 
           {details && details.length > 0 && (
