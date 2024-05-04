@@ -180,7 +180,6 @@ const MapPage = ({ params }: MapPageProps) => {
     smallScreenMode,
     setShouldFilterSavedProperties,
     updateCurrentView,
-    updateSmallScreenMode,
   };
   const isVisible = (mode: string) =>
     smallScreenMode === mode ? "" : "max-sm:hidden";
