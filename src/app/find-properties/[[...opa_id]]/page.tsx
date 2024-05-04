@@ -10,7 +10,7 @@ import {
 } from "@/components";
 import { FilterProvider } from "@/context/FilterContext";
 import { NextUIProvider, Spinner } from "@nextui-org/react";
-import { X } from "@phosphor-icons/react";
+import { X, GlobeHemisphereWest, ListBullets } from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import StreetView from "../../../components/StreetView";
 import { centroid } from "@turf/centroid";
@@ -306,6 +306,19 @@ const MapPage = ({ params }: MapPageProps) => {
                 />
               )}
             </SidePanel>
+            <ThemeButton
+              aria-label={`Change to ${smallScreenMode}`}
+              label={smallScreenMode === "map" ? "List View" : "Map View"}
+              className="absolute bottom-4 left-1/2 -ml-[3.5rem] rounded-2xl sm:hidden max-md:min-w-[7rem]"
+              onPress={updateSmallScreenMode}
+              startContent={
+                smallScreenMode === "map" ? (
+                  <ListBullets /> 
+                ) : (
+                  <GlobeHemisphereWest /> 
+                )  
+              }
+            />
           </div>
         </div>
       </NextUIProvider>
