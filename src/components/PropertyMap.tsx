@@ -50,6 +50,7 @@ import { Info, X } from "@phosphor-icons/react";
 import { centroid } from "@turf/centroid";
 import { Position } from "geojson";
 import { toTitleCase } from "../utilities/toTitleCase";
+import { ThemeButton } from "../components/ThemeButton";
 
 type SearchedProperty = {
   coordinates: [number, number];
@@ -108,14 +109,27 @@ const layerStylePoints: CircleLayerSpecification = {
 // info icon in legend summary
 let summaryInfo: ReactElement | null = null;
 
-const MapControls = () => (
-  <>
-    <NavigationControl showCompass={false} position="bottom-right" />
-    <GeolocateControl position="bottom-right" />
-    <ScaleControl />
-    <MapLegendControl position="bottom-left" layerStyle={layerStylePolygon} />
-  </>
-);
+const MapControls = () => {
+  const [smallScreenToggle, setSmallScreenToggle] = useState<boolean>(false);
+  return (
+    <>
+      <NavigationControl showCompass={false} position="bottom-right" />
+      <GeolocateControl position="bottom-right" />
+      <ScaleControl />
+      {(smallScreenToggle || window.innerWidth > 640) ?
+        <MapLegendControl position="bottom-left" setSmallScreenToggle={setSmallScreenToggle} layerStyle={layerStylePolygon} />
+        :
+        <div className="maplibregl-ctrl maplibregl-ctrl-group w-[40px] h-[40px]">
+          <ThemeButton
+            className="custom-info z-10"
+            startContent={<span className="custom-info-icon maplibregl-ctrl-icon"></span>}
+            onPress={() => setSmallScreenToggle(s => !s)}
+          />
+        </div>
+      }
+    </>
+  )
+};
 
 interface PropertyMapProps {
   featuresInView: MapGeoJSONFeature[];
@@ -147,6 +161,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
     coordinates: [-75.1628565788269, 39.97008211622267],
     address: "",
   });
+  const [smallScreenToggle, setSmallScreenToggle] = useState<boolean>(false);
 
   useEffect(() => {
     let protocol = new Protocol();
