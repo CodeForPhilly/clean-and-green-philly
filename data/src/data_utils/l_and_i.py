@@ -1,6 +1,6 @@
+import pandas as pd
 from classes.featurelayer import FeatureLayer
 from constants.services import COMPLAINTS_SQL_QUERY, VIOLATIONS_SQL_QUERY
-import pandas as pd
 
 
 def l_and_i(primary_featurelayer):
@@ -92,17 +92,17 @@ def l_and_i(primary_featurelayer):
         "opa_account_num",
     )
 
-    # Complaints need a spatial join, but we need to take special care to merge on just the parcel geoms first to get OPA_ID
+    # Complaints need a spatial join, but we need to take special care to merge on just the parcel geoms first to get opa_id
     complaints_with_opa_id = primary_featurelayer.gdf.sjoin(
         l_and_i_complaints.gdf, how="left", predicate="contains"
     )
     complaints_with_opa_id.drop(columns=["index_right"], inplace=True)
 
-    # Concatenate the complaints values into a list with a semicolon separator by OPA_ID
+    # Concatenate the complaints values into a list with a semicolon separator by opa_id
     complaints_with_opa_id = (
-        complaints_with_opa_id.groupby("OPA_ID")["li_complaints"]
+        complaints_with_opa_id.groupby("opa_id")["li_complaints"]
         .apply(lambda x: "; ".join([str(val) for val in x if val is not None]))
-        .reset_index()[["OPA_ID", "li_complaints"]]
+        .reset_index()[["opa_id", "li_complaints"]]
     )
 
     # Clean up the NaN values in the li_complaints column
@@ -119,7 +119,7 @@ def l_and_i(primary_featurelayer):
     # Merge the complaints values back into the primary_featurelayer
     primary_featurelayer.opa_join(
         complaints_with_opa_id,
-        "OPA_ID",
+        "opa_id",
     )
 
     primary_featurelayer.gdf[
