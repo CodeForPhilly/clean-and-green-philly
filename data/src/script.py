@@ -4,6 +4,7 @@ from classes.backup_archive_database import BackupArchiveDatabase
 from classes.diff_report import DiffReport
 from config.config import FORCE_RELOAD
 from config.psql import conn
+from data_utils.access_process import access_process
 from data_utils.city_owned_properties import city_owned_properties
 from data_utils.conservatorship import conservatorship
 from data_utils.deliquencies import deliquencies
@@ -15,6 +16,7 @@ from data_utils.llc_owner import llc_owner
 from data_utils.nbhoods import nbhoods
 from data_utils.opa_properties import opa_properties
 from data_utils.phs_properties import phs_properties
+from data_utils.priority_level import priority_level
 from data_utils.rco_geoms import rco_geoms
 from data_utils.tactical_urbanism import tactical_urbanism
 from data_utils.tree_canopy import tree_canopy
@@ -53,7 +55,7 @@ if FORCE_RELOAD:
 # Load Vacant Property Data
 dataset = vacant_properties()
 
-""" # Load and join other datasets
+# Load and join other datasets
 for service in services:
     dataset = service(dataset)
 
@@ -63,13 +65,12 @@ dataset = priority_level(dataset)
 # Add Access Process
 dataset = access_process(dataset)
 
-
 # Post to Mapbox
 dataset.build_and_publish_pmtiles("vacant_properties_tiles")
 
 # Finalize in Postgres
 dataset.gdf.to_postgis("vacant_properties_end", conn, if_exists="replace", index=False)
-"""
+
 conn.commit()
 
 # if we are reloading, run the diff report, then archive the backup and finally prune old archives

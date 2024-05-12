@@ -49,7 +49,7 @@ class TestDiffBackup:
     def test_generate_table_detail_report(self):
         """print out the html for the vacant_properties diff"""
         diff = DiffReport()
-        html = diff._generate_table_detail_report("vacant_properties")
+        html = diff.generate_table_detail_report("vacant_properties")
         print(html)
 
     def test_detail_report(self):
@@ -59,6 +59,19 @@ class TestDiffBackup:
         print(url)
 
     def test_upload_to_gcp(self):
+        """test a simple upload to Google cloud"""
         bucket = google_cloud_bucket()
         blob = bucket.blob("test.txt")
         blob.upload_from_string("test")
+
+    def test_send_report_to_slack(self):
+        """CAREFUL: if configured, this will send a message to Slack, potentially our prod channel"""
+        diff = DiffReport()
+        diff.report = "This is the report"
+        diff.send_report_to_slack()
+
+    def test_email_report(self):
+        """CAREFUL: if configured, this will send email if configured"""
+        diff = DiffReport()
+        diff.report = "This is the report"
+        diff.email_report()

@@ -1,12 +1,21 @@
 import logging as log
+import os
 import smtplib
 import subprocess
 from email.mime.text import MIMEText
 
 from classes.backup_archive_database import backup_schema_name
 from classes.featurelayer import google_cloud_bucket
-from config.config import from_email, log_level, report_to_email, smtp_server
-from config.psql import conn, local_engine
+from config.config import (
+    from_email,
+    log_level,
+    report_to_email,
+    report_to_slack_channel,
+    smtp_server,
+)
+from config.psql import conn, local_engine, url
+from data_utils.utils import mask_password
+from slack_sdk import WebClient
 from sqlalchemy import inspect
 
 log.basicConfig(level=log_level)
@@ -70,7 +79,7 @@ class DiffReport:
             str: the full url of the report
         """
         return self._save_detail_report_to_cloud(
-            self._generate_table_detail_report(table), table
+            self.generate_table_detail_report(table), table
         )
 
     def _save_detail_report_to_cloud(self, html: str, table: str) -> str:
@@ -89,7 +98,7 @@ class DiffReport:
         blob.upload_from_string(html, content_type="text/html")
         return "https://storage.googleapis.com/" + bucket.name + "/" + path
 
-    def _generate_table_detail_report(self, table: str) -> str:
+    def generate_table_detail_report(self, table: str) -> str:
         """
         generate an html table of the details of differences in this table from the materialized diff table in the backup schema from data-diff
         """
@@ -135,7 +144,9 @@ class DiffReport:
         # compare the tables and output the summary stats to include in the report.  Materialize the details
         # of the differences to a table in the backup schema named table_name_diff
         data_diff_command = (
-            "data-diff $VACANT_LOTS_DB public."
+            "data-diff "
+            + url
+            + " public."
             + table
             + " "
             + backup_schema_name
@@ -149,7 +160,7 @@ class DiffReport:
             + table
             + "_diff --stats"
         )
-        log.debug(data_diff_command)
+        log.debug(mask_password(data_diff_command))
 
         complete_process = subprocess.run(
             data_diff_command, check=False, shell=True, capture_output=True
@@ -165,13 +176,22 @@ class DiffReport:
 
     def send_report_to_slack(self):
         """
-        TODO: post the summary report to the slack channel if configured.
+        post the summary report to the slack channel if configured.
         """
-        return "TODO"
+        if report_to_slack_channel:
+            token = os.environ["CAGP_SLACK_API_TOKEN"]
+            client = WebClient(token=token)
+
+            # Send a message
+            client.chat_postMessage(
+                channel=report_to_slack_channel,
+                text=self.report,
+                username="CAGP Diff Report Bot",
+            )
 
     def email_report(self):
         """
-        TODO: email the summary report if configured.
+        email the summary report if configured.
         """
         if report_to_email:
             # Create a text/plain message

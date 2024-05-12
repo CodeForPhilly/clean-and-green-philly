@@ -16,15 +16,24 @@ from shapely import Point, wkb
 
 # Configure Google
 def google_cloud_bucket() -> Bucket:
-    key = os.environ["CLEAN_GREEN_GOOGLE_KEY"]
-    credentials_path = os.path.expanduser("~/projects/personal/vacant-lots-proj/data/src/app/service-account-key.json")
+    """Build the google cloud bucket with name configured in your environ or default of cleanandgreenphl
+
+    Returns:
+        Bucket: the gcp bucket
+    """
+    credentials_path = os.path.expanduser("/app/service-account-key.json")
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-    bucket_name = os.environ["GOOGLE_CLOUD_BUCKET_NAME"] if os.environ["GOOGLE_CLOUD_BUCKET_NAME"] != None else "cleanandgreenphl"
+    bucket_name = (
+        os.environ["GOOGLE_CLOUD_BUCKET_NAME"]
+        if os.environ["GOOGLE_CLOUD_BUCKET_NAME"] is not None
+        else "cleanandgreenphl"
+    )
     storage_client = storage.Client(project="clean-and-green-philly")
-    bucket = storage_client.bucket(bucket_name)
-    return bucket
+    return storage_client.bucket(bucket_name)
+
 
 bucket = google_cloud_bucket()
+
 
 class FeatureLayer:
     """
@@ -41,9 +50,9 @@ class FeatureLayer:
         force_reload=FORCE_RELOAD,
         from_xy=False,
         use_wkb_geom_field=None,
-        cols: list[str]=None,
-        pk_cols: list[str]=None,
-        cleanup_sql: list[str]=None
+        cols: list[str] = None,
+        pk_cols: list[str] = None,
+        cleanup_sql: list[str] = None,
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -113,7 +122,9 @@ class FeatureLayer:
                         parcel_type = (
                             "Land"
                             if "Vacant_Indicators_Land" in url
-                            else "Building" if "Vacant_Indicators_Bldg" in url else None
+                            else "Building"
+                            if "Vacant_Indicators_Bldg" in url
+                            else None
                         )
                         self.dumper = EsriDumper(url)
                         features = [feature for feature in self.dumper]
@@ -184,21 +195,32 @@ class FeatureLayer:
 
                 # save self.gdf to psql
                 # rename columns to lowercase for table creation in postgres
-                self.gdf = self.gdf.rename(columns={x:x.lower() for x in self.cols})
+                if self.cols:
+                    self.gdf = self.gdf.rename(
+                        columns={x: x.lower() for x in self.cols}
+                    )
                 self.gdf.to_postgis(
                     name=self.psql_table,
                     con=conn,
                     if_exists="replace",
                     chunksize=1000,
                 )
-                
+
                 # run any custom steps to clean up this table
                 if self.cleanup_sql:
                     for sql in self.cleanup_sql:
                         conn.exec_driver_sql(sql)
                 # add primary key constraints if any
                 if self.pk_cols and len(self.pk_cols) > 0:
-                    conn.execute(sa.DDL("alter table " + self.psql_table + " add primary key (" + ",".join(self.pk_cols) + ")"))
+                    conn.execute(
+                        sa.DDL(
+                            "alter table "
+                            + self.psql_table
+                            + " add primary key ("
+                            + ",".join(self.pk_cols)
+                            + ")"
+                        )
+                    )
 
             except Exception as e:
                 print(f"Error loading data for {self.name}: {e}")

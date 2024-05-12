@@ -4,7 +4,8 @@ FROM python:3.11.4
 # Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Install system dependencies for GDAL and Tippecanoe
+# Install system dependencies for GDAL and Tippecanoe 
+# postgresql-client for psql and pg_dump executables for backups
 RUN apt-get update && apt-get install -y \
     libgdal-dev \
     gcc \
@@ -12,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     build-essential \
     libsqlite3-dev \
     zlib1g-dev \
+    postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
 # Set GDAL environment variables
