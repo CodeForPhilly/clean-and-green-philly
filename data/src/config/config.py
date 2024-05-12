@@ -12,7 +12,7 @@ log_level: int = logging.WARN
 max_backup_schema_days: int = 365
 """ max days to keep backed up schemas archived in plsql """
 
-report_to_slack_channel: str = "test-private-workspace"
+report_to_slack_channel: str = ""
 """ if this is not blank, send the data-diff summary report to this Slack channel.
 The CAGP_SLACK_API_TOKEN environment variable must be set """
 
