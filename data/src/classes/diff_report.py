@@ -49,7 +49,9 @@ class DiffReport:
             if self._summary_shows_differences(summary):
                 self.report += summary
                 self.report += "Details: " + self.detail_report(table) + "\n"
-                self.report += "\n"
+            else:
+                self.report += table + "\nNo difference\n"
+            self.report += "\n"
         log.debug("\n")
         log.debug(self.report)
         self.send_report_to_slack()
@@ -131,10 +133,16 @@ class DiffReport:
 
     def _list_tables(self) -> list[str]:
         """
-        list all tables for the public schema
+        list tables to do the diff on
         """
         # return inspect(local_engine).get_table_names(schema='public')
-        return ["vacant_properties"]
+        return [
+            "vacant_properties",
+            "li_complaints",
+            "li_violations",
+            "opa_properties",
+            "property_tax_delinquencies",
+        ]
 
     def compare_table(self, table: str, pks: list[str]) -> str:
         """

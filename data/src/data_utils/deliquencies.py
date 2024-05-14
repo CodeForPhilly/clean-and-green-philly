@@ -1,6 +1,6 @@
+import pandas as pd
 from classes.featurelayer import FeatureLayer
 from constants.services import DELINQUENCIES_QUERY
-import pandas as pd
 
 
 def deliquencies(primary_featurelayer):
@@ -18,6 +18,8 @@ def deliquencies(primary_featurelayer):
             "total_assessment",
             "sheriff_sale",
         ],
+        pk_cols=["opa_number"],
+        cleanup_sql=["delete from property_tax_delinquencies where opa_number = 0"],
     )
 
     primary_featurelayer.opa_join(

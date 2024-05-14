@@ -31,25 +31,41 @@ class BackupArchiveDatabase:
         backup the whole public schema to another schema in the same db.
         pgdump the public schema, replace public schema name with backup schema name, clean up the special column types, and import it with psql in one piped command
         """
+
         pgdump_command = (
+            # first, dump the schema only where we can safely replace all 'public' strings with 'backup_'
             "pg_dump "
             + url
-            + " --schema public | sed 's/public/"
+            + " -s --schema public | sed 's/public/"
             + backup_schema_name
             + "/g' | sed 's/"
             + backup_schema_name
             + ".geometry/public.geometry/' | sed 's/"
             + backup_schema_name
-            + ".spatial_ref_sys/public.spatial_ref_sys/' | psql "
+            + ".spatial_ref_sys/public.spatial_ref_sys/' | psql -v ON_ERROR_STOP=1 "
             + url
-            + " > /dev/null"
+            + " > /dev/null "
+            # then dump the data only and substitute the word public only where it is in DDL, not in the data
+            + " && pg_dump "
+            + url
+            + " -a --schema public | sed 's/COPY public./COPY "
+            + backup_schema_name
+            + "./g' | sed 's/"
+            + backup_schema_name
+            + ".geometry/public.geometry/' | sed 's/"
+            + backup_schema_name
+            + ".spatial_ref_sys/public.spatial_ref_sys/' | psql -v ON_ERROR_STOP=1 "
+            + url
+            + " > /dev/null "
         )
         log.debug(mask_password(pgdump_command))
         complete_process = subprocess.run(pgdump_command, check=False, shell=True)
 
         if complete_process.returncode != 0 or complete_process.stderr:
             raise RuntimeError(
-                "pg_dump command did not exit with success. "
+                "pg_dump command "
+                + mask_password(pgdump_command)
+                + " did not exit with success. "
                 + complete_process.stderr.decode()
             )
 

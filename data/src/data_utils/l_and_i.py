@@ -6,7 +6,9 @@ from constants.services import COMPLAINTS_SQL_QUERY, VIOLATIONS_SQL_QUERY
 def l_and_i(primary_featurelayer):
     # Load complaints data from L&I
     l_and_i_complaints = FeatureLayer(
-        name="LI Complaints", carto_sql_queries=COMPLAINTS_SQL_QUERY
+        name="LI Complaints",
+        carto_sql_queries=COMPLAINTS_SQL_QUERY,
+        pk_cols=["service_request_id"],
     )
 
     # filter for only Status = 'Open'
@@ -30,7 +32,11 @@ def l_and_i(primary_featurelayer):
 
     # Load data for violations from L&I
     l_and_i_violations = FeatureLayer(
-        name="LI Violations", carto_sql_queries=VIOLATIONS_SQL_QUERY, from_xy=True
+        name="LI Violations",
+        carto_sql_queries=VIOLATIONS_SQL_QUERY,
+        from_xy=True,
+        pk_cols=["violationnumber", "opa_account_num"],
+        cleanup_sql=["delete from li_violations where opa_account_num is null"],
     )
 
     all_violations_count_df = (

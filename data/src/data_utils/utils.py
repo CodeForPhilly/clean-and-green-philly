@@ -10,4 +10,4 @@ def mask_password(value: str):
     Returns:
         _type_: the string with the password replaced by MASKED
     """
-    return re.sub(r"//(\w+):.*@", r"//\1:MASKED@", value)
+    return re.sub(":\w+@", ":MASKED@", value)
