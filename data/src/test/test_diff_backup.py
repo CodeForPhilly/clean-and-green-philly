@@ -7,7 +7,7 @@ from classes.backup_archive_database import (
 )
 from classes.diff_report import DiffReport
 from classes.featurelayer import google_cloud_bucket
-from config.psql import local_engine
+from config.psql import conn, local_engine
 from sqlalchemy import inspect
 
 
@@ -31,6 +31,7 @@ class TestDiffBackup:
         test the backup archiving
         """
         TestDiffBackup.backup.archive_backup_schema()
+        conn.commit()
         assert backup_schema_name not in inspect(local_engine).get_schema_names()
 
     def test_prune_old_archives(self):
