@@ -1,5 +1,6 @@
 import logging as log
 import os
+import re
 import smtplib
 import subprocess
 from email.mime.text import MIMEText
@@ -167,6 +168,7 @@ class DiffReport:
             + "."
             + table
             + "_diff --stats"
+            + " --table-write-limit 100000"
         )
         log.debug(mask_password(data_diff_command))
 
@@ -179,8 +181,8 @@ class DiffReport:
                 "data-diff command did not exit with success. "
                 + complete_process.stderr.decode()
             )
-
-        return complete_process.stdout.decode()
+        output = complete_process.stdout.decode()
+        return re.sub(r"\nExtra-Info:.*", "", output, flags=re.DOTALL)
 
     def send_report_to_slack(self):
         """
