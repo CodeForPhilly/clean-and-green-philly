@@ -18,10 +18,7 @@ def vacant_properties():
             "parcel_type",
         ],
         pk_cols=["opa_id", "parcel_type"],
-        cleanup_sql=[
-            "delete from vacant_properties where opa_id is null",
-            "update backup_.vacant_properties set owner1 = 'Nico' where opa_id = '888600040'",
-        ],
+        cleanup_sql=["delete from vacant_properties where opa_id is null"],
     )
 
     vacant_properties.gdf.dropna(subset=["opa_id"], inplace=True)
