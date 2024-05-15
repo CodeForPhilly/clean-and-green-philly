@@ -208,6 +208,7 @@ const SinglePropertyDetail = ({
             }}
           >
             <ThemeButton
+              tabIndex={0}
               color="tertiary"
               label="Share"
               startContent={<Share />}
@@ -217,6 +218,8 @@ const SinglePropertyDetail = ({
               }}
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
+              onFocus={() => setHover(true)}
+              onBlur={() => setHover(false) }
             />
           </Tooltip>
         </div>
