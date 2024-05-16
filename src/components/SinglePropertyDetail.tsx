@@ -208,7 +208,6 @@ const SinglePropertyDetail = ({
             }}
           >
             <ThemeButton
-              tabIndex={0}
               color="tertiary"
               label="Share"
               startContent={<Share />}
