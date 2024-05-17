@@ -17,9 +17,9 @@ const CookieConsentBanner = () => {
   return (
     <div
       className={`${
-        cookieConsent === true
+        cookieConsent
           ? "hidden"
-          : "flex fixed inset-x-0 bottom-0 z-20 justify-between bg-blue-200 p-6"
+          : "md:flex fixed inset-x-0 bottom-0 z-20 justify-between bg-blue-200 p-4 sm:p-6"
       }`}
     >
       <div>
@@ -30,8 +30,8 @@ const CookieConsentBanner = () => {
         </div>
       </div>
 
-      <div className="flex gap-2">
-        <div className="flex flex-none items-center gap-x-5">
+      <div className="flex justify-end gap-2">
+        <div className="flex flex-none items-center gap-x-2">
           <ThemeButton
             color="tertiary"
             label="Decline"
