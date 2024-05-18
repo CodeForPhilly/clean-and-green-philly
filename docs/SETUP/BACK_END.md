@@ -142,6 +142,8 @@ Whenever the data load script is run in refresh mode, the old data set is backed
 
 Backups are done in PostgreSQL in the vacantlotsdb database by copying the whole public schema to a backup schema named backup_{timestamp}.  Besides the original tables, the backup schema includes a '{table_name}_diff' table with details of the differences from data-diff for each table.
 
+The first time you run the backup code you will need to clean up the tables.  This will not be required on subsequent runs.  For each table returned from `diff_report.list_tables`, find the corresponding `data_utils` class.  If there is anything in the `cleanup_sql` variable, run that sql.
+
 Backup schemas are only kept for one year by default.  Backup schemas older than a year are deleted at the end of the load script.
 
 When a diff is performed, an html file of the contents of the '{table_name}_diff' table is generated for each table and uploaded to the public GCP bucket so it can be viewed in a web browser.  The location of the html files is in the format: https://storage.googleapis.com/cleanandgreenphl/diff/2{backup_timestamp}/{table_name}.html  The link to the detail diff page is included in the Slack report message.
