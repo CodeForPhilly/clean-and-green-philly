@@ -217,6 +217,8 @@ const SinglePropertyDetail = ({
               }}
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
+              onFocus={() => setHover(true)}
+              onBlur={() => setHover(false) }
             />
           </Tooltip>
         </div>
