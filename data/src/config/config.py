@@ -26,7 +26,7 @@ smtp_server: str = "localhost"
 """ sendmail server """
 
 
-def is_docker():
+def is_docker() -> bool:
     """
     whether we are running in Docker or not, e.g. in ide or cl environment
     """

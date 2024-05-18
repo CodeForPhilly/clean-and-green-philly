@@ -39,6 +39,7 @@ class TestDiffBackup:
         test dropping backups that are too old
         """
         TestDiffBackup.backup.prune_old_archives()
+        conn.commit()
 
     def test_diff(self):
         """
