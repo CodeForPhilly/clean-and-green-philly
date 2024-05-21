@@ -17,9 +17,7 @@ def deliquencies(primary_featurelayer):
             "most_recent_year_owed",
             "total_assessment",
             "sheriff_sale",
-        ],
-        pk_cols=["opa_number"],
-        cleanup_sql=["delete from property_tax_delinquencies where opa_number = 0"],
+        ]
     )
 
     primary_featurelayer.opa_join(

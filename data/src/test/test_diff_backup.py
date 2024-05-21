@@ -45,7 +45,7 @@ class TestDiffBackup:
         """
         test the diff, assumes the backup_ table is there
         """
-        diff = DiffReport()
+        diff = DiffReport(timestamp_string=TestDiffBackup.backup.timestamp_string)
         diff.run()
 
     def test_generate_table_detail_report(self):

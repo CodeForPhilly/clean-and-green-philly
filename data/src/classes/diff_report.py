@@ -21,6 +21,20 @@ from sqlalchemy import inspect
 
 log.basicConfig(level=log_level)
 
+class DiffTable:
+    """Metadata about a table to be run through data-diff
+    """    
+    def __init__(self, table: str, pk_cols: list[str], where: str = None):
+        """constructor
+
+        Args:
+            table (str): the name of the table in postgres
+            pk_cols (list[str]): the list of columns in the primary key
+            where (str, optional): any additional where clause to limit the rows being compared
+        """
+        self.table = table
+        self.pk_cols = pk_cols
+        self.where = where
 
 class DiffReport:
     """
@@ -33,7 +47,7 @@ class DiffReport:
         Args:
             timestamp_string (str, optional): This should be the same timestamp used in the backup to keep things consistent.  We only use this as the folder name for the diff detail files in GCP. Defaults to None.
         """
-        self.tables = self._list_tables()
+        self.diff_tables = self._list_diff_tables()
         self.timestamp_string = timestamp_string
         self.report: str = "Diff report\ntable A/1 = new data, table B/2 = old data\n\n"
 
@@ -42,16 +56,15 @@ class DiffReport:
         run the report and slack or email it.
         """
 
-        for table in self.tables:
-            pks = self.find_primary_keys(table)
-            log.debug("Process table %s with pks %s", table, str(pks))
-            summary = table + "\n" + self.compare_table(table, pks)
+        for diff_table in self.diff_tables:
+            log.debug("Process table %s with pks %s", diff_table.table, str(diff_table.pk_cols))
+            summary = diff_table.table + "\n" + self.compare_table(diff_table)
             # if no differences, do not report.
             if self._summary_shows_differences(summary):
                 self.report += summary
-                self.report += "Details: " + self.detail_report(table) + "\n"
+                self.report += "Details: " + self.detail_report(diff_table.table) + "\n"
             else:
-                self.report += table + "\nNo difference\n"
+                self.report += diff_table.table + "\nNo difference\n"
             self.report += "\n"
         log.debug("\n")
         log.debug(self.report)
@@ -132,24 +145,28 @@ class DiffReport:
             .get("constrained_columns")
         )
 
-    def _list_tables(self) -> list[str]:
+    def _list_diff_tables(self) -> list[DiffTable]:
         """
-        list tables to do the diff on
+        list table metadata to do the diff on
+        Returns:
+            list[DiffTable]: the list of metadata
         """
-        # return inspect(local_engine).get_table_names(schema='public')
         return [
-            "vacant_properties",
-            "li_complaints",
-            "li_violations",
-            "opa_properties",
-            "property_tax_delinquencies",
+            DiffTable(table="vacant_properties",pk_cols=["opa_id", "parcel_type"],where="opa_id is not null"),
+            DiffTable(table="li_complaints",pk_cols=["service_request_id"]),
+            DiffTable(table="li_violations",pk_cols=["violationnumber", "opa_account_num"],where="opa_account_num is not null"),
+            DiffTable(table="opa_properties",pk_cols=["parcel_number"]),
+            DiffTable(table="property_tax_delinquencies",pk_cols=["opa_number"],where="opa_number <> 0")
         ]
 
-    def compare_table(self, table: str, pks: list[str]) -> str:
+    def compare_table(self, diff_table: DiffTable) -> str:
         """
         run data-diff to compare the newly imported table in the public schema to the table in the backup schema.
         We could use the data-diff python API but the cl is much clearer and has features I could not find in the API.
         """
+        table = diff_table.table
+        pks = diff_table.pk_cols
+
         # compare the tables and output the summary stats to include in the report.  Materialize the details
         # of the differences to a table in the backup schema named table_name_diff
         data_diff_command = (
@@ -169,6 +186,7 @@ class DiffReport:
             + table
             + "_diff --stats"
             + " --table-write-limit 100000"
+            + (" -w '" + diff_table.where + "'" if diff_table.where else "")
         )
         log.debug(mask_password(data_diff_command))
 
@@ -214,3 +232,5 @@ class DiffReport:
             s = smtplib.SMTP(smtp_server)
             s.sendmail(from_email, [report_to_email], msg.as_string())
             s.quit()
+
+

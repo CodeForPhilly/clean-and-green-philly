@@ -5,7 +5,6 @@ import traceback
 import geopandas as gpd
 import pandas as pd
 import requests
-import sqlalchemy as sa
 from config.config import FORCE_RELOAD, USE_CRS
 from config.psql import conn
 from esridump.dumper import EsriDumper
@@ -50,9 +49,7 @@ class FeatureLayer:
         force_reload=FORCE_RELOAD,
         from_xy=False,
         use_wkb_geom_field=None,
-        cols: list[str] = None,
-        pk_cols: list[str] = None,
-        cleanup_sql: list[str] = None,
+        cols: list[str] = None
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -66,8 +63,6 @@ class FeatureLayer:
         self.gdf = gdf
         self.crs = crs
         self.cols = cols
-        self.pk_cols = pk_cols
-        self.cleanup_sql = cleanup_sql
         self.psql_table = name.lower().replace(" ", "_")
         self.input_crs = "EPSG:4326" if not from_xy else USE_CRS
         self.use_wkb_geom_field = use_wkb_geom_field
@@ -205,23 +200,6 @@ class FeatureLayer:
                     if_exists="replace",
                     chunksize=1000,
                 )
-
-                # run any custom steps to clean up this table
-                if self.cleanup_sql:
-                    for sql in self.cleanup_sql:
-                        conn.exec_driver_sql(sql)
-                # add primary key constraints if any
-                if self.pk_cols and len(self.pk_cols) > 0:
-                    conn.execute(
-                        sa.DDL(
-                            "alter table "
-                            + self.psql_table
-                            + " add primary key ("
-                            + ",".join(self.pk_cols)
-                            + ")"
-                        )
-                    )
-
             except Exception as e:
                 print(f"Error loading data for {self.name}: {e}")
                 traceback.print_exc()

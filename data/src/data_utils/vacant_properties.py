@@ -16,9 +16,7 @@ def vacant_properties():
             "ZIPCODE",
             "OPA_ID",
             "parcel_type",
-        ],
-        pk_cols=["opa_id", "parcel_type"],
-        cleanup_sql=["delete from vacant_properties where opa_id is null"],
+        ]
     )
 
     vacant_properties.gdf.dropna(subset=["opa_id"], inplace=True)
