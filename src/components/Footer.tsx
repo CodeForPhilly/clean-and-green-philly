@@ -48,6 +48,8 @@ const Footer = () => (
           </li>
         </ul>
       </nav>
+
+      <CookieConsentBanner />
     </footer>
   </div>
 );
