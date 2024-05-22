@@ -30,7 +30,7 @@ const CookieConsentBanner = () => {
         </div>
       </div>
 
-      <div className="flex justify-end gap-2">
+      <div className="flex justify-end gap-2 pt-4 sm:pt-0">
         <div className="flex flex-none items-center gap-x-2">
           <ThemeButton
             color="tertiary"
