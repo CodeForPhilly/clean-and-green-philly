@@ -3,23 +3,25 @@
 import { useState } from "react";
 import { ThemeButton } from "./ThemeButton";
 import { Check, X } from "@phosphor-icons/react";
+import { useCookieContext } from "@/context/CookieContext";
 
 const CookieConsentBanner = () => {
-  const [cookieConsent, setCookieConsent] = useState(false);
+  const [shouldStoreCookies, setShouldStoreCookies] = useState(false);
+  const { shouldShowBanner, setShouldShowBanner } = useCookieContext();
 
-  const onClickButton = (shouldAllowCookies: boolean) => {
-    setCookieConsent(true);
+  const onClickButton = (shouldSaveCookies: boolean) => {
+    setShouldStoreCookies(shouldSaveCookies);
+    setShouldShowBanner(false);
 
     // TODO: Add logic for accepting or declining cookies. See issue 597.
-    console.log("shouldAllowCookies", shouldAllowCookies);
   };
 
   return (
     <div
       className={`${
-        cookieConsent
-          ? "hidden"
-          : "md:flex fixed inset-x-0 bottom-0 z-20 justify-between bg-blue-200 p-4 sm:p-6"
+        shouldShowBanner
+          ? "md:flex fixed inset-x-0 bottom-0 z-20 justify-between bg-blue-200 p-4 sm:p-6"
+          : "hidden"
       }`}
     >
       <div>
