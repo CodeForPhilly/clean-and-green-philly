@@ -7,7 +7,9 @@ import React, {
 } from "react";
 
 interface CookieContextProps {
+  shouldAllowCookies: boolean;
   shouldShowBanner: boolean;
+  setShouldAllowCookies: React.Dispatch<React.SetStateAction<boolean>>;
   setShouldShowBanner: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
@@ -28,10 +30,18 @@ export const useCookieContext = () => {
 };
 
 export const CookieProvider: FC<CookieProviderProps> = ({ children }) => {
+  const [shouldAllowCookies, setShouldAllowCookies] = useState(false);
   const [shouldShowBanner, setShouldShowBanner] = useState(true);
 
   return (
-    <CookieContext.Provider value={{ shouldShowBanner, setShouldShowBanner }}>
+    <CookieContext.Provider
+      value={{
+        shouldAllowCookies,
+        shouldShowBanner,
+        setShouldAllowCookies,
+        setShouldShowBanner,
+      }}
+    >
       {children}
     </CookieContext.Provider>
   );
