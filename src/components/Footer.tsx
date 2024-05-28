@@ -2,6 +2,7 @@
 
 import { useCookieContext } from "@/context/CookieContext";
 import CookieConsentBanner from "./CookieConsentBanner";
+import Link from "next/link";
 
 const Footer = () => {
   let { setShouldShowBanner } = useCookieContext();
@@ -36,9 +37,9 @@ const Footer = () => {
             <span className="max-sm:hidden">—</span>
 
             <li className="base-sm underline text-gray-600 mx-auto">
-              <a href="/legal-disclaimer" className="hover:text-gray-800">
+              <Link href="/legal-disclaimer" className="hover:text-gray-800">
                 Legal Disclaimer
-              </a>
+              </Link>
             </li>
 
             <span className="max-sm:hidden">—</span>
