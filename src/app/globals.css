@@ -345,6 +345,33 @@ a .bg-color-none {
   background-image: url('data:image/svg+xml,<svg width="16" height="2" viewBox="0 0 16 2" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.5 0.724609C15.5 0.89037 15.4342 1.04934 15.3169 1.16655C15.1997 1.28376 15.0408 1.34961 14.875 1.34961H1.125C0.95924 1.34961 0.800269 1.28376 0.683058 1.16655C0.565848 1.04934 0.5 0.89037 0.5 0.724609C0.5 0.558849 0.565848 0.399878 0.683058 0.282668C0.800269 0.165458 0.95924 0.0996094 1.125 0.0996094H14.875C15.0408 0.0996094 15.1997 0.165458 15.3169 0.282668C15.4342 0.399878 15.5 0.558849 15.5 0.724609Z" fill="%2303141B"/></svg>') !important;
 }
 
+/* Tooltips for maplibre components, classes style the title attributes */
+.maplibregl-ctrl button.maplibregl-ctrl-geolocate[title]:hover::after,
+.maplibregl-ctrl button.maplibregl-ctrl-zoom-in[title]:hover::after,
+.maplibregl-ctrl button.maplibregl-ctrl-zoom-out[title]:hover::after {
+  content: attr(title);
+  font-size: 14px;
+  padding: 4px 10px;
+  width: max-content;
+  z-index: 100;
+  @apply absolute items-center flex bg-gray-900 rounded-[14px] text-white z-[75];
+}
+
+.maplibregl-ctrl button.maplibregl-ctrl-geolocate[title]:hover::after {
+  transform: translateX(-102.5%);
+  @apply top-1.5;
+}
+
+.maplibregl-ctrl button.maplibregl-ctrl-zoom-in[title]:hover::after {
+  transform: translateX(-105.5%);
+  @apply top-1.5;
+}
+
+.maplibregl-ctrl button.maplibregl-ctrl-zoom-out[title]:hover::after {
+  transform: translateX(-105.5%);
+  @apply top-[46px];
+}
+
 /* styling for the map tooltip */
 .customized-map-popup {
   .maplibregl-popup-content {
