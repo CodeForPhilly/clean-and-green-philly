@@ -1,12 +1,11 @@
 import geopandas as gpd
 from classes.featurelayer import FeatureLayer
 from config.config import USE_CRS
+from constants.services import NBHOODS_URL
 
 
 def nbhoods(primary_featurelayer):
-    nbhoods_url = "https://raw.githubusercontent.com/opendataphilly/open-geo-data/master/Neighborhoods_Philadelphia/Neighborhoods_Philadelphia.geojson"
-
-    phl_nbhoods = gpd.read_file(nbhoods_url)
+    phl_nbhoods = gpd.read_file(NBHOODS_URL)
     phl_nbhoods.rename(columns={"mapname": "neighborhood"}, inplace=True)
     phl_nbhoods = phl_nbhoods.to_crs(USE_CRS)
 

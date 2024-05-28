@@ -42,3 +42,5 @@ OPA_PROPERTIES_QUERY = "SELECT market_value, sale_date, sale_price, parcel_numbe
 UNSAFE_BUILDINGS_QUERY = "SELECT * FROM unsafe"
 
 IMMINENT_DANGER_BUILDINGS_QUERY = "SELECT * FROM imm_dang"
+
+NBHOODS_URL = "https://raw.githubusercontent.com/opendataphilly/open-geo-data/master/philadelphia-neighborhoods/philadelphia-neighborhoods.geojson"

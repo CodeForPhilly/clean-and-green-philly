@@ -12,7 +12,7 @@ def opa_properties(primary_featurelayer):
             "sale_date",
             "sale_price",
             "parcel_number",
-        ],
+        ]
     )
 
     primary_featurelayer.opa_join(

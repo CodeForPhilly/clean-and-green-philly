@@ -11,7 +11,7 @@ def phs_properties(primary_featurelayer):
 
     primary_featurelayer.opa_join(
         phs_properties.gdf,
-        "BRT_ID",
+        "brt_id",
     )
 
     primary_featurelayer.gdf["phs_partner_agency"].fillna("None", inplace=True)

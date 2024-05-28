@@ -136,3 +136,16 @@ docker-compose run streetview
 ```
 
 The script should only load new images that aren't in the bucket already (new properties added to list).
+
+#### Backup and difference reporting
+Whenever the data load script is run in refresh mode, the old data set is backed up and a report of any differences is sent to the team via Slack.  Differences in data are calculated using the [data-diff](https://github.com/datafold/data-diff) package. See [issue 520](https://github.com/CodeForPhilly/clean-and-green-philly/issues/520) in Github.
+
+Backups are done in PostgreSQL in the vacantlotsdb database by copying the whole public schema to a backup schema named backup_{timestamp}.  Besides the original tables, the backup schema includes a '{table_name}_diff' table with details of the differences from data-diff for each table.
+
+Backup schemas are only kept for one year by default.  Backup schemas older than a year are deleted at the end of the load script.
+
+When a diff is performed, an html file of the contents of the '{table_name}_diff' table is generated for each table and uploaded to the public GCP bucket so it can be viewed in a web browser.  The location of the html files is in the format: https://storage.googleapis.com/cleanandgreenphl/diff/2{backup_timestamp}/{table_name}.html  The link to the detail diff page is included in the Slack report message.
+
+The `CAGP_SLACK_API_TOKEN` environmental variable must be set with the API key for the Slack app that can write messages to the channel as configured in the config.py `report_to_slack_channel` variable.
+
+The report will also be emailed to any emails configured in the config.py `report_to_email` variable.
