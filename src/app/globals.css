@@ -367,3 +367,13 @@ a .bg-color-none {
     width: 24px;
   }
 }
+
+@media screen and (max-width: 640px) {
+  .maplibregl-ctrl-bottom-right,
+  .maplibregl-ctrl-bottom-left {
+    position: fixed !important;
+  }
+  .maplibregl-ctrl-bottom-left {
+    bottom: 50px !important;
+  }
+}
