@@ -1,19 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import { ThemeButton } from "./ThemeButton";
 import { Check, X } from "@phosphor-icons/react";
 import { useCookieContext } from "@/context/CookieContext";
 
 const CookieConsentBanner = () => {
-  const [shouldStoreCookies, setShouldStoreCookies] = useState(false);
-  const { shouldShowBanner, setShouldShowBanner } = useCookieContext();
+  const { shouldShowBanner, setShouldAllowCookies, setShouldShowBanner } =
+    useCookieContext();
 
   const onClickButton = (shouldSaveCookies: boolean) => {
-    setShouldStoreCookies(shouldSaveCookies);
+    setShouldAllowCookies(shouldSaveCookies);
     setShouldShowBanner(false);
-
-    // TODO: Add logic for accepting or declining cookies. See issue 597.
   };
 
   return (

@@ -8,7 +8,6 @@ const Footer = () => {
   let { setShouldShowBanner } = useCookieContext();
 
   const onClickCookieSettings = () => {
-    // TODO: Add logic for showing cookie consent banner. See issue 597.
     setShouldShowBanner(true);
   };
 
