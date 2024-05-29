@@ -18,7 +18,7 @@ We welcome all kinds of contributions, big or small. The best way to start is to
 
 Once you've found an issue you'd like to work on, please comment on it to let us know you're interested. We'll do our best to assign it to you ASAP. If you're unable to complete the issue in a timely manner (a week or two), please let us know so we can reassign it. If we see an issue with no activity for 3 or more days, we'll reach out via GitHub and Slack to the person to whom it's assigned. If there is no activity at all on the issue for 1 week, we'll reassign it. If there is some activity (e.g., a draft PR or a message to let us know that you're out of town), then you're free to continue working on the issue for another week. However, in the interest of avoiding bottlenecks and giving everyone a fair chance to contribute, we ask that everyone try to complete all issues within 2 weeks of assignment.
 
-For info on how to get the codebase setup, see the [SETUP](/SETUP) folder, which contains instructions for setting up the front end, back end, and full stack, depending on your interest. If you have questions about the process, please ask in the [Slack channel](https://codeforphilly.slack.com/archives/C05H9QBMP96).
+For info on how to get the codebase setup, see the [SETUP](/docs/SETUP) folder, which contains instructions for setting up the front end, back end, and full stack, depending on your interest. If you have questions about the process, please ask in the [Slack channel](https://codeforphilly.slack.com/archives/C05H9QBMP96).
 
 To make sure the repo is protected and organized, merges to `main` are not allowed. All changes must be made through pull requests to the `staging` branch. Once you have commits ready to merge, please create a new branch named in the format of `<github-username>`/`<issue-number>`-`<kebab-case-description>`. For example vimusds/1069-fix-territory-on-mobile. Your PR will need to be approved by at least one required reviewer (see [CODEOWNERS](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/.github/CODEOWNERS)) and must pass all required status checks. When these are complete, it will be merged to the `staging` branch and then eventually reviwed by our design team and merged to `main` for deployment. To help them in this, please provide clear instructions on how to test/view the changes you've made, and tag the issues you're addressing. You can do this when writing the PR by writing `#<number>` in the `Does this close any currently open issues` section.
 
@@ -32,7 +32,7 @@ To report a bug, request a feature, or suggest an enhancement, please open an is
 
 ## Contribute to Documentation
 
-As this project grows, building our documentation is an important part of making sure it's accessible and sustainable. We welcome contributions to our documentation, ranging from refining existing content for better clarity, adding examples and tutorials for complex features, to ensuring inclusivity in language and presentation. In particular, we welcome suggestions for any of the documents in [docs][../docs] and [SETUP](/SETUP).
+As this project grows, building our documentation is an important part of making sure it's accessible and sustainable. We welcome contributions to our documentation, ranging from refining existing content for better clarity, adding examples and tutorials for complex features, to ensuring inclusivity in language and presentation. In particular, we welcome suggestions for any of the documents in [docs](../docs) and [SETUP](/docs/SETUP).
 
 ## Suggesting Something Else
 
