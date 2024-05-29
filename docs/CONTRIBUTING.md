@@ -32,7 +32,7 @@ To report a bug, request a feature, or suggest an enhancement, please open an is
 
 ## Contribute to Documentation
 
-As this project grows, building our documentation is an important part of making sure it's accessible and sustainable. We welcome contributions to our documentation, ranging from refining existing content for better clarity, adding examples and tutorials for complex features, to ensuring inclusivity in language and presentation. In particular, we welcome suggestions for any of the documents in [docs][../docs] and [SETUP](/SETUP).
+As this project grows, building our documentation is an important part of making sure it's accessible and sustainable. We welcome contributions to our documentation, ranging from refining existing content for better clarity, adding examples and tutorials for complex features, to ensuring inclusivity in language and presentation. In particular, we welcome suggestions for any of the documents in [docs](../docs) and [SETUP](/docs/SETUP).
 
 ## Suggesting Something Else
 
