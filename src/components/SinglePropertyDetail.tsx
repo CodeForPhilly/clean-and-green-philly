@@ -142,38 +142,45 @@ const SinglePropertyDetail = ({
 
   const onClickSaveButton = () => {
     if (shouldAllowCookies) {
-      const localStorageData = localStorage.getItem("opa_ids");
-      const parsedLocalStorageData = localStorageData
-        ? JSON.parse(localStorageData)
-        : {};
-
-      if (parsedLocalStorageData.opa_ids[OPA_ID]) {
-        removePropertyIdFromLocalStorage(parsedLocalStorageData);
-        setIsPropertySavedToLocalStorage(false);
-
-        if (parsedLocalStorageData.count === 0) {
-          dispatch({
-            type: "SET_DIMENSIONS",
-            property: "OPA_ID",
-            dimensions: [],
-          });
-          setShouldFilterSavedProperties(false);
-        } else {
-          if (shouldFilterSavedProperties) {
-            let propertyIds = getPropertyIdsFromLocalStorage();
-            dispatch({
-              type: "SET_DIMENSIONS",
-              property: "OPA_ID",
-              dimensions: [...propertyIds],
-            });
-          }
-        }
-      } else {
-        savePropertyIdToLocalStorage(parsedLocalStorageData);
-        setIsPropertySavedToLocalStorage(true);
-      }
+      findPropertyIdInLocalStorage();
     } else {
       setShouldShowBanner(true);
+    }
+  };
+
+  const findPropertyIdInLocalStorage = () => {
+    const localStorageData = localStorage.getItem("opa_ids");
+    const parsedLocalStorageData = localStorageData
+      ? JSON.parse(localStorageData)
+      : {};
+
+    if (parsedLocalStorageData.opa_ids[OPA_ID]) {
+      removePropertyIdFromLocalStorage(parsedLocalStorageData);
+      setIsPropertySavedToLocalStorage(false);
+      dispatchFilterAction(parsedLocalStorageData);
+    } else {
+      savePropertyIdToLocalStorage(parsedLocalStorageData);
+      setIsPropertySavedToLocalStorage(true);
+    }
+  };
+
+  const dispatchFilterAction = (data: any) => {
+    if (data.count === 0) {
+      dispatch({
+        type: "SET_DIMENSIONS",
+        property: "OPA_ID",
+        dimensions: [],
+      });
+      setShouldFilterSavedProperties(false);
+    } else {
+      if (shouldFilterSavedProperties) {
+        let propertyIds = getPropertyIdsFromLocalStorage();
+        dispatch({
+          type: "SET_DIMENSIONS",
+          property: "OPA_ID",
+          dimensions: [...propertyIds],
+        });
+      }
     }
   };
 
