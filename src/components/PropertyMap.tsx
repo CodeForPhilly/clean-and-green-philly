@@ -119,10 +119,10 @@ const MapControls = () => {
       {(smallScreenToggle || window.innerWidth > 640) ?
         <MapLegendControl position="bottom-left" setSmallScreenToggle={setSmallScreenToggle} layerStyle={layerStylePolygon} />
         :
-        <div className="maplibregl-ctrl maplibregl-ctrl-group w-[40px] h-[40px]">
+        <div className="custom-legend-info-div maplibregl-ctrl maplibregl-ctrl-group w-[40px] h-[40px]">
           <ThemeButton
-            className="custom-info z-10"
-            startContent={<span className="custom-info-icon maplibregl-ctrl-icon"></span>}
+            className="custom-legend-info z-10"
+            startContent={<span className="custom-legend-info-icon maplibregl-ctrl-icon"></span>}
             onPress={() => setSmallScreenToggle(s => !s)}
           />
         </div>

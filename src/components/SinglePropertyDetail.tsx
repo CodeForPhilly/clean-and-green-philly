@@ -217,6 +217,8 @@ const SinglePropertyDetail = ({
               }}
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
+              onFocus={() => setHover(true)}
+              onBlur={() => setHover(false) }
             />
           </Tooltip>
         </div>
@@ -230,14 +232,24 @@ const SinglePropertyDetail = ({
             objectFit="cover"
             unoptimized
           />
-          <button
-            className="absolute top-4 right-4 bg-white p-[10px] rounded-md hover:bg-gray-100"
-            onClick={() => setIsStreetViewModalOpen(true)}
-            aria-label="Open full screen street view map"
-            id="outside-iframe-element"
+          <Tooltip
+            disableAnimation
+            closeDelay={100}
+            placement="top"
+            content="Street View"
+            classNames={{
+              content: "bg-gray-900 rounded-[14px] text-white relative top-[5px]",
+            }}
           >
-            <ArrowsOut color="#3D3D3D" size={24} />
-          </button>
+            <button
+              className="absolute top-4 right-4 bg-white p-[10px] rounded-md hover:bg-gray-100"
+              onClick={() => setIsStreetViewModalOpen(true)}
+              aria-label="Open full screen street view map"
+              id="outside-iframe-element"
+            >
+              <ArrowsOut color="#3D3D3D" size={24} />
+            </button>
+          </Tooltip>
         </div>
       </div>
       <div className="py-4 px-2">
@@ -251,14 +263,24 @@ const SinglePropertyDetail = ({
             {address.toLowerCase()}
           </h2>
           <div>
-            <ThemeButtonLink
-              href={atlasUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              color="tertiary"
-              label="Atlas"
-              endContent={<ArrowSquareOut aria-hidden="true" />}
-            />
+            <Tooltip
+              disableAnimation
+              closeDelay={100}
+              placement="top"
+              content="View on City Atlas"
+              classNames={{
+                content: "bg-gray-900 rounded-[14px] text-white relative top-1",
+              }}
+            >
+              <ThemeButtonLink
+                href={atlasUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                color="tertiary"
+                label="Atlas"
+                endContent={<ArrowSquareOut aria-hidden="true" />}
+              />
+            </Tooltip>
           </div>
         </div>
       </div>

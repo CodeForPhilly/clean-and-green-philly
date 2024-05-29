@@ -308,7 +308,7 @@ const MapPage = ({ params }: MapPageProps) => {
             <ThemeButton
               aria-label={`Change to ${smallScreenMode}`}
               label={smallScreenMode === "map" ? "List View" : "Map View"}
-              className="absolute bottom-4 left-1/2 -ml-[3.5rem] rounded-2xl sm:hidden max-md:min-w-[7rem]"
+              className="fixed bottom-10 left-1/2 -ml-[3.5rem] rounded-2xl sm:hidden max-md:min-w-[7rem]"
               onPress={updateSmallScreenMode}
               startContent={
                 smallScreenMode === "map" ? (
