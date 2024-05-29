@@ -6,11 +6,13 @@ export function generateMetadata({
   description,
   url,
   imageUrl,
+  imageAlt,
 }: {
   title: string;
-  description: string;
+  description?: string;
   url: string;
   imageUrl?: string;
+  imageAlt?: string;
 }): Metadata {
   return {
     ...globalMetadata,
@@ -26,7 +28,7 @@ export function generateMetadata({
           url: imageUrl || "/thumbnail.png",
           width: 1200,
           height: 630,
-          alt: title,
+          alt: imageAlt || "Clean & Green Philly",
         },
       ],
     },

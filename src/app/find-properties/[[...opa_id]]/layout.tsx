@@ -1,9 +1,14 @@
 import { Header, Hotjar } from "@/components";
+import { generateMetadata } from "@/utilities/generateMetaData";
 
-export const metadata = {
-  title: "Find Properties",
-};
+const title = "Find Properties";
+const url = "/find-properties";
+//descrption?
 
+export const metadata = generateMetadata({
+  title,
+  url,
+});
 const MapLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="overflow-hidden">
