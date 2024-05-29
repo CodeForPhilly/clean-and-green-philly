@@ -1,4 +1,5 @@
 import { Header, Hotjar } from "@/components";
+import CookieConsentBanner from "@/components/CookieConsentBanner";
 
 export const metadata = {
   title: "Find Properties",
@@ -10,6 +11,7 @@ const MapLayout = ({ children }: { children: React.ReactNode }) => {
       <Header />
       <main id="main">{children}</main>
       <Hotjar />
+      <CookieConsentBanner />
     </div>
   );
 };

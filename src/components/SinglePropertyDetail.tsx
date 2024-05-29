@@ -16,6 +16,7 @@ import ContentCard from "./ContentCard";
 import cleanup from "@/images/transform-a-property.png";
 import { PiEyeSlash } from "react-icons/pi";
 import { useFilter } from "@/context/FilterContext";
+import { useCookieContext } from "@/context/CookieContext";
 import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
 
 interface PropertyDetailProps {
@@ -61,6 +62,7 @@ const SinglePropertyDetail = ({
   const [hover, setHover] = useState<boolean>(false);
   const [isPropertySavedToLocalStorage, setIsPropertySavedToLocalStorage] =
     useState(false);
+  let { shouldAllowCookies, setShouldShowBanner } = useCookieContext();
 
   useEffect(() => {
     if (!localStorage.getItem("opa_ids")) {
@@ -139,35 +141,39 @@ const SinglePropertyDetail = ({
   };
 
   const onClickSaveButton = () => {
-    const localStorageData = localStorage.getItem("opa_ids");
-    const parsedLocalStorageData = localStorageData
-      ? JSON.parse(localStorageData)
-      : {};
+    if (shouldAllowCookies) {
+      const localStorageData = localStorage.getItem("opa_ids");
+      const parsedLocalStorageData = localStorageData
+        ? JSON.parse(localStorageData)
+        : {};
 
-    if (parsedLocalStorageData.opa_ids[OPA_ID]) {
-      removePropertyIdFromLocalStorage(parsedLocalStorageData);
-      setIsPropertySavedToLocalStorage(false);
+      if (parsedLocalStorageData.opa_ids[OPA_ID]) {
+        removePropertyIdFromLocalStorage(parsedLocalStorageData);
+        setIsPropertySavedToLocalStorage(false);
 
-      if (parsedLocalStorageData.count === 0) {
-        dispatch({
-          type: "SET_DIMENSIONS",
-          property: "OPA_ID",
-          dimensions: [],
-        });
-        setShouldFilterSavedProperties(false);
-      } else {
-        if (shouldFilterSavedProperties) {
-          let propertyIds = getPropertyIdsFromLocalStorage();
+        if (parsedLocalStorageData.count === 0) {
           dispatch({
             type: "SET_DIMENSIONS",
             property: "OPA_ID",
-            dimensions: [...propertyIds],
+            dimensions: [],
           });
+          setShouldFilterSavedProperties(false);
+        } else {
+          if (shouldFilterSavedProperties) {
+            let propertyIds = getPropertyIdsFromLocalStorage();
+            dispatch({
+              type: "SET_DIMENSIONS",
+              property: "OPA_ID",
+              dimensions: [...propertyIds],
+            });
+          }
         }
+      } else {
+        savePropertyIdToLocalStorage(parsedLocalStorageData);
+        setIsPropertySavedToLocalStorage(true);
       }
     } else {
-      savePropertyIdToLocalStorage(parsedLocalStorageData);
-      setIsPropertySavedToLocalStorage(true);
+      setShouldShowBanner(true);
     }
   };
 
