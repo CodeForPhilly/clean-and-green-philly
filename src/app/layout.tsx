@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { CookieProviderWrapper } from "./CookieProviderWrapper";
 
 export const metadata: Metadata = {
   title: {
@@ -28,7 +29,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
+        <CookieProviderWrapper>{children}</CookieProviderWrapper>
       </body>
     </html>
   );
