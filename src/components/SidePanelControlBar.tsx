@@ -5,9 +5,7 @@ import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import {
   BookmarkSimple,
   DownloadSimple,
-  Funnel,
-  GlobeHemisphereWest,
-  SquaresFour,
+  Funnel
 } from "@phosphor-icons/react";
 import { ThemeButton } from "./ThemeButton";
 import { useFilter } from "@/context/FilterContext";
@@ -22,7 +20,6 @@ type SidePanelControlBarProps = {
   smallScreenMode: string;
   setShouldFilterSavedProperties: (shouldFilter: boolean) => void;
   updateCurrentView: (view: BarClickOptions) => void;
-  updateSmallScreenMode: () => void;
 };
 
 const SearchBarComponent: FC<SidePanelControlBarProps> = ({
@@ -34,7 +31,6 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   smallScreenMode,
   setShouldFilterSavedProperties,
   updateCurrentView,
-  updateSmallScreenMode,
 }) => {
   const filterRef = useRef<HTMLButtonElement | null>(null);
   const savedRef = useRef<HTMLButtonElement | null>(null);
@@ -73,19 +69,6 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
     <>
       <div className="flex justify-between -mx-6 px-12 top-0 py-4 z-10 bg-white">
         {/* Left-aligned content: Total Properties in View */}
-        <ThemeButton
-          color="tertiary"
-          aria-label={`Change to ${smallScreenMode}`}
-          className="sm:hidden max-md:min-w-[4rem]"
-          onPress={updateSmallScreenMode}
-          startContent={
-            smallScreenMode === "map" ? (
-              <SquaresFour />
-            ) : (
-              <GlobeHemisphereWest />
-            )
-          }
-        />
         <div className="sm:px-4 lg:px-0 py-2">
           <h1 className="body-md">
             <span className="font-bold">
