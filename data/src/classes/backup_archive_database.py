@@ -114,8 +114,7 @@ class BackupArchiveDatabase:
         bucket = google_cloud_bucket()
         count: int = 0
         for blob in bucket.list_blobs(prefix=tiles_file_id_prefix):
-            # there should only be one but in case there are more include the count in the backup file name
-            suffix: str = '_' + self.timestamp_string + ('' if count == 0 else '_' + count )
+            suffix: str = '_' + self.timestamp_string
             name, ext = os.path.splitext(blob.name)
             backup_file_name: str = tile_file_backup_directory + "/" + name + suffix + ext
             log.debug(backup_file_name)
