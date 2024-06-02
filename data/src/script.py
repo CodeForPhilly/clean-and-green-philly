@@ -2,7 +2,7 @@ import sys
 
 from classes.backup_archive_database import BackupArchiveDatabase
 from classes.diff_report import DiffReport
-from config.config import FORCE_RELOAD
+from config.config import FORCE_RELOAD, tiles_file_id_prefix
 from config.psql import conn
 from data_utils.access_process import access_process
 from data_utils.city_owned_properties import city_owned_properties
@@ -47,9 +47,15 @@ services = [
 ]
 
 # backup sql schema if we are reloading data
-backup: BackupArchiveDatabase
+backup: BackupArchiveDatabase = None
 if FORCE_RELOAD:
+    # first archive any remaining backup that may exist from a previous run that errored
     backup = BackupArchiveDatabase()
+    if backup.is_backup_schema_exists():
+        backup.archive_backup_schema()
+        conn.commit()
+
+    backup = BackupArchiveDatabase() # create a new one so we get a new timestamp
     backup.backup_schema()
 
 # Load Vacant Property Data
@@ -57,7 +63,7 @@ dataset = vacant_properties()
 
 # Load and join other datasets
 for service in services:
-    dataset = service(dataset)
+   dataset = service(dataset)
 
 # Add Priority Level
 dataset = priority_level(dataset)
@@ -65,8 +71,13 @@ dataset = priority_level(dataset)
 # Add Access Process
 dataset = access_process(dataset)
 
+# back up old tiles file whether we are reloading data or not
+if backup is None:
+    backup = BackupArchiveDatabase()
+backup.backup_tiles_file()
+
 # Post to Mapbox
-dataset.build_and_publish_pmtiles("vacant_properties_tiles")
+dataset.build_and_publish_pmtiles(tiles_file_id_prefix)
 
 # Finalize in Postgres
 dataset.gdf.to_postgis("vacant_properties_end", conn, if_exists="replace", index=False)

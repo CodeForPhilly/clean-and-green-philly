@@ -1,12 +1,14 @@
 import logging as log
+import os
 import subprocess
 from datetime import datetime, timedelta
 
 import sqlalchemy as sa
-from config.config import log_level, max_backup_schema_days
+from config.config import log_level, max_backup_schema_days, tiles_file_id_prefix, tile_file_backup_directory
 from config.psql import conn, local_engine, url
 from data_utils.utils import mask_password
 from sqlalchemy import inspect
+from classes.featurelayer import google_cloud_bucket
 
 log.basicConfig(level=log_level)
 
@@ -97,3 +99,27 @@ class BackupArchiveDatabase:
                     sql = "drop schema " + schema + " cascade"
                     log.debug(sql)
                     conn.execute(sa.DDL(sql))
+
+    def is_backup_schema_exists(self) -> bool:
+        """ whether the backup schema exists
+
+        Returns:
+            bool: whether true
+        """        
+        return backup_schema_name in inspect(local_engine).get_schema_names()
+    
+    def backup_tiles_file(self):
+        """backup the main tiles file to a timestamped copy in the backup/ folder in GCP
+        """
+        bucket = google_cloud_bucket()
+        count: int = 0
+        for blob in bucket.list_blobs(prefix=tiles_file_id_prefix):
+            # there should only be one but in case there are more include the count in the backup file name
+            suffix: str = '_' + self.timestamp_string + ('' if count == 0 else '_' + count )
+            name, ext = os.path.splitext(blob.name)
+            backup_file_name: str = tile_file_backup_directory + "/" + name + suffix + ext
+            log.debug(backup_file_name)
+            bucket.rename_blob(blob,new_name=backup_file_name)
+            count += 1
+        if count == 0:
+            log.warning("No files were found to back up.")
