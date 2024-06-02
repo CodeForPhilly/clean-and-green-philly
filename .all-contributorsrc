@@ -137,6 +137,7 @@
         "code"
       ]
     },
+    {
       "login": "jgaye",
       "name": "Julien Gaye",
       "avatar_url": "https://avatars.githubusercontent.com/u/4049458?v=4",
@@ -145,6 +146,7 @@
         "code"
       ]
     },
+    {
       "login": "BayLadyCoder",
       "name": "Bay Chairangsaris",
       "avatar_url": "https://avatars.githubusercontent.com/u/33296817?v=4",
@@ -153,6 +155,8 @@
         "code",
         "doc"
       ]
+    },
+    {
       "login": "paulhchoi",
       "name": "Paul Choi",
       "avatar_url": "https://avatars.githubusercontent.com/u/8061917?v=4",
