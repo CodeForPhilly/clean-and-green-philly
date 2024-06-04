@@ -22,6 +22,10 @@ COMMUNITY_GARDENS_TO_LOAD = [
     "https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/rest/services/PHS_NGT_Supported_Current_view/FeatureServer/0/"
 ]
 
+PPR_PROPERTIES_TO_LOAD = [
+   "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PPR_Properties/FeatureServer/0"
+]
+
 one_year_ago = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime(
     "%Y-%m-%d"
 )
