@@ -24,7 +24,7 @@ If you're unable to complete the issue in a timely manner (a week or two), pleas
 
 ### Local setup
 
-For info on how to get the codebase setup, see the [SETUP](/SETUP) folder, which contains instructions for setting up the front end, back end, and full stack, depending on your interest. If you have questions about the process, please ask in the [Slack channel](https://codeforphilly.slack.com/archives/C05H9QBMP96).
+For info on how to get the codebase setup, see the [SETUP](/docs/SETUP) folder, which contains instructions for setting up the front end, back end, and full stack, depending on your interest. If you have questions about the process, please ask in the [Slack channel](https://codeforphilly.slack.com/archives/C05H9QBMP96).
 
 
 ## Quickstart
@@ -62,7 +62,7 @@ To report a bug, request a feature, or suggest an enhancement, please open an is
 
 ## Contribute to Documentation
 
-As this project grows, building our documentation is an important part of making sure it's accessible and sustainable. We welcome contributions to our documentation, ranging from refining existing content for better clarity, adding examples and tutorials for complex features, to ensuring inclusivity in language and presentation. In particular, we welcome suggestions for any of the documents in [docs][../docs] and [SETUP](/SETUP).
+As this project grows, building our documentation is an important part of making sure it's accessible and sustainable. We welcome contributions to our documentation, ranging from refining existing content for better clarity, adding examples and tutorials for complex features, to ensuring inclusivity in language and presentation. In particular, we welcome suggestions for any of the documents in [docs](../docs) and [SETUP](/docs/SETUP).
 
 ## Suggesting Something Else
 

@@ -39,15 +39,15 @@ Note: make sure to keep your fork up to date with the original repository by fol
 1. Ensure that PostgreSQL is installed and running on your Mac.
 2. In your terminal, run `createdb vacantlotdb`. This command directly creates a new database named `vacantlotdb`.
 3. Run `psql -U postgres -d vacantlotdb`. Enter the password when prompted. This command opens the PostgreSQL command line interface and connects you to the `vacantlotdb` database.
-4. Run `CREATE EXTENSION postgis;`
+4. Run `CREATE EXTENSION postgis;`.
 5. Run `\q` to exit the PostgreSQL command line interface.
 
 ### macOS
 
 1. Ensure that PostgreSQL is installed and running on your Mac.
 2. In your terminal, run `createdb vacantlotdb`. This command directly creates a new database named `vacantlotdb`.
-3. Run `psql -d vacantlotdb`. Note that you might need to start postgres on mac: `brew services start postgresql` before running psql If prompted, enter the password for your PostgreSQL user. This will open the PostgreSQL command line interface and connect you to the `vacantlotdb` database. You will know it’s succeeded when you see `vacantlotdb=#`
-4. Run `CREATE EXTENSION postgis;`
+3. Run `psql -d vacantlotdb`. Note that you might need to start postgres on mac: `brew services start postgresql` before running psql. If prompted, enter the password for your PostgreSQL user. This will open the PostgreSQL command line interface and connect you to the `vacantlotdb` database. You will know it’s succeeded when you see `vacantlotdb=#`.
+4. Run `CREATE EXTENSION postgis;`.
 5. To exit the PostgreSQL interface, type `\q` and press Enter.
 
 Note for all OS: Optionally, in `/config/config`, set `FORCE_RELOAD` = `False` to read "cached" data in postgres instead of downloading new data.
@@ -67,7 +67,7 @@ Replace `password` with your PostgreSQL user password. Save and close the file. 
 #### macOS
 
 In the terminal, open your shell's profile file, such as `~/.zshrc` (for Zsh, which is the default shell on recent versions of macOS) or `~/.bash_profile` (for Bash), using a text editor like Nano or Vim. For instance, `nano ~/.zshrc`. Add the following lines at the end of the file
-`export VACANT_LOTS_DB="postgresql://postgres:password@localhost/vacantlotdb"`
+`export VACANT_LOTS_DB="postgresql://postgres:password@localhost/vacantlotdb"`.
 Make sure to replace `password` with your actual PostgreSQL password. Save and close the file. To apply these changes, run `source ~/.zshrc` (or the appropriate file for your shell).
 
 Note for all OS: you can choose to write to local, remote, both, or neither in the settings in `config.py`
@@ -136,3 +136,16 @@ docker-compose run streetview
 ```
 
 The script should only load new images that aren't in the bucket already (new properties added to list).
+
+#### Backup and difference reporting
+Whenever the data load script is run in refresh mode, the old data set is backed up and a report of any differences is sent to the team via Slack.  Differences in data are calculated using the [data-diff](https://github.com/datafold/data-diff) package. See [issue 520](https://github.com/CodeForPhilly/clean-and-green-philly/issues/520) in Github.
+
+Backups are done in PostgreSQL in the vacantlotsdb database by copying the whole public schema to a backup schema named backup_{timestamp}.  Besides the original tables, the backup schema includes a '{table_name}_diff' table with details of the differences from data-diff for each table.
+
+Backup schemas are only kept for one year by default.  Backup schemas older than a year are deleted at the end of the load script.
+
+When a diff is performed, an html file of the contents of the '{table_name}_diff' table is generated for each table and uploaded to the public GCP bucket so it can be viewed in a web browser.  The location of the html files is in the format: https://storage.googleapis.com/cleanandgreenphl/diff/2{backup_timestamp}/{table_name}.html  The link to the detail diff page is included in the Slack report message.
+
+The `CAGP_SLACK_API_TOKEN` environmental variable must be set with the API key for the Slack app that can write messages to the channel as configured in the config.py `report_to_slack_channel` variable.
+
+The report will also be emailed to any emails configured in the config.py `report_to_email` variable.

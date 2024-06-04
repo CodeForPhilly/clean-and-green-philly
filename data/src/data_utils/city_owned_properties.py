@@ -9,16 +9,16 @@ def city_owned_properties(primary_featurelayer):
         cols=["OPABRT", "AGENCY", "SIDEYARDELIGIBLE"],
     )
 
-    city_owned_properties.gdf.dropna(subset=["OPABRT"], inplace=True)
+    city_owned_properties.gdf.dropna(subset=["opabrt"], inplace=True)
 
     primary_featurelayer.opa_join(
         city_owned_properties.gdf,
-        "OPABRT",
+        "opabrt",
     )
 
     rename_columns = {
-        "AGENCY": "city_owner_agency",
-        "SIDEYARDELIGIBLE": "side_yard_eligible",
+        "agency": "city_owner_agency",
+        "sideyardeligible": "side_yard_eligible",
     }
 
     primary_featurelayer.gdf.rename(columns=rename_columns, inplace=True)

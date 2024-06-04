@@ -16,20 +16,18 @@ def vacant_properties():
             "ZIPCODE",
             "OPA_ID",
             "parcel_type",
-        ],
+        ]
     )
 
-    vacant_properties.gdf.dropna(subset=["OPA_ID"], inplace=True)
+    vacant_properties.gdf.dropna(subset=["opa_id"], inplace=True)
 
     vacant_properties.gdf = vacant_properties.gdf.rename(
         columns={
-            "ADDRESS": "address",
-            "OWNER1": "owner_1",
-            "OWNER2": "owner_2",
-            "BLDG_DESC": "building_description",
-            "COUNCILDISTRICT": "council_district",
-            "ZONINGBASEDISTRICT": "zoning_base_district",
-            "ZIPCODE": "zipcode",
+            "owner1": "owner_1",
+            "owner2": "owner_2",
+            "bldg_desc": "building_description",
+            "councildistrict": "council_district",
+            "zoningbasedistrict": "zoning_base_district",
         }
     )
 
