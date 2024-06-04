@@ -1,0 +1,27 @@
+name: Frontend PR Checks
+on: # see https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "src/**/*"
+      - "package.json"
+      - "package-lock.json"
+      - "*.js"
+jobs:
+  lint_and_build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+          cache-dependency-path: "package-lock.json"
+      - name: Install dependencies
+        run: npm ci
+      - name: Run lints
+        run: npm run lint
+      - name: Check the build
+        run: npm run build
