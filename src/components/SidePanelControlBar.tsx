@@ -2,11 +2,7 @@
 
 import React, { FC, useRef } from "react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
-import {
-  BookmarkSimple,
-  DownloadSimple,
-  Funnel
-} from "@phosphor-icons/react";
+import { BookmarkSimple, DownloadSimple, Funnel } from "@phosphor-icons/react";
 import { ThemeButton } from "./ThemeButton";
 import { useFilter } from "@/context/FilterContext";
 import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
@@ -39,7 +35,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   let filterCount = Object.keys(appFilter).length;
 
   if (shouldFilterSavedProperties) {
-    // Exclude OPA_ID from filterCount, which counts OPA_ID as a filter by default
+    // Exclude opa_id from filterCount, which counts opa_id as a filter by default
     filterCount--;
   }
 
@@ -50,14 +46,14 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       setShouldFilterSavedProperties(false);
       dispatch({
         type: "SET_DIMENSIONS",
-        property: "OPA_ID",
+        property: "opa_id",
         dimensions: [],
       });
     } else {
       setShouldFilterSavedProperties(true);
       dispatch({
         type: "SET_DIMENSIONS",
-        property: "OPA_ID",
+        property: "opa_id",
         dimensions: [...propertyIds],
       });
     }
