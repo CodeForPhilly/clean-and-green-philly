@@ -2,10 +2,10 @@ import sys
 
 from classes.backup_archive_database import BackupArchiveDatabase
 from classes.diff_report import DiffReport
-from config.config import FORCE_RELOAD
 from config.psql import conn
 from data_utils.access_process import access_process
 from data_utils.city_owned_properties import city_owned_properties
+from data_utils.community_gardens import community_gardens
 from data_utils.conservatorship import conservatorship
 from data_utils.deliquencies import deliquencies
 from data_utils.drug_crimes import drug_crimes
@@ -22,6 +22,8 @@ from data_utils.tactical_urbanism import tactical_urbanism
 from data_utils.tree_canopy import tree_canopy
 from data_utils.unsafe_buildings import unsafe_buildings
 from data_utils.vacant_properties import vacant_properties
+
+from config.config import FORCE_RELOAD
 
 # Ensure the directory containing awkde is in the Python path
 awkde_path = "/usr/src/app"
@@ -44,6 +46,7 @@ services = [
     tactical_urbanism,
     conservatorship,
     llc_owner,
+    community_gardens
 ]
 
 # backup sql schema if we are reloading data
