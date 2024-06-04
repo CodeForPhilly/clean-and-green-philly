@@ -11,4 +11,3 @@ export const useStagingTiles = false;
 
 export const googleCloudBucketName =
   process.env.GOOGLE_CLOUD_BUCKET_NAME || "cleanandgreenphl";
-

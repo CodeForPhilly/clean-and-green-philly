@@ -209,12 +209,12 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             <TableBody items={items}>
               {({ properties }) => (
                 <TableRow
-                  key={properties?.OPA_ID}
+                  key={properties?.opa_id}
                   onClick={() => {
                     setSelectedProperty(
                       items.find(
                         (item) =>
-                          properties?.OPA_ID === item?.properties?.OPA_ID
+                          properties?.opa_id === item?.properties?.opa_id
                       ) || null
                     );
                   }}
