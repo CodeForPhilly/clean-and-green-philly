@@ -20,7 +20,7 @@ def drug_crimes(primary_featurelayer):
     x = np.array([])
     y = np.array([])
 
-    for geom in gun_crimes.gdf.geometry:
+    for geom in drug_crimes.gdf.geometry:
         coords = np.array(geom.xy)
         x = np.concatenate([x, coords[0]])
         y = np.concatenate([y, coords[1]])
