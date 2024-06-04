@@ -15,6 +15,9 @@ def community_gardens(primary_featurelayer):
     # Create a boolean mask where 'site_Name' is not null
     mask = primary_featurelayer.gdf["Site_Name"].notnull()
 
+    count_dropped = mask.sum()
+    print(f"Number of community gardens being dropped: {count_dropped}")
+
     # Use this mask to drop rows where 'site_Name' is not null
     primary_featurelayer.gdf = primary_featurelayer.gdf.drop(
         primary_featurelayer.gdf[mask].index
