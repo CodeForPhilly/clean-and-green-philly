@@ -108,22 +108,22 @@ const MapPage = ({ params }: MapPageProps) => {
 
     const linkedProperty = featuresInView.find(
       (feature) =>
-        feature.properties.OPA_ID.toString() ===
+        feature.properties.opa_id.toString() ===
         linkedPropertyRef?.current?.toString()
     );
 
     if (
       linkedProperty &&
-      linkedProperty.properties.OPA_ID !== selectedProperty?.properties.OPA_ID
+      linkedProperty.properties.opa_id !== selectedProperty?.properties.opa_id
     ) {
       setSelectedProperty(linkedProperty);
       linkedPropertyRef.current = null;
     }
-  }, [featuresInView, selectedProperty?.properties.OPA_ID]);
+  }, [featuresInView, selectedProperty?.properties.opa_id]);
 
   useEffect(() => {
     if (!selectedProperty) return;
-    const opa_id = selectedProperty.properties.OPA_ID;
+    const opa_id = selectedProperty.properties.opa_id;
     history.replaceState(null, "", `/find-properties/${opa_id}`);
   }, [selectedProperty]);
 
@@ -312,10 +312,10 @@ const MapPage = ({ params }: MapPageProps) => {
               onPress={updateSmallScreenMode}
               startContent={
                 smallScreenMode === "map" ? (
-                  <ListBullets /> 
+                  <ListBullets />
                 ) : (
-                  <GlobeHemisphereWest /> 
-                )  
+                  <GlobeHemisphereWest />
+                )
               }
             />
           </div>
