@@ -15,6 +15,7 @@ from data_utils.l_and_i import l_and_i
 from data_utils.llc_owner import llc_owner
 from data_utils.nbhoods import nbhoods
 from data_utils.opa_properties import opa_properties
+from data_utils.park_priority import park_priority
 from data_utils.phs_properties import phs_properties
 from data_utils.priority_level import priority_level
 from data_utils.rco_geoms import rco_geoms
@@ -46,7 +47,8 @@ services = [
     tactical_urbanism,
     conservatorship,
     llc_owner,
-    community_gardens
+    community_gardens,
+    park_priority,
 ]
 
 # backup sql schema if we are reloading data
