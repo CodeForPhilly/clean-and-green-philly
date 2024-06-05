@@ -24,6 +24,8 @@ Welcome to the project roadmap for Clean & Green Philly! After launching v1.0.0 
 
 ### 🔢 Development Risk Indicator
 
+✅ **Completed June 2024**
+
 - **Goal:** Add a development risk metric based on building permits per census block.
 - **Key Actions:**
   - Calculate a z-scored count of building permits issued in the past year per census block.
@@ -37,6 +39,8 @@ Welcome to the project roadmap for Clean & Green Philly! After launching v1.0.0 
   - Build and implement a predictive model to identify potential tangled titles in our dataset dataset.
 
 ### 🏗 Negligent Developers Data
+
+✅ **Completed June 2024**
 
 - **Goal:** Include data on negligent developers in our dataset.
 - **Key Actions:**
