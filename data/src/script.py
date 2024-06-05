@@ -9,6 +9,7 @@ from data_utils.community_gardens import community_gardens
 from data_utils.conservatorship import conservatorship
 from data_utils.contig_neighbors import contig_neighbors
 from data_utils.deliquencies import deliquencies
+from data_utils.dev_probability import dev_probability
 from data_utils.drug_crimes import drug_crimes
 from data_utils.gun_crimes import gun_crimes
 from data_utils.imm_dang_buildings import imm_dang_buildings
@@ -53,6 +54,7 @@ services = [
     park_priority,
     ppr_properties,
     contig_neighbors,
+    dev_probability,
 ]
 
 # backup sql schema if we are reloading data
