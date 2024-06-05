@@ -21,10 +21,10 @@ function getPriorityClass(priorityLevel: string) {
 }
 
 const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
-  const { address, guncrime_density, tree_canopy_gap, priority_level, OPA_ID } =
+  const { address, guncrime_density, tree_canopy_gap, priority_level, opa_id } =
     feature.properties;
 
-  const image = `https://storage.googleapis.com/cleanandgreenphl/${OPA_ID}.jpg`;
+  const image = `https://storage.googleapis.com/cleanandgreenphl/${opa_id}.jpg`;
   const formattedAddress = toTitleCase(address);
   const priorityClass = getPriorityClass(priority_level);
 

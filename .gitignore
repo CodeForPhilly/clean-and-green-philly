@@ -46,3 +46,13 @@ next-env.d.ts
 
 y/
 cleanandgreenphilly_gcloud_bucket/
+
+# personal service account key for GCP
+data/src/app/service-account-key.json
+
+# compiled python files
+*.pyc
+
+# awkde build files
+data/src/awkde/build/
+tmp/

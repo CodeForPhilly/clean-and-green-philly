@@ -10,7 +10,7 @@ import {
 } from "@/components";
 import { FilterProvider } from "@/context/FilterContext";
 import { NextUIProvider, Spinner } from "@nextui-org/react";
-import { X } from "@phosphor-icons/react";
+import { X, GlobeHemisphereWest, ListBullets } from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import StreetView from "../../../components/StreetView";
 import { centroid } from "@turf/centroid";
@@ -108,22 +108,22 @@ const MapPage = ({ params }: MapPageProps) => {
 
     const linkedProperty = featuresInView.find(
       (feature) =>
-        feature.properties.OPA_ID.toString() ===
+        feature.properties.opa_id.toString() ===
         linkedPropertyRef?.current?.toString()
     );
 
     if (
       linkedProperty &&
-      linkedProperty.properties.OPA_ID !== selectedProperty?.properties.OPA_ID
+      linkedProperty.properties.opa_id !== selectedProperty?.properties.opa_id
     ) {
       setSelectedProperty(linkedProperty);
       linkedPropertyRef.current = null;
     }
-  }, [featuresInView, selectedProperty?.properties.OPA_ID]);
+  }, [featuresInView, selectedProperty?.properties.opa_id]);
 
   useEffect(() => {
     if (!selectedProperty) return;
-    const opa_id = selectedProperty.properties.OPA_ID;
+    const opa_id = selectedProperty.properties.opa_id;
     history.replaceState(null, "", `/find-properties/${opa_id}`);
   }, [selectedProperty]);
 
@@ -180,7 +180,6 @@ const MapPage = ({ params }: MapPageProps) => {
     smallScreenMode,
     setShouldFilterSavedProperties,
     updateCurrentView,
-    updateSmallScreenMode,
   };
   const isVisible = (mode: string) =>
     smallScreenMode === mode ? "" : "max-sm:hidden";
@@ -306,6 +305,19 @@ const MapPage = ({ params }: MapPageProps) => {
                 />
               )}
             </SidePanel>
+            <ThemeButton
+              aria-label={`Change to ${smallScreenMode}`}
+              label={smallScreenMode === "map" ? "List View" : "Map View"}
+              className="fixed bottom-10 left-1/2 -ml-[3.5rem] rounded-2xl sm:hidden max-md:min-w-[7rem]"
+              onPress={updateSmallScreenMode}
+              startContent={
+                smallScreenMode === "map" ? (
+                  <ListBullets />
+                ) : (
+                  <GlobeHemisphereWest />
+                )
+              }
+            />
           </div>
         </div>
       </NextUIProvider>

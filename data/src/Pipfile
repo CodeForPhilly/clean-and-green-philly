@@ -21,6 +21,14 @@ psycopg2-binary = "*"
 geoalchemy2 = "*"
 mapbox = "*"
 google-cloud-storage = "*"
+pydantic = "==1.10.12"
+data-diff = {extras = ["postgresql"], version = "*"}
+future = "*"
+slack-sdk = "*"
+pytest = "*"
+networkx = "*"
+libpysal = "*"
+jenkspy = "*"
 
 [dev-packages]
 

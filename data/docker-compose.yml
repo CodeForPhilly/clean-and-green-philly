@@ -9,9 +9,12 @@ services:
       - CLEAN_GREEN_GOOGLE_KEY
       - PYTHONUNBUFFERED=1
       - GOOGLE_CLOUD_BUCKET_NAME
+      - CAGP_SLACK_API_TOKEN
     volumes:
       - ./src:/usr/src/app
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
+    extra_hosts: 
+      - host.docker.internal:host-gateway
 
   formatter:
     build: .

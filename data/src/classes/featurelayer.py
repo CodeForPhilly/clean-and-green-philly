@@ -1,23 +1,37 @@
 import os
 import subprocess
-import requests
+import traceback
+
 import geopandas as gpd
 import pandas as pd
-from esridump.dumper import EsriDumper
-import traceback
-from config.config import USE_CRS, FORCE_RELOAD
+import requests
 from config.psql import conn
-from shapely import wkb, Point
+from esridump.dumper import EsriDumper
 from google.cloud import storage
+from google.cloud.storage.bucket import Bucket
+from shapely import Point, wkb
 
-# Configure Google
-key = os.environ["CLEAN_GREEN_GOOGLE_KEY"]
-credentials_path = os.path.expanduser("/app/service-account-key.json")
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-bucket_name = os.environ["GOOGLE_CLOUD_BUCKET_NAME"] if os.environ["GOOGLE_CLOUD_BUCKET_NAME"] != None else "cleanandgreenphl"
-storage_client = storage.Client(project="clean-and-green-philly")
-bucket = storage_client.bucket(bucket_name)
+from config.config import FORCE_RELOAD, USE_CRS
 
+
+def google_cloud_bucket() -> Bucket:
+    """Build the google cloud bucket with name configured in your environ or default of cleanandgreenphl
+
+    Returns:
+        Bucket: the gcp bucket
+    """
+    credentials_path = os.path.expanduser("/app/account-service-key.json")
+    
+    if not os.path.exists(credentials_path):
+        raise FileNotFoundError(f"Credentials file not found at {credentials_path}")
+    
+    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
+    bucket_name = os.getenv("GOOGLE_CLOUD_BUCKET_NAME", "cleanandgreenphl")
+    
+    storage_client = storage.Client(project="clean-and-green-philly")
+    return storage_client.bucket(bucket_name)
+
+bucket = google_cloud_bucket()
 
 class FeatureLayer:
     """
@@ -34,7 +48,7 @@ class FeatureLayer:
         force_reload=FORCE_RELOAD,
         from_xy=False,
         use_wkb_geom_field=None,
-        cols=None,
+        cols: list[str] = None
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -102,7 +116,9 @@ class FeatureLayer:
                         parcel_type = (
                             "Land"
                             if "Vacant_Indicators_Land" in url
-                            else "Building" if "Vacant_Indicators_Bldg" in url else None
+                            else "Building"
+                            if "Vacant_Indicators_Bldg" in url
+                            else None
                         )
                         self.dumper = EsriDumper(url)
                         features = [feature for feature in self.dumper]
@@ -172,13 +188,17 @@ class FeatureLayer:
                     self.gdf = self.gdf[self.cols]
 
                 # save self.gdf to psql
+                # rename columns to lowercase for table creation in postgres
+                if self.cols:
+                    self.gdf = self.gdf.rename(
+                        columns={x: x.lower() for x in self.cols}
+                    )
                 self.gdf.to_postgis(
                     name=self.psql_table,
                     con=conn,
                     if_exists="replace",
                     chunksize=1000,
                 )
-
             except Exception as e:
                 print(f"Error loading data for {self.name}: {e}")
                 traceback.print_exc()
@@ -204,26 +224,26 @@ class FeatureLayer:
         self.gdf.drop(columns=["index_right"], inplace=True)
         self.gdf.drop_duplicates(inplace=True)
 
-        # Coerce OPA_ID to integer and drop rows where OPA_ID is null or non-numeric
-        self.gdf["OPA_ID"] = pd.to_numeric(self.gdf["OPA_ID"], errors="coerce")
-        self.gdf = self.gdf.dropna(subset=["OPA_ID"])
+        # Coerce opa_id to integer and drop rows where opa_id is null or non-numeric
+        self.gdf["opa_id"] = pd.to_numeric(self.gdf["opa_id"], errors="coerce")
+        self.gdf = self.gdf.dropna(subset=["opa_id"])
 
     def opa_join(self, other_df, opa_column):
         """
-        Join 2 dataframes based on OPA_ID and keep the 'geometry' column from the left dataframe if it exists in both.
+        Join 2 dataframes based on opa_id and keep the 'geometry' column from the left dataframe if it exists in both.
         """
 
         # Coerce opa_column to integer and drop rows where opa_column is null or non-numeric
         other_df[opa_column] = pd.to_numeric(other_df[opa_column], errors="coerce")
         other_df = other_df.dropna(subset=[opa_column])
 
-        # Coerce OPA_ID to integer and drop rows where OPA_ID is null or non-numeric
-        self.gdf["OPA_ID"] = pd.to_numeric(self.gdf["OPA_ID"], errors="coerce")
-        self.gdf = self.gdf.dropna(subset=["OPA_ID"])
+        # Coerce opa_id to integer and drop rows where opa_id is null or non-numeric
+        self.gdf["opa_id"] = pd.to_numeric(self.gdf["opa_id"], errors="coerce")
+        self.gdf = self.gdf.dropna(subset=["opa_id"])
 
         # Perform the merge
         joined = self.gdf.merge(
-            other_df, how="left", right_on=opa_column, left_on="OPA_ID"
+            other_df, how="left", right_on=opa_column, left_on="opa_id"
         )
 
         # Check if 'geometry' column exists in both dataframes and clean up
@@ -231,7 +251,7 @@ class FeatureLayer:
             joined = joined.drop(columns=["geometry_y"])
             joined = joined.rename(columns={"geometry_x": "geometry"})
 
-        if opa_column != "OPA_ID":
+        if opa_column != "opa_id":
             joined = joined.drop(columns=[opa_column])
 
         self.gdf = joined

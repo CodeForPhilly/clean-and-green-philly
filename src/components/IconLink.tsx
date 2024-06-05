@@ -1,7 +1,8 @@
 "use client";
 
-import { Button, Link, NavbarItem } from "@nextui-org/react";
+import { Button, NavbarItem } from "@nextui-org/react";
 import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 interface IconLinkProps {
   icon: React.ReactElement;

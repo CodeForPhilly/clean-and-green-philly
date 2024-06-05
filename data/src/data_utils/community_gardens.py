@@ -9,13 +9,16 @@ def community_gardens(primary_featurelayer):
     )
 
     community_gardens.gdf = community_gardens.gdf[["Site_Name", "geometry"]]
-
+    
     primary_featurelayer.spatial_join(community_gardens)
 
-    # Create a boolean mask where 'Site Name' is not null
+    # Create a boolean mask where 'site_Name' is not null
     mask = primary_featurelayer.gdf["Site_Name"].notnull()
 
-    # Use this mask to drop rows where 'Site Name' is not null
+    count_dropped = mask.sum()
+    print(f"Number of community gardens being dropped: {count_dropped}")
+
+    # Use this mask to drop rows where 'site_Name' is not null
     primary_featurelayer.gdf = primary_featurelayer.gdf.drop(
         primary_featurelayer.gdf[mask].index
     )

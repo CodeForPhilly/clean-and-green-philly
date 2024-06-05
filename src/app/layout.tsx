@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { CookieProviderWrapper } from "./CookieProviderWrapper";
 
 const defaultTitle =
   "Clean & Green Philly - Helping communities clean vacant properties";
@@ -51,7 +52,7 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        {children}
+        <CookieProviderWrapper>{children}</CookieProviderWrapper>
       </body>
     </html>
   );

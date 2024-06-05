@@ -4,17 +4,13 @@ from urllib.parse import quote
 
 import pandas as pd
 import requests
+from classes.featurelayer import google_cloud_bucket
 from config.psql import conn
-from google.cloud import storage
 
 # Configure Google
+bucket = google_cloud_bucket()
 key = os.environ["CLEAN_GREEN_GOOGLE_KEY"]
-credentials_path = os.path.expanduser("/app/service-account-key.json")
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-bucket_name = "cleanandgreenphl"
-storage_client = storage.Client(project="clean-and-green-philly")
-bucket = storage_client.bucket(bucket_name)
-
+bucket_name = bucket.name
 
 # Helper Functions
 def get_streetview_metadata(address):
@@ -54,13 +50,13 @@ blobs = bucket.list_blobs()
 blobs = [blob.name.split(".")[0] for blob in blobs]
 print(f"Found {len(blobs)} images in bucket")
 
-# Remove from properties any value of OPA_ID that is in blobs
-properties = properties[~properties.OPA_ID.astype(str).isin(blobs)]
+# Remove from properties any value of opa_id that is in blobs
+properties = properties[~properties.opa_id.astype(str).isin(blobs)]
 print(f"Found {len(properties)} images to fetch")
 
 
 for idx, row in properties.iterrows():
-    opa_id = row["OPA_ID"]
+    opa_id = row["opa_id"]
     file_name = f"{opa_id}.jpg"
     blob = bucket.blob(file_name)
 

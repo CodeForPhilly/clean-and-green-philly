@@ -16,6 +16,7 @@ import ContentCard from "./ContentCard";
 import cleanup from "@/images/transform-a-property.png";
 import { PiEyeSlash } from "react-icons/pi";
 import { useFilter } from "@/context/FilterContext";
+import { useCookieContext } from "@/context/CookieContext";
 import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
 
 interface PropertyDetailProps {
@@ -61,6 +62,7 @@ const SinglePropertyDetail = ({
   const [hover, setHover] = useState<boolean>(false);
   const [isPropertySavedToLocalStorage, setIsPropertySavedToLocalStorage] =
     useState(false);
+  let { shouldAllowCookies, setShouldShowBanner } = useCookieContext();
 
   useEffect(() => {
     if (!localStorage.getItem("opa_ids")) {
@@ -72,7 +74,7 @@ const SinglePropertyDetail = ({
       ? JSON.parse(localStorageData)
       : {};
 
-    const propertyId = parsedLocalStorageData.opa_ids[OPA_ID];
+    const propertyId = parsedLocalStorageData.opa_ids[opa_id];
     propertyId
       ? setIsPropertySavedToLocalStorage(true)
       : setIsPropertySavedToLocalStorage(false);
@@ -97,10 +99,10 @@ const SinglePropertyDetail = ({
     total_due,
     tree_canopy_gap,
     zipcode,
-    OPA_ID,
+    opa_id,
     phs_partner_agency,
   } = properties;
-  const image = `https://storage.googleapis.com/cleanandgreenphl/${OPA_ID}.jpg`;
+  const image = `https://storage.googleapis.com/cleanandgreenphl/${opa_id}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
   const priorityClass = getPriorityClass(priority_level);
 
@@ -116,7 +118,7 @@ const SinglePropertyDetail = ({
     let newLocalCache: PropertyIdLocalStorage = {
       ...localCache,
     };
-    newLocalCache.opa_ids[OPA_ID] = OPA_ID;
+    newLocalCache.opa_ids[opa_id] = opa_id;
     newLocalCache.count++;
     localStorage.setItem("opa_ids", JSON.stringify(newLocalCache));
   };
@@ -124,7 +126,7 @@ const SinglePropertyDetail = ({
   const removePropertyIdFromLocalStorage = (
     localStorageData: PropertyIdLocalStorage
   ) => {
-    delete localStorageData.opa_ids[OPA_ID];
+    delete localStorageData.opa_ids[opa_id];
     localStorageData.count--;
     localStorage.setItem("opa_ids", JSON.stringify(localStorageData));
   };
@@ -139,35 +141,46 @@ const SinglePropertyDetail = ({
   };
 
   const onClickSaveButton = () => {
+    if (shouldAllowCookies) {
+      findPropertyIdInLocalStorage();
+    } else {
+      setShouldShowBanner(true);
+    }
+  };
+
+  const findPropertyIdInLocalStorage = () => {
     const localStorageData = localStorage.getItem("opa_ids");
     const parsedLocalStorageData = localStorageData
       ? JSON.parse(localStorageData)
       : {};
 
-    if (parsedLocalStorageData.opa_ids[OPA_ID]) {
+    if (parsedLocalStorageData.opa_ids[opa_id]) {
       removePropertyIdFromLocalStorage(parsedLocalStorageData);
       setIsPropertySavedToLocalStorage(false);
-
-      if (parsedLocalStorageData.count === 0) {
-        dispatch({
-          type: "SET_DIMENSIONS",
-          property: "OPA_ID",
-          dimensions: [],
-        });
-        setShouldFilterSavedProperties(false);
-      } else {
-        if (shouldFilterSavedProperties) {
-          let propertyIds = getPropertyIdsFromLocalStorage();
-          dispatch({
-            type: "SET_DIMENSIONS",
-            property: "OPA_ID",
-            dimensions: [...propertyIds],
-          });
-        }
-      }
+      dispatchFilterAction(parsedLocalStorageData);
     } else {
       savePropertyIdToLocalStorage(parsedLocalStorageData);
       setIsPropertySavedToLocalStorage(true);
+    }
+  };
+
+  const dispatchFilterAction = (data: any) => {
+    if (data.count === 0) {
+      dispatch({
+        type: "SET_DIMENSIONS",
+        property: "opa_id",
+        dimensions: [],
+      });
+      setShouldFilterSavedProperties(false);
+    } else {
+      if (shouldFilterSavedProperties) {
+        let propertyIds = getPropertyIdsFromLocalStorage();
+        dispatch({
+          type: "SET_DIMENSIONS",
+          property: "opa_id",
+          dimensions: [...propertyIds],
+        });
+      }
     }
   };
 
@@ -218,7 +231,7 @@ const SinglePropertyDetail = ({
               onMouseEnter={() => setHover(true)}
               onMouseLeave={() => setHover(false)}
               onFocus={() => setHover(true)}
-              onBlur={() => setHover(false) }
+              onBlur={() => setHover(false)}
             />
           </Tooltip>
         </div>
@@ -238,7 +251,8 @@ const SinglePropertyDetail = ({
             placement="top"
             content="Street View"
             classNames={{
-              content: "bg-gray-900 rounded-[14px] text-white relative top-[5px]",
+              content:
+                "bg-gray-900 rounded-[14px] text-white relative top-[5px]",
             }}
           >
             <button
