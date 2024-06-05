@@ -2,7 +2,6 @@ import sys
 
 from classes.backup_archive_database import BackupArchiveDatabase
 from classes.diff_report import DiffReport
-from config.config import FORCE_RELOAD, tiles_file_id_prefix
 from config.psql import conn
 from data_utils.access_process import access_process
 from data_utils.city_owned_properties import city_owned_properties
@@ -17,6 +16,7 @@ from data_utils.imm_dang_buildings import imm_dang_buildings
 from data_utils.l_and_i import l_and_i
 from data_utils.llc_owner import llc_owner
 from data_utils.nbhoods import nbhoods
+from data_utils.negligent_devs import negligent_devs
 from data_utils.opa_properties import opa_properties
 from data_utils.park_priority import park_priority
 from data_utils.phs_properties import phs_properties
@@ -28,7 +28,7 @@ from data_utils.tree_canopy import tree_canopy
 from data_utils.unsafe_buildings import unsafe_buildings
 from data_utils.vacant_properties import vacant_properties
 
-from config.config import FORCE_RELOAD
+from config.config import FORCE_RELOAD, tiles_file_id_prefix
 
 # Ensure the directory containing awkde is in the Python path
 awkde_path = "/usr/src/app"
@@ -56,6 +56,7 @@ services = [
     ppr_properties,
     contig_neighbors,
     dev_probability,
+    negligent_devs,
 ]
 
 # backup sql schema if we are reloading data
