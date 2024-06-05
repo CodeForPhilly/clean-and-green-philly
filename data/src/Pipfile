@@ -26,6 +26,7 @@ data-diff = {extras = ["postgresql"], version = "*"}
 future = "*"
 slack-sdk = "*"
 pytest = "*"
+jenkspy = "*"
 
 [dev-packages]
 
