@@ -2,13 +2,7 @@
 
 import React, { FC, useRef } from "react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
-import {
-  BookmarkSimple,
-  DownloadSimple,
-  Funnel,
-  GlobeHemisphereWest,
-  SquaresFour,
-} from "@phosphor-icons/react";
+import { BookmarkSimple, DownloadSimple, Funnel } from "@phosphor-icons/react";
 import { ThemeButton } from "./ThemeButton";
 import { useFilter } from "@/context/FilterContext";
 import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
@@ -22,7 +16,6 @@ type SidePanelControlBarProps = {
   smallScreenMode: string;
   setShouldFilterSavedProperties: (shouldFilter: boolean) => void;
   updateCurrentView: (view: BarClickOptions) => void;
-  updateSmallScreenMode: () => void;
 };
 
 const SearchBarComponent: FC<SidePanelControlBarProps> = ({
@@ -34,7 +27,6 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   smallScreenMode,
   setShouldFilterSavedProperties,
   updateCurrentView,
-  updateSmallScreenMode,
 }) => {
   const filterRef = useRef<HTMLButtonElement | null>(null);
   const savedRef = useRef<HTMLButtonElement | null>(null);
@@ -43,7 +35,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   let filterCount = Object.keys(appFilter).length;
 
   if (shouldFilterSavedProperties) {
-    // Exclude OPA_ID from filterCount, which counts OPA_ID as a filter by default
+    // Exclude opa_id from filterCount, which counts opa_id as a filter by default
     filterCount--;
   }
 
@@ -54,14 +46,14 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
       setShouldFilterSavedProperties(false);
       dispatch({
         type: "SET_DIMENSIONS",
-        property: "OPA_ID",
+        property: "opa_id",
         dimensions: [],
       });
     } else {
       setShouldFilterSavedProperties(true);
       dispatch({
         type: "SET_DIMENSIONS",
-        property: "OPA_ID",
+        property: "opa_id",
         dimensions: [...propertyIds],
       });
     }
@@ -71,22 +63,9 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
     <div>{/* Keep empty while loading */}</div>
   ) : (
     <>
-      <div className="flex justify-between items-center bg-white border-b-[1px] border-[#12121215] p-2 h-14">
+      <div className="flex justify-between -mx-6 px-12 top-0 py-4 z-10 bg-white">
         {/* Left-aligned content: Total Properties in View */}
-        <ThemeButton
-          color="tertiary"
-          aria-label={`Change to ${smallScreenMode}`}
-          className="sm:hidden max-md:min-w-[4rem]"
-          onPress={updateSmallScreenMode}
-          startContent={
-            smallScreenMode === "map" ? (
-              <SquaresFour />
-            ) : (
-              <GlobeHemisphereWest />
-            )
-          }
-        />
-        <div className="sm:px-4 py-2">
+        <div className="sm:px-4 lg:px-0 py-2">
           <h1 className="body-md">
             <span className="font-bold">
               {shouldFilterSavedProperties
@@ -151,7 +130,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             label={<span className="body-md max-lg:hidden">Download</span>}
             className={`max-md:min-w-[4rem] ${
               smallScreenMode === "map" ? "max-sm:hidden" : ""
-            }`}
+            } px-0`}
           />
         </div>
       </div>

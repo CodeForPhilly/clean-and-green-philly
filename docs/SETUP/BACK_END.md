@@ -39,15 +39,15 @@ Note: make sure to keep your fork up to date with the original repository by fol
 1. Ensure that PostgreSQL is installed and running on your Mac.
 2. In your terminal, run `createdb vacantlotdb`. This command directly creates a new database named `vacantlotdb`.
 3. Run `psql -U postgres -d vacantlotdb`. Enter the password when prompted. This command opens the PostgreSQL command line interface and connects you to the `vacantlotdb` database.
-4. Run `CREATE EXTENSION postgis;`
+4. Run `CREATE EXTENSION postgis;`.
 5. Run `\q` to exit the PostgreSQL command line interface.
 
 ### macOS
 
 1. Ensure that PostgreSQL is installed and running on your Mac.
 2. In your terminal, run `createdb vacantlotdb`. This command directly creates a new database named `vacantlotdb`.
-3. Run `psql -d vacantlotdb`. Note that you might need to start postgres on mac: `brew services start postgresql` before running psql If prompted, enter the password for your PostgreSQL user. This will open the PostgreSQL command line interface and connect you to the `vacantlotdb` database. You will know it’s succeeded when you see `vacantlotdb=#`
-4. Run `CREATE EXTENSION postgis;`
+3. Run `psql -d vacantlotdb`. Note that you might need to start postgres on mac: `brew services start postgresql` before running psql. If prompted, enter the password for your PostgreSQL user. This will open the PostgreSQL command line interface and connect you to the `vacantlotdb` database. You will know it’s succeeded when you see `vacantlotdb=#`.
+4. Run `CREATE EXTENSION postgis;`.
 5. To exit the PostgreSQL interface, type `\q` and press Enter.
 
 Note for all OS: Optionally, in `/config/config`, set `FORCE_RELOAD` = `False` to read "cached" data in postgres instead of downloading new data.
@@ -67,7 +67,7 @@ Replace `password` with your PostgreSQL user password. Save and close the file. 
 #### macOS
 
 In the terminal, open your shell's profile file, such as `~/.zshrc` (for Zsh, which is the default shell on recent versions of macOS) or `~/.bash_profile` (for Bash), using a text editor like Nano or Vim. For instance, `nano ~/.zshrc`. Add the following lines at the end of the file
-`export VACANT_LOTS_DB="postgresql://postgres:password@localhost/vacantlotdb"`
+`export VACANT_LOTS_DB="postgresql://postgres:password@localhost/vacantlotdb"`.
 Make sure to replace `password` with your actual PostgreSQL password. Save and close the file. To apply these changes, run `source ~/.zshrc` (or the appropriate file for your shell).
 
 Note for all OS: you can choose to write to local, remote, both, or neither in the settings in `config.py`
