@@ -8,6 +8,7 @@ from data_utils.city_owned_properties import city_owned_properties
 from data_utils.community_gardens import community_gardens
 from data_utils.conservatorship import conservatorship
 from data_utils.deliquencies import deliquencies
+from data_utils.dev_probability import dev_probability
 from data_utils.drug_crimes import drug_crimes
 from data_utils.gun_crimes import gun_crimes
 from data_utils.imm_dang_buildings import imm_dang_buildings
@@ -50,7 +51,8 @@ services = [
     llc_owner,
     community_gardens,
     park_priority,
-    ppr_properties
+    ppr_properties,
+    dev_probability,
 ]
 
 # backup sql schema if we are reloading data
