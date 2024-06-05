@@ -5,7 +5,9 @@ const defaultTitle =
   "Clean & Green Philly - Helping communities clean vacant properties";
 const description =
   "The ultimate toolkit to help community groups clean and green vacant properties to reduce gun violence in Philadelphia.";
-const siteUrl = new URL("https://59a4-71-168-133-113.ngrok-free.app/"); //REPLACE
+const siteUrl = new URL("https://staging.cleanandgreenphilly.org/");
+// const siteUrl = new URL("https://cleanandgreenphilly.org/");
+// const siteUrl = new URL("https://59a4-71-168-133-113.ngrok-free.app/"); //REPLACE
 
 export const metadata: Metadata = {
   title: {

@@ -2,7 +2,7 @@ import { generateMetadata } from "@/utilities/generateMetaData";
 
 const title = "Methodology";
 const description =
-  "Clean & Green Philly combines several public datasets in order to categorize Philadelphia’s vacant properties."; //thoughts?
+  "Clean & Green Philly combines several public datasets in order to categorize Philadelphia’s vacant properties based on how important it is that someone intervene there."; //??
 const url = "/methodology";
 
 export const metadata = generateMetadata({

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { metadata as globalMetadata } from "../app/layout";
 
+//imageUrl and imageAlt included to allow different images to be used for different pages in the future if desired
+
 export function generateMetadata({
   title,
   description,
