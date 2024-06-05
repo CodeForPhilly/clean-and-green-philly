@@ -5,34 +5,33 @@ import traceback
 import geopandas as gpd
 import pandas as pd
 import requests
-from config.config import FORCE_RELOAD, USE_CRS
 from config.psql import conn
 from esridump.dumper import EsriDumper
 from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
 from shapely import Point, wkb
 
+from config.config import FORCE_RELOAD, USE_CRS
 
-# Configure Google
+
 def google_cloud_bucket() -> Bucket:
     """Build the google cloud bucket with name configured in your environ or default of cleanandgreenphl
 
     Returns:
         Bucket: the gcp bucket
     """
-    credentials_path = os.path.expanduser("/app/service-account-key.json")
+    credentials_path = os.path.expanduser("/app/account-service-key.json")
+    
+    if not os.path.exists(credentials_path):
+        raise FileNotFoundError(f"Credentials file not found at {credentials_path}")
+    
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-    bucket_name = (
-        os.environ["GOOGLE_CLOUD_BUCKET_NAME"]
-        if os.environ["GOOGLE_CLOUD_BUCKET_NAME"] is not None
-        else "cleanandgreenphl"
-    )
+    bucket_name = os.getenv("GOOGLE_CLOUD_BUCKET_NAME", "cleanandgreenphl")
+    
     storage_client = storage.Client(project="clean-and-green-philly")
     return storage_client.bucket(bucket_name)
 
-
 bucket = google_cloud_bucket()
-
 
 class FeatureLayer:
     """

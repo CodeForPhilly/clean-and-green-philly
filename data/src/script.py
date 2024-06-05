@@ -7,6 +7,7 @@ from data_utils.access_process import access_process
 from data_utils.city_owned_properties import city_owned_properties
 from data_utils.community_gardens import community_gardens
 from data_utils.conservatorship import conservatorship
+from data_utils.contig_neighbors import contig_neighbors
 from data_utils.deliquencies import deliquencies
 from data_utils.dev_probability import dev_probability
 from data_utils.drug_crimes import drug_crimes
@@ -52,6 +53,7 @@ services = [
     community_gardens,
     park_priority,
     ppr_properties,
+    contig_neighbors,
     dev_probability,
 ]
 
