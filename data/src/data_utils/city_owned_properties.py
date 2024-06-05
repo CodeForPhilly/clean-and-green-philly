@@ -31,6 +31,12 @@ def city_owned_properties(primary_featurelayer):
         (primary_featurelayer.gdf['owner_2'].str.contains("PUBLIC PROP|PUBLC PROP", na=False)), 
         'city_owner_agency'
     ] = "DPP"
+    
+    primary_featurelayer.gdf.loc[
+        primary_featurelayer.gdf['owner_1'].isin(["CITY OF PHILADELPHIA", "CITY OF PHILA"]) & 
+        primary_featurelayer.gdf['owner_2'].isna(), 
+        'city_owner_agency'
+    ] = "City of Philadelphia"
 
     primary_featurelayer.gdf["side_yard_eligible"].fillna("No", inplace=True)
 
