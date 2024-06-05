@@ -7,6 +7,7 @@ from data_utils.access_process import access_process
 from data_utils.city_owned_properties import city_owned_properties
 from data_utils.community_gardens import community_gardens
 from data_utils.conservatorship import conservatorship
+from data_utils.contig_neighbors import contig_neighbors
 from data_utils.deliquencies import deliquencies
 from data_utils.drug_crimes import drug_crimes
 from data_utils.gun_crimes import gun_crimes
@@ -33,24 +34,25 @@ if awkde_path not in sys.path:
     sys.path.append(awkde_path)
 
 services = [
-    city_owned_properties,
-    phs_properties,
-    l_and_i,
-    rco_geoms,
-    tree_canopy,
-    nbhoods,
-    gun_crimes,
-    drug_crimes,
-    deliquencies,
-    opa_properties,
-    unsafe_buildings,
-    imm_dang_buildings,
-    tactical_urbanism,
-    conservatorship,
-    llc_owner,
-    community_gardens,
-    park_priority,
-    ppr_properties
+    # city_owned_properties,
+    # phs_properties,
+    # l_and_i,
+    # rco_geoms,
+    # tree_canopy,
+    # nbhoods,
+    # gun_crimes,
+    # drug_crimes,
+    # deliquencies,
+    # opa_properties,
+    # unsafe_buildings,
+    # imm_dang_buildings,
+    # tactical_urbanism,
+    # conservatorship,
+    # llc_owner,
+    # community_gardens,
+    # park_priority,
+    # ppr_properties,
+    contig_neighbors,
 ]
 
 # backup sql schema if we are reloading data
