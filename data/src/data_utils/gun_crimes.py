@@ -1,12 +1,13 @@
-from constants.services import GUNCRIME_SQL_QUERY
-from config.config import USE_CRS
-from classes.featurelayer import FeatureLayer
-import numpy as np
-import matplotlib.pyplot as plt
-from awkde.awkde import GaussianKDE
-import rasterio
-from rasterio.transform import Affine
 import mapclassify
+import matplotlib.pyplot as plt
+import numpy as np
+import rasterio
+from awkde.awkde import GaussianKDE
+from classes.featurelayer import FeatureLayer
+from constants.services import GUNCRIME_SQL_QUERY
+from rasterio.transform import Affine
+
+from config.config import USE_CRS
 
 
 def gun_crimes(primary_featurelayer):
@@ -26,15 +27,17 @@ def gun_crimes(primary_featurelayer):
     X = np.array(list(zip(x, y)))
 
     # Generate grid for plotting
-    x_grid, y_grid = np.linspace(x.min(), x.max(), 1000), np.linspace(
-        y.min(), y.max(), 1000
+    grid_length = 2500
+    
+    x_grid, y_grid = np.linspace(x.min(), x.max(), grid_length), np.linspace(
+        y.min(), y.max(), grid_length
     )
     xx, yy = np.meshgrid(x_grid, y_grid)
     grid_points = np.array([xx.ravel(), yy.ravel()]).T
 
     # Compute adaptive KDE values
     print("fitting KDE for gun crime data")
-    kde = GaussianKDE(glob_bw="silverman", alpha=0.999, diag_cov=True)
+    kde = GaussianKDE(glob_bw=0.1, alpha=0.999, diag_cov=True)
     kde.fit(X)
 
     z = kde.predict(grid_points)
@@ -56,7 +59,7 @@ def gun_crimes(primary_featurelayer):
 
     # Export as raster
     with rasterio.open(
-        "tmp/output.tif",
+        "tmp/gun_crimes.tif",
         "w",
         driver="GTiff",
         height=zz.shape[0],
@@ -80,7 +83,7 @@ def gun_crimes(primary_featurelayer):
 
     primary_featurelayer.gdf = primary_featurelayer.gdf.drop(columns=["centroid"])
 
-    src = rasterio.open("tmp/output.tif")
+    src = rasterio.open("tmp/gun_crimes.tif")
     sampled_values = [x[0] for x in src.sample(coord_list)]
 
     primary_featurelayer.gdf["guncrime_density"] = sampled_values

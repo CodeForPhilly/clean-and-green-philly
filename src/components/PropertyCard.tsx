@@ -21,10 +21,10 @@ function getPriorityClass(priorityLevel: string) {
 }
 
 const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
-  const { address, guncrime_density, tree_canopy_gap, priority_level, OPA_ID } =
+  const { address, guncrime_density, tree_canopy_gap, priority_level, opa_id } =
     feature.properties;
 
-  const image = `https://storage.googleapis.com/cleanandgreenphl/${OPA_ID}.jpg`;
+  const image = `https://storage.googleapis.com/cleanandgreenphl/${opa_id}.jpg`;
   const formattedAddress = toTitleCase(address);
   const priorityClass = getPriorityClass(priority_level);
 
@@ -41,7 +41,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
         className="cursor-pointer max-w-sm w-full h-full"
         onClick={handleClick}
       >
-        <div className="bg-white h-full flex flex-col rounded-lg overflow-hidden p-3 hover:bg-gray-100">
+        <div className="bg-white h-full flex flex-col rounded-lg overflow-hidden p-3 hover:bg-gray-100 focus-within:bg-gray-100">
           <div
             className="relative w-full rounded-md overflow-hidden"
             style={{ height: "160px", width: "auto" }}
@@ -55,7 +55,10 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
             />
           </div>
           <div className="my-3">
-            <button className="font-bold heading-lg" onKeyDown={handleKeyDown}>
+            <button
+              className="font-bold heading-lg focus:bg-gray-100"
+              onKeyDown={handleKeyDown}
+            >
               {formattedAddress}
             </button>
             <div className="text-gray-700 body-sm">

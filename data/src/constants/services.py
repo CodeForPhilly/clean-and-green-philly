@@ -22,6 +22,10 @@ COMMUNITY_GARDENS_TO_LOAD = [
     "https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/rest/services/PHS_NGT_Supported_Current_view/FeatureServer/0/"
 ]
 
+PPR_PROPERTIES_TO_LOAD = [
+    "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PPR_Properties/FeatureServer/0"
+]
+
 one_year_ago = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime(
     "%Y-%m-%d"
 )
@@ -43,4 +47,25 @@ UNSAFE_BUILDINGS_QUERY = "SELECT * FROM unsafe"
 
 IMMINENT_DANGER_BUILDINGS_QUERY = "SELECT * FROM imm_dang"
 
+PERMITS_QUERY = f"""
+        SELECT
+        address,
+        addressobjectid,
+        approvedscopeofwork,
+        commercialorresidential,
+        opa_account_num,
+        permittype,
+        status,
+        unit_num,
+        unit_type,
+        permitissuedate,
+        typeofwork,
+        the_geom,
+        ST_AsGeoJSON(the_geom)::json AS the_geom_geojson
+        FROM permits
+        WHERE permitissuedate >= '{one_year_ago}'
+    """
+
 NBHOODS_URL = "https://raw.githubusercontent.com/opendataphilly/open-geo-data/master/philadelphia-neighborhoods/philadelphia-neighborhoods.geojson"
+
+CENSUS_BGS_URL = "https://opendata.arcgis.com/datasets/2f982bada233478ea0100528227febce_0.geojson"

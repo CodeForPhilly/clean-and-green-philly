@@ -6,7 +6,7 @@ const ContentPagesLayout = ({ children }: { children: React.ReactNode }) => {
       <Header />
       <main id="main">
         <div className="max-w-[68.75rem] mx-auto pb-[30px] pt-[60px] w-[90%]">
-            {children}
+          {children}
         </div>
       </main>
       <Footer />

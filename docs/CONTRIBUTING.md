@@ -14,17 +14,47 @@ We hold weekly meetings via Zoom, plus the monthly in-person Code for Philly hac
 
 ## How can I contribute?
 
+### Find an issue
 We welcome all kinds of contributions, big or small. The best way to start is to look through the [issues page](https://github.com/CodeForPhilly/vacant-lots-proj/issues) to see what's available to be working on. If you're not sure which issue to tackle, consider filtering them by tags or asking in the [Slack channel](https://codeforphilly.slack.com/archives/C05H9QBMP96).
 
-Once you've found an issue you'd like to work on, please comment on it to let us know you're interested. We'll do our best to assign it to you ASAP. If you're unable to complete the issue in a timely manner (a week or two), please let us know so we can reassign it. If we see an issue with no activity for 3 or more days, we'll reach out via GitHub and Slack to the person to whom it's assigned. If there is no activity at all on the issue for 1 week, we'll reassign it. If there is some activity (e.g., a draft PR or a message to let us know that you're out of town), then you're free to continue working on the issue for another week. However, in the interest of avoiding bottlenecks and giving everyone a fair chance to contribute, we ask that everyone try to complete all issues within 2 weeks of assignment.
+Once you've found an issue you'd like to work on, please comment on it to let us know you're interested. We'll do our best to assign it to you ASAP. 
+
+### Being fair
+If you're unable to complete the issue in a timely manner (a week or two), please let us know so we can reassign it. If we see an issue with no activity for 3 or more days, we'll reach out via GitHub and Slack to the person to whom it's assigned. If there is no activity at all on the issue for 1 week, we'll reassign it. If there is some activity (e.g., a draft PR or a message to let us know that you're out of town), then you're free to continue working on the issue for another week. However, in the interest of avoiding bottlenecks and giving everyone a fair chance to contribute, we ask that everyone try to complete all issues within 2 weeks of assignment.
+
+### Local setup
 
 For info on how to get the codebase setup, see the [SETUP](/docs/SETUP) folder, which contains instructions for setting up the front end, back end, and full stack, depending on your interest. If you have questions about the process, please ask in the [Slack channel](https://codeforphilly.slack.com/archives/C05H9QBMP96).
 
-To make sure the repo is protected and organized, merges to `main` are not allowed. All changes must be made through pull requests to the `staging` branch. Once you have commits ready to merge, please create a new branch named in the format of `<github-username>`/`<issue-number>`-`<kebab-case-description>`. For example vimusds/1069-fix-territory-on-mobile. Your PR will need to be approved by at least one required reviewer (see [CODEOWNERS](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/.github/CODEOWNERS)) and must pass all required status checks. When these are complete, it will be merged to the `staging` branch and then eventually reviwed by our design team and merged to `main` for deployment. To help them in this, please provide clear instructions on how to test/view the changes you've made, and tag the issues you're addressing. You can do this when writing the PR by writing `#<number>` in the `Does this close any currently open issues` section.
 
-If you're unclear on the precise implementation of a ticket, please refer to [the prototype](https://www.figma.com/proto/NAFkgq34abW6uJ0R7PW24T/Prototype---Clean-%26-Green-Philly?page-id=187%3A12602&type=design&node-id=2592-30019&viewport=-657%2C-623%2C0.1&t=fqZvOvLyE9qv7AAV-8&scaling=min-zoom&starting-point-node-id=2592%3A30019&hide-ui=1).
+## Quickstart
 
-Note: when you have completed an issue and are ready to close it, please tag the appropriate reviewe(s). It it's a front-end issue, tag @paulhchoi and @thansidwell (plus @brandonfcohen1 if it involves the map). If it's a back-end issue, tag @brandonfcohen1. Feel free to drop a message in the Slack channel if you have questions.
+To maintain repo organization and protection, merges to main are not allowed. All changes must be made through pull requests to the `staging` branch. Follow these steps, [example PR](https://github.com/CodeForPhilly/clean-and-green-philly/pull/617) for reference:
+
+1. Have an assigned issue (e.g. [#646](https://github.com/CodeForPhilly/clean-and-green-philly/issues/646))
+1. Ensure you're up to date with the `staging` branch
+2. Create a new branch
+    - Name it `<github-username>`/`<issue-number>`-`<kebab-case-description>`. 
+    - Example: `vimusds/1069-fix-territory-on-mobile`.
+3. Push changes and open PR: Push your commits and open a PR with the template filled in. 
+    - Provide clear instructions on how to test/view your changes
+    - Tag the issues you're addressing using `#<number>` in the "Does this close any currently open issues?" section.
+4. Ensure your PR passes all checks. If not, resolve the errors and try again.
+5. Tag reviewers: Tag a code approver (see [CODEOWNERS](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/.github/CODEOWNERS)) for review.
+
+Once approved and all checks pass, your code will be built in Vercel if it's a frontend change and merged into staging by a reviewer. Now you just need to close your issue!
+
+### Closing your Issue
+To close the issue you worked on, add a comment to the issue tagging the appropriate reviewer(s).
+- Front-End Issues: Tag @paulhchoi and @thansidwell. If it involves the map, also tag @brandonfcohen1.
+- Back-End Issues: Tag @brandonfcohen1.
+
+🎉 Congrats, you finished your contribution!
+
+### What's next?
+
+-  Design review: The design team will review and eventually merge it into main for deployment.
+- Deploy to prod: A Clean and Green Philly team member will deploy your changes to the production site.
 
 ## Open an Issue
 
