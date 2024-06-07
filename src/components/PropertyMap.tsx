@@ -302,6 +302,15 @@ const PropertyMap: FC<PropertyMapProps> = ({
         const center = map.getCenter();
         geocoderRef.current = new MapboxGeocoder({
           accessToken: mapboxAccessToken,
+          bbox: [-75.288283,39.864114,-74.945063,40.140129],
+          filter: function (item) {
+            return item.context.some((i) => {
+                return (
+                    (i.id.split('.').shift() === 'place' && i.text === 'Philadelphia') ||
+                    (i.id.split('.').shift() === 'district' && i.text === 'Philadelphia County')
+                );
+            });
+          },
           mapboxgl: mapboxgl,
           marker: false,
           proximity: {
