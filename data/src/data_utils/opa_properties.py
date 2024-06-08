@@ -12,6 +12,12 @@ def opa_properties(primary_featurelayer):
             "sale_date",
             "sale_price",
             "parcel_number",
+            "mailing_address_1", 
+            "mailing_address_2", 
+            "mailing_care_of", 
+            "mailing_city_state",
+            "mailing_street",
+            "mailing_zip"
         ]
     )
 

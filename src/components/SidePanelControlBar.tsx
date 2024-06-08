@@ -84,6 +84,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           {savedPropertyCount > 0 ? (
             <ThemeButton
               color="tertiary"
+              aria-label="Saved Properties"
               label={
                 <div className="lg:space-x-1 body-md">
                   <span className="max-lg:hidden">Saved</span>

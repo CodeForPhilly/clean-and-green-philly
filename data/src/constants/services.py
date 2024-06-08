@@ -23,7 +23,7 @@ COMMUNITY_GARDENS_TO_LOAD = [
 ]
 
 PPR_PROPERTIES_TO_LOAD = [
-   "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PPR_Properties/FeatureServer/0"
+    "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PPR_Properties/FeatureServer/0"
 ]
 
 one_year_ago = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime(
@@ -41,10 +41,31 @@ DRUGCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, point_x AS x, p
 
 DELINQUENCIES_QUERY = "SELECT * FROM real_estate_tax_delinquencies"
 
-OPA_PROPERTIES_QUERY = "SELECT market_value, sale_date, sale_price, parcel_number, the_geom FROM opa_properties_public"
+OPA_PROPERTIES_QUERY = "SELECT market_value, sale_date, sale_price, parcel_number, mailing_address_1, mailing_address_2, mailing_care_of, mailing_street, mailing_zip, mailing_city_state, the_geom FROM opa_properties_public"
 
 UNSAFE_BUILDINGS_QUERY = "SELECT * FROM unsafe"
 
 IMMINENT_DANGER_BUILDINGS_QUERY = "SELECT * FROM imm_dang"
 
+PERMITS_QUERY = f"""
+        SELECT
+        address,
+        addressobjectid,
+        approvedscopeofwork,
+        commercialorresidential,
+        opa_account_num,
+        permittype,
+        status,
+        unit_num,
+        unit_type,
+        permitissuedate,
+        typeofwork,
+        the_geom,
+        ST_AsGeoJSON(the_geom)::json AS the_geom_geojson
+        FROM permits
+        WHERE permitissuedate >= '{one_year_ago}'
+    """
+
 NBHOODS_URL = "https://raw.githubusercontent.com/opendataphilly/open-geo-data/master/philadelphia-neighborhoods/philadelphia-neighborhoods.geojson"
+
+CENSUS_BGS_URL = "https://opendata.arcgis.com/datasets/2f982bada233478ea0100528227febce_0.geojson"

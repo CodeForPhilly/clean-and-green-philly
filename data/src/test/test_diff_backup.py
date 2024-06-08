@@ -77,3 +77,22 @@ class TestDiffBackup:
         diff = DiffReport()
         diff.report = "This is the report"
         diff.email_report()
+
+    def test_is_backup_schema_exists(self):
+        """test method for whether the backup schema exists """    
+        if TestDiffBackup.backup.is_backup_schema_exists():
+            TestDiffBackup.backup.archive_backup_schema()
+            conn.commit()
+            assert not TestDiffBackup.backup.is_backup_schema_exists()
+        else:
+            TestDiffBackup.backup.backup_schema()
+            assert TestDiffBackup.backup.is_backup_schema_exists()
+            TestDiffBackup.backup.archive_backup_schema()
+            conn.commit()
+            assert not TestDiffBackup.backup.is_backup_schema_exists()
+
+    
+    def test_backup_tiles_file(self):
+        """ test backing up the tiles file """
+        TestDiffBackup.backup.backup_tiles_file()
+

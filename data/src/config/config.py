@@ -25,6 +25,11 @@ report_to_email: str = ""
 smtp_server: str = "localhost"
 """ sendmail server """
 
+tiles_file_id_prefix: str = "vacant_properties_tiles"
+""" the prefix of the name of the tiles file generated and saved to GCP """
+
+tile_file_backup_directory: str = "backup"
+""" The name of the directory in GCP to store timestamped backups of the tiles file """
 
 def is_docker() -> bool:
     """
