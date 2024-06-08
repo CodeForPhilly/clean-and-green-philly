@@ -103,20 +103,16 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           )}
           <ThemeButton
             color="tertiary"
-            aria-label="Filter"
+            aria-roledescription=' '
             label={
               <div className="lg:space-x-1 body-md">
                 <span className="max-lg:hidden">Filter</span>
-                {filterCount !== 0 && <span>({filterCount})</span>}
+                <span className="sr-only">Button</span>
+                {filterCount !== 0 && <span aria-hidden="true">({filterCount})</span>}
+                {filterCount !== 0 && <span className="sr-only">{filterCount} filters applied</span>}
               </div>
             }
-            onPress={() => {
-              if (filterRef.current && currentView === "filter") {
-                filterRef.current.blur();
-              }
-
-              updateCurrentView("filter");
-            }}
+            onPress={() => updateCurrentView("filter")}
             isSelected={currentView === "filter" || filterCount !== 0}
             startContent={<Funnel />}
             className="max-lg:min-w-[4rem]"
