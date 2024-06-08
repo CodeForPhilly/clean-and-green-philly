@@ -3,7 +3,7 @@ import { generateMetadata } from "@/utilities/generateMetaData";
 const title = "Gentrification";
 const url = "/gentrification";
 const description =
-  "At Clean & Green Philly, we try to avoid contributing to green gentrification here in Philadelphia."; // ??
+  "At Clean & Green Philly, we try to avoid contributing to green gentrification here in Philadelphia.";
 
 export const metadata = generateMetadata({
   title,

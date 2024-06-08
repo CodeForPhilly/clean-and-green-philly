@@ -5,7 +5,7 @@ import CookieConsentBanner from "@/components/CookieConsentBanner";
 const title = "Find Properties";
 const url = "/find-properties";
 const description =
-  "You can search and find vacant properties that match your goals. Use our data to understand those properties and how to take action."; //?
+  "You can search and find vacant properties that match your goals. Use our data to understand those properties and how to take action.";
 
 export const metadata = generateMetadata({
   title,
