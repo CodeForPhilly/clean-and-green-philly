@@ -32,11 +32,19 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   const savedRef = useRef<HTMLButtonElement | null>(null);
   const { dispatch, appFilter } = useFilter();
 
-  let filterCount = Object.keys(appFilter).length;
-
-  if (shouldFilterSavedProperties) {
-    // Exclude opa_id from filterCount, which counts opa_id as a filter by default
-    filterCount--;
+  const filterCount = () => {
+    let count = 0
+    for (let property of Object.keys(appFilter)) {
+      if (property === "access_process") {
+        count = count + appFilter[property].values.length
+      } else {
+        count++
+      }
+    }
+    if (shouldFilterSavedProperties) {
+      count--
+    }
+    return count
   }
 
   const onClickSavedButton = () => {
@@ -107,7 +115,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             label={
               <div className="lg:space-x-1 body-md">
                 <span className="max-lg:hidden">Filter</span>
-                {filterCount !== 0 && <span>({filterCount})</span>}
+                {filterCount() !== 0 && <span>({filterCount()})</span>}
               </div>
             }
             onPress={() => {
@@ -117,7 +125,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
 
               updateCurrentView("filter");
             }}
-            isSelected={currentView === "filter" || filterCount !== 0}
+            isSelected={currentView === "filter" || filterCount() !== 0}
             startContent={<Funnel />}
             className="max-lg:min-w-[4rem]"
             data-hover={false}
