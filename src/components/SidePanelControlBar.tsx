@@ -103,13 +103,12 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           )}
           <ThemeButton
             color="tertiary"
+            aria-label={filterCount === 0 ? "Filter Button" : `Filter Button ${filterCount} filters active`}
             aria-roledescription=' '
             label={
               <div className="lg:space-x-1 body-md">
                 <span className="max-lg:hidden">Filter</span>
-                <span className="sr-only">Button</span>
                 {filterCount !== 0 && <span aria-hidden="true">({filterCount})</span>}
-                {filterCount !== 0 && <span className="sr-only">{filterCount} filters applied</span>}
               </div>
             }
             onPress={() => updateCurrentView("filter")}
