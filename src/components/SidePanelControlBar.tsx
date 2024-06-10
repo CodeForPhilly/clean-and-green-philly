@@ -103,8 +103,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           )}
           <ThemeButton
             color="tertiary"
-            aria-label={filterCount === 0 ? "Filter Button" : `Filter Button ${filterCount} filters active`}
-            aria-roledescription=' '
+            aria-label={filterCount === 0 ? "Filter" : `Filter ${filterCount} filters active`}
             label={
               <div className="lg:space-x-1 body-md">
                 <span className="max-lg:hidden">Filter</span>
