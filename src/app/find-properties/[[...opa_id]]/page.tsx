@@ -208,7 +208,6 @@ const MapPage = ({ params }: MapPageProps) => {
   }, [currentView, selectedProperty, shouldFilterSavedProperties]);
 
   return (
-    <FilterProvider>
       <NextUIProvider>
         <div className="flex flex-col">
           <div className="flex flex-grow overflow-hidden">
@@ -321,7 +320,6 @@ const MapPage = ({ params }: MapPageProps) => {
           </div>
         </div>
       </NextUIProvider>
-    </FilterProvider>
   );
 };
 

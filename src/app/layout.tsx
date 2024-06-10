@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CookieProviderWrapper } from "./CookieProviderWrapper";
+import { FilterProviderWrapper } from "./FilterProviderWrapper";
 
 export const metadata: Metadata = {
   title: {
@@ -29,7 +30,11 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <CookieProviderWrapper>{children}</CookieProviderWrapper>
+        <CookieProviderWrapper>
+          <FilterProviderWrapper>
+            {children}
+          </FilterProviderWrapper>
+        </CookieProviderWrapper>
       </body>
     </html>
   );

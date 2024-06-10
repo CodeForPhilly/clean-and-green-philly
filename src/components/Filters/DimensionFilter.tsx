@@ -25,8 +25,15 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
     appFilter[property]?.values || []
   );
-  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{[property: string]: string[]}>({})
-
+  const initialSelectedPanelKeys = () => {
+    let panelKeyObj: {[key: string]: string[]} = {}
+    for (const key in appFilter) {
+      panelKeyObj[key] = appFilter[key].values
+    }
+    return panelKeyObj
+  }
+  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{[property: string]: string[]}>(initialSelectedPanelKeys())
+  
   const toggleDimensionForPanel = (dimension: string, panel_property: string) => {
     let newSelectedPanelKeys
     if (selectedPanelKeys[panel_property]) {

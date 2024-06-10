@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useRef } from "react";
+import React, { FC, useMemo, useRef } from "react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { BookmarkSimple, DownloadSimple, Funnel } from "@phosphor-icons/react";
 import { ThemeButton } from "./ThemeButton";
@@ -32,12 +32,20 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   const savedRef = useRef<HTMLButtonElement | null>(null);
   const { dispatch, appFilter } = useFilter();
 
-  let filterCount = Object.keys(appFilter).length;
-
-  if (shouldFilterSavedProperties) {
-    // Exclude opa_id from filterCount, which counts opa_id as a filter by default
-    filterCount--;
-  }
+  const filterCount: number = useMemo(() => {
+    let count = 0
+    for (let property of Object.keys(appFilter)) {
+        if (property === "access_process") {
+          count += appFilter[property].values.length
+        } else {
+          count++
+        }
+      }
+      if (shouldFilterSavedProperties) {
+        count--
+      }
+    return count
+  }, [appFilter])
 
   const onClickSavedButton = () => {
     let propertyIds = getPropertyIdsFromLocalStorage();
