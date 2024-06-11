@@ -127,6 +127,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           />
           <ThemeButton
             color="tertiary"
+            aria-expanded={currentView === "download"}
             aria-label="Download"
             onPress={() => updateCurrentView("download")}
             startContent={<DownloadSimple />}
