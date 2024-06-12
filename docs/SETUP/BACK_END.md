@@ -14,11 +14,11 @@ We use [docker-compose](https://docs.docker.com/compose/) to manage the backend 
 
 The first time you set up your backend, or any time either of the two Docker files change, you should build the Docker services by running `docker-compose build`.  It may take a while to install the dependencies but you will only need to do this once.  You can rebuild only one container, such as `postgres`, with `docker-compose build postgres`.  For first-time runs, you should set `FORCE_RELOAD = True` in `config.py` and optionally `log_level: int = logging.DEBUG` to get more verbose output.
 
-All Docker commands should be run from the `data/` directory.  There is one main `Dockerfile` for the batch scripts and one called `Dockerfile-pg` from the PostgreSQL and postgis installation.  There is also a file called `init_pg.sql` that is run one time by Docker when the postgres data volume is empty to create the database and install postgis.  You should not have to touch any of the above three files.
+All Docker commands should be run from the `data/` directory.  There is one main `Dockerfile` for the batch scripts and one called `Dockerfile-pg` for the PostgreSQL and postgis installation.  There is also a file called `init_pg.sql` that is run one time by Docker when the postgres data volume is empty to create the database and install postgis.  You should not have to touch any of the above three files.
 
 ### PostgreSQL
 
-[PostgreSQL](https://www.postgresql.org/) AKA postgres, pg, psql is an open-source relational database management system.  It is used in this project by the data load script to stage data and by the data diff process to compare new data with backed up data.  We run Postgres with the [Postgis](https://postgis.net/) extension for geospatial data in a Docker container.
+[PostgreSQL](https://www.postgresql.org/) AKA postgres, pg, psql is an open-source relational database management system.  It is used in this project only by the data load script to stage data and by the data diff process to compare new data with backed up data.  It is not needed by the front-end to run.  We run Postgres with the [Postgis](https://postgis.net/) extension for geospatial data in a Docker container.
 
 #### Running PostgreSQL
 
@@ -120,11 +120,13 @@ docker-compose run streetview
 The script should only load new images that aren't in the bucket already (new properties added to list).
 
 #### Backup and difference reporting
-Whenever the data load script is run in refresh mode, the old data set is backed up and a report of any differences is sent to the team via Slack.  Differences in data are calculated using the [data-diff](https://github.com/datafold/data-diff) package. See [issue 520](https://github.com/CodeForPhilly/clean-and-green-philly/issues/520) in Github.
+Whenever the data load script is run in force reload mode, the old data set is backed up and a report of any differences is sent to the team via Slack.  Differences in data are calculated using the [data-diff](https://github.com/datafold/data-diff) package. See [issue 520](https://github.com/CodeForPhilly/clean-and-green-philly/issues/520) in Github.
 
 Backups are done in PostgreSQL in the vacantlotsdb database by copying the whole public schema to a backup schema named backup_{timestamp}.  Besides the original tables, the backup schema includes a '{table_name}_diff' table with details of the differences from data-diff for each table.
 
 Backup schemas are only kept for one year by default.  Backup schemas older than a year are deleted at the end of the load script.
+
+After all runs of the back-end script, the tiles file is backed up to the backup/ directory in the GCP bucket with a timestamp.  If the main tiles file ever gets corrupted, it can be rolled back to a backup file.
 
 When a diff is performed, an html file of the contents of the '{table_name}_diff' table is generated for each table and uploaded to the public GCP bucket so it can be viewed in a web browser.  The location of the html files is in the format: https://storage.googleapis.com/cleanandgreenphl/diff/{backup_timestamp}/{table_name}.html  The link to the detail diff page is included in the Slack report message.
 
