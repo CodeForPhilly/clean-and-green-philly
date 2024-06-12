@@ -205,11 +205,7 @@ const SinglePropertyDetail = ({
             color="tertiary"
             label={isPropertySavedToLocalStorage ? "Saved" : "Save"}
             startContent={
-              isPropertySavedToLocalStorage ? (
-                <Check weight="light" />
-              ) : (
-                <BookmarkSimple />
-              )
+              isPropertySavedToLocalStorage ? <Check /> : <BookmarkSimple />
             }
             onPress={() => {
               onClickSaveButton();
