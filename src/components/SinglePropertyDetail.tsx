@@ -292,6 +292,7 @@ const SinglePropertyDetail = ({
                 rel="noopener noreferrer"
                 color="tertiary"
                 label="Atlas"
+                aria-label="Atlas opens in a new tab"
                 endContent={<ArrowSquareOut aria-hidden="true" />}
               />
             </Tooltip>
