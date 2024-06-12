@@ -20,7 +20,7 @@ def google_cloud_bucket() -> Bucket:
     Returns:
         Bucket: the gcp bucket
     """
-    credentials_path = os.path.expanduser("/app/account-service-key.json")
+    credentials_path = os.path.expanduser("/app/service-account-key.json")
     
     if not os.path.exists(credentials_path):
         raise FileNotFoundError(f"Credentials file not found at {credentials_path}")
