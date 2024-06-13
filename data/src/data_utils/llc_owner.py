@@ -8,9 +8,9 @@ def llc_owner(primary_featurelayer):
 
         # Checking if " llc" is in either owner1 or owner2
         if " llc" in owner1 or " llc" in owner2:
-            llc_owners.append("Yes")
+            llc_owners.append("Business")
         else:
-            llc_owners.append("No")
+            llc_owners.append("Individual")
 
     primary_featurelayer.gdf["llc_owner"] = llc_owners
     return primary_featurelayer

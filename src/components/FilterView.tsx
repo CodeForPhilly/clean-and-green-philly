@@ -5,7 +5,6 @@ import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { ThemeButton } from "./ThemeButton";
 import { rcos, neighborhoods, zoning } from "./Filters/filterOptions";
 
-
 const filters = [
   {
     property: "priority_level",
@@ -16,7 +15,14 @@ const filters = [
   {
     property: "get_access",
     display: "Get Access",
-    options: ["TACTICAL_URBANISM", "PRIVATE_LAND_USE", "BUY_FROM_OWNER", "SIDE_YARD", "LAND_BANK", "CONSERVATORSHIP"],
+    options: [
+      "TACTICAL_URBANISM",
+      "PRIVATE_LAND_USE",
+      "BUY_FROM_OWNER",
+      "SIDE_YARD",
+      "LAND_BANK",
+      "CONSERVATORSHIP",
+    ],
     type: "panels",
   },
   {
@@ -40,14 +46,14 @@ const filters = [
   },
   {
     property: "parcel_type",
-    display: "Parcel Type",
+    display: "Property Type",
     options: ["Land", "Building"],
     type: "buttonGroup",
   },
   {
     property: "llc_owner",
     display: "LLC Owner",
-    options: ["Yes", "No"],
+    options: ["Business", "Individual"],
     type: "buttonGroup",
   },
 ];
