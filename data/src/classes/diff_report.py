@@ -214,7 +214,7 @@ class DiffReport:
             client.chat_postMessage(
                 channel=report_to_slack_channel,
                 text=self.report,
-                username="CAGP Diff Report Bot",
+                username="CAGP Diff Bot",
             )
 
     def email_report(self):

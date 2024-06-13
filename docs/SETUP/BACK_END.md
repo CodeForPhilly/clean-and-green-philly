@@ -47,7 +47,7 @@ Note: make sure to keep your fork up to date with the original repository by fol
 
 The project needs certain specific and sensitive pieces of information to run.  We store these in the user's development environment and not in source control.
 
-For Mac and Linux, you can permanently store the enviromental variables in your command line shell's configuration file, e.g. `~/.bashrc`, `~/.bash_profile`, `~/.zshrc` or `~/.profile`.  Add a line `export VAR_NAME=VALUE` in your file and run `source file` to read it in when newly created.  Any new shells will automatically have the new environment.
+For Mac and Linux, you can permanently store the environmental variables in your command line shell's configuration file, e.g. `~/.bashrc`, `~/.bash_profile`, `~/.zshrc` or `~/.profile`.  Add a line `export VAR_NAME=VALUE` in your file and run `source file` to read it in when newly created.  Any new shells will automatically have the new environment.
 
 For Windows, you can set environmental variables under System -> Advanced or you can download a terminal emulator such as [Git Bash](https://gitforwindows.org/) and follow the instructions for Mac and Linux above.  A terminal emulator is reccommended.
 
