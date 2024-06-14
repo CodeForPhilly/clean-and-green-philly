@@ -36,15 +36,17 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
     appFilter[property]?.values || []
   );
-  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{
-    [property: string]: string[];
-  }>({});
-
-  const toggleDimensionForPanel = (
-    dimension: string,
-    panel_property: string
-  ) => {
-    let newSelectedPanelKeys;
+  const initialSelectedPanelKeys = () => {
+    let panelKeyObj: {[key: string]: string[]} = {}
+    for (const key in appFilter) {
+      panelKeyObj[key] = appFilter[key].values
+    }
+    return panelKeyObj
+  }
+  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{[property: string]: string[]}>(initialSelectedPanelKeys())
+  
+  const toggleDimensionForPanel = (dimension: string, panel_property: string) => {
+    let newSelectedPanelKeys
     if (selectedPanelKeys[panel_property]) {
       newSelectedPanelKeys = selectedPanelKeys[panel_property].includes(
         dimension
@@ -128,7 +130,8 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       : {
           desc: "Find properties based on what we think is the easiest method to get legal access to them, based on the data available to us. ",
           linkFragment: "access-method",
-        };
+      };
+
   // text-gray-500, 600 ? or #586266 (figma)?
   return (
     <div className="pt-3 pb-6">
@@ -140,7 +143,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             <a
               href={`/methodology/#${filterDescription.linkFragment}`}
               className="link"
-              aria-label={`Goes to methodology page for ${property}`}
+              aria-label={`Learn more about ${property === "priority_level" ? "priority level" : "access process"} from our Methodology Page`}
             >
               Learn more{" "}
             </a>

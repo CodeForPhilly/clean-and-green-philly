@@ -6,6 +6,7 @@ import {
   ArrowSquareOut,
   ArrowsOut,
   Share,
+  Check,
 } from "@phosphor-icons/react";
 import { MapGeoJSONFeature } from "maplibre-gl";
 import Image from "next/image";
@@ -203,7 +204,9 @@ const SinglePropertyDetail = ({
           <ThemeButton
             color="tertiary"
             label={isPropertySavedToLocalStorage ? "Saved" : "Save"}
-            startContent={<BookmarkSimple />}
+            startContent={
+              isPropertySavedToLocalStorage ? <Check /> : <BookmarkSimple />
+            }
             onPress={() => {
               onClickSaveButton();
             }}
@@ -292,6 +295,7 @@ const SinglePropertyDetail = ({
                 rel="noopener noreferrer"
                 color="tertiary"
                 label="Atlas"
+                aria-label="Atlas opens in a new tab"
                 endContent={<ArrowSquareOut aria-hidden="true" />}
               />
             </Tooltip>
