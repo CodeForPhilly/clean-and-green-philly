@@ -14,6 +14,17 @@ type DimensionFilterProps = {
   useIndexOfFilter?: boolean;
 };
 
+type OptionDisplayMapping = {
+  [key: string]: { [key: string]: string };
+};
+
+const optionsDisplayMapping: OptionDisplayMapping = {
+  "llc_owner": {
+    "Yes": "Business",
+    "No": "Individual",
+  },
+};
+
 const DimensionFilter: FC<DimensionFilterProps> = ({
   property,
   display,
@@ -25,24 +36,34 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
     appFilter[property]?.values || []
   );
-  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{[property: string]: string[]}>({})
+  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{
+    [property: string]: string[];
+  }>({});
 
-  const toggleDimensionForPanel = (dimension: string, panel_property: string) => {
-    let newSelectedPanelKeys
+  const toggleDimensionForPanel = (
+    dimension: string,
+    panel_property: string
+  ) => {
+    let newSelectedPanelKeys;
     if (selectedPanelKeys[panel_property]) {
-      newSelectedPanelKeys = selectedPanelKeys[panel_property].includes(dimension)
+      newSelectedPanelKeys = selectedPanelKeys[panel_property].includes(
+        dimension
+      )
         ? selectedPanelKeys[panel_property].filter((key) => key !== dimension)
         : [...selectedPanelKeys[panel_property], dimension];
     } else {
-      newSelectedPanelKeys = [dimension]
+      newSelectedPanelKeys = [dimension];
     }
-    setSelectedPanelkeys({...selectedPanelKeys, [panel_property]: newSelectedPanelKeys});
+    setSelectedPanelkeys({
+      ...selectedPanelKeys,
+      [panel_property]: newSelectedPanelKeys,
+    });
     dispatch({
       type: "SET_DIMENSIONS",
       property: panel_property,
       dimensions: newSelectedPanelKeys,
     });
-  }
+  };
 
   const toggleDimension = (dimension: string) => {
     const newSelectedKeys = selectedKeys.includes(dimension)
@@ -68,34 +89,35 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   };
 
   const filter = useMemo(() => {
-      if (type === "buttonGroup") {
-        return (
-          <ButtonGroup
-            options={options}
-            selectedKeys={selectedKeys}
-            toggleDimension={toggleDimension}
-          />
-        );
-      } else if (type === "panels") {
-        return (
-          <Panels 
-            options={options}
-            selectedPanelKeys={selectedPanelKeys}
-            toggleDimensionForPanel={toggleDimensionForPanel}
-          />
-        )
-      } else {
-        return (
-          <MultiSelect
-            display={display}
-            options={options}
-            selectedKeys={selectedKeys}
-            toggleDimension={toggleDimension}
-            handleSelectionChange={handleSelectionChange}
-          />
-        );
-      }
-    }, [selectedKeys, selectedPanelKeys])
+    if (type === "buttonGroup") {
+      return (
+        <ButtonGroup
+          options={options}
+          selectedKeys={selectedKeys}
+          toggleDimension={toggleDimension}
+          displayOptions={optionsDisplayMapping[property]}
+        />
+      );
+    } else if (type === "panels") {
+      return (
+        <Panels
+          options={options}
+          selectedPanelKeys={selectedPanelKeys}
+          toggleDimensionForPanel={toggleDimensionForPanel}
+        />
+      );
+    } else {
+      return (
+        <MultiSelect
+          display={display}
+          options={options}
+          selectedKeys={selectedKeys}
+          toggleDimension={toggleDimension}
+          handleSelectionChange={handleSelectionChange}
+        />
+      );
+    }
+  }, [selectedKeys, selectedPanelKeys]);
 
   const filterDescription =
     property === "priority_level"

@@ -11,7 +11,7 @@ services:
       - GOOGLE_CLOUD_BUCKET_NAME
       - CAGP_SLACK_API_TOKEN
     volumes:
-      - ./src:/usr/src/app # is this the line to change? #
+      - ./src:/usr/src/app
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
     extra_hosts:
       - host.docker.internal:host-gateway

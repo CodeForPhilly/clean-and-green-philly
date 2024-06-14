@@ -52,8 +52,8 @@ const filters = [
   },
   {
     property: "llc_owner",
-    display: "LLC Owner",
-    options: ["Business", "Individual"],
+    display: "Owner",
+    options: ["Yes", "No"],
     type: "buttonGroup",
   },
 ];
