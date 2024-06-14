@@ -4,35 +4,6 @@
 
 If you are planning to contribute to the data wrangling and database management on this project and will need to run the Python script, follow the installation and setup instructions below.
 
-## Installation
-
-### Docker
-
-Docker is a platform that allows you to containerize and run applications in isolated environments, making it easier to manage dependencies and ensure consistent deployments. Download the [latest version of Docker Desktop for your operating system](https://www.docker.com/products/docker-desktop/).
-
-We use [docker-compose](https://docs.docker.com/compose/) to manage the backend Docker services.  The `data/docker-compose.yaml` file defines the services.  The only service that runs perpetually in Docker is `postgres`.  The other services are one-time batch jobs to build the data sets.
-
-The first time you set up your backend, or any time either of the two Docker files change, you should build the Docker services by running `docker-compose build`.  It may take a while to install the dependencies but you will only need to do this once.  You can rebuild only one container, such as `postgres`, with `docker-compose build postgres`.  For first-time runs, you should set `FORCE_RELOAD = True` in `config.py` and optionally `log_level: int = logging.DEBUG` to get more verbose output.
-
-All Docker commands should be run from the `data/` directory.  There is one main `Dockerfile` for the batch scripts and one called `Dockerfile-pg` for the PostgreSQL and postgis installation.  There is also a file called `init_pg.sql` that is run one time by Docker when the postgres data volume is empty to create the database and install postgis.  You should not have to touch any of the above three files.
-
-### PostgreSQL
-
-[PostgreSQL](https://www.postgresql.org/) AKA postgres, pg, psql is an open-source relational database management system.  It is used in this project only by the data load script to stage data and by the data diff process to compare new data with backed up data.  It is not needed by the front-end to run.  We run Postgres with the [Postgis](https://postgis.net/) extension for geospatial data in a Docker container.
-
-#### Running PostgreSQL
-
-First, set up the two environmental variables for Postgres as defined below.  To start the postgres Docker container, run:
-`docker compose up -d postgres`.  You can access the psql command line in your container to work with the database with this command: `docker exec -it cagp-postgres psql -U postgres -d vacantlotdb`.  To stop the postgres container run `docker compose down postgres`.
-
-## Configuration
-
-There are numerous configuration variables in `data/src/config/config.py`.  See the documentation in that file for each variable.  You will also have to set up environmental variables for keys and database connection parameters as defined throughout this document.
-
-There are the following secrets that may be securely shared with you by the project leads:
-- The password for the project's Google account to access the cloud platform.  For development purposes you can work in your personal cloud account, see the GCP section below.
-- The Slack API key to post diff reports to the project Slack via the messenger bot.  See the 'Backup and difference reporting' section below.  You can set up your own Slack bot for your personal workspace and use that API key for local testing.  See [this link](https://www.datacamp.com/tutorial/how-to-send-slack-messages-with-python) for instructions or do a Google search on how to do it.
-
 ## Setup
 
 ### Fork the Repository
@@ -60,10 +31,13 @@ Create an environmental variable called `POSTGRES_PASSWORD` and set its value to
 
 ### Docker Build
 
-All of the data scripting is in python and lives in the `data` folder. Everything below should be run in that folder.
+Docker is a platform that allows you to containerize and run applications in isolated environments, making it easier to manage dependencies and ensure consistent deployments. Download the [latest version of Docker Desktop for your operating system](https://www.docker.com/products/docker-desktop/).
 
-For all three OS, you'll first have to go into the `data` subdirectory and open the `docker-compose.yml` file. Change the filepath under `volumes` to the location of your repository. (Currently it is hardcoded to Brandon's filepath.)
-For example, if your repository is located at `user/Documents/vacant-lots-proj`, you would change the filepath to `user/Documents/vacant-lots-proj/data`. Save and close the file. Alternatively, you can run the image in Docker following the steps below. If needed, it will build (this will take a few minutes). It should only need to build if it's your first time running or if major configuation changes are made. Changes to the python script should not trigger a re-build.
+We use [docker-compose](https://docs.docker.com/compose/) to manage the backend Docker services.  The `data/docker-compose.yaml` file defines the services.  The only service that runs perpetually in Docker is `postgres`.  The other services are one-time batch jobs to build the data sets.
+
+The first time you set up your backend, or any time either of the two Docker files change, you should build the Docker services by running `docker-compose build`.  It may take a while to install the dependencies but you will only need to do this once.  You can rebuild only one container, such as `postgres`, with `docker-compose build postgres`.  For first-time runs, you should set `FORCE_RELOAD = True` in `config.py` and optionally `log_level: int = logging.DEBUG` to get more verbose output.
+
+All Docker commands should be run from the `data/` directory.  There is one main `Dockerfile` for the batch scripts and one called `Dockerfile-pg` for the PostgreSQL and postgis installation.  There is also a file called `init_pg.sql` that is run one time by Docker when the postgres data volume is empty to create the database and install postgis.  You should not have to touch any of the above three files.
 
 #### Windows
 
@@ -85,6 +59,21 @@ The backend also works on WSL Ubuntu running Docker for Linux on Windows 10.
 #### macOS
 
 In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker-compose run vacant-lots-proj`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker-compose down`.
+
+### PostgreSQL
+
+[PostgreSQL](https://www.postgresql.org/) AKA postgres, pg, psql is an open-source relational database management system.  It is used in this project only by the data load script to stage data and by the data diff process to compare new data with backed up data.  It is not needed by the front-end to run.  We run Postgres with the [Postgis](https://postgis.net/) extension for geospatial data in a Docker container.
+
+To start the postgres Docker container, run:
+`docker compose up -d postgres`.  You can access the psql command line in your container to work with the database with this command: `docker exec -it cagp-postgres psql -U postgres -d vacantlotdb`.  To stop the postgres container run `docker compose down postgres`.
+
+## Configuration
+
+There are numerous configuration variables in `data/src/config/config.py`.  See the documentation in that file for each variable.  You will also have to set up environmental variables for keys and database connection parameters as defined throughout this document.
+
+There are the following secrets that may be securely shared with you by the project leads:
+- The password for the project's Google account to access the cloud platform.  For development purposes you can work in your personal cloud account, see the GCP section below.
+- The Slack API key to post diff reports to the project Slack via the messenger bot.  See the 'Backup and difference reporting' section below.  You can set up your own Slack bot for your personal workspace and use that API key for local testing.  See [this link](https://www.datacamp.com/tutorial/how-to-send-slack-messages-with-python) for instructions or do a Google search on how to do it.
 
 #### Making code changes
 
