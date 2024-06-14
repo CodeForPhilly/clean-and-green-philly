@@ -1,16 +1,42 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { CookieProviderWrapper } from "./CookieProviderWrapper";
+import { FilterProviderWrapper } from "./FilterProviderWrapper";
+
+const defaultTitle =
+  "Clean & Green Philly - Helping communities clean vacant properties";
+const description =
+  "The ultimate toolkit to help community groups clean and green vacant properties to reduce gun violence in Philadelphia.";
+const siteUrl = new URL("https://staging.cleanandgreenphilly.org/");
+
+/* REPLACE WITH URL BELOW BEFORE PUSHING TO PRODUCTION
+const siteUrl = new URL("https://cleanandgreenphilly.org/");
+*/
 
 export const metadata: Metadata = {
   title: {
-    default: "Clean & Green Philly",
+    default: defaultTitle,
     template: "%s - Clean & Green Philly",
   },
-  description:
-    "Reduce the gun violence in Philadelphia by finding vacant properties to clean and green them.",
+  description: description,
   icons: {
     icon: "/favicon.ico",
+  },
+  metadataBase: siteUrl,
+  openGraph: {
+    type: "website",
+    url: "/",
+    title: defaultTitle,
+    description: description,
+    images: [
+      {
+        url: "/thumbnail.png",
+        width: 1200,
+        height: 630,
+        alt: "Clean & Green Philly",
+      },
+    ],
+    siteName: "Clean & Green Philly",
   },
 };
 
@@ -29,7 +55,11 @@ export default function RootLayout({
         >
           Skip to main content
         </a>
-        <CookieProviderWrapper>{children}</CookieProviderWrapper>
+        <CookieProviderWrapper>
+          <FilterProviderWrapper>
+            {children}
+          </FilterProviderWrapper>
+        </CookieProviderWrapper>
       </body>
     </html>
   );
