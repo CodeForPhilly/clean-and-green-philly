@@ -1,11 +1,12 @@
 import os
 import subprocess
 import traceback
+import sqlalchemy as sa
 
 import geopandas as gpd
 import pandas as pd
 import requests
-from config.psql import conn
+from config.psql import conn, local_engine
 from esridump.dumper import EsriDumper
 from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
@@ -88,6 +89,9 @@ class FeatureLayer:
 
     def check_psql(self):
         try:
+            if not sa.inspect(local_engine).has_table(self.psql_table):
+                print(f"Table {self.psql_table} does not exist")
+                return False
             psql_table = gpd.read_postgis(
                 f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
             )
