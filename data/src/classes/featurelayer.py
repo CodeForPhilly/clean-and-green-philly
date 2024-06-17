@@ -1,11 +1,12 @@
 import os
 import subprocess
 import traceback
+import sqlalchemy as sa
 
 import geopandas as gpd
 import pandas as pd
 import requests
-from config.psql import conn
+from config.psql import conn, local_engine
 from esridump.dumper import EsriDumper
 from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
@@ -20,7 +21,7 @@ def google_cloud_bucket() -> Bucket:
     Returns:
         Bucket: the gcp bucket
     """
-    credentials_path = os.path.expanduser("/app/account-service-key.json")
+    credentials_path = os.path.expanduser("/app/service-account-key.json")
     
     if not os.path.exists(credentials_path):
         raise FileNotFoundError(f"Credentials file not found at {credentials_path}")
@@ -88,6 +89,9 @@ class FeatureLayer:
 
     def check_psql(self):
         try:
+            if not sa.inspect(local_engine).has_table(self.psql_table):
+                print(f"Table {self.psql_table} does not exist")
+                return False
             psql_table = gpd.read_postgis(
                 f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
             )

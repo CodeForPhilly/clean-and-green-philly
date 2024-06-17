@@ -40,7 +40,7 @@ def dev_probability(primary_featurelayer):
 
     # Classify development probability using Jenks natural breaks
     breaks = jenkspy.jenks_breaks(census_bgs_gdf['permit_count'], n_classes=3)
-    census_bgs_gdf['dev_rank'] = pd.cut(census_bgs_gdf['permit_count'], bins=breaks, labels=['Low', 'Medium', 'High'])
+    census_bgs_gdf['dev_rank'] = pd.cut(census_bgs_gdf['permit_count'], bins=breaks, labels=['Low', 'Medium', 'High']).astype(str)
 
     updated_census_bgs = FeatureLayer(
         name="Updated Census Block Groups",

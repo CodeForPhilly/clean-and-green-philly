@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   vacant-lots-proj:
     build: .
@@ -34,3 +33,22 @@ services:
       - ./src:/usr/src/app
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
     command: sh -c "pipenv run python streetview.py"
+
+  postgres:
+    container_name: cagp-postgres
+    build:
+      context: .
+      dockerfile: Dockerfile-pg
+    environment:
+      - POSTGRES_PASSWORD
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+      - ./init_pg.sql:/docker-entrypoint-initdb.d/init_pg.sql
+    extra_hosts: 
+      - host.docker.internal:host-gateway
+
+volumes:
+  database_volume:
