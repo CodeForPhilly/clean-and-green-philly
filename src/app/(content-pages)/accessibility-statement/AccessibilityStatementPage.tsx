@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 export default function AccessibilityStatementPage() {
   return (
     <>
@@ -109,11 +111,10 @@ export default function AccessibilityStatementPage() {
       </p>
       <h2 className="heading-2xl font-semibold mt-8">Evaluation Report</h2>
       <p>
-        {" "}
-        You can find our full evaluation report in VPAT®️ format. (
-        <a href="" className="text-blue-400 underline">
+        You can find our full evaluation report in VPAT®️ format.(
+        <Link href="/vpat" className="text-blue-400 underline">
           link
-        </a>
+        </Link>
         )
       </p>
       <hr className="my-6 border-gray-300" />
