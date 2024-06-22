@@ -11,14 +11,17 @@ from config.config import USE_CRS
 
 def park_priority(primary_featurelayer):
     park_url = 'https://parkserve.tpl.org/downloads/Parkserve_Shapefiles_05212024.zip'
+    
+    file_name_prefix: str = 'Parkserve'
+
     target_files = [
-        'ParkServe_ParkPriorityAreas.shp',
-        'ParkServe_ParkPriorityAreas.dbf',
-        'ParkServe_ParkPriorityAreas.shx',
-        'ParkServe_ParkPriorityAreas.prj',
-        'ParkServe_ParkPriorityAreas.cpg',
-        'ParkServe_ParkPriorityAreas.sbn',
-        'ParkServe_ParkPriorityAreas.sbx'
+        file_name_prefix + '_ParkPriorityAreas.shp',
+        file_name_prefix + '_ParkPriorityAreas.dbf',
+        file_name_prefix + '_ParkPriorityAreas.shx',
+        file_name_prefix + '_ParkPriorityAreas.prj',
+        file_name_prefix + '_ParkPriorityAreas.cpg',
+        file_name_prefix + '_ParkPriorityAreas.sbn',
+        file_name_prefix + '_ParkPriorityAreas.sbx'
     ]
 
     geojson_path = "tmp/phl_parks.geojson"
@@ -37,7 +40,7 @@ def park_priority(primary_featurelayer):
         else:
             print("Park priority files already exist in /tmp, skipping download.")
 
-        pa_parks = gpd.read_file("tmp/ParkServe_ParkPriorityAreas.shp")
+        pa_parks = gpd.read_file("tmp/" + file_name_prefix + "_ParkPriorityAreas.shp")
         pa_parks = pa_parks.to_crs(USE_CRS)
 
         # Filter for Philadelphia County

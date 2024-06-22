@@ -70,6 +70,7 @@ if FORCE_RELOAD:
 
     backup = BackupArchiveDatabase() # create a new one so we get a new timestamp
     backup.backup_schema()
+    conn.commit()
 
 # Load Vacant Property Data
 dataset = vacant_properties()
