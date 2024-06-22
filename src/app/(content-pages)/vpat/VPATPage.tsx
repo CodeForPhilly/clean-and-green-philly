@@ -64,10 +64,10 @@ export default function VPATPage() {
       <table className="min-w-full bg-white border-collapse my-4">
         <thead>
           <tr>
-            <th className="border px-4 py-2 text-left w-1/2 bg-zinc-200">
+            <th className="border px-4 py-2 text-left w-1/2 bg-zinc-200 text-zinc-500">
               Standard/Guideline
             </th>
-            <th className="border px-4 py-2 text-left w-1/2 bg-zinc-200">
+            <th className="border px-4 py-2 text-left w-1/2 bg-zinc-200 text-zinc-500">
               Included In Report
             </th>
           </tr>
@@ -231,13 +231,13 @@ export default function VPATPage() {
       <table className="min-w-full bg-white border-collapse my-4">
         <thead>
           <tr>
-            <th className="sticky top-0 border px-4 py-2 text-left w-1/3">
+            <th className="border px-4 py-2 text-left w-1/3 bg-zinc-200 text-zinc-500">
               Criteria
             </th>
-            <th className="sticky top-0 border px-4 py-2 text-left w-1/3">
+            <th className="border px-4 py-2 text-left w-1/3 bg-zinc-200 text-zinc-500">
               Conformance Level
             </th>
-            <th className="sticky top-0 border px-4 py-2 text-left w-1/3">
+            <th className="border px-4 py-2 text-left w-1/3 bg-zinc-200 text-zinc-500">
               Remarks and Explanations
             </th>
           </tr>
