@@ -4,7 +4,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import { FC } from "react";
 import AccessibilityStatementPage from "./AccessibilityStatementPage";
 
-const LegalDisclaimer: FC = () => {
+const AccessibilityStatement: FC = () => {
   return (
     <NextUIProvider>
       <AccessibilityStatementPage />
@@ -12,4 +12,4 @@ const LegalDisclaimer: FC = () => {
   );
 };
 
-export default LegalDisclaimer;
+export default AccessibilityStatement;

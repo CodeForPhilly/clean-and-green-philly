@@ -4,7 +4,7 @@ import { NextUIProvider } from "@nextui-org/react";
 import { FC } from "react";
 import VPATPage from "./VPATPage";
 
-const LegalDisclaimer: FC = () => {
+const VPAT: FC = () => {
   return (
     <NextUIProvider>
       <VPATPage />
@@ -12,4 +12,4 @@ const LegalDisclaimer: FC = () => {
   );
 };
 
-export default LegalDisclaimer;
+export default VPAT;
