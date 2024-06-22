@@ -1,14 +1,14 @@
 export default function VPATPage() {
   return (
     <>
-      <h1 className="text-3xl font-bold mb-6">
+      <h1 className="heading-3xl font-bold mb-6">
         Clean & Green Philly Accessibility Conformance Report
       </h1>
       <p className="mb-1 font-bold">
         Based on VPAT® Version 2.5 International Edition
       </p>
 
-      <h2 className="text-2xl font-semibold my-4">Product Information</h2>
+      <h2 className="heading-2xl font-semibold my-4">Product Information</h2>
       <p className="mb-1">
         <strong>Name of Product/Version:</strong> Clean & Green Philly
       </p>
@@ -193,7 +193,7 @@ export default function VPATPage() {
         </ul>
       </p>
 
-      <h2 className="text-2xl font-semibold my-4" id="WCAG-2.2">
+      <h2 className="heading-2xl font-semibold my-4" id="WCAG-2.2">
         WCAG 2.2 Report
       </h2>
       <p className="mb-1">
@@ -220,7 +220,7 @@ export default function VPATPage() {
         .
       </p>
 
-      <h3 className="text-xl font-semibold my-2">
+      <h3 className="heading-xl font-semibold my-2">
         Table 1: Success Criteria, Level A
       </h3>
       <p className="mb-1">
@@ -1021,7 +1021,7 @@ export default function VPATPage() {
         </tbody>
       </table>
 
-      <h3 className="text-xl font-semibold my-2">
+      <h3 className="heading-xl font-semibold my-2">
         Table 2: Success Criteria, Level AA
       </h3>
       <p className="mb-1">
@@ -1607,7 +1607,7 @@ export default function VPATPage() {
         </tr>
       </table>
 
-      <h2 className="text-2xl font-semibold my-4 bg-zinc-200">
+      <h2 className="heading-2xl font-semibold my-4 bg-zinc-200">
         Revised Section 508 Report
       </h2>
       <p className="mb-1">
@@ -1616,7 +1616,7 @@ export default function VPATPage() {
         we release fixes.
       </p>
 
-      <h3 className="text-xl font-semibold my-2">
+      <h3 className="heading-xl font-semibold my-2">
         Chapter 3:{" "}
         <a
           href="https://www.access-board.gov/ict/#chapter-3-functional-performance-criteria"
@@ -1724,7 +1724,7 @@ export default function VPATPage() {
         </tbody>
       </table>
 
-      <h3 className="text-xl font-semibold my-2">
+      <h3 className="heading-xl font-semibold my-2">
         Section 508 Chapter 4:{" "}
         <a
           href="https://www.access-board.gov/ict/#chapter-4-hardware"
@@ -1739,7 +1739,7 @@ export default function VPATPage() {
         Notes: Not applicable to Clean & Green Philly website.
       </p>
 
-      <h3 className="text-xl font-semibold my-2">
+      <h3 className="heading-xl font-semibold my-2">
         {" "}
         Chapter 5:{" "}
         <a
@@ -1771,8 +1771,13 @@ export default function VPATPage() {
             </td>
             <td className="border px-4 py-2 w-1/3">
               See{" "}
-              <a href="#WCAG-2.2" className="underline">
-                WCAG 2.2 section target="_blank" rel="noopener noreferrer"
+              <a
+                href="#WCAG-2.2"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                WCAG 2.2 section
               </a>
             </td>
             <td className="border px-4 py-2 w-1/3">
@@ -2048,7 +2053,7 @@ export default function VPATPage() {
         </tbody>
       </table>
 
-      <h3 className="text-xl font-semibold my-2">
+      <h3 className="heading-xl font-semibold my-2">
         Chapter 6:{" "}
         <a
           className="underline"
