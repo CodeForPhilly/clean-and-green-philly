@@ -49,7 +49,9 @@ export default function AccessibilityStatementPage() {
           Submit an issue through our{" "}
           <a
             href="https://github.com/CodeForPhilly/clean-and-green-philly/issues"
-            className="text-blue-400 underline"
+            className="link"
+            target="_blank"
+            rel="noopener noreferrer"
           >
             Github
           </a>
@@ -111,8 +113,8 @@ export default function AccessibilityStatementPage() {
       </p>
       <h2 className="heading-2xl font-semibold mt-8">Evaluation Report</h2>
       <p>
-        You can find our full evaluation report in VPAT®️ format.(
-        <Link href="/vpat" className="text-blue-400 underline">
+        You can find our full evaluation report in VPAT®️ format. (
+        <Link href="/vpat" className="link">
           link
         </Link>
         )

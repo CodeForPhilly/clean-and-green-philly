@@ -2,29 +2,34 @@ export default function VPATPage() {
   return (
     <>
       <h1 className="text-3xl font-bold mb-6">
-        Accessibility Conformance Report
+        Clean & Green Philly Accessibility Conformance Report
       </h1>
+      <p className="mb-1 font-bold">
+        Based on VPAT® Version 2.5 International Edition
+      </p>
+
       <h2 className="text-2xl font-semibold my-4">Product Information</h2>
       <p className="mb-1">
         <strong>Name of Product/Version:</strong> Clean & Green Philly
       </p>
-      <p className="mb-1">
-        <strong>Report Date:</strong> May 31, 2024
-      </p>
-      <p className="mb-1">
-        <strong>
-          Product Description: Free and easy to use online tool empowering
-          community groups in Philadelphia to combat gun violence through the
-          revitalization of vacant properties via cleaning and greening
-          initiatives.
-        </strong>
+      <p className="mb-1 font-bold">Report Date: May 31, 2024</p>
+      <p className="mb-1 font-bold">
+        Product Description: Free and easy to use online tool empowering
+        community groups in Philadelphia to combat gun violence through the
+        revitalization of vacant properties via cleaning and greening
+        initiatives.
       </p>
       <p className="mb-1">
         <strong>Contact Information:</strong>{" "}
         <ul className="list-disc ml-8 my-2">
           <li>
             {" "}
-            <a href="mailto:cleanandgreenphl@gmail.com" className="underline">
+            <a
+              href="mailto:cleanandgreenphl@gmail.com"
+              className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               cleanandgreenphl@gmail.com
             </a>
           </li>
@@ -49,21 +54,20 @@ export default function VPATPage() {
           </li>
         </ul>
       </p>
-      <p className="mb-1">
-        <strong>Applicable Standards/Guidelines</strong>:
-      </p>
+      <p className="mb-1 font-bold">Applicable Standards/Guidelines:</p>
       <p>
         {" "}
         This report covers the degree of conformance for the following
         accessibility standard/guidelines:
       </p>
+
       <table className="min-w-full bg-white border-collapse my-4">
         <thead>
           <tr>
-            <th className="border px-4 py-2 text-left w-1/2">
+            <th className="border px-4 py-2 text-left w-1/2 bg-zinc-200">
               Standard/Guideline
             </th>
-            <th className="border px-4 py-2 text-left w-1/2">
+            <th className="border px-4 py-2 text-left w-1/2 bg-zinc-200">
               Included In Report
             </th>
           </tr>
@@ -74,6 +78,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/2008/REC-WCAG20-20081211/"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Web Content Accessibility Guidelines 2.0
               </a>
@@ -88,7 +94,12 @@ export default function VPATPage() {
           </tr>
           <tr>
             <td className="border px-4 py-2 w-1/2">
-              <a href="https://www.w3.org/TR/WCAG21/" className="underline">
+              <a
+                href="https://www.w3.org/TR/WCAG21/"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Web Content Accessibility Guidelines 2.1
               </a>
             </td>
@@ -102,7 +113,12 @@ export default function VPATPage() {
           </tr>
           <tr>
             <td className="border px-4 py-2 w-1/2">
-              <a href="https://www.w3.org/TR/WCAG22/" className="underline">
+              <a
+                href="https://www.w3.org/TR/WCAG22/"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Web Content Accessibility Guidelines 2.2
               </a>
             </td>
@@ -116,7 +132,12 @@ export default function VPATPage() {
           </tr>
           <tr>
             <td className="border px-4 py-2 w-1/2">
-              <a href="https://www.access-board.gov/ict/" className="underline">
+              <a
+                href="https://www.access-board.gov/ict/"
+                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 Revised Section 508 standards published January 18, 2017 and
                 corrected January 22, 2018
               </a>
@@ -128,6 +149,8 @@ export default function VPATPage() {
               <a
                 href="https://www.etsi.org/deliver/etsi_en/301500_301599/301549/03.01.01_60/en_301549v030101p.pdf"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 EN 301 549 Accessibility requirements for ICT products and
                 services - V3.1.1 (2019-11) AND EN 301 549 Accessibility
@@ -169,6 +192,7 @@ export default function VPATPage() {
           </li>
         </ul>
       </p>
+
       <h2 className="text-2xl font-semibold my-4" id="WCAG-2.2">
         WCAG 2.2 Report
       </h2>
@@ -188,11 +212,14 @@ export default function VPATPage() {
         <a
           href="https://www.w3.org/TR/WCAG20/#conformance-reqs"
           className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           WCAG 2.0 Conformance Requirements
         </a>
         .
       </p>
+
       <h3 className="text-xl font-semibold my-2">
         Table 1: Success Criteria, Level A
       </h3>
@@ -204,11 +231,13 @@ export default function VPATPage() {
       <table className="min-w-full bg-white border-collapse my-4">
         <thead>
           <tr>
-            <th className="border px-4 py-2 text-left w-1/3">Criteria</th>
-            <th className="border px-4 py-2 text-left w-1/3">
+            <th className="sticky top-0 border px-4 py-2 text-left w-1/3">
+              Criteria
+            </th>
+            <th className="sticky top-0 border px-4 py-2 text-left w-1/3">
               Conformance Level
             </th>
-            <th className="border px-4 py-2 text-left w-1/3">
+            <th className="sticky top-0 border px-4 py-2 text-left w-1/3">
               Remarks and Explanations
             </th>
           </tr>
@@ -219,6 +248,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#text-equiv-all"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.1.1 Non-text Content</strong>
               </a>{" "}
@@ -241,6 +272,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#media-equiv-av-only-alt"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.2.1 Audio-only and Video-only (Prerecorded)</strong>
               </a>{" "}
@@ -263,6 +296,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#media-equiv-captions"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.2.2 Captions (Prerecorded)</strong>
               </a>{" "}
@@ -285,6 +320,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#media-equiv-audio-desc"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>
                   1.2.3 Audio Description or Media Alternative (Prerecorded)
@@ -309,6 +346,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#content-structure-separation-programmatic"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.3.1 Info and Relationships</strong>
               </a>{" "}
@@ -332,6 +371,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#content-structure-separation-sequence"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.3.2 Meaningful Sequence</strong>
               </a>{" "}
@@ -355,6 +396,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#content-structure-separation-understanding"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.3.3 Sensory Characteristics</strong>
               </a>{" "}
@@ -376,6 +419,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#visual-audio-contrast-without-color"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.4.1 Use of Color</strong>
               </a>{" "}
@@ -402,6 +447,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#visual-audio-contrast-dis-audio"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.4.2 Audio Control</strong>
               </a>{" "}
@@ -426,6 +473,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#keyboard-operation-keyboard-operable"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.1.1 Keyboard</strong>
               </a>{" "}
@@ -453,6 +502,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#keyboard-operation-trapping"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.1.2 No Keyboard Trap</strong>
               </a>{" "}
@@ -475,6 +526,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG21/#character-key-shortcuts"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.1.4 Character Key Shortcuts</strong>
               </a>{" "}
@@ -492,6 +545,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#time-limits-required-behaviors"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.2.1 Timing Adjustable</strong>
               </a>{" "}
@@ -515,6 +570,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#time-limits-pause"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.2.2 Pause, Stop, Hide</strong>
               </a>{" "}
@@ -539,6 +596,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#seizure-does-not-violate"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.3.1 Three Flashes or Below Threshold</strong>
               </a>{" "}
@@ -564,6 +623,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#navigation-mechanisms-skip"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.4.1 Bypass Blocks</strong>
               </a>{" "}
@@ -589,6 +650,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#navigation-mechanisms-title"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.4.2 Page Titled</strong>
               </a>{" "}
@@ -612,6 +675,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#navigation-mechanisms-focus-order"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.4.3 Focus Order</strong>
               </a>{" "}
@@ -638,29 +703,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#navigation-mechanisms-refs"
                 className="underline"
-              >
-                <strong>2.4.4 Link Purpose (In Context)</strong>
-              </a>{" "}
-              (Level A) <br />
-              Also applies to:
-              <br /> Revised Section 508
-              <ul className="list-disc ml-8">
-                <li>501 (Web)(Software)</li>
-                <li>504.2 (Authoring Tool)</li>
-                <li>
-                  <strong>602.3 (Support Docs)</strong>
-                </li>
-              </ul>
-            </td>
-            <td className="border px-4 py-2 w-1/3">Supports</td>
-            <td className="border px-4 py-2 w-1/3"></td>
-          </tr>
-
-          <tr>
-            <td className="border px-4 py-2 w-1/3">
-              <a
-                href="https://www.w3.org/TR/WCAG20/#navigation-mechanisms-refs"
-                className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.4.4 Link Purpose (In Context)</strong>
               </a>{" "}
@@ -684,6 +728,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG21/#pointer-gestures"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.5.1 Pointer Gestures</strong>
               </a>{" "}
@@ -700,6 +746,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG21/#pointer-cancellation"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.5.2 Pointer Cancellation</strong>
               </a>{" "}
@@ -716,6 +764,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG21/#label-in-name"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.5.3 Label in Name</strong>
               </a>{" "}
@@ -732,6 +782,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG21/#motion-actuation"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>2.5.4 Motion Actuation</strong>
               </a>{" "}
@@ -747,6 +799,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#meaning-doc-lang-id"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>3.1.1 Language of Page</strong>
               </a>{" "}
@@ -771,6 +825,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#consistent-behavior-receive-focus"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>3.2.1 On Focus</strong>
               </a>{" "}
@@ -795,6 +851,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#consistent-behavior-unpredictable-change"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>3.2.2 On Input</strong>
               </a>{" "}
@@ -819,6 +877,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG22/#consistent-help"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>3.2.6 Consistent Help</strong>
               </a>{" "}
@@ -834,6 +894,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#minimize-error-identified"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>3.3.1 Error Identification</strong>
               </a>{" "}
@@ -859,6 +921,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#minimize-error-cues"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>3.3.2 Labels or Instructions</strong>
               </a>{" "}
@@ -883,6 +947,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG22/#redundant-entry"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>3.3.7 Redundant Entry</strong>
               </a>{" "}
@@ -899,6 +965,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#ensure-compat-parses"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>4.1.1 Parsing</strong>
               </a>{" "}
@@ -925,6 +993,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#ensure-compat-rsv"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>4.1.2 Name, Role, Value</strong>
               </a>{" "}
@@ -950,6 +1020,7 @@ export default function VPATPage() {
           </tr>
         </tbody>
       </table>
+
       <h3 className="text-xl font-semibold my-2">
         Table 2: Success Criteria, Level AA
       </h3>
@@ -976,6 +1047,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#media-equiv-real-time-captions"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.2.4 Captions (Live)</strong>
               </a>{" "}
@@ -999,6 +1072,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG20/#media-equiv-audio-desc-only"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.2.5 Audio Description (Prerecorded)</strong>
               </a>{" "}
@@ -1022,6 +1097,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG21/#orientation"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.3.4 Orientation</strong>
               </a>{" "}
@@ -1038,6 +1115,8 @@ export default function VPATPage() {
               <a
                 href="https://www.w3.org/TR/WCAG21/#identify-input-purpose"
                 className="underline"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 <strong>1.3.5 Identify Input Purpose</strong>
               </a>{" "}
@@ -1055,6 +1134,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#visual-audio-contrast-contrast"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>1.4.3 Contrast (Minimum)</strong>
             </a>{" "}
@@ -1082,6 +1163,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#visual-audio-contrast-scale"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>1.4.4 Resize text</strong>
             </a>{" "}
@@ -1105,6 +1188,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#visual-audio-contrast-text-presentation"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>1.4.5 Images of Text</strong>
             </a>{" "}
@@ -1130,6 +1215,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG21/#reflow"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>1.4.10 Reflow</strong>
             </a>{" "}
@@ -1146,6 +1233,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG21/#non-text-contrast"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>1.4.11 Non-text Contrast</strong>
             </a>{" "}
@@ -1166,6 +1255,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG21/#text-spacing"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>1.4.12 Text Spacing</strong>
             </a>{" "}
@@ -1183,6 +1274,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG21/#content-on-hover-or-focus"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>1.4.13 Content on Hover or Focus</strong>
             </a>{" "}
@@ -1198,6 +1291,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#navigation-mechanisms-mult-loc"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>2.4.5 Multiple Ways</strong>
             </a>{" "}
@@ -1222,6 +1317,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#navigation-mechanisms-mult-loc"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>2.4.5 Multiple Ways</strong>
             </a>{" "}
@@ -1246,6 +1343,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#navigation-mechanisms-descriptive"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>2.4.6 Headings and Labels</strong>
             </a>{" "}
@@ -1269,6 +1368,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#navigation-mechanisms-focus-visible"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>2.4.7 Focus Visible</strong>
             </a>{" "}
@@ -1292,6 +1393,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG22/#focus-not-obscured-minimum"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>2.4.11 Focus Not Obscured (Minimum)</strong>
             </a>{" "}
@@ -1307,6 +1410,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG22/#dragging-movements"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>2.5.7 Dragging Movements</strong>
             </a>{" "}
@@ -1324,6 +1429,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG22/#target-size-minimum"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>2.5.8 Target Size (Minimum)</strong>
             </a>{" "}
@@ -1339,6 +1446,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#meaning-other-lang-id"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>3.1.2 Language of Parts</strong>
             </a>{" "}
@@ -1362,6 +1471,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#consistent-behavior-consistent-locations"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>3.2.3 Consistent Navigation</strong>
             </a>{" "}
@@ -1387,6 +1498,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#consistent-behavior-consistent-functionality"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>3.2.4 Consistent Identification</strong>
             </a>{" "}
@@ -1412,6 +1525,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#minimize-error-suggestions"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>3.3.3 Error Suggestion</strong>
             </a>{" "}
@@ -1434,6 +1549,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG20/#minimize-error-reversible"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>3.3.4 Error Prevention (Legal, Financial, Data)</strong>
             </a>{" "}
@@ -1456,6 +1573,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG22/#accessible-authentication-minimum"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>3.3.8 Accessible Authentication (Minimum)</strong>
             </a>{" "}
@@ -1471,6 +1590,8 @@ export default function VPATPage() {
             <a
               href="https://www.w3.org/TR/WCAG21/#status-messages"
               className="underline"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <strong>4.1.3 Status Messages</strong>
             </a>{" "}
@@ -1485,6 +1606,7 @@ export default function VPATPage() {
           </td>
         </tr>
       </table>
+
       <h2 className="text-2xl font-semibold my-4 bg-zinc-200">
         Revised Section 508 Report
       </h2>
@@ -1493,11 +1615,14 @@ export default function VPATPage() {
         site has not been evaluated. We will periodically update this report as
         we release fixes.
       </p>
+
       <h3 className="text-xl font-semibold my-2">
         Chapter 3:{" "}
         <a
           href="https://www.access-board.gov/ict/#chapter-3-functional-performance-criteria"
           className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           {" "}
           Functional Performance Criteria
@@ -1598,11 +1723,14 @@ export default function VPATPage() {
           </tr>
         </tbody>
       </table>
+
       <h3 className="text-xl font-semibold my-2">
         Section 508 Chapter 4:{" "}
         <a
           href="https://www.access-board.gov/ict/#chapter-4-hardware"
           className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           Hardware
         </a>
@@ -1617,6 +1745,8 @@ export default function VPATPage() {
         <a
           href="https://www.access-board.gov/ict/#chapter-5-software"
           className="underline"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           Software
         </a>
@@ -1642,7 +1772,7 @@ export default function VPATPage() {
             <td className="border px-4 py-2 w-1/3">
               See{" "}
               <a href="#WCAG-2.2" className="underline">
-                WCAG 2.2 section
+                WCAG 2.2 section target="_blank" rel="noopener noreferrer"
               </a>
             </td>
             <td className="border px-4 py-2 w-1/3">
@@ -1655,6 +1785,8 @@ export default function VPATPage() {
               <a
                 className="underline italic font-bold"
                 href="https://www.access-board.gov/ict/#502-interoperability-assistive-technology"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 {" "}
                 502 Interoperability with Assistive Technology
@@ -1687,7 +1819,7 @@ export default function VPATPage() {
           </tr>
 
           <tr>
-            <td className="border px-4 py-2 w-1/3 underline italic font-bold bg-zinc-200">
+            <td className="border px-4 py-2 w-1/3 italic font-bold bg-zinc-200">
               502.3 Accessibility Services
             </td>
             <td className="border px-4 py-2 w-1/3 bg-zinc-200"></td>
@@ -1811,6 +1943,8 @@ export default function VPATPage() {
               <a
                 className="underline italic font-bold"
                 href="https://www.access-board.gov/ict/#503-applications"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 503 Applications
               </a>
@@ -1862,6 +1996,8 @@ export default function VPATPage() {
               <a
                 className="underline italic font-bold"
                 href="https://www.access-board.gov/ict/#504-authoring-tools"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 504 Authoring Tools
               </a>
@@ -1917,6 +2053,8 @@ export default function VPATPage() {
         <a
           className="underline"
           href="https://www.access-board.gov/ict/#chapter-6-support-documentation-and-services"
+          target="_blank"
+          rel="noopener noreferrer"
         >
           Support Documentation and Services
         </a>
@@ -1948,6 +2086,8 @@ export default function VPATPage() {
               <a
                 className="underline italic font-bold"
                 href="https://www.access-board.gov/ict/#602-support-documentation"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 602 Support Documentation
               </a>
@@ -1994,6 +2134,8 @@ export default function VPATPage() {
               <a
                 className="underline italic font-bold"
                 href="https://www.access-board.gov/ict/#603-support-services"
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 603 Support Services
               </a>
@@ -2021,6 +2163,7 @@ export default function VPATPage() {
           </tr>
         </tbody>
       </table>
+      <br></br>
     </>
   );
 }
