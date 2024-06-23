@@ -1,4 +1,5 @@
 import sys
+import time
 
 from classes.backup_archive_database import BackupArchiveDatabase
 from classes.diff_report import DiffReport
@@ -67,8 +68,9 @@ if FORCE_RELOAD:
     if backup.is_backup_schema_exists():
         backup.archive_backup_schema()
         conn.commit()
-
-    backup = BackupArchiveDatabase() # create a new one so we get a new timestamp
+        time.sleep(1) # make sure we get a different timestamp
+        backup = BackupArchiveDatabase() # create a new one so we get a new timestamp
+    
     backup.backup_schema()
     conn.commit()
 
