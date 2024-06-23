@@ -31,14 +31,20 @@ export const useCookieContext = () => {
 };
 
 export const CookieProvider: FC<CookieProviderProps> = ({ children }) => {
-  const [shouldAllowCookies, setShouldAllowCookies] = useState(() => {
-    const storedPrefs = localStorage.getItem("cookiePrefs");
-    return storedPrefs ? JSON.parse(storedPrefs).shouldAllowCookies : false;
+  const [shouldAllowCookies, setShouldAllowCookies] = useState<boolean>(() => {
+    if (typeof window !== "undefined" && window.localStorage) {
+      const storedPrefs = localStorage.getItem("cookiePrefs");
+      return storedPrefs ? JSON.parse(storedPrefs).shouldAllowCookies : false;
+    }
+    return false;
   });
 
   const [shouldShowBanner, setShouldShowBanner] = useState<boolean>(() => {
-    const storedPrefs = localStorage.getItem("cookiePrefs");
-    return storedPrefs ? JSON.parse(storedPrefs).shouldShowBanner : true;
+    if (typeof window !== "undefined" && window.localStorage) {
+      const storedPrefs = localStorage.getItem("cookiePrefs");
+      return storedPrefs ? JSON.parse(storedPrefs).shouldShowBanner : true;
+    }
+    return true;
   });
 
   useEffect(() => {
