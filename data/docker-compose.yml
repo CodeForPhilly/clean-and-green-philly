@@ -16,6 +16,7 @@ services:
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
     extra_hosts: 
       - host.docker.internal:host-gateway
+    network_mode: "host"
 
   formatter:
     build:
@@ -24,6 +25,7 @@ services:
     volumes:
       - ./src:/usr/src/app
     command: sh -c "pipenv run black /usr/src/app"
+    network_mode: "host"
 
   streetview:
     build:
@@ -39,6 +41,7 @@ services:
       - ./src:/usr/src/app
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
     command: sh -c "pipenv run python streetview.py"
+    network_mode: "host"
 
   postgres:
     container_name: cagp-postgres
