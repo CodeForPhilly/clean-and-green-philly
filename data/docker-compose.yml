@@ -1,6 +1,8 @@
 services:
   vacant-lots-proj:
-    build: .
+    build:
+      context: .
+      network: host
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CFP_MAPBOX_TOKEN_UPLOADER
@@ -16,13 +18,17 @@ services:
       - host.docker.internal:host-gateway
 
   formatter:
-    build: .
+    build:
+      context: .
+      network: host
     volumes:
       - ./src:/usr/src/app
     command: sh -c "pipenv run black /usr/src/app"
 
   streetview:
-    build: .
+    build:
+      context: .
+      network: host
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CLEAN_GREEN_GOOGLE_KEY
@@ -39,6 +45,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-pg
+      network: host
     environment:
       - POSTGRES_PASSWORD
     restart: always
