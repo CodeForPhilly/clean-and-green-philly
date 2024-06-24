@@ -8,12 +8,14 @@ type ButtonGroupProps = {
   options: string[];
   selectedKeys: string[];
   toggleDimension: (dimension: string) => void;
+  displayOptions?: { [key: string]: string };
 };
 
 const ButtonGroup: FC<ButtonGroupProps> = ({
   options,
   selectedKeys,
   toggleDimension,
+  displayOptions = {},
 }) => {
   return (
     <div className="flex flex-wrap gap-x-2 min-h-[33.5px]">
@@ -38,7 +40,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({
             ) : undefined
           }
         >
-          {option}
+          {displayOptions[option] || option}
         </Button>
       ))}
     </div>

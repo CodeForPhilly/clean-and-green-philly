@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, useRef } from "react";
+import React, { FC, useMemo, useRef } from "react";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { BookmarkSimple, DownloadSimple, Funnel } from "@phosphor-icons/react";
 import { ThemeButton } from "./ThemeButton";
@@ -32,12 +32,20 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   const savedRef = useRef<HTMLButtonElement | null>(null);
   const { dispatch, appFilter } = useFilter();
 
-  let filterCount = Object.keys(appFilter).length;
-
-  if (shouldFilterSavedProperties) {
-    // Exclude opa_id from filterCount, which counts opa_id as a filter by default
-    filterCount--;
-  }
+  const filterCount: number = useMemo(() => {
+    let count = 0
+    for (let property of Object.keys(appFilter)) {
+        if (property === "access_process") {
+          count += appFilter[property].values.length
+        } else {
+          count++
+        }
+      }
+      if (shouldFilterSavedProperties) {
+        count--
+      }
+    return count
+  }, [appFilter])
 
   const onClickSavedButton = () => {
     let propertyIds = getPropertyIdsFromLocalStorage();
@@ -103,20 +111,14 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           )}
           <ThemeButton
             color="tertiary"
-            aria-label="Filter"
+            aria-label={filterCount === 0 ? "Filter" : `Filter ${filterCount} filters active`}
             label={
               <div className="lg:space-x-1 body-md">
                 <span className="max-lg:hidden">Filter</span>
-                {filterCount !== 0 && <span>({filterCount})</span>}
+                {filterCount !== 0 && <span aria-hidden="true">({filterCount})</span>}
               </div>
             }
-            onPress={() => {
-              if (filterRef.current && currentView === "filter") {
-                filterRef.current.blur();
-              }
-
-              updateCurrentView("filter");
-            }}
+            onPress={() => updateCurrentView("filter")}
             isSelected={currentView === "filter" || filterCount !== 0}
             startContent={<Funnel />}
             className="max-lg:min-w-[4rem]"
@@ -125,6 +127,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           />
           <ThemeButton
             color="tertiary"
+            aria-expanded={currentView === "download"}
             aria-label="Download"
             onPress={() => updateCurrentView("download")}
             startContent={<DownloadSimple />}

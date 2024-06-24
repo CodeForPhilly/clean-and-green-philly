@@ -14,6 +14,17 @@ type DimensionFilterProps = {
   useIndexOfFilter?: boolean;
 };
 
+type OptionDisplayMapping = {
+  [key: string]: { [key: string]: string };
+};
+
+const optionsDisplayMapping: OptionDisplayMapping = {
+  "llc_owner": {
+    "Yes": "Business",
+    "No": "Individual",
+  },
+};
+
 const DimensionFilter: FC<DimensionFilterProps> = ({
   property,
   display,
@@ -25,24 +36,36 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
     appFilter[property]?.values || []
   );
-  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{[property: string]: string[]}>({})
-
+  const initialSelectedPanelKeys = () => {
+    let panelKeyObj: {[key: string]: string[]} = {}
+    for (const key in appFilter) {
+      panelKeyObj[key] = appFilter[key].values
+    }
+    return panelKeyObj
+  }
+  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{[property: string]: string[]}>(initialSelectedPanelKeys())
+  
   const toggleDimensionForPanel = (dimension: string, panel_property: string) => {
     let newSelectedPanelKeys
     if (selectedPanelKeys[panel_property]) {
-      newSelectedPanelKeys = selectedPanelKeys[panel_property].includes(dimension)
+      newSelectedPanelKeys = selectedPanelKeys[panel_property].includes(
+        dimension
+      )
         ? selectedPanelKeys[panel_property].filter((key) => key !== dimension)
         : [...selectedPanelKeys[panel_property], dimension];
     } else {
-      newSelectedPanelKeys = [dimension]
+      newSelectedPanelKeys = [dimension];
     }
-    setSelectedPanelkeys({...selectedPanelKeys, [panel_property]: newSelectedPanelKeys});
+    setSelectedPanelkeys({
+      ...selectedPanelKeys,
+      [panel_property]: newSelectedPanelKeys,
+    });
     dispatch({
       type: "SET_DIMENSIONS",
       property: panel_property,
       dimensions: newSelectedPanelKeys,
     });
-  }
+  };
 
   const toggleDimension = (dimension: string) => {
     const newSelectedKeys = selectedKeys.includes(dimension)
@@ -68,34 +91,35 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   };
 
   const filter = useMemo(() => {
-      if (type === "buttonGroup") {
-        return (
-          <ButtonGroup
-            options={options}
-            selectedKeys={selectedKeys}
-            toggleDimension={toggleDimension}
-          />
-        );
-      } else if (type === "panels") {
-        return (
-          <Panels 
-            options={options}
-            selectedPanelKeys={selectedPanelKeys}
-            toggleDimensionForPanel={toggleDimensionForPanel}
-          />
-        )
-      } else {
-        return (
-          <MultiSelect
-            display={display}
-            options={options}
-            selectedKeys={selectedKeys}
-            toggleDimension={toggleDimension}
-            handleSelectionChange={handleSelectionChange}
-          />
-        );
-      }
-    }, [selectedKeys, selectedPanelKeys])
+    if (type === "buttonGroup") {
+      return (
+        <ButtonGroup
+          options={options}
+          selectedKeys={selectedKeys}
+          toggleDimension={toggleDimension}
+          displayOptions={optionsDisplayMapping[property]}
+        />
+      );
+    } else if (type === "panels") {
+      return (
+        <Panels
+          options={options}
+          selectedPanelKeys={selectedPanelKeys}
+          toggleDimensionForPanel={toggleDimensionForPanel}
+        />
+      );
+    } else {
+      return (
+        <MultiSelect
+          display={display}
+          options={options}
+          selectedKeys={selectedKeys}
+          toggleDimension={toggleDimension}
+          handleSelectionChange={handleSelectionChange}
+        />
+      );
+    }
+  }, [selectedKeys, selectedPanelKeys]);
 
   const filterDescription =
     property === "priority_level"
@@ -106,7 +130,8 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       : {
           desc: "Find properties based on what we think is the easiest method to get legal access to them, based on the data available to us. ",
           linkFragment: "access-method",
-        };
+      };
+
   // text-gray-500, 600 ? or #586266 (figma)?
   return (
     <div className="pt-3 pb-6">
@@ -118,7 +143,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             <a
               href={`/methodology/#${filterDescription.linkFragment}`}
               className="link"
-              aria-label={`Goes to methodology page for ${property}`}
+              aria-label={`Learn more about ${property === "priority_level" ? "priority level" : "access process"} from our Methodology Page`}
             >
               Learn more{" "}
             </a>

@@ -1,7 +1,8 @@
-version: "3.8"
 services:
   vacant-lots-proj:
-    build: .
+    build:
+      context: .
+      network: host
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CFP_MAPBOX_TOKEN_UPLOADER
@@ -15,15 +16,21 @@ services:
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
     extra_hosts: 
       - host.docker.internal:host-gateway
+    network_mode: "host"
 
   formatter:
-    build: .
+    build:
+      context: .
+      network: host
     volumes:
       - ./src:/usr/src/app
     command: sh -c "pipenv run black /usr/src/app"
+    network_mode: "host"
 
   streetview:
-    build: .
+    build:
+      context: .
+      network: host
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CLEAN_GREEN_GOOGLE_KEY
@@ -34,3 +41,24 @@ services:
       - ./src:/usr/src/app
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
     command: sh -c "pipenv run python streetview.py"
+    network_mode: "host"
+
+  postgres:
+    container_name: cagp-postgres
+    build:
+      context: .
+      dockerfile: Dockerfile-pg
+      network: host
+    environment:
+      - POSTGRES_PASSWORD
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - database_volume:/var/lib/postgresql/data
+      - ./init_pg.sql:/docker-entrypoint-initdb.d/init_pg.sql
+    extra_hosts: 
+      - host.docker.internal:host-gateway
+
+volumes:
+  database_volume:

@@ -14,10 +14,9 @@ from config.config import (
     report_to_slack_channel,
     smtp_server,
 )
-from config.psql import conn, local_engine, url
+from config.psql import conn, url
 from data_utils.utils import mask_password
 from slack_sdk import WebClient
-from sqlalchemy import inspect
 
 log.basicConfig(level=log_level)
 
@@ -49,7 +48,7 @@ class DiffReport:
         """
         self.diff_tables = self._list_diff_tables()
         self.timestamp_string = timestamp_string
-        self.report: str = "Diff report\ntable A/1 = new data, table B/2 = old data\n\n"
+        self.report: str = "The back-end data has been fully refreshed.  Here is the diff report on " + len(self.diff_tables) + " key tables.\nLegend: table A = new data, table B = old data.\n\n"
 
     def run(self):
         """
@@ -135,16 +134,6 @@ class DiffReport:
         html += "</table>"
         return html
 
-    def find_primary_keys(self, table: str) -> list[str]:
-        """
-        introspect on the db to find the primary key columns for this table
-        """
-        return (
-            inspect(local_engine)
-            .get_pk_constraint(table_name=table)
-            .get("constrained_columns")
-        )
-
     def _list_diff_tables(self) -> list[DiffTable]:
         """
         list table metadata to do the diff on
@@ -214,7 +203,7 @@ class DiffReport:
             client.chat_postMessage(
                 channel=report_to_slack_channel,
                 text=self.report,
-                username="CAGP Diff Report Bot",
+                username="CAGP Diff Bot",
             )
 
     def email_report(self):
