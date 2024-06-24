@@ -19,7 +19,7 @@ def park_priority(primary_featurelayer):
         file_name_prefix + '_ParkPriorityAreas.dbf',
         file_name_prefix + '_ParkPriorityAreas.shx',
         file_name_prefix + '_ParkPriorityAreas.prj',
-        file_name_prefix + '_ParkPriorityAreas.cpg',
+        file_name_prefix + '_ParkPriorityAreas.CPG',
         file_name_prefix + '_ParkPriorityAreas.sbn',
         file_name_prefix + '_ParkPriorityAreas.sbx'
     ]
