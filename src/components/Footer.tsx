@@ -51,6 +51,17 @@ const Footer = () => {
                 Contact Us
               </a>
             </li>
+
+            <span className="max-sm:hidden">—</span>
+
+            <li className="base-sm underline text-gray-600 mx-auto">
+              <Link
+                href="/accessibility-statement"
+                className="hover:text-gray-800"
+              >
+                Accessibility Statement
+              </Link>
+            </li>
           </ul>
         </nav>
 
