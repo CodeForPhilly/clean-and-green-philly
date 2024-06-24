@@ -35,19 +35,19 @@ def ppr_properties(primary_featurelayer):
         ppr_properties = FeatureLayer(name="PPR Properties")
         ppr_properties.gdf = ppr_properties_gdf
 
-    ppr_properties.gdf = ppr_properties.gdf[["PUBLIC_NAME", "geometry"]]
+    ppr_properties.gdf = ppr_properties.gdf[["public_name", "geometry"]]
 
     ppr_properties.gdf = ppr_properties.gdf.to_crs(USE_CRS)
 
     primary_featurelayer.spatial_join(ppr_properties)
 
-    mask = primary_featurelayer.gdf["PUBLIC_NAME"].notnull()
+    mask = primary_featurelayer.gdf["public_name"].notnull()
     
     count_dropped = mask.sum()
     print(f"Number of PPR properties being dropped: {count_dropped}")
 
     primary_featurelayer.gdf = primary_featurelayer.gdf.drop(primary_featurelayer.gdf[mask].index)
 
-    primary_featurelayer.gdf = primary_featurelayer.gdf.drop(columns=["PUBLIC_NAME"])
+    primary_featurelayer.gdf = primary_featurelayer.gdf.drop(columns=["public_name"])
 
     return primary_featurelayer

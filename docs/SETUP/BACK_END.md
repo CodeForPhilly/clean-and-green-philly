@@ -67,6 +67,10 @@ In the terminal, use the `cd` command to navigate to your repository location, a
 To start the postgres Docker container, run:
 `docker compose up -d postgres`.  You can access the psql command line in your container to work with the database with this command: `docker exec -it cagp-postgres psql -U postgres -d vacantlotdb`.  To stop the postgres container run `docker compose down postgres`.
 
+## Python Development
+
+You can set up your local Python environment so you can develop and run the backend `script.py` and create and run unit tests outside of Docker.  Build your local environment to match what is defined in the `Dockerfile`.  Install the same python version as is in the Dockerfile, using `pyenv` to manage multiple distributions if needed.  Use `pipenv` to create a virtual environment.  Install the pip dependencies that are defined in the `Pipfile` into your virtual environment.  Install the executables with `apt-get`.  Now you can develop in Python in your terminal and IDE and run unit tests with `pytest`. 
+
 ## Configuration
 
 There are numerous configuration variables in `data/src/config/config.py`.  See the documentation in that file for each variable.  You will also have to set up environmental variables for keys and database connection parameters as defined throughout this document.

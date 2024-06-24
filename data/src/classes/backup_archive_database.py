@@ -38,13 +38,15 @@ class BackupArchiveDatabase:
             # first, dump the schema only where we can safely replace all 'public' strings with 'backup_'
             "pg_dump "
             + url
-            + " -s --schema public | sed 's/public/"
-            + backup_schema_name
-            + "/g' | sed 's/"
+            + " -s --schema public | "
+            + " sed 's/public/" + backup_schema_name + "/g'"
+            + " | sed 's/"
             + backup_schema_name
             + ".geometry/public.geometry/' | sed 's/"
             + backup_schema_name
-            + ".spatial_ref_sys/public.spatial_ref_sys/' | psql -v ON_ERROR_STOP=1 "
+            + ".spatial_ref_sys/public.spatial_ref_sys/'"
+            + " | sed 's/backup__/public_/g'" # ppr_properties.public_name column needs to be restored.
+            + " | psql -v ON_ERROR_STOP=1 "
             + url
             + " > /dev/null "
             # then dump the data only and substitute the word public only where it is in DDL, not in the data
