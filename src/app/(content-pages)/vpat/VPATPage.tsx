@@ -65,7 +65,7 @@ export default function VPATPage() {
 
       <table
         className="min-w-full bg-white border-collapse my-4"
-        aria-describedby="standards-guidelines"
+        aria-labelledby="standards-guidelines"
       >
         <thead>
           <tr>
@@ -235,7 +235,7 @@ export default function VPATPage() {
       </p>
       <table
         className="min-w-full bg-white border-collapse my-4"
-        aria-describedby="wcag-level-a"
+        aria-labelledby="wcag-level-a"
       >
         <thead>
           <tr>
@@ -1039,7 +1039,7 @@ export default function VPATPage() {
       </p>
       <table
         className="min-w-full bg-white border-collapse my-4"
-        aria-describedby="wcag-level-aa"
+        aria-labelledby="wcag-level-aa"
       >
         <thead>
           <tr>
@@ -1649,7 +1649,7 @@ export default function VPATPage() {
       </p>
       <table
         className="min-w-full bg-white border-collapse my-4"
-        aria-describedby="functional-performance-criteria"
+        aria-labelledby="functional-performance-criteria"
       >
         <thead>
           <tr>
@@ -1771,7 +1771,7 @@ export default function VPATPage() {
       <p className="mb-1">Notes:</p>
       <table
         className="min-w-full bg-white border-collapse my-4"
-        aria-describedby="software"
+        aria-labelledby="software"
       >
         <thead>
           <tr>
@@ -2087,7 +2087,7 @@ export default function VPATPage() {
       <p className="mb-1">Notes:</p>
       <table
         className="min-w-full bg-white border-collapse my-4"
-        aria-describedby="support-doc-services"
+        aria-labelledby="support-doc-services"
       >
         <thead>
           <tr>
