@@ -54,14 +54,19 @@ export default function VPATPage() {
           </li>
         </ul>
       </p>
-      <p className="mb-1 font-bold">Applicable Standards/Guidelines:</p>
+      <p className="mb-1 font-bold" id="standards-guidelines">
+        Applicable Standards/Guidelines:
+      </p>
       <p>
         {" "}
         This report covers the degree of conformance for the following
         accessibility standard/guidelines:
       </p>
 
-      <table className="min-w-full bg-white border-collapse my-4">
+      <table
+        className="min-w-full bg-white border-collapse my-4"
+        aria-describedby="standards-guidelines"
+      >
         <thead>
           <tr>
             <th className="border px-4 py-2 text-left w-1/2 bg-zinc-200 text-zinc-500">
@@ -220,7 +225,7 @@ export default function VPATPage() {
         .
       </p>
 
-      <h3 className="heading-xl font-semibold my-2">
+      <h3 className="heading-xl font-semibold my-2" id="wcag-level-a">
         Table 1: Success Criteria, Level A
       </h3>
       <p className="mb-1">
@@ -228,7 +233,10 @@ export default function VPATPage() {
         site has not been evaluated. We will periodically update this report as
         we release fixes.
       </p>
-      <table className="min-w-full bg-white border-collapse my-4">
+      <table
+        className="min-w-full bg-white border-collapse my-4"
+        aria-describedby="wcag-level-a"
+      >
         <thead>
           <tr>
             <th className="border px-4 py-2 text-left w-1/3 bg-zinc-200 text-zinc-500">
@@ -1021,7 +1029,7 @@ export default function VPATPage() {
         </tbody>
       </table>
 
-      <h3 className="heading-xl font-semibold my-2">
+      <h3 className="heading-xl font-semibold my-2" id="wcag-level-aa">
         Table 2: Success Criteria, Level AA
       </h3>
       <p className="mb-1">
@@ -1029,7 +1037,10 @@ export default function VPATPage() {
         site has not been evaluated. We will periodically update this report as
         we release fixes.
       </p>
-      <table className="min-w-full bg-white border-collapse my-4">
+      <table
+        className="min-w-full bg-white border-collapse my-4"
+        aria-describedby="wcag-level-aa"
+      >
         <thead>
           <tr>
             <th className="border px-4 py-2 text-left w-1/3">Criteria</th>
@@ -1616,7 +1627,10 @@ export default function VPATPage() {
         we release fixes.
       </p>
 
-      <h3 className="heading-xl font-semibold my-2">
+      <h3
+        className="heading-xl font-semibold my-2"
+        id="functional-performance-criteria"
+      >
         Chapter 3:{" "}
         <a
           href="https://www.access-board.gov/ict/#chapter-3-functional-performance-criteria"
@@ -1633,7 +1647,10 @@ export default function VPATPage() {
         Notes: The interactive map needs better accessibility support and
         optimization. We are actively looking to improve this.
       </p>
-      <table className="min-w-full bg-white border-collapse my-4">
+      <table
+        className="min-w-full bg-white border-collapse my-4"
+        aria-describedby="functional-performance-criteria"
+      >
         <thead>
           <tr>
             <th className="border px-4 py-2 text-left w-1/3">Criteria</th>
@@ -1739,7 +1756,7 @@ export default function VPATPage() {
         Notes: Not applicable to Clean & Green Philly website.
       </p>
 
-      <h3 className="heading-xl font-semibold my-2">
+      <h3 className="heading-xl font-semibold my-2" id="software">
         {" "}
         Chapter 5:{" "}
         <a
@@ -1752,7 +1769,10 @@ export default function VPATPage() {
         </a>
       </h3>
       <p className="mb-1">Notes:</p>
-      <table className="min-w-full bg-white border-collapse my-4">
+      <table
+        className="min-w-full bg-white border-collapse my-4"
+        aria-describedby="software"
+      >
         <thead>
           <tr>
             <th className="border px-4 py-2 text-left w-1/3">Criteria</th>
@@ -2053,7 +2073,7 @@ export default function VPATPage() {
         </tbody>
       </table>
 
-      <h3 className="heading-xl font-semibold my-2">
+      <h3 className="heading-xl font-semibold my-2" id="support-doc-services">
         Chapter 6:{" "}
         <a
           className="underline"
@@ -2065,7 +2085,10 @@ export default function VPATPage() {
         </a>
       </h3>
       <p className="mb-1">Notes:</p>
-      <table className="min-w-full bg-white border-collapse my-4">
+      <table
+        className="min-w-full bg-white border-collapse my-4"
+        aria-describedby="support-doc-services"
+      >
         <thead>
           <tr>
             <th className="border px-4 py-2 text-left w-1/3">Criteria</th>
