@@ -15,7 +15,7 @@ function IconLink({ icon, text, href }: IconLinkProps) {
   return (
     <NavbarItem
       isActive={pathname === href}
-      aria-current={pathname === href ? "true" : undefined}
+      aria-current={pathname === href ? "page" : undefined}
       key={text}
       className={pathname === href ? "active-state-nav" : ""}
     >
