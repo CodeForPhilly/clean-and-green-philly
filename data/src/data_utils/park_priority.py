@@ -1,13 +1,11 @@
-import io
 import os
 import zipfile
 
 import geopandas as gpd
-import requests
 from classes.featurelayer import FeatureLayer
 
 from config.config import USE_CRS
-
+from data_utils.utils import save_stream_url
 
 def park_priority(primary_featurelayer):
     park_url = 'https://parkserve.tpl.org/downloads/Parkserve_Shapefiles_05212024.zip'
@@ -25,18 +23,19 @@ def park_priority(primary_featurelayer):
     ]
 
     geojson_path = "tmp/phl_parks.geojson"
+    
+    
     shapefile_exists = all(os.path.exists(os.path.join("tmp", file_name)) for file_name in target_files)
 
     if not os.path.exists(geojson_path):
         if not shapefile_exists:
             print("Downloading park priority data (slow operation)...")
-            park_response = requests.get(park_url)
+            zipfile_save_path = save_stream_url(park_url)
 
-            with io.BytesIO(park_response.content) as f:
-                with zipfile.ZipFile(f, "r") as zip_ref:
-                    # Extract only the necessary files
-                    for file_name in target_files:
-                        zip_ref.extract(file_name, "tmp/")
+            with zipfile.ZipFile(zipfile_save_path, "r") as zip_ref:
+                # Extract only the necessary files
+                for file_name in target_files:
+                    zip_ref.extract(file_name, "tmp/")
         else:
             print("Park priority files already exist in /tmp, skipping download.")
 
@@ -63,3 +62,4 @@ def park_priority(primary_featurelayer):
     primary_featurelayer.spatial_join(park_priority_layer)
 
     return primary_featurelayer
+
