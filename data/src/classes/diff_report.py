@@ -14,10 +14,9 @@ from config.config import (
     report_to_slack_channel,
     smtp_server,
 )
-from config.psql import conn, local_engine, url
+from config.psql import conn, url
 from data_utils.utils import mask_password
 from slack_sdk import WebClient
-from sqlalchemy import inspect
 
 log.basicConfig(level=log_level)
 
@@ -134,16 +133,6 @@ class DiffReport:
             html += "</tr>"
         html += "</table>"
         return html
-
-    def find_primary_keys(self, table: str) -> list[str]:
-        """
-        introspect on the db to find the primary key columns for this table
-        """
-        return (
-            inspect(local_engine)
-            .get_pk_constraint(table_name=table)
-            .get("constrained_columns")
-        )
 
     def _list_diff_tables(self) -> list[DiffTable]:
         """
