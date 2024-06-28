@@ -50,7 +50,11 @@ const MultiSelect: FC<MultiSelectProps> = ({
                 <SelectFilterChip
                   key={index}
                   classNames={{ base: "multiSelectChip" }}
-                  endContent={<X />}
+                  endContent={
+                    <span aria-label={`close ${option}`}>
+                      <X />
+                    </span>
+                  }
                   onClose={() => toggleDimension(option)}
                 >
                   {option}
