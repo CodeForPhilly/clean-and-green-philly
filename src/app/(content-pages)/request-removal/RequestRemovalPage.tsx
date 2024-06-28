@@ -37,6 +37,7 @@ export default function RequestRemovalPage() {
         the final decision rests with our team, and not all requests may result
         in the removal of a property listing.
       </p>
+      <p>Lorem Ipsum ... testing Vercel bot</p>
     </>
   );
 }
