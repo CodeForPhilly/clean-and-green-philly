@@ -265,7 +265,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   ) : (
     <>
       <div className="flex w-full my-auto items-center justify-center">
-        <div className="flex flex-col justify-center">
+        <div aria-live="polite" className="flex flex-col justify-center">
           <p className="text-center text-xl font-bold">No Results</p>
           <p className="text-center mt-1">
             There are no results that match your filter.
@@ -273,6 +273,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
           <div className="mx-auto mt-2">
             <ThemeButton
               color="secondary"
+              aria-label="Clear Filters"
               label="Clear Filters"
               startContent={<X />}
               onPress={() =>
