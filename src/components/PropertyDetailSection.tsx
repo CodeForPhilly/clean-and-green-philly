@@ -12,7 +12,6 @@ import {
 import { ThemeButton } from "./ThemeButton";
 import { PiCaretRight, PiCaretLeft } from "react-icons/pi";
 import {
-  Link,
   Table,
   TableHeader,
   TableColumn,
