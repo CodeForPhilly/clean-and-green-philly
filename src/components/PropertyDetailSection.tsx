@@ -12,6 +12,7 @@ import {
 import { ThemeButton } from "./ThemeButton";
 import { PiCaretRight, PiCaretLeft } from "react-icons/pi";
 import {
+  Link,
   Table,
   TableHeader,
   TableColumn,
@@ -141,6 +142,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             : "bg-white text-gray-900 rounded-md shadow-none rounded-md content-center"
         }`}
         aria-label={isActive ? `Page ${value}` : `Go to page ${value}`}
+        aria-current={isActive ? "page" : false}
         onPress={() => setPage(value)}
         label={value}
       >
