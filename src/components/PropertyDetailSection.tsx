@@ -250,6 +250,9 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 disableCursorAnimation={true}
               ></Pagination>
             </div>
+            <p className="text-center mt-4">
+              {`${((page - 1) * 6) + 1}-${page === pages ? featuresInView.length : (page * 6)} of ${featuresInView.length}`}
+            </p>
             <div className="flex w-full justify-center py-4 px-6">
               <p className="body-sm text-gray-500">
                 Note: only the first 100 properties can be viewed in list.
