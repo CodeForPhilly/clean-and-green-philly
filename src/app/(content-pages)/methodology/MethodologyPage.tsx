@@ -25,8 +25,6 @@ export default function MethodologyPage() {
           residents, CDCs, City government offices, academic researchers, and
           more.
         </p>
-        {/* Offset for clicking on learn more from filter, scrolls to section below */}
-        <span id="priority-method"></span>
         <p className="body-md">
           Although we aim to simplify the decision-making process for users of
           Clean & Green Philly, we value transparency. Below, we lay out key
@@ -40,7 +38,7 @@ export default function MethodologyPage() {
         </p>
 
         <div className="container mx-auto md:my-12">
-          <h2 className="heading-2xl font-semibold mb-4">
+          <h2 id="priority-method" className="heading-2xl font-semibold mb-4">
             How did we determine &ldquo;priority&rdquo;?
           </h2>
 
@@ -104,8 +102,6 @@ export default function MethodologyPage() {
             </li>
           </ol>
           <br />
-          {/* Offset for clicking on learn more from filter, scrolls to section below */}
-          <span id="access-method"></span>
           <p className="body-md mb-4">
             These specific datasets were chosen based on the original research
             and extensive stakeholder engagement. The decision tree below
@@ -114,7 +110,7 @@ export default function MethodologyPage() {
         </div>
 
         <div className="container mx-auto md:my-12">
-          <h2 className="heading-2xl font-semibold mb-4">
+          <h2 id="access-method" className="heading-2xl font-semibold mb-4">
             How did we determine &ldquo;access process&rdquo;?
           </h2>
 
