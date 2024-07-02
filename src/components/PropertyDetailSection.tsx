@@ -230,13 +230,16 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             </TableBody>
           </Table>
         ) : (
-          items.map((feature, index) => (
-            <PropertyCard
-              feature={feature}
-              key={index}
-              setSelectedProperty={setSelectedProperty}
-            />
-          ))
+          <>
+            <div aria-live="polite" className="sr-only"> {`You are on page ${page}`} </div>
+            {items.map((feature, index) => (
+              <PropertyCard
+                feature={feature}
+                key={index}
+                setSelectedProperty={setSelectedProperty}
+              />
+            ))}
+          </>
         )}
         {featuresInView?.length > 0 && widthRef.current && (
           <div>
