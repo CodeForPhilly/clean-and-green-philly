@@ -37,9 +37,8 @@ export default function MethodologyPage() {
           .
         </p>
 
-        <span id="priority-method"></span>
         <div className="container mx-auto md:my-12">
-          <h2 className="heading-2xl font-semibold mb-4">
+          <h2 id="priority-method" className="heading-2xl font-semibold mb-4">
             How did we determine &ldquo;priority&rdquo;?
           </h2>
 
@@ -110,9 +109,8 @@ export default function MethodologyPage() {
           </p>
         </div>
 
-        <span id="access-method"></span>
         <div className="container mx-auto md:my-12">
-          <h2 className="heading-2xl font-semibold mb-4">
+          <h2 id="access-method" className="heading-2xl font-semibold mb-4">
             How did we determine &ldquo;access process&rdquo;?
           </h2>
 
