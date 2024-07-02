@@ -28,6 +28,8 @@ import PropertyCard from "./PropertyCard";
 import SinglePropertyDetail from "./SinglePropertyDetail";
 import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
 import { MapGeoJSONFeature } from "maplibre-gl";
+import { X } from "@phosphor-icons/react";
+import { useFilter } from "@/context/FilterContext";
 
 const tableCols = [
   {
@@ -70,7 +72,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   smallScreenMode,
 }) => {
   const [page, setPage] = useState(1);
-
+  const { dispatch } = useFilter();
   const rowsPerPage = 6;
   const pages = Math.ceil(featuresInView.length / rowsPerPage);
   const widthRef = useRef(false);
@@ -189,7 +191,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       setShouldFilterSavedProperties={setShouldFilterSavedProperties}
       updateCurrentView={updateCurrentView}
     />
-  ) : (
+  ) : featuresInView.length ? (
     <>
       <div className="flex flex-wrap flex-grow h-full min-h-[calc(100svh-101px)] max-h-[calc(100svh-101px)] mt-2">
         {display === "list" ? (
@@ -258,6 +260,32 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             </div>
           </div>
         )}
+      </div>
+    </>
+  ) : (
+    <>
+      <div className="flex w-full my-auto items-center justify-center">
+        <div aria-live="polite" className="flex flex-col justify-center">
+          <p className="text-center text-xl font-bold">No Results</p>
+          <p className="text-center mt-1">
+            There are no results that match your filter.
+          </p>
+          <div className="mx-auto mt-2">
+            <ThemeButton
+              color="secondary"
+              aria-label="Clear Filters"
+              label="Clear Filters"
+              startContent={<X />}
+              onPress={() =>
+                dispatch({
+                  type: "CLEAR_DIMENSIONS",
+                  property: "",
+                  dimensions: [],
+                })
+              }
+            />
+          </div>
+        </div>
       </div>
     </>
   );
