@@ -3,15 +3,25 @@
 import { ThemeButton } from "./ThemeButton";
 import { Check, X } from "@phosphor-icons/react";
 import { useCookieContext } from "@/context/CookieContext";
+import { useEffect, useState } from "react";
 
 const CookieConsentBanner = () => {
   const { shouldShowBanner, setShouldAllowCookies, setShouldShowBanner } =
     useCookieContext();
 
+  const [isClientSide, setIsClientSide] = useState(false);
+
+  useEffect(() => {
+    // Ensure accessing localStorage only runs on the client side.
+    setIsClientSide(true);
+  }, []);
+
   const onClickButton = (shouldSaveCookies: boolean) => {
     setShouldAllowCookies(shouldSaveCookies);
     setShouldShowBanner(false);
   };
+
+  if (!isClientSide) return null;
 
   return (
     <div

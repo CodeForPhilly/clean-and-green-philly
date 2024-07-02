@@ -120,7 +120,7 @@ class BackupArchiveDatabase:
             name, ext = os.path.splitext(blob.name)
             backup_file_name: str = tile_file_backup_directory + "/" + name + suffix + ext
             log.debug(backup_file_name)
-            bucket.rename_blob(blob,new_name=backup_file_name)
+            bucket.copy_blob(blob,destination_bucket=bucket,new_name=backup_file_name)
             count += 1
         if count == 0:
             log.warning("No files were found to back up.")

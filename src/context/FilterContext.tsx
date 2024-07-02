@@ -22,7 +22,7 @@ interface FilterContextProps {
 }
 
 type FilterAction = {
-  type: "SET_DIMENSIONS";
+  type: "SET_DIMENSIONS" | "CLEAR_DIMENSIONS";
   property: string;
   dimensions: string[];
   useIndexOfFilter?: boolean;
@@ -46,6 +46,8 @@ const filterReducer = (
           useIndexOfFilter: action.useIndexOfFilter || false,
         },
       };
+    case "CLEAR_DIMENSIONS":
+      return {};
     default:
       throw new Error("Unhandled action type");
   }
