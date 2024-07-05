@@ -20,7 +20,7 @@ The project needs certain specific and sensitive pieces of information to run.  
 
 For Mac and Linux, you can permanently store the environmental variables in your command line shell's configuration file, e.g. `~/.bashrc`, `~/.bash_profile`, `~/.zshrc` or `~/.profile`.  Add a line `export VAR_NAME=VALUE` in your file and run `source file` to read it in when newly created.  Any new shells will automatically have the new environment.
 
-For Windows, you can set environmental variables under System -> Advanced or you can download a terminal emulator such as [Git Bash](https://gitforwindows.org/) and follow the instructions for Mac and Linux above.  A terminal emulator is reccommended.
+For Windows, you can set environmental variables under System -> Advanced or you can download a terminal emulator such as [Git Bash](https://gitforwindows.org/) and follow the instructions for Mac and Linux above.  A terminal emulator is recommended.
 
 All of your local environmental variables will be passed through to docker-compose so if you have them locally you should not have to hard-code them as indicated below.
 
@@ -33,7 +33,7 @@ Create an environmental variable called `POSTGRES_PASSWORD` and set its value to
 
 Docker is a platform that allows you to containerize and run applications in isolated environments, making it easier to manage dependencies and ensure consistent deployments. Download the [latest version of Docker Desktop for your operating system](https://www.docker.com/products/docker-desktop/).
 
-We use [docker-compose](https://docs.docker.com/compose/) to manage the backend Docker services.  The `data/docker-compose.yaml` file defines the services.  The only service that runs perpetually in Docker is `postgres`.  The other services are one-time batch jobs to build the data sets.
+We use [docker-compose](https://docs.docker.com/compose/) to manage the backend Docker services.  The `data/docker-compose.yml` file defines the services.  The only service that runs perpetually in Docker is `postgres`.  The other services are one-time batch jobs to build the data sets.
 
 The first time you set up your backend, or any time either of the two Docker files change, you should build the Docker services by running `docker-compose build`.  It may take a while to install the dependencies but you will only need to do this once.  You can rebuild only one container, such as `postgres`, with `docker-compose build postgres`.  For first-time runs, you should set `FORCE_RELOAD = True` in `config.py` and optionally `log_level: int = logging.DEBUG` to get more verbose output.
 
