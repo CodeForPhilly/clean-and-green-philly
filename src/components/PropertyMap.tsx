@@ -13,7 +13,7 @@ import {
   maptilerApiKey,
   mapboxAccessToken,
   useStagingTiles,
-  googleCloudBucketName
+  googleCloudBucketName,
 } from "../config/config";
 import { useFilter } from "@/context/FilterContext";
 import Map, {
@@ -116,25 +116,32 @@ const MapControls = () => {
       <NavigationControl showCompass={false} position="bottom-right" />
       <GeolocateControl position="bottom-right" />
       <ScaleControl />
-      {(smallScreenToggle || window.innerWidth > 640) ?
-        <MapLegendControl position="bottom-left" setSmallScreenToggle={setSmallScreenToggle} layerStyle={layerStylePolygon} />
-        :
+      {smallScreenToggle || window.innerWidth > 640 ? (
+        <MapLegendControl
+          position="bottom-left"
+          setSmallScreenToggle={setSmallScreenToggle}
+          layerStyle={layerStylePolygon}
+        />
+      ) : (
         <div className="custom-legend-info-div maplibregl-ctrl maplibregl-ctrl-group w-[40px] h-[40px]">
           <ThemeButton
             className="custom-legend-info z-10"
-            startContent={<span className="custom-legend-info-icon maplibregl-ctrl-icon"></span>}
-            onPress={() => setSmallScreenToggle(s => !s)}
+            startContent={
+              <span className="custom-legend-info-icon maplibregl-ctrl-icon"></span>
+            }
+            onPress={() => setSmallScreenToggle((s) => !s)}
           />
         </div>
-      }
+      )}
     </>
-  )
+  );
 };
 
 interface PropertyMapProps {
   featuresInView: MapGeoJSONFeature[];
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
+  setLoadingError: Dispatch<SetStateAction<boolean>>;
   selectedProperty: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
@@ -146,6 +153,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   featuresInView,
   setFeaturesInView,
   setLoading,
+  setLoadingError,
   selectedProperty,
   setSelectedProperty,
   setFeatureCount,
@@ -189,7 +197,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         layers,
       });
 
-      setSearchedProperty({...searchedProperty, address: "" })
+      setSearchedProperty({ ...searchedProperty, address: "" });
       if (features.length > 0) {
         setSelectedProperty(features[0]);
       } else {
@@ -217,7 +225,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }
         return acc;
       },
-      0,
+      0
     );
 
     setFeatureCount(clusteredFeatureCount);
@@ -252,7 +260,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         map.project(searchedProperty.coordinates),
         {
           layers,
-        },
+        }
       );
       if (features.length > 0) {
         setSelectedProperty(features[0]);
@@ -293,7 +301,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
               tabIndex={0}
             />
           </Tooltip>,
-          legendSummary,
+          legendSummary
         );
       }
 
@@ -302,13 +310,15 @@ const PropertyMap: FC<PropertyMapProps> = ({
         const center = map.getCenter();
         geocoderRef.current = new MapboxGeocoder({
           accessToken: mapboxAccessToken,
-          bbox: [-75.288283,39.864114,-74.945063,40.140129],
+          bbox: [-75.288283, 39.864114, -74.945063, 40.140129],
           filter: function (item) {
             return item.context.some((i) => {
-                return (
-                    (i.id.split('.').shift() === 'place' && i.text === 'Philadelphia') ||
-                    (i.id.split('.').shift() === 'district' && i.text === 'Philadelphia County')
-                );
+              return (
+                (i.id.split(".").shift() === "place" &&
+                  i.text === "Philadelphia") ||
+                (i.id.split(".").shift() === "district" &&
+                  i.text === "Philadelphia County")
+              );
             });
           },
           mapboxgl: mapboxgl,
@@ -321,7 +331,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
         map.addControl(geocoderRef.current as unknown as IControl, "top-right");
 
-        geocoderRef.current.on("result", e => {
+        geocoderRef.current.on("result", (e) => {
           const address = e.result.place_name.split(",")[0];
           setSelectedProperty(null);
           setSearchedProperty({
@@ -370,7 +380,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
     const updateFilter = () => {
       if (!map) return;
 
-      const isAnyFilterEmpty = Object.values(appFilter).some(filterItem => {
+      const isAnyFilterEmpty = Object.values(appFilter).some((filterItem) => {
         return filterItem.values.length === 0;
       });
 
@@ -385,7 +395,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         (acc, [property, filterItem]) => {
           if (filterItem.values.length) {
             const thisFilterGroup: any = ["any"];
-            filterItem.values.forEach(item => {
+            filterItem.values.forEach((item) => {
               if (filterItem.useIndexOfFilter) {
                 thisFilterGroup.push([
                   ">=",
@@ -401,7 +411,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           }
           return acc;
         },
-        [] as any[],
+        [] as any[]
       );
 
       map.setFilter("vacant_properties_tiles_points", ["all", ...mapFilter]);
@@ -424,16 +434,19 @@ const PropertyMap: FC<PropertyMapProps> = ({
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
         mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
-        onMouseEnter={e => changeCursor(e, "pointer")}
-        onMouseLeave={e => changeCursor(e, "default")}
+        onMouseEnter={(e) => changeCursor(e, "pointer")}
+        onMouseLeave={(e) => changeCursor(e, "default")}
         onClick={onMapClick}
         minZoom={MIN_MAP_ZOOM}
         maxZoom={MAX_MAP_ZOOM}
         interactiveLayerIds={layers}
-        onLoad={e => {
+        onError={(e) => {
+          setLoadingError(true);
+        }}
+        onLoad={(e) => {
           setMap(e.target);
         }}
-        onSourceData={e => {
+        onSourceData={(e) => {
           handleSetFeatures(e);
         }}
         onMoveEnd={handleSetFeatures}

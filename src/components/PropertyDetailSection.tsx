@@ -50,6 +50,7 @@ interface PropertyDetailSectionProps {
   featuresInView: MapGeoJSONFeature[];
   display: "detail" | "list";
   loading: boolean;
+  loadingError: boolean;
   selectedProperty: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -63,6 +64,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   featuresInView,
   display,
   loading,
+  loadingError,
   selectedProperty,
   setSelectedProperty,
   setIsStreetViewModalOpen,
@@ -172,7 +174,16 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     return featuresInView.slice(start, end);
   }, [page, featuresInView, smallScreenMode]);
 
-  return loading ? (
+  return loadingError ? (
+    <div className="flex flex-col w-full items-center justify-center p-4 mt-24">
+      <div>
+        <p className="body-md">We are having technical issues.</p>
+      </div>
+      <div>
+        <p className="body-md">Please try again later.</p>
+      </div>
+    </div>
+  ) : loading ? (
     <div className="flex-grow h-full">
       {/* Center vertically in screen */}
       <div className="flex w-full justify-center p-4 mt-24">
