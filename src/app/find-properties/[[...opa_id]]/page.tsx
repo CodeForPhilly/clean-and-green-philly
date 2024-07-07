@@ -33,6 +33,7 @@ const MapPage = ({ params }: MapPageProps) => {
   const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
   const [loading, setLoading] = useState(true);
+  const [hasLoadingError, setHasLoadingError] = useState(false);
   const [selectedProperty, setSelectedProperty] =
     useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
@@ -208,118 +209,116 @@ const MapPage = ({ params }: MapPageProps) => {
   }, [currentView, selectedProperty, shouldFilterSavedProperties]);
 
   return (
-      <NextUIProvider>
-        <div className="flex flex-col">
-          <div className="flex flex-grow overflow-hidden">
-            <StreetViewModal
-              isOpen={isStreetViewModalOpen}
-              onClose={() => setIsStreetViewModalOpen(false)}
-            >
-              <StreetView
-                lat={streetViewLocation?.[1].toString() || ""}
-                lng={streetViewLocation?.[0].toString() || ""}
-                yaw="180"
-                pitch="5"
-                fov="0.7"
+    <NextUIProvider>
+      <div className="flex flex-col">
+        <div className="flex flex-grow overflow-hidden">
+          <StreetViewModal
+            isOpen={isStreetViewModalOpen}
+            onClose={() => setIsStreetViewModalOpen(false)}
+          >
+            <StreetView
+              lat={streetViewLocation?.[1].toString() || ""}
+              lng={streetViewLocation?.[0].toString() || ""}
+              yaw="180"
+              pitch="5"
+              fov="0.7"
+            />
+          </StreetViewModal>
+          <div className={`flex-grow ${isVisible("map")}`}>
+            <div className={`sticky top-0 z-10 sm:hidden ${isVisible("map")}`}>
+              <SidePanelControlBar {...controlBarProps} />
+            </div>
+            {isLinkedPropertyParsed ? (
+              <PropertyMap
+                featuresInView={featuresInView}
+                setFeaturesInView={setFeaturesInView}
+                setLoading={setLoading}
+                setHasLoadingError={setHasLoadingError}
+                selectedProperty={selectedProperty}
+                setSelectedProperty={setSelectedProperty}
+                setFeatureCount={setFeatureCount}
+                initialViewState={initialViewState}
+                prevCoordinate={prevCoordinateRef.current}
+                setPrevCoordinate={() => (prevCoordinateRef.current = null)}
               />
-            </StreetViewModal>
-            <div className={`flex-grow ${isVisible("map")}`}>
-              <div
-                className={`sticky top-0 z-10 sm:hidden ${isVisible("map")}`}
-              >
+            ) : (
+              <div className="flex w-full h-full justify-center">
+                <Spinner />
+              </div>
+            )}
+          </div>
+          <SidePanel
+            isVisible={isVisible("properties")}
+            selectedProperty={selectedProperty}
+          >
+            {!selectedProperty && (
+              <div className="h-14 sticky top-0 z-10">
                 <SidePanelControlBar {...controlBarProps} />
               </div>
-              {isLinkedPropertyParsed ? (
-                <PropertyMap
-                  featuresInView={featuresInView}
-                  setFeaturesInView={setFeaturesInView}
-                  setLoading={setLoading}
-                  selectedProperty={selectedProperty}
-                  setSelectedProperty={setSelectedProperty}
-                  setFeatureCount={setFeatureCount}
-                  initialViewState={initialViewState}
-                  prevCoordinate={prevCoordinateRef.current}
-                  setPrevCoordinate={() => (prevCoordinateRef.current = null)}
+            )}
+            {currentView === "download" ? (
+              <div className="relative">
+                <ThemeButton
+                  color="secondary"
+                  className="right-4 lg:right-[24px] absolute top-8 min-w-[3rem]"
+                  aria-label="Close download panel"
+                  startContent={<PiX />}
+                  onPress={() => updateCurrentView("detail")}
                 />
+                <div className="p-4 mt-8 text-center">
+                  <h2 className="heading-xl font-semibold mb-4">
+                    Access Our Data
+                  </h2>
+                  <p>
+                    If you are interested in accessing the data behind this
+                    dashboard, please reach out to us at
+                    <a
+                      href="mailto:cleanandgreenphl@gmail.com"
+                      className="text-blue-600 hover:text-blue-800 underline"
+                    >
+                      {" "}
+                      cleanandgreenphl@gmail.com
+                    </a>
+                    . Let us know who you are and why you want the data. We are
+                    happy to share the data with anyone with community-oriented
+                    interests.
+                  </p>
+                </div>
+              </div>
+            ) : currentView === "filter" ? (
+              <FilterView updateCurrentView={updateCurrentView} />
+            ) : (
+              <PropertyDetailSection
+                featuresInView={featuresInView}
+                display={currentView as "detail" | "list"}
+                loading={loading}
+                hasLoadingError={hasLoadingError}
+                selectedProperty={selectedProperty}
+                setSelectedProperty={setSelectedProperty}
+                setIsStreetViewModalOpen={setIsStreetViewModalOpen}
+                shouldFilterSavedProperties={shouldFilterSavedProperties}
+                setShouldFilterSavedProperties={setShouldFilterSavedProperties}
+                smallScreenMode={smallScreenMode}
+                updateCurrentView={updateCurrentView}
+              />
+            )}
+          </SidePanel>
+          <ThemeButton
+            aria-label={`Change to ${smallScreenMode}`}
+            label={smallScreenMode === "map" ? "List View" : "Map View"}
+            className="fixed bottom-10 left-1/2 -ml-[3.5rem] rounded-2xl sm:hidden max-md:min-w-[7rem]"
+            onPress={updateSmallScreenMode}
+            startContent={
+              smallScreenMode === "map" ? (
+                <ListBullets />
               ) : (
-                <div className="flex w-full h-full justify-center">
-                  <Spinner />
-                </div>
-              )}
-            </div>
-            <SidePanel
-              isVisible={isVisible("properties")}
-              selectedProperty={selectedProperty}
-            >
-              {!selectedProperty && (
-                <div className="h-14 sticky top-0 z-10">
-                  <SidePanelControlBar {...controlBarProps} />
-                </div>
-              )}
-              {currentView === "download" ? (
-                <div className="relative">
-                  <ThemeButton
-                    color="secondary"
-                    className="right-4 lg:right-[24px] absolute top-8 min-w-[3rem]"
-                    aria-label="Close download panel"
-                    startContent={<PiX />}
-                    onPress={() => updateCurrentView("detail")}
-                  />
-                  <div className="p-4 mt-8 text-center">
-                    <h2 className="heading-xl font-semibold mb-4">
-                      Access Our Data
-                    </h2>
-                    <p>
-                      If you are interested in accessing the data behind this
-                      dashboard, please reach out to us at
-                      <a
-                        href="mailto:cleanandgreenphl@gmail.com"
-                        className="text-blue-600 hover:text-blue-800 underline"
-                      >
-                        {" "}
-                        cleanandgreenphl@gmail.com
-                      </a>
-                      . Let us know who you are and why you want the data. We
-                      are happy to share the data with anyone with
-                      community-oriented interests.
-                    </p>
-                  </div>
-                </div>
-              ) : currentView === "filter" ? (
-                <FilterView updateCurrentView={updateCurrentView} />
-              ) : (
-                <PropertyDetailSection
-                  featuresInView={featuresInView}
-                  display={currentView as "detail" | "list"}
-                  loading={loading}
-                  selectedProperty={selectedProperty}
-                  setSelectedProperty={setSelectedProperty}
-                  setIsStreetViewModalOpen={setIsStreetViewModalOpen}
-                  shouldFilterSavedProperties={shouldFilterSavedProperties}
-                  setShouldFilterSavedProperties={
-                    setShouldFilterSavedProperties
-                  }
-                  smallScreenMode={smallScreenMode}
-                  updateCurrentView={updateCurrentView}
-                />
-              )}
-            </SidePanel>
-            <ThemeButton
-              aria-label={`Change to ${smallScreenMode}`}
-              label={smallScreenMode === "map" ? "List View" : "Map View"}
-              className="fixed bottom-10 left-1/2 -ml-[3.5rem] rounded-2xl sm:hidden max-md:min-w-[7rem]"
-              onPress={updateSmallScreenMode}
-              startContent={
-                smallScreenMode === "map" ? (
-                  <ListBullets />
-                ) : (
-                  <GlobeHemisphereWest />
-                )
-              }
-            />
-          </div>
+                <GlobeHemisphereWest />
+              )
+            }
+          />
         </div>
-      </NextUIProvider>
+      </div>
+    </NextUIProvider>
   );
 };
 
