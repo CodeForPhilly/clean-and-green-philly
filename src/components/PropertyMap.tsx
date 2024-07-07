@@ -141,7 +141,7 @@ interface PropertyMapProps {
   featuresInView: MapGeoJSONFeature[];
   setFeaturesInView: Dispatch<SetStateAction<any[]>>;
   setLoading: Dispatch<SetStateAction<boolean>>;
-  setLoadingError: Dispatch<SetStateAction<boolean>>;
+  setHasLoadingError: Dispatch<SetStateAction<boolean>>;
   selectedProperty: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setFeatureCount: Dispatch<SetStateAction<number>>;
@@ -153,7 +153,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   featuresInView,
   setFeaturesInView,
   setLoading,
-  setLoadingError,
+  setHasLoadingError,
   selectedProperty,
   setSelectedProperty,
   setFeatureCount,
@@ -441,7 +441,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         maxZoom={MAX_MAP_ZOOM}
         interactiveLayerIds={layers}
         onError={(e) => {
-          setLoadingError(true);
+          setHasLoadingError(true);
         }}
         onLoad={(e) => {
           setMap(e.target);

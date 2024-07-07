@@ -33,7 +33,7 @@ const MapPage = ({ params }: MapPageProps) => {
   const [featureCount, setFeatureCount] = useState<number>(0);
   const [currentView, setCurrentView] = useState<BarClickOptions>("detail");
   const [loading, setLoading] = useState(true);
-  const [loadingError, setLoadingError] = useState(false);
+  const [hasLoadingError, setHasLoadingError] = useState(false);
   const [selectedProperty, setSelectedProperty] =
     useState<MapGeoJSONFeature | null>(null);
   const [isStreetViewModalOpen, setIsStreetViewModalOpen] =
@@ -233,7 +233,7 @@ const MapPage = ({ params }: MapPageProps) => {
                 featuresInView={featuresInView}
                 setFeaturesInView={setFeaturesInView}
                 setLoading={setLoading}
-                setLoadingError={setLoadingError}
+                setHasLoadingError={setHasLoadingError}
                 selectedProperty={selectedProperty}
                 setSelectedProperty={setSelectedProperty}
                 setFeatureCount={setFeatureCount}
@@ -292,7 +292,7 @@ const MapPage = ({ params }: MapPageProps) => {
                 featuresInView={featuresInView}
                 display={currentView as "detail" | "list"}
                 loading={loading}
-                loadingError={loadingError}
+                hasLoadingError={hasLoadingError}
                 selectedProperty={selectedProperty}
                 setSelectedProperty={setSelectedProperty}
                 setIsStreetViewModalOpen={setIsStreetViewModalOpen}
