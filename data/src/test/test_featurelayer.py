@@ -6,7 +6,7 @@ class TestFeaturelayer:
     """    
     def test_tiles_file_size_ok(self):
         """ test that the size of the tiles file exceeds a minimum.  
-        Assumes a temp file is there from a previous run and the file is too small.
+        Assumes a temp file is there from a previous run.
         """
         test_fl = FeatureLayer("test")
         # it should be smaller than 10 MB
