@@ -138,11 +138,11 @@ To access the Linux terminal of this vm instance via SSH you can use the 'SSH-in
 You can also connect to the vm with the terminal ssh client on your pc.  This is recommended for more advanced use cases as the web UI is limited.  To set this up, follow the steps below:
 - In GCP, go to IAM and Admin -> Service Accounts -> Keys and click on the `1065311260334-compute@developer.gserviceaccount.com	` account.
 - Click 'Add key'.  You can only download the service account JSON key file when you create a key so you will have to create a new key.    Select 'JSON' and save the .json file to your local machine.
-- Download the [Google Cloud Command Line Interface (CLI)](https://cloud.google.com/sdk/docs/install) for your OS.
+- Download and install the [Google Cloud Command Line Interface (CLI)](https://cloud.google.com/sdk/docs/install) for your OS.
 - In your terminal, navigate to the folder with your saved .json file.  Run the command:
 `gcloud auth activate-service-account --key-file=your-key.json`
 - Now you can ssh into the vm with:
-`gcloud compute ssh --zone "us-east1-b" "cleanandgreenphl@backend" --project "clean-and-green-philly" &`
+`gcloud compute ssh --zone "us-east1-b" "cleanandgreenphl@backend" --project "clean-and-green-philly"`
 - You will land in the home directory of the `cleanandgreenphl` user.  The project has been cloned to this directory.
 
 The job to regenerate and upload the tiles file and street images to the GCP bucket has been scheduled in `cron` to run weekly on Wednesday at 5 AM.  You can run `crontab -l` to see the job.  Currently it looks like this:
