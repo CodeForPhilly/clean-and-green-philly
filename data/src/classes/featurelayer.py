@@ -354,7 +354,7 @@ class FeatureLayer:
 
         Args:
             temp_merged_pmtiles (str): the path to the file
-
+            min_size_bytes (int): the minimum size in bytes to determine if the file size is ok
         Returns:
             bool: whether it is big enough
         """        
