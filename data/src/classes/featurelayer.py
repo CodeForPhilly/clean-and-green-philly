@@ -2,7 +2,7 @@ import os
 import subprocess
 import traceback
 import sqlalchemy as sa
-
+import logging as log
 import geopandas as gpd
 import pandas as pd
 import requests
@@ -12,8 +12,9 @@ from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
 from shapely import Point, wkb
 
-from config.config import FORCE_RELOAD, USE_CRS
+from config.config import FORCE_RELOAD, USE_CRS, write_production_tiles_file, min_tiles_file_size_in_bytes, log_level
 
+log.basicConfig(level=log_level)
 
 def google_cloud_bucket() -> Bucket:
     """Build the google cloud bucket with name configured in your environ or default of cleanandgreenphl
@@ -334,6 +335,32 @@ class FeatureLayer:
         for command in [points_command, polygons_command, merge_command]:
             subprocess.run(command)
 
+        write_files = [f"{tileset_id}_staging.pmtiles"]
+        
+        if write_production_tiles_file:
+            write_files.append(f"{tileset_id}.pmtiles")
+        
+        if not self.tiles_file_size_ok(temp_merged_pmtiles,min_tiles_file_size_in_bytes):
+            return
+        
         # Upload to Google Cloud Storage
-        blob = bucket.blob(f"{tileset_id}_staging.pmtiles")
-        blob.upload_from_filename(temp_merged_pmtiles)
+        for file in write_files:
+            blob = bucket.blob(file)
+            blob.upload_from_filename(temp_merged_pmtiles)
+
+    def tiles_file_size_ok(self,temp_merged_pmtiles: str, min_size_bytes: int) -> bool:
+        """check whether the temp saved tiles files is big enough.  If not then it might be corrupted so log 
+        error and don't upload to gcp
+
+        Args:
+            temp_merged_pmtiles (str): the path to the file
+
+        Returns:
+            bool: whether it is big enough
+        """        
+        # check that the file size is acceptable.
+        file_size = os.stat(temp_merged_pmtiles).st_size
+        if file_size < min_size_bytes:
+            log.error("%s is %i bytes in size but should be at least %i.  Therefore, we are not uploading any files to the GCP bucket.  The file may be corrupt or incomplete.",temp_merged_pmtiles,file_size,min_size_bytes)
+            return False
+        return True
