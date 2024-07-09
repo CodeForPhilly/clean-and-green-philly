@@ -340,27 +340,13 @@ class FeatureLayer:
         if write_production_tiles_file:
             write_files.append(f"{tileset_id}.pmtiles")
         
-        if not self.tiles_file_size_ok(temp_merged_pmtiles,min_tiles_file_size_in_bytes):
-            return
+        # check whether the temp saved tiles files is big enough.
+        # If not then it might be corrupted so log error and don't upload to gcp.
+        file_size = os.stat(temp_merged_pmtiles).st_size
+        if file_size < min_tiles_file_size_in_bytes:
+            raise Exception(f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}.  Therefore, we are not uploading any files to the GCP bucket.  The file may be corrupt or incomplete.")
         
         # Upload to Google Cloud Storage
         for file in write_files:
             blob = bucket.blob(file)
             blob.upload_from_filename(temp_merged_pmtiles)
-
-    def tiles_file_size_ok(self,temp_merged_pmtiles: str, min_size_bytes: int) -> bool:
-        """check whether the temp saved tiles files is big enough.  If not then it might be corrupted so log 
-        error and don't upload to gcp
-
-        Args:
-            temp_merged_pmtiles (str): the path to the file
-            min_size_bytes (int): the minimum size in bytes to determine if the file size is ok
-        Returns:
-            bool: whether it is big enough
-        """        
-        # check that the file size is acceptable.
-        file_size = os.stat(temp_merged_pmtiles).st_size
-        if file_size < min_size_bytes:
-            log.error("%s is %i bytes in size but should be at least %i.  Therefore, we are not uploading any files to the GCP bucket.  The file may be corrupt or incomplete.",temp_merged_pmtiles,file_size,min_size_bytes)
-            return False
-        return True
