@@ -344,7 +344,7 @@ class FeatureLayer:
         # If not then it might be corrupted so log error and don't upload to gcp.
         file_size = os.stat(temp_merged_pmtiles).st_size
         if file_size < min_tiles_file_size_in_bytes:
-            raise Exception(f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}.  Therefore, we are not uploading any files to the GCP bucket.  The file may be corrupt or incomplete.")
+            raise ValueError(f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}.  Therefore, we are not uploading any files to the GCP bucket.  The file may be corrupt or incomplete.")
         
         # Upload to Google Cloud Storage
         for file in write_files:
