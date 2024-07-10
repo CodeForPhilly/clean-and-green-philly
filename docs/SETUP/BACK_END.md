@@ -27,7 +27,7 @@ All of your local environmental variables will be passed through to docker-compo
 #### PostgreSQL
 
 Create an environmental variable called `POSTGRES_PASSWORD` and set its value to a new, strong password to use for your local postgres installation in Docker.  After that, add the below variable to configure the full postgres connection string:
-`VACANT_LOTS_DB="postgresql://postgres:${POSTGRES_PASSWORD}@localhost/vacantlotdb"`
+`VACANT_LOTS_DB="postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5433/vacantlotdb"`
 
 ### Docker Build
 
@@ -63,6 +63,8 @@ In the terminal, use the `cd` command to navigate to your repository location, a
 ### PostgreSQL
 
 [PostgreSQL](https://www.postgresql.org/) AKA postgres, pg, psql is an open-source relational database management system.  It is used in this project only by the data load script to stage data and by the data diff process to compare new data with backed up data.  It is not needed by the front-end to run.  We run Postgres with the [Postgis](https://postgis.net/) extension for geospatial data in a Docker container.
+
+We are running postgres on the non-standard port 5433 instead of the default of 5432.  This is so our Docker postgres will not conflict with any native postgres already running on the developer's PC.
 
 To start the postgres Docker container, run:
 `docker compose up -d postgres`.  You can access the psql command line in your container to work with the database with this command: `docker exec -it cagp-postgres psql -U postgres -d vacantlotdb`.  To stop the postgres container run `docker compose down postgres`.
@@ -126,3 +128,34 @@ When a diff is performed, an html file of the contents of the '{table_name}_diff
 The `CAGP_SLACK_API_TOKEN` environmental variable must be set with the API key for the Slack app that can write messages to the channel as configured in the config.py `report_to_slack_channel` variable.
 
 The report will also be emailed to any emails configured in the config.py `report_to_email` variable.
+
+# Production script execution
+
+The job to reload the backend data has been scheduled in the Google Cloud to run on a weekly basis.
+
+A virtual machine running Debian Linux named `backend` is set up in the compute engine of the CAGP GCP account.  The staging branch of the git project has been cloned here into the home directory of the `cleanandgreenphl` user.  All required software such as docker and git has been installed on this vm.
+
+To access the Linux terminal of this vm instance via SSH you can use the 'SSH-in-browser' GCP tool on the web.  Go to Compute Engine -> VM instances and select SSH next to the `backend` instance, then select 'Open in browser window'.
+
+You can also connect to the vm with the terminal ssh client on your pc.  This is recommended for more advanced use cases as the web UI is limited.  To set this up, follow the steps below:
+- In GCP, go to IAM and Admin -> Service Accounts -> Keys and click on the `1065311260334-compute@developer.gserviceaccount.com	` account.
+- Click 'Add key'.  You can only download the service account JSON key file when you create a key so you will have to create a new key.    Select 'JSON' and save the .json file to your local machine.
+- Download and install the [Google Cloud Command Line Interface (CLI)](https://cloud.google.com/sdk/docs/install) for your OS.
+- In your terminal, navigate to the folder with your saved .json file.  Run the command:
+`gcloud auth activate-service-account --key-file=your-key.json`
+- Now you can ssh into the vm with:
+`gcloud compute ssh --zone "us-east1-b" "cleanandgreenphl@backend" --project "clean-and-green-philly"`
+- You will land in the home directory of the `cleanandgreenphl` user.  The project has been cloned to this directory.
+
+The job to regenerate and upload the tiles file and street images to the GCP bucket has been scheduled in `cron` to run weekly on Wednesday at 5 AM.  You can run `crontab -l` to see the job.  Currently it looks like this:
+
+`0 5 * * 3 . /home/cleanandgreenphl/.cagp_env && cd clean-and-green-philly/data && docker compose run vacant-lots-proj && docker compose run streetview`
+
+The specific production environmental variables are stored in `/home/cleanandgreenphl/.cagp_env`.  Some variables in the `data/src/config/config.py` project file have been edited locally for the scheduled run.  Be careful when running this job in this environment because the production web site could be affected.
+
+The message with the diff report will be sent to the `clean-and-green-philly-back-end` Slack channel.
+
+To troubleshoot any errors you can look at the docker logs of the last run container. e.g.:
+`docker logs data-vacant-lots-proj-run-8c5e7639c386 | grep -i error`
+
+
