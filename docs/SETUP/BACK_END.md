@@ -27,7 +27,7 @@ All of your local environmental variables will be passed through to docker-compo
 #### PostgreSQL
 
 Create an environmental variable called `POSTGRES_PASSWORD` and set its value to a new, strong password to use for your local postgres installation in Docker.  After that, add the below variable to configure the full postgres connection string:
-`VACANT_LOTS_DB="postgresql://postgres:${POSTGRES_PASSWORD}@localhost/vacantlotdb"`
+`VACANT_LOTS_DB="postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5433/vacantlotdb"`
 
 ### Docker Build
 
@@ -63,6 +63,8 @@ In the terminal, use the `cd` command to navigate to your repository location, a
 ### PostgreSQL
 
 [PostgreSQL](https://www.postgresql.org/) AKA postgres, pg, psql is an open-source relational database management system.  It is used in this project only by the data load script to stage data and by the data diff process to compare new data with backed up data.  It is not needed by the front-end to run.  We run Postgres with the [Postgis](https://postgis.net/) extension for geospatial data in a Docker container.
+
+We are running postgres on the non-standard port 5433 instead of the default of 5432.  This is so our Docker postgres will not conflict with any native postgres already running on the developer's PC.
 
 To start the postgres Docker container, run:
 `docker compose up -d postgres`.  You can access the psql command line in your container to work with the database with this command: `docker exec -it cagp-postgres psql -U postgres -d vacantlotdb`.  To stop the postgres container run `docker compose down postgres`.
