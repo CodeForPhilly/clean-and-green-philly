@@ -204,6 +204,8 @@ const SinglePropertyDetail = ({
           <ThemeButton
             color="tertiary"
             label={isPropertySavedToLocalStorage ? "Saved" : "Save"}
+            aria-current={undefined}
+            aria-pressed={isPropertySavedToLocalStorage ? "true" : undefined}
             startContent={
               isPropertySavedToLocalStorage ? <Check /> : <BookmarkSimple />
             }
