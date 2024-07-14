@@ -48,7 +48,7 @@ class DiffReport:
         """
         self.diff_tables = self._list_diff_tables()
         self.timestamp_string = timestamp_string
-        self.report: str = "The back-end data has been fully refreshed.  Here is the diff report on " + str(len(self.diff_tables)) + " key tables.\nLegend: table A = new data, table B = old data.\n\n"
+        self.report: str = "The back-end data has been fully refreshed.  Here is the difference report on " + str(len(self.diff_tables)) + " key tables.\nLegend: table A = new data, table B = old data.\n\n"
 
     def run(self):
         """

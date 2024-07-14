@@ -50,6 +50,7 @@ interface PropertyDetailSectionProps {
   featuresInView: MapGeoJSONFeature[];
   display: "detail" | "list";
   loading: boolean;
+  hasLoadingError: boolean;
   selectedProperty: MapGeoJSONFeature | null;
   setSelectedProperty: (property: MapGeoJSONFeature | null) => void;
   setIsStreetViewModalOpen: Dispatch<SetStateAction<boolean>>;
@@ -63,6 +64,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   featuresInView,
   display,
   loading,
+  hasLoadingError,
   selectedProperty,
   setSelectedProperty,
   setIsStreetViewModalOpen,
@@ -143,6 +145,7 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             : "bg-white text-gray-900 rounded-md shadow-none rounded-md content-center"
         }`}
         aria-label={isActive ? `Page ${value}` : `Go to page ${value}`}
+        aria-current={isActive ? "page" : false}
         onPress={() => setPage(value)}
         label={value}
       >
@@ -172,7 +175,16 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
     return featuresInView.slice(start, end);
   }, [page, featuresInView, smallScreenMode]);
 
-  return loading ? (
+  return hasLoadingError ? (
+    <div className="flex flex-col w-full items-center justify-center p-4 mt-24">
+      <div>
+        <p className="body-md">We are having technical issues.</p>
+      </div>
+      <div>
+        <p className="body-md">Please try again later.</p>
+      </div>
+    </div>
+  ) : loading ? (
     <div className="flex-grow h-full">
       {/* Center vertically in screen */}
       <div className="flex w-full justify-center p-4 mt-24">
@@ -229,13 +241,16 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
             </TableBody>
           </Table>
         ) : (
-          items.map((feature, index) => (
-            <PropertyCard
-              feature={feature}
-              key={index}
-              setSelectedProperty={setSelectedProperty}
-            />
-          ))
+          <>
+            <div aria-live="polite" className="sr-only"> {`You are on page ${page}`} </div>
+            {items.map((feature, index) => (
+              <PropertyCard
+                feature={feature}
+                key={index}
+                setSelectedProperty={setSelectedProperty}
+              />
+            ))}
+          </>
         )}
         {featuresInView?.length > 0 && widthRef.current && (
           <div>
@@ -252,6 +267,9 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
                 disableCursorAnimation={true}
               ></Pagination>
             </div>
+            <p className="text-center mt-4">
+              {`${((page - 1) * 6) + 1} to ${page === pages ? featuresInView.length : (page * 6)} of ${featuresInView.length}`}
+            </p>
             <div className="flex w-full justify-center py-4 px-6">
               <p className="body-sm text-gray-500">
                 Note: only the first 100 properties can be viewed in list.
