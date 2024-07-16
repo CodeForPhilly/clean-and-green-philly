@@ -3,13 +3,7 @@ export const Rake = () => (
     <style>
       {`
         .rake-icon {
-          fill: black;
-        }
-
-        @media (prefers-color-scheme: dark) {
-          .rake-icon {
-            fill: white;
-          }
+          fill: CanvasText;
         }
       `}
     </style>
