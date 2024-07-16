@@ -3,7 +3,7 @@ name: PR Checks Backend
 on:
   pull_request:
     branches:
-      - test-backend-workflow
+      - main
     paths:
       - "data/**"
 
