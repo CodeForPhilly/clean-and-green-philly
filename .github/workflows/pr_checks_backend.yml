@@ -31,13 +31,15 @@ jobs:
 
       - name: Run Black Formatter in Docker
         run: |
+          cd data
           docker-compose run --rm formatter
         continue-on-error: true
 
       - name: Run Flake8
         run: |
+          cd data
           pip install flake8
-          flake8 data
+          flake8 .
         continue-on-error: true
 
       - name: Install dependencies and build Docker images
