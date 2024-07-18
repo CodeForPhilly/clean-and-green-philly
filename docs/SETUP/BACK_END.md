@@ -16,7 +16,7 @@ If you plan to contribute to the data wrangling and database management on this 
 
 ### Set Environment Variables
 
-The project needs certain specific and sensitive pieces of information to run. We store these in the user's development environment and not in source control.
+The project requires specific and sensitive information to run, which should be stored in the user's development environment rather than in source control. Here are instructions for setting environment variables locally on your machine or using a `.env` file.
 
 #### Using a .env File
 
@@ -25,32 +25,45 @@ The project needs certain specific and sensitive pieces of information to run. W
 
 ```sh
 POSTGRES_PASSWORD=a-strong-password-here
-VACANT_LOTS_DB=postgresql://postgres:${POSTGRES_PASSWORD}@localhost/vacantlotdb
+VACANT_LOTS_DB=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5433/vacantlotdb
 ```
 
-All local environmental variables will be passed through to docker-compose, so if you have them set up in the `.env` file, you should not need to hard-code them elsewhere.
+All local environment variables will be passed through to docker-compose, so if you have them set up in the `.env` file, you should not need to hard-code them elsewhere.
+
+#### Setting Environment Variables Locally
+
+For Mac and Linux, you can permanently store the environment variables in your command line shell's configuration file, e.g., `~/.bashrc`, `~/.bash_profile`, `~/.zshrc`, or `~/.profile`. Add a line `export VAR_NAME=VALUE` in your file and run `source <file>` to read it in when newly created. Any new shells will automatically have the new environment.
+
+For Windows, you can set environment variables under System -> Advanced or you can download a terminal emulator such as [Git Bash](https://gitforwindows.org/) and follow the instructions for Mac and Linux above. A terminal emulator is recommended.
+
+```sh
+export POSTGRES_PASSWORD=a-strong-password-here
+export VACANT_LOTS_DB=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5433/vacantlotdb
+```
+
+All of your local environment variables will be passed through to docker-compose, so if you have them locally, you should not have to hard-code them.
 
 ### Docker Build
 
 Docker is a platform that allows you to containerize and run applications in isolated environments, making it easier to manage dependencies and ensure consistent deployments. Download the [latest version of Docker Desktop for your operating system](https://www.docker.com/products/docker-desktop/).
 
-We use [docker-compose](https://docs.docker.com/compose/) to manage the backend Docker services. The `data/docker-compose.yaml` file defines the services. The only service that runs perpetually in Docker is `postgres`. The other services are one-time batch jobs to build the data sets.
+We use [docker compose](https://docs.docker.com/compose/) to manage the backend Docker services. The `data/docker compose.yaml` file defines the services. The only service that runs perpetually in Docker is `postgres`. The other services are one-time batch jobs to build the data sets.
 
 1. The first time you set up your backend, or any time either of the two Docker files change, build the Docker services by running:
 
    ```sh
-   docker-compose build
+   docker compose build
    ```
 
 2. When this has finished, also run:
 
    ```sh
-   docker-compose build postgres
+   docker compose build postgres
    ```
 
 3. When both processes have finished, connect to the PG database in the container by running:
    ```sh
-   docker-compose up -d postgres
+   docker compose up -d postgres
    ```
 
 For first-time runs, set `FORCE_RELOAD=True` in `config.py` and optionally `log_level: int = logging.DEBUG` to get more verbose output.
@@ -60,22 +73,22 @@ All Docker commands should be run from the `data/` directory. There is one main 
 #### Windows
 
 1. Make sure Docker is running by opening the Docker Desktop app.
-2. Open the command prompt. Navigate to the location of the `clean-and-green-philly` repository. Run `cd data` and then `docker-compose run vacant-lots-proj`.
-3. When the script is done running, you’ll get a notification. When you’re done, to shut off the Docker container (which uses memory), run `docker-compose down`.
+2. Open the command prompt. Navigate to the location of the `clean-and-green-philly` repository. Run `cd data` and then `docker compose run vacant-lots-proj`.
+3. When the script is done running, you’ll get a notification. When you’re done, to shut off the Docker container (which uses memory), run `docker compose down`.
 
 #### Linux
 
 1. In the terminal, navigate to your repository location using `cd path/to/clean-and-green-philly`. Then run `cd data` to move into the `data` directory.
-2. Run `docker-compose run vacant-lots-proj`. Enter your password if requested. If you run into an error message related to "KEY_ID" or something similar, you may have to do the following:
-   - Hard-code your `VACANT_LOTS_DB` variable in `docker-compose.yml`.
+2. Run `docker compose run vacant-lots-proj`. Enter your password if requested. If you run into an error message related to "KEY_ID" or something similar, you may have to do the following:
+   - Hard-code your `VACANT_LOTS_DB` variable in `docker compose.yml`.
 
 The backend also works on WSL Ubuntu running Docker for Linux on Windows 10.
 
-3. When you're finished, and you want to shut down the Docker container, run `docker-compose down`.
+3. When you're finished, and you want to shut down the Docker container, run `docker compose down`.
 
 #### macOS
 
-In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker-compose run vacant-lots-proj`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker-compose down`.
+In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker compose run vacant-lots-proj`. This command starts Docker Compose and sets up your environment as defined in your `docker compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker compose down`.
 
 ### PostgreSQL
 
@@ -121,14 +134,14 @@ Changes to our codebase should always address an [issue](https://github.com/Code
 Format all python files by running:
 
 ```sh
-docker-compose run formatter
+docker compose run formatter
 ```
 
 #### Google Cloud (GCP)
 
 The map data is converted to the [pmtiles](https://docs.protomaps.com/pmtiles/) format and served from Google Cloud. For access to production credentials, contact the project lead.
 
-You can run the tile build locally with `docker-compose run vacant-lots-proj` to create a tile file and upload it to your own GCP bucket. First, create your own GCP account using their free trial. You will need to create the following assets in your GCP account and configure them in the environment variables in the `.env` file:
+You can run the tile build locally with `docker compose run vacant-lots-proj` to create a tile file and upload it to your own GCP bucket. First, create your own GCP account using their free trial. You will need to create the following assets in your GCP account and configure them in the environment variables in the `.env` file:
 
 1. Under APIs and Services -> Credentials, create an API key and put that in the CLEAN_GREEN_GOOGLE_KEY variable.
 2. Under APIs and Services -> Credentials, create a service account. After you create the service account you will download the service account private key file named like encoded-keyword-ddd-xxx.json. Copy that to `~/.config/gcloud/application_default_credentials.json`. This path is specified by default in the volumes section of the docker compose file.
@@ -138,7 +151,7 @@ Your `/data/.env` file should now look like this:
 
 ```sh
 POSTGRES_PASSWORD=a-strong-password-here
-VACANT_LOTS_DB=postgresql://postgres:${POSTGRES_PASSWORD}@localhost/vacantlotdb
+VACANT_LOTS_DB=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5433/vacantlotdb
 CLEAN_GREEN_GOOGLE_KEY=your-api-key-here
 GOOGLE_CLOUD_BUCKET_NAME=your-bucket-name-here
 ```
@@ -150,7 +163,7 @@ The python script loads the tiles to Google Cloud as `vacant_properties_tiles_st
 To update streetview images, after running the full data script run:
 
 ```sh
-docker-compose run streetview
+docker compose run streetview
 ```
 
 The script should only load new images that aren't in the bucket already (new properties added to list).
