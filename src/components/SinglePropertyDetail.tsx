@@ -204,6 +204,8 @@ const SinglePropertyDetail = ({
           <ThemeButton
             color="tertiary"
             label={isPropertySavedToLocalStorage ? "Saved" : "Save"}
+            aria-current={undefined}
+            aria-pressed={isPropertySavedToLocalStorage ? "true" : undefined}
             startContent={
               isPropertySavedToLocalStorage ? <Check /> : <BookmarkSimple />
             }
@@ -264,7 +266,7 @@ const SinglePropertyDetail = ({
               aria-label="Open full screen street view map"
               id="outside-iframe-element"
             >
-              <ArrowsOut color="#3D3D3D" size={24} />
+              <ArrowsOut color="ButtonText" size={24} />
             </button>
           </Tooltip>
         </div>

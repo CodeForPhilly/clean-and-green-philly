@@ -5,13 +5,24 @@
     "sourceType": "module",
     "project": "./tsconfig.json"
   },
-  "extends": ["next/core-web-vitals", "plugin:react/recommended", "prettier"],
+  "extends": [
+    "next/core-web-vitals",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier"
+  ],
   "rules": {
     "react/react-in-jsx-scope": "off",
     "react/prop-types": "off",
-    "custom-rules/no-text-size-class": "warn"
+    "custom-rules/no-text-size-class": "warn",
+    "prettier/prettier": "error"
   },
-  "plugins": ["react", "eslint-plugin-custom-rules"],
+  "plugins": [
+    "react",
+    "eslint-plugin-custom-rules",
+    "@typescript-eslint",
+    "prettier"
+  ],
   "settings": {
     "react": {
       "version": "detect"

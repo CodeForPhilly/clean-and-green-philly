@@ -80,7 +80,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
                 ? savedPropertyCount
                 : featureCount.toLocaleString()}{" "}
             </span>
-            Properties <span className="max-xl:hidden"> in View </span>
+            <span className="sm:hidden lg:inline"> Total </span> Properties 
           </h1>
         </div>
         {/* Right-aligned content: Buttons */}

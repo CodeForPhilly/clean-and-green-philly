@@ -7,11 +7,7 @@ const defaultTitle =
   "Clean & Green Philly - Helping communities clean vacant properties";
 const description =
   "The ultimate toolkit to help community groups clean and green vacant properties to reduce gun violence in Philadelphia.";
-const siteUrl = new URL("https://staging.cleanandgreenphilly.org/");
-
-/* REPLACE WITH URL BELOW BEFORE PUSHING TO PRODUCTION
 const siteUrl = new URL("https://cleanandgreenphilly.org/");
-*/
 
 export const metadata: Metadata = {
   title: {
@@ -56,9 +52,7 @@ export default function RootLayout({
           Skip to main content
         </a>
         <CookieProviderWrapper>
-          <FilterProviderWrapper>
-            {children}
-          </FilterProviderWrapper>
+          <FilterProviderWrapper>{children}</FilterProviderWrapper>
         </CookieProviderWrapper>
       </body>
     </html>
