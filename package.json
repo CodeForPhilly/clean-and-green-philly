@@ -13,7 +13,7 @@
     "@mapbox/mapbox-gl-geocoder": "^5.0.1",
     "@nextui-org/react": "^2.1.10",
     "@phosphor-icons/react": "^2.0.15",
-    "@turf/centroid": "^7.0.0-alpha.114",
+    "@turf/centroid": "^7.0.0",
     "autoprefixer": "10.4.15",
     "clsx": "^2.1.1",
     "framer-motion": "^10.16.4",
