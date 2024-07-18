@@ -15,7 +15,7 @@
     "@phosphor-icons/react": "^2.0.15",
     "@turf/centroid": "^7.0.0-alpha.114",
     "autoprefixer": "10.4.15",
-    "clsx": "^2.1.0",
+    "clsx": "^2.1.1",
     "framer-motion": "^10.16.4",
     "lodash": "^4.17.21",
     "mapbox-gl": "^3.2.0",
