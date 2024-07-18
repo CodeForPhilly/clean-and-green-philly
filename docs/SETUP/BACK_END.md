@@ -55,13 +55,13 @@ We use [docker compose](https://docs.docker.com/compose/) to manage the backend 
    docker compose build
    ```
 
-2. When this has finished, also run:
+   This should correctly build both containers. However, if it does not, you can explicitly build the postgres container with the following:
 
    ```sh
    docker compose build postgres
    ```
 
-3. When both processes have finished, connect to the PG database in the container by running:
+2. When both containers are built, connect to the PG database in the container by running:
    ```sh
    docker compose up -d postgres
    ```
