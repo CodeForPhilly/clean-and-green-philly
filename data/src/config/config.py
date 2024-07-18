@@ -33,9 +33,16 @@ smtp_server: str = "localhost"
 tiles_file_id_prefix: str = "vacant_properties_tiles"
 """ the prefix of the name of the tiles file generated and saved to GCP """
 
+write_production_tiles_file: bool = False
+""" Whether to write the main vacant_properties_tiles.pmtiles as well as the staging vacant_properties_tiles_staging.pmtiles. 
+BE CAREFUL, if true this writes the production file.
+"""
 tile_file_backup_directory: str = "backup"
 """ The name of the directory in GCP to store timestamped backups of the tiles file """
 
+min_tiles_file_size_in_bytes: int = 5 * 1024 * 1024
+""" The minimum file size in bytes of the final generated pm tiles file.  If the file is not at least this size, 
+don't upload to the GCP bucket as the file may be corrupted, e.g. a source vacant properties dataset was incomplete with not enough features."""
 
 def is_docker() -> bool:
     """

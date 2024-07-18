@@ -1,13 +1,21 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "python.analysis.extraPaths": ["${workspaceFolder}/data/src","${workspaceFolder}/data/src/awkde"],
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/data/src",
+    "${workspaceFolder}/data/src/awkde"
+  ],
   "python.testing.pytestEnabled": true,
   "python.testing.cwd": "${workspaceFolder}/data/src",
   "[python]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
       "source.organizeImports": "explicit"
-    }
-  }
+    },
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+  "python.formatting.provider": "black",
+  "python.linting.flake8Enabled": true,
+  "python.linting.enabled": true,
+  "python.linting.flake8Args": ["--max-line-length=88"]
 }
