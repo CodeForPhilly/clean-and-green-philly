@@ -46,7 +46,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-custom-rules": "file:./eslint-plugin-custom-rules",
-    "postcss-nesting": "^12.1.1",
+    "postcss-nesting": "^12.1.5",
     "postcss-preset-env": "^9.5.6"
   }
 }
