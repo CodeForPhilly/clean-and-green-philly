@@ -8,7 +8,7 @@ This document will outline guidelines for contributing to the Clean & Green Phil
 
 Before contributing, we encourage you to read our [LICENSE](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/LICENSE) and [README](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/README.md) files. If you have any questions not answered by the content of this repository, please contact us via [our Slack channel](https://codeforphilly.slack.com/archives/C05H9QBMP96).
 
-### Quickstart Checklist
+## Quickstart Checklist
 
 To ensure smooth contributions to the Clean & Green Philly project, please follow these steps:
 
@@ -51,37 +51,6 @@ If you're unable to complete the issue in a timely manner (a week or two), pleas
 ### Local setup
 
 For info on how to get the codebase setup, see the [SETUP](/docs/SETUP) folder, which contains instructions for setting up the front end, back end, and full stack, depending on your interest. If you have questions about the process, please ask in the [Slack channel](https://codeforphilly.slack.com/archives/C05H9QBMP96).
-
-## Quickstart
-
-To maintain repo organization and protection, merges to main are not allowed. All changes must be made through pull requests to the `staging` branch. Follow these steps, [example PR](https://github.com/CodeForPhilly/clean-and-green-philly/pull/617) for reference:
-
-1. Have an assigned issue (e.g. [#646](https://github.com/CodeForPhilly/clean-and-green-philly/issues/646))
-1. Ensure you're up to date with the `staging` branch
-1. Create a new branch
-   - Name it `<github-username>`/`<issue-number>`-`<kebab-case-description>`.
-   - Example: `vimusds/1069-fix-territory-on-mobile`.
-1. Push changes and open PR: Push your commits and open a PR with the template filled in.
-   - Provide clear instructions on how to test/view your changes
-   - Tag the issues you're addressing using `#<number>` in the "Does this close any currently open issues?" section.
-1. Ensure your PR passes all checks. If not, resolve the errors and try again.
-1. Tag reviewers: Tag a code approver (see [CODEOWNERS](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/.github/CODEOWNERS)) for review.
-
-Once approved and all checks pass, your code will be built in Vercel if it's a frontend change and merged into staging by a reviewer. Now you just need to close your issue!
-
-### Closing your Issue
-
-To close the issue you worked on, add a comment to the issue tagging the appropriate reviewer(s).
-
-- Front-End Issues: Tag @paulhchoi and @thansidwell. If it involves the map, also tag @brandonfcohen1.
-- Back-End Issues: Tag @brandonfcohen1.
-
-🎉 Congrats, you finished your contribution!
-
-### What's next?
-
-- Design review: The design team will review and eventually merge it into main for deployment.
-- Deploy to prod: A Clean and Green Philly team member will deploy your changes to the production site.
 
 ## Open an Issue
 
