@@ -7,8 +7,10 @@ updates:
     target-branch: 'staging'
     commit-message:
       prefix: 'deps'
+    open-pull-requests-limit: 10
     groups:
       all-actions:
+        applies-to: version-updates
         patterns:
           - '*'
 
@@ -19,8 +21,10 @@ updates:
     target-branch: 'staging'
     commit-message:
       prefix: 'deps'
+    open-pull-requests-limit: 10
     groups:
       all-npm:
+        applies-to: version-updates
         patterns:
           - '*'
 
@@ -31,7 +35,9 @@ updates:
     target-branch: 'staging'
     commit-message:
       prefix: 'deps'
+    open-pull-requests-limit: 10
     groups:
       all-pip:
+        applies-to: version-updates
         patterns:
           - '*'
