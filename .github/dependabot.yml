@@ -4,7 +4,7 @@ updates:
     directory: '/'
     schedule:
       interval: 'daily'
-    target-branch: 'dependabot-testing' # Change target branch for testing
+    target-branch: 'staging'
     commit-message:
       prefix: 'deps'
     groups:
@@ -16,7 +16,7 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-    target-branch: 'dependabot-testing' # Change target branch for testing
+    target-branch: 'staging'
     commit-message:
       prefix: 'deps'
     groups:
@@ -28,7 +28,7 @@ updates:
     directory: '/data/src'
     schedule:
       interval: 'weekly'
-    target-branch: 'dependabot-testing' # Change target branch for testing
+    target-branch: 'staging'
     commit-message:
       prefix: 'deps'
     groups:
