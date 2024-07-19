@@ -20,10 +20,10 @@ export default function VPATPage() {
         initiatives.
       </p>
       <p className="mb-1">
-        <strong>Contact Information:</strong>{" "}
+        <strong>Contact Information:</strong>{' '}
         <ul className="list-disc ml-8 my-2">
           <li>
-            {" "}
+            {' '}
             <a
               href="mailto:cleanandgreenphl@gmail.com"
               className="underline"
@@ -58,7 +58,7 @@ export default function VPATPage() {
         Applicable Standards/Guidelines:
       </p>
       <p>
-        {" "}
+        {' '}
         This report covers the degree of conformance for the following
         accessibility standard/guidelines:
       </p>
@@ -213,7 +213,7 @@ export default function VPATPage() {
       <p className="italic">
         Note: When reporting on conformance with the WCAG 2.x Success Criteria,
         they are scoped for full pages, complete processes, and
-        accessibility-supported ways of using technology as documented in the{" "}
+        accessibility-supported ways of using technology as documented in the{' '}
         <a
           href="https://www.w3.org/TR/WCAG20/#conformance-reqs"
           className="underline"
@@ -260,7 +260,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.1.1 Non-text Content</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <ul className="list-disc ml-8">
@@ -272,7 +272,7 @@ export default function VPATPage() {
             <td className="border px-4 py-2 w-1/3">Partially supports</td>
             <td className="border px-4 py-2 w-1/3">
               The close button found on Property Filter pill shapes does not
-              have an accessible name.{" "}
+              have an accessible name.{' '}
             </td>
           </tr>
           <tr>
@@ -284,7 +284,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.2.1 Audio-only and Video-only (Prerecorded)</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -296,7 +296,7 @@ export default function VPATPage() {
             </td>
             <td className="border px-4 py-2 w-1/3">Not Applicable</td>
             <td className="border px-4 py-2 w-1/3">
-              There are currently no audio or video media in the website{" "}
+              There are currently no audio or video media in the website{' '}
             </td>
           </tr>
           <tr>
@@ -308,7 +308,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.2.2 Captions (Prerecorded)</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -320,7 +320,7 @@ export default function VPATPage() {
             </td>
             <td className="border px-4 py-2 w-1/3">Not Applicable</td>
             <td className="border px-4 py-2 w-1/3">
-              There are currently no audio or video media in the website{" "}
+              There are currently no audio or video media in the website{' '}
             </td>
           </tr>
           <tr>
@@ -334,7 +334,7 @@ export default function VPATPage() {
                 <strong>
                   1.2.3 Audio Description or Media Alternative (Prerecorded)
                 </strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -346,7 +346,7 @@ export default function VPATPage() {
             </td>
             <td className="border px-4 py-2 w-1/3">Not Applicable</td>
             <td className="border px-4 py-2 w-1/3">
-              There are currently no audio or video media in the website{" "}
+              There are currently no audio or video media in the website{' '}
             </td>
           </tr>
           <tr>
@@ -358,7 +358,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.3.1 Info and Relationships</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -371,7 +371,7 @@ export default function VPATPage() {
             <td className="border px-4 py-2 w-1/3">Partially Supports</td>
             <td className="border px-4 py-2 w-1/3">
               Some elements found in the Find Properties page, such as the
-              filters, list box, & toggle buttons have known issues.{" "}
+              filters, list box, & toggle buttons have known issues.{' '}
             </td>
           </tr>
           <tr>
@@ -383,7 +383,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.3.2 Meaningful Sequence</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -408,7 +408,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.3.3 Sensory Characteristics</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -431,7 +431,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.4.1 Use of Color</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -459,7 +459,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.4.2 Audio Control</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -485,7 +485,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.1.1 Keyboard</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -514,7 +514,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.1.2 No Keyboard Trap</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -538,7 +538,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.1.4 Character Key Shortcuts</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A 2.1 and 2.2)
               <br /> Revised Section 508 – Does not apply
             </td>
@@ -557,7 +557,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.2.1 Timing Adjustable</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -582,7 +582,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.2.2 Pause, Stop, Hide</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -608,7 +608,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.3.1 Three Flashes or Below Threshold</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -635,7 +635,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.4.1 Bypass Blocks</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -662,7 +662,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.4.2 Page Titled</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -687,7 +687,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.4.3 Focus Order</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -715,7 +715,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.4.4 Link Purpose (In Context)</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -740,7 +740,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.5.1 Pointer Gestures</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A 2.1 and 2.2)
               <br />
               Revised Section 508 – Does not apply
@@ -758,7 +758,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.5.2 Pointer Cancellation</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A 2.1 and 2.2) <br />
               Also applies to:
               <br /> Revised Section 508 – Does not apply
@@ -776,7 +776,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.5.3 Label in Name</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A 2.1 and 2.2) <br />
               Also applies to:
               <br /> Revised Section 508 – Does not apply
@@ -794,7 +794,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>2.5.4 Motion Actuation</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A)
               <br /> Revised Section 508 – Does not apply
             </td>
@@ -811,7 +811,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>3.1.1 Language of Page</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A)
               <br />
               Also applies to:
@@ -837,7 +837,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>3.2.1 On Focus</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A)
               <br />
               Also applies to:
@@ -863,7 +863,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>3.2.2 On Input</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A)
               <br />
               Also applies to:
@@ -889,7 +889,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>3.2.6 Consistent Help</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A 2.2 only)
               <br /> Revised Section 508 – Does not apply
             </td>
@@ -906,7 +906,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>3.3.1 Error Identification</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A)
               <br />
               Revised Section 508
@@ -933,7 +933,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>3.3.2 Labels or Instructions</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A) <br />
               Also applies to:
               <br />
@@ -959,7 +959,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>3.3.7 Redundant Entry</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A 2.2 only)
               <br />
               Revised Section 508 – Does not apply
@@ -977,7 +977,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>4.1.1 Parsing</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A)
               <br />
               Applies to:
@@ -1005,7 +1005,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>4.1.2 Name, Role, Value</strong>
-              </a>{" "}
+              </a>{' '}
               (Level A)
               <br />
               Also applies to:
@@ -1062,7 +1062,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.2.4 Captions (Live)</strong>
-              </a>{" "}
+              </a>{' '}
               (Level AA) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -1074,7 +1074,7 @@ export default function VPATPage() {
             </td>
             <td className="border px-4 py-2 w-1/3">Not applicable</td>
             <td className="border px-4 py-2 w-1/3">
-              There are currently no audio or video media in the website{" "}
+              There are currently no audio or video media in the website{' '}
             </td>
           </tr>
 
@@ -1087,7 +1087,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.2.5 Audio Description (Prerecorded)</strong>
-              </a>{" "}
+              </a>{' '}
               (Level AA) <br />
               Also applies to:
               <br /> Revised Section 508
@@ -1099,7 +1099,7 @@ export default function VPATPage() {
             </td>
             <td className="border px-4 py-2 w-1/3">Not applicable</td>
             <td className="border px-4 py-2 w-1/3">
-              There are currently no audio or video media in the website{" "}
+              There are currently no audio or video media in the website{' '}
             </td>
           </tr>
 
@@ -1112,7 +1112,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.3.4 Orientation</strong>
-              </a>{" "}
+              </a>{' '}
               (Level AA 2.1 and 2.2) <br />
               Also applies to:
               <br /> Revised Section 508 – Does not apply
@@ -1130,7 +1130,7 @@ export default function VPATPage() {
                 rel="noopener noreferrer"
               >
                 <strong>1.3.5 Identify Input Purpose</strong>
-              </a>{" "}
+              </a>{' '}
               (Level AA 2.1 and 2.2) <br />
               Also applies to:
               <br /> Revised Section 508 – Does not apply
@@ -1149,7 +1149,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>1.4.3 Contrast (Minimum)</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA) <br />
             Also applies to:
             <br /> Revised Section 508
@@ -1178,7 +1178,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>1.4.4 Resize text</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA) <br />
             Also applies to:
             <br /> Revised Section 508
@@ -1203,7 +1203,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>1.4.5 Images of Text</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA) <br />
             Also applies to:
             <br /> Revised Section 508
@@ -1230,7 +1230,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>1.4.10 Reflow</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA 2.1 and 2.2) <br />
             Also applies to:
             <br /> Revised Section 508 – Does not apply
@@ -1248,7 +1248,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>1.4.11 Non-text Contrast</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA 2.1 and 2.2)
             <br /> Revised Section 508 – Does not apply
           </td>
@@ -1270,7 +1270,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>1.4.12 Text Spacing</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA 2.1 and 2.2)
             <br />
             Also applies to:
@@ -1289,7 +1289,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>1.4.13 Content on Hover or Focus</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA 2.1 and 2.2)
             <br /> Revised Section 508 – Does not apply
           </td>
@@ -1306,7 +1306,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>2.4.5 Multiple Ways</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA)
             <br /> Revised Section 508
             <ul className="list-disc ml-8">
@@ -1332,7 +1332,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>2.4.5 Multiple Ways</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA)
             <br /> Revised Section 508
             <ul className="list-disc ml-8">
@@ -1358,7 +1358,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>2.4.6 Headings and Labels</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA) <br />
             Also applies to:
             <br /> Revised Section 508
@@ -1383,7 +1383,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>2.4.7 Focus Visible</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA) <br />
             Also applies to:
             <br /> Revised Section 508
@@ -1408,7 +1408,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>2.4.11 Focus Not Obscured (Minimum)</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA 2.2 only)
             <br /> Revised Section 508 – Does not apply
           </td>
@@ -1425,7 +1425,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>2.5.7 Dragging Movements</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA 2.2 only)
             <br /> Revised Section 508 – Does not apply
           </td>
@@ -1444,7 +1444,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>2.5.8 Target Size (Minimum)</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA 2.2 only)
             <br /> Revised Section 508 – Does not apply
           </td>
@@ -1461,7 +1461,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>3.1.2 Language of Parts</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA) <br />
             Also applies to:
             <br /> Revised Section 508
@@ -1486,7 +1486,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>3.2.3 Consistent Navigation</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA) <br />
             Also applies to:
             <br /> Revised Section 508
@@ -1513,7 +1513,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>3.2.4 Consistent Identification</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA) <br />
             Also applies to:
             <br /> Revised Section 508
@@ -1540,7 +1540,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>3.3.3 Error Suggestion</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA)
             <br /> Revised Section 508
             <ul className="list-disc ml-8">
@@ -1564,7 +1564,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>3.3.4 Error Prevention (Legal, Financial, Data)</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA)
             <br /> Revised Section 508
             <ul className="list-disc ml-8">
@@ -1588,7 +1588,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>3.3.8 Accessible Authentication (Minimum)</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA 2.2 only)
             <br /> Revised Section 508 – Does not apply
           </td>
@@ -1605,7 +1605,7 @@ export default function VPATPage() {
               rel="noopener noreferrer"
             >
               <strong>4.1.3 Status Messages</strong>
-            </a>{" "}
+            </a>{' '}
             (Level AA 2.1 and 2.2)
             <br /> Revised Section 508 – Does not apply
           </td>
@@ -1631,16 +1631,16 @@ export default function VPATPage() {
         className="heading-xl font-semibold my-2"
         id="functional-performance-criteria"
       >
-        Chapter 3:{" "}
+        Chapter 3:{' '}
         <a
           href="https://www.access-board.gov/ict/#chapter-3-functional-performance-criteria"
           className="underline"
           target="_blank"
           rel="noopener noreferrer"
         >
-          {" "}
+          {' '}
           Functional Performance Criteria
-        </a>{" "}
+        </a>{' '}
         (FPC)
       </h3>
       <p className="mb-1">
@@ -1742,7 +1742,7 @@ export default function VPATPage() {
       </table>
 
       <h3 className="heading-xl font-semibold my-2">
-        Section 508 Chapter 4:{" "}
+        Section 508 Chapter 4:{' '}
         <a
           href="https://www.access-board.gov/ict/#chapter-4-hardware"
           className="underline"
@@ -1757,8 +1757,8 @@ export default function VPATPage() {
       </p>
 
       <h3 className="heading-xl font-semibold my-2" id="software">
-        {" "}
-        Chapter 5:{" "}
+        {' '}
+        Chapter 5:{' '}
         <a
           href="https://www.access-board.gov/ict/#chapter-5-software"
           className="underline"
@@ -1790,7 +1790,7 @@ export default function VPATPage() {
               501.1 Scope – Incorporation of WCAG 2.2 AA
             </td>
             <td className="border px-4 py-2 w-1/3">
-              See{" "}
+              See{' '}
               <a
                 href="#WCAG-2.2"
                 className="underline"
@@ -1813,7 +1813,7 @@ export default function VPATPage() {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                {" "}
+                {' '}
                 502 Interoperability with Assistive Technology
               </a>
             </td>
@@ -2074,7 +2074,7 @@ export default function VPATPage() {
       </table>
 
       <h3 className="heading-xl font-semibold my-2" id="support-doc-services">
-        Chapter 6:{" "}
+        Chapter 6:{' '}
         <a
           className="underline"
           href="https://www.access-board.gov/ict/#chapter-6-support-documentation-and-services"
@@ -2138,7 +2138,7 @@ export default function VPATPage() {
               602.3 Electronic Support Documentation
             </td>
             <td className="border px-4 py-2 w-1/3">
-              See{" "}
+              See{' '}
               <a className="underline" href="#WCAG-2.2">
                 WCAG 2.2 section
               </a>

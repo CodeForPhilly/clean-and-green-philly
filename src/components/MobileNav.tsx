@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   Link,
@@ -7,11 +7,11 @@ import {
   NavbarContent,
   NavbarMenu,
   NavbarMenuToggle,
-} from "@nextui-org/react";
-import { PiBinoculars, PiKey, PiTree, PiInfo, PiList } from "react-icons/pi";
-import Image from "next/image";
-import React, { FC } from "react";
-import IconLink from "./IconLink";
+} from '@nextui-org/react';
+import { PiBinoculars, PiKey, PiTree, PiInfo, PiList } from 'react-icons/pi';
+import Image from 'next/image';
+import React, { FC } from 'react';
+import IconLink from './IconLink';
 const MobileNav: FC = () => {
   const [isMenuOpen, setIsMenuOpen] = React.useState(false);
 
@@ -36,7 +36,7 @@ const MobileNav: FC = () => {
 
         <NavbarMenuToggle
           as="nav"
-          aria-label={isMenuOpen ? "Close menu" : "Open menu"}
+          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           className="min-[850px]:hidden flex-end w-fit"
           icon={
             <>
@@ -44,7 +44,7 @@ const MobileNav: FC = () => {
             </>
           }
         >
-          {" "}
+          {' '}
         </NavbarMenuToggle>
       </NavbarContent>
 

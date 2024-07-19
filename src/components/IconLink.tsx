@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { Button, NavbarItem } from "@nextui-org/react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
+import { Button, NavbarItem } from '@nextui-org/react';
+import { usePathname } from 'next/navigation';
+import Link from 'next/link';
 
 interface IconLinkProps {
   icon: React.ReactElement;
@@ -15,9 +15,9 @@ function IconLink({ icon, text, href }: IconLinkProps) {
   return (
     <NavbarItem
       isActive={pathname === href}
-      aria-current={pathname === href ? "page" : undefined}
+      aria-current={pathname === href ? 'page' : undefined}
       key={text}
-      className={pathname === href ? "active-state-nav" : ""}
+      className={pathname === href ? 'active-state-nav' : ''}
     >
       <Button
         as={Link}
@@ -27,7 +27,7 @@ function IconLink({ icon, text, href }: IconLinkProps) {
         // *only include if there will be no text link present* aria-label={text}
         startContent={<div className="linkIcon">{icon}</div>}
         className={
-          pathname === href ? "active-state-nav" : "iconLink bg-color-none"
+          pathname === href ? 'active-state-nav' : 'iconLink bg-color-none'
         }
         // className="flex text-gray-900 items-center active:bg-[#E9FFE5] active:text-green-700 focus:text-green-700 focus:bg-[#E9FFE5] hover:gray-100 bg-color-none hover:bg-gray-10"
       >

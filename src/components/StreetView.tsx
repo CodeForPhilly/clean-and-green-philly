@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 interface StreetViewProps {
   lat: string;
@@ -37,7 +37,7 @@ const StreetView: React.FC<StreetViewProps> = ({
     fov: string
   ) => {
     const base_url =
-      "https://www.google.com/maps/embed?pb=!4v[TIMESTAMP]!6m8!1m7![PANO_ID]";
+      'https://www.google.com/maps/embed?pb=!4v[TIMESTAMP]!6m8!1m7![PANO_ID]';
     const orientation = `!2m2!1d${lat}!2d${lng}!3f${yaw}!4f${pitch}!5f${fov}`;
     return base_url + orientation;
   };

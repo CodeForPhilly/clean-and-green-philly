@@ -1,26 +1,26 @@
-import Image from "next/image";
-import beforeAfter from "@/images/beforeAfter.png";
-import { ArrowUpRight } from "@phosphor-icons/react";
-import { ThemeButtonLink } from "@/components/ThemeButton";
-import cleanup from "@/images/lot-cleanup.png";
-import plant from "@/images/plant-trees.jpeg";
-import maintain from "@/images/maintain.jpeg";
-import fence from "@/images/fence.png";
-import pollinators from "@/images/flowers.png";
-import garden from "@/images/community-garden.jpeg";
-import meadow from "@/images/meadow.jpeg";
-import bikeracks from "@/images/bike-rack.jpeg";
-import stormwater from "@/images/stormwater.png";
-import restaurant from "@/images/restaurant.jpeg";
-import housing from "@/images/housing.png";
-import park from "@/images/install-a-park.jpeg";
-import ContentCard from "../../../components/ContentCard";
+import Image from 'next/image';
+import beforeAfter from '@/images/beforeAfter.png';
+import { ArrowUpRight } from '@phosphor-icons/react';
+import { ThemeButtonLink } from '@/components/ThemeButton';
+import cleanup from '@/images/lot-cleanup.png';
+import plant from '@/images/plant-trees.jpeg';
+import maintain from '@/images/maintain.jpeg';
+import fence from '@/images/fence.png';
+import pollinators from '@/images/flowers.png';
+import garden from '@/images/community-garden.jpeg';
+import meadow from '@/images/meadow.jpeg';
+import bikeracks from '@/images/bike-rack.jpeg';
+import stormwater from '@/images/stormwater.png';
+import restaurant from '@/images/restaurant.jpeg';
+import housing from '@/images/housing.png';
+import park from '@/images/install-a-park.jpeg';
+import ContentCard from '../../../components/ContentCard';
 
 export default function TransformPropertyPage() {
   const parkInATruckUrl =
-    "https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html";
-  const jumpStartUrl = "https://www.jumpstartphilly.com/";
-  const localRepresentativesUrl = "https://phlcouncil.com/council-members/";
+    'https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html';
+  const jumpStartUrl = 'https://www.jumpstartphilly.com/';
+  const localRepresentativesUrl = 'https://phlcouncil.com/council-members/';
 
   return (
     <>
@@ -34,7 +34,7 @@ export default function TransformPropertyPage() {
         <Image
           src={beforeAfter}
           alt={
-            "A Philadelphia lot before a clean up and the same lot, filled with trees and greenery after a clean up."
+            'A Philadelphia lot before a clean up and the same lot, filled with trees and greenery after a clean up.'
           }
           placeholder="blur"
           className="w-full overflow-hidden rounded-[20px] aspect-video md:aspect-auto object-cover object-center"
@@ -58,18 +58,18 @@ export default function TransformPropertyPage() {
           body="Organizing a community clean-up or hiring a waste removal service to clean a property enhances its appearance, improves residents' mental health, and eliminates potential hazards."
           details={[
             {
-              label: "Cost:",
-              data: "Low",
+              label: 'Cost:',
+              data: 'Low',
             },
             {
-              label: "Upkeep:",
-              data: "None",
+              label: 'Upkeep:',
+              data: 'None',
             },
           ]}
           links={[
             {
-              url: "https://nkcdc.org/community/cleaning-greening/community-cleanup-resources/",
-              text: "Resources on NKCDC",
+              url: 'https://nkcdc.org/community/cleaning-greening/community-cleanup-resources/',
+              text: 'Resources on NKCDC',
             },
           ]}
         />
@@ -81,18 +81,18 @@ export default function TransformPropertyPage() {
           body="Planting trees not only adds beauty and shade to the property but also contributes to urban cooling, cleaner air, and habitat for wildlife."
           details={[
             {
-              label: "Cost:",
-              data: "Low",
+              label: 'Cost:',
+              data: 'Low',
             },
             {
-              label: "Upkeep:",
-              data: "Low",
+              label: 'Upkeep:',
+              data: 'Low',
             },
           ]}
           links={[
             {
-              url: "https://treephilly.org/yard-trees-2/",
-              text: "Help on Tree Philly",
+              url: 'https://treephilly.org/yard-trees-2/',
+              text: 'Help on Tree Philly',
             },
           ]}
         />
@@ -104,12 +104,12 @@ export default function TransformPropertyPage() {
           body="Mowing grass, raking leaves, and clearing trash regularly ensures the lot remains clean, safe, and attractive, promoting community pride and deterring illegal activities."
           details={[
             {
-              label: "Cost:",
-              data: "Low",
+              label: 'Cost:',
+              data: 'Low',
             },
             {
-              label: "Upkeep:",
-              data: "Low",
+              label: 'Upkeep:',
+              data: 'Low',
             },
           ]}
         />
@@ -121,12 +121,12 @@ export default function TransformPropertyPage() {
           body="Hiring a contractor to install low fences defines boundaries, enhances safety, and improves aesthetics while allowing for easy access and integration with the neighborhood."
           details={[
             {
-              label: "Cost:",
-              data: "Medium",
+              label: 'Cost:',
+              data: 'Medium',
             },
             {
-              label: "Upkeep:",
-              data: "Low",
+              label: 'Upkeep:',
+              data: 'Low',
             },
           ]}
         />
@@ -141,7 +141,7 @@ export default function TransformPropertyPage() {
         not for a playground. Likewise, you wouldn&rsquo;t want to start a
         community garden in a vacant lot that doesn&rsquo;t get any sun. To
         better understand what your options are for a specific property, try
-        filling out the{" "}
+        filling out the{' '}
         <a
           target="_blank"
           rel="noopener noreferrer nofollow"
@@ -149,7 +149,7 @@ export default function TransformPropertyPage() {
           className="link"
         >
           Detroit Future City vacant property quiz
-        </a>{" "}
+        </a>{' '}
         (the recommendations work for Philadelphia, too). It&rsquo;s meant to
         help users understand the best options for their specific properties.
         Also, remember to think about other constraints, like how much funding
@@ -172,8 +172,8 @@ export default function TransformPropertyPage() {
           body="Creating a pollinator garden promotes biodiversity and beautifies the lot with colorful flowers."
           links={[
             {
-              url: "https://phsonline.org/uploads/attachments/ckacmpaca1evpj7rasp7ty5aq-pollinator-gardens-infosheet.pdf",
-              text: "Help from PHS",
+              url: 'https://phsonline.org/uploads/attachments/ckacmpaca1evpj7rasp7ty5aq-pollinator-gardens-infosheet.pdf',
+              text: 'Help from PHS',
             },
           ]}
         />
@@ -185,8 +185,8 @@ export default function TransformPropertyPage() {
           body="Establishing a community garden provides fresh produce, promotes social interaction, and transforms the lot into a vibrant space for residents."
           links={[
             {
-              url: "https://groundedinphilly.org/",
-              text: "Resources from Grounded in Philly",
+              url: 'https://groundedinphilly.org/',
+              text: 'Resources from Grounded in Philly',
             },
           ]}
         />
@@ -198,8 +198,8 @@ export default function TransformPropertyPage() {
           body="Planting native wildflowers and grasses brings natural beauty, supports local wildlife, and requires less maintenance than traditional landscaping."
           links={[
             {
-              url: "https://extension.psu.edu/meadows-and-prairies-wildlife-friendly-alternatives-to-lawn",
-              text: "Instructions from Penn State",
+              url: 'https://extension.psu.edu/meadows-and-prairies-wildlife-friendly-alternatives-to-lawn',
+              text: 'Instructions from Penn State',
             },
           ]}
         />
@@ -211,12 +211,12 @@ export default function TransformPropertyPage() {
           body="Installing bike parking encourages sustainable transportation, reduces traffic, and supports a healthier lifestyle for community members."
           links={[
             {
-              url: "https://streetboxphl.com/",
-              text: "Help from StreetBoxPHL",
+              url: 'https://streetboxphl.com/',
+              text: 'Help from StreetBoxPHL',
             },
             {
-              url: "https://www.phila.gov/media/20211109093815/OTIS-bike-corral-application.pdf",
-              text: "Guidelines from City of Phila",
+              url: 'https://www.phila.gov/media/20211109093815/OTIS-bike-corral-application.pdf',
+              text: 'Guidelines from City of Phila',
             },
           ]}
         />
@@ -228,8 +228,8 @@ export default function TransformPropertyPage() {
           body="Rain gardens and other infrastructure reduces stormwater runoff, prevents flooding, and improves water quality while adding greenery to the landscape."
           links={[
             {
-              url: "https://groundedinphilly.org/",
-              text: "Help from Phila Water Department",
+              url: 'https://groundedinphilly.org/',
+              text: 'Help from Phila Water Department',
             },
           ]}
         />
@@ -241,12 +241,12 @@ export default function TransformPropertyPage() {
           body="Providing seating and shade to restaurants supports local business while creating a dynamic street life."
           links={[
             {
-              url: "https://streetboxphl.com/",
-              text: "Help from StreetBoxPHL",
+              url: 'https://streetboxphl.com/',
+              text: 'Help from StreetBoxPHL',
             },
             {
-              url: "https://www.phila.gov/services/permits-violations-licenses/get-a-license/business-licenses/food-businesses/get-a-streetery-license/",
-              text: "Guidelines from City of Phila",
+              url: 'https://www.phila.gov/services/permits-violations-licenses/get-a-license/business-licenses/food-businesses/get-a-streetery-license/',
+              text: 'Guidelines from City of Phila',
             },
           ]}
         />
@@ -258,16 +258,16 @@ export default function TransformPropertyPage() {
           body="Developing affordable housing helps address Philadelphia's housing crisis and can combat gentrification by enabling residents to stay in their neighborhood."
           links={[
             {
-              url: "https://phdcphila.org/land/buy-land/propose-affordable-housing-project/",
-              text: "Help from PHDC",
+              url: 'https://phdcphila.org/land/buy-land/propose-affordable-housing-project/',
+              text: 'Help from PHDC',
             },
             {
-              url: "https://www.habitatphiladelphia.org/homeownership-program/",
-              text: "Help from Habitat from Humanity",
+              url: 'https://www.habitatphiladelphia.org/homeownership-program/',
+              text: 'Help from Habitat from Humanity',
             },
             {
-              url: "https://www.lisc.org/philly/our-priorities/affordable-housing/",
-              text: "Help from LISC",
+              url: 'https://www.lisc.org/philly/our-priorities/affordable-housing/',
+              text: 'Help from LISC',
             },
           ]}
         />
@@ -279,8 +279,8 @@ export default function TransformPropertyPage() {
           body="Providing seating, green spaces, and walking paths offers recreational space, improves public health, and enhances quality of life."
           links={[
             {
-              url: "https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html",
-              text: "Help from Park in a Truck",
+              url: 'https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html',
+              text: 'Help from Park in a Truck',
             },
           ]}
         />
@@ -415,7 +415,7 @@ export default function TransformPropertyPage() {
           to increased property values and rental prices, which can put
           already-marginalized Philadelphians at risk of displacement. To
           understand how we&rsquo;re working to mitigate the risk of
-          &ldquo;green gentrification,&rdquo;{" "}
+          &ldquo;green gentrification,&rdquo;{' '}
           <a href="/gentrification" className="link">
             click here to read more
           </a>

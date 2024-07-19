@@ -1,8 +1,8 @@
-import { generateMetadata } from "@/utilities/generateMetaData";
+import { generateMetadata } from '@/utilities/generateMetaData';
 
-const title = "Legal Disclaimer";
-const description = "Acceptance of Terms and Conditions of Use";
-const url = "/legal-disclaimer";
+const title = 'Legal Disclaimer';
+const description = 'Acceptance of Terms and Conditions of Use';
+const url = '/legal-disclaimer';
 
 export const metadata = generateMetadata({
   title,
