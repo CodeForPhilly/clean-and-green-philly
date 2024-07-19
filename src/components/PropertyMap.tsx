@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   FC,
@@ -8,14 +8,14 @@ import {
   Dispatch,
   SetStateAction,
   ReactElement,
-} from "react";
+} from 'react';
 import {
   maptilerApiKey,
   mapboxAccessToken,
   useStagingTiles,
   googleCloudBucketName,
-} from "../config/config";
-import { useFilter } from "@/context/FilterContext";
+} from '../config/config';
+import { useFilter } from '@/context/FilterContext';
 import Map, {
   Source,
   Layer,
@@ -24,7 +24,7 @@ import Map, {
   ScaleControl,
   GeolocateControl,
   ViewState,
-} from "react-map-gl/maplibre";
+} from 'react-map-gl/maplibre';
 import maplibregl, {
   Map as MaplibreMap,
   PointLike,
@@ -37,20 +37,20 @@ import maplibregl, {
   LngLatLike,
   MapMouseEvent,
   LngLat,
-} from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
-import mapboxgl from "mapbox-gl";
-import { Protocol } from "pmtiles";
-import MapboxGeocoder from "@mapbox/mapbox-gl-geocoder";
-import "@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css";
-import { MapLegendControl } from "./MapLegendControl";
-import { createPortal } from "react-dom";
-import { Tooltip } from "@nextui-org/react";
-import { Info, X } from "@phosphor-icons/react";
-import { centroid } from "@turf/centroid";
-import { Position } from "geojson";
-import { toTitleCase } from "../utilities/toTitleCase";
-import { ThemeButton } from "../components/ThemeButton";
+} from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import mapboxgl from 'mapbox-gl';
+import { Protocol } from 'pmtiles';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import { MapLegendControl } from './MapLegendControl';
+import { createPortal } from 'react-dom';
+import { Tooltip } from '@nextui-org/react';
+import { Info, X } from '@phosphor-icons/react';
+import { centroid } from '@turf/centroid';
+import { Position } from 'geojson';
+import { toTitleCase } from '../utilities/toTitleCase';
+import { ThemeButton } from '../components/ThemeButton';
 
 type SearchedProperty = {
   coordinates: [number, number];
@@ -62,47 +62,47 @@ const MAX_MAP_ZOOM = 20;
 const MAX_TILE_ZOOM = 16;
 
 const layers = [
-  "vacant_properties_tiles_polygons",
-  "vacant_properties_tiles_points",
+  'vacant_properties_tiles_polygons',
+  'vacant_properties_tiles_points',
 ];
 const colorScheme: DataDrivenPropertyValueSpecification<ColorSpecification> = [
-  "match",
-  ["get", "priority_level"], // get the value of the guncrime_density property
-  "High",
-  "#FF4500", // Orange Red
-  "Medium",
-  "#FFD700", // Gold
-  "Low",
-  "#B0E57C", // Light Green
-  "#D3D3D3", // default color if none of the categories match
+  'match',
+  ['get', 'priority_level'], // get the value of the guncrime_density property
+  'High',
+  '#FF4500', // Orange Red
+  'Medium',
+  '#FFD700', // Gold
+  'Low',
+  '#B0E57C', // Light Green
+  '#D3D3D3', // default color if none of the categories match
 ];
 
 const layerStylePolygon: FillLayerSpecification = {
-  id: "vacant_properties_tiles_polygons",
-  type: "fill",
-  source: "vacant_properties_tiles",
-  "source-layer": "vacant_properties_tiles_polygons",
+  id: 'vacant_properties_tiles_polygons',
+  type: 'fill',
+  source: 'vacant_properties_tiles',
+  'source-layer': 'vacant_properties_tiles_polygons',
   paint: {
-    "fill-color": colorScheme,
-    "fill-opacity": 0.7,
+    'fill-color': colorScheme,
+    'fill-opacity': 0.7,
   },
   metadata: {
-    name: "Priority",
+    name: 'Priority',
   },
 };
 
 const layerStylePoints: CircleLayerSpecification = {
-  id: "vacant_properties_tiles_points",
-  type: "circle",
-  source: "vacant_properties_tiles",
-  "source-layer": "vacant_properties_tiles_points",
+  id: 'vacant_properties_tiles_points',
+  type: 'circle',
+  source: 'vacant_properties_tiles',
+  'source-layer': 'vacant_properties_tiles_points',
   paint: {
-    "circle-color": colorScheme,
-    "circle-opacity": 0.7,
-    "circle-radius": 3,
+    'circle-color': colorScheme,
+    'circle-opacity': 0.7,
+    'circle-radius': 3,
   },
   metadata: {
-    name: "Priority",
+    name: 'Priority',
   },
 };
 
@@ -167,15 +167,15 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
   const [searchedProperty, setSearchedProperty] = useState<SearchedProperty>({
     coordinates: [-75.1628565788269, 39.97008211622267],
-    address: "",
+    address: '',
   });
   const [smallScreenToggle, setSmallScreenToggle] = useState<boolean>(false);
 
   useEffect(() => {
-    let protocol = new Protocol();
-    maplibregl.addProtocol("pmtiles", protocol.tile);
+    const protocol = new Protocol();
+    maplibregl.addProtocol('pmtiles', protocol.tile);
     return () => {
-      maplibregl.removeProtocol("pmtiles");
+      maplibregl.removeProtocol('pmtiles');
     };
   }, []);
 
@@ -197,7 +197,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         layers,
       });
 
-      setSearchedProperty({ ...searchedProperty, address: "" });
+      setSearchedProperty({ ...searchedProperty, address: '' });
       if (features.length > 0) {
         setSelectedProperty(features[0]);
       } else {
@@ -207,11 +207,11 @@ const PropertyMap: FC<PropertyMapProps> = ({
   };
 
   const handleSetFeatures = (event: any) => {
-    if (!["moveend", "sourcedata"].includes(event.type)) return;
+    if (!['moveend', 'sourcedata'].includes(event.type)) return;
     if (!map) return;
     setLoading(true);
 
-    let bbox: [PointLike, PointLike] | undefined = undefined;
+    const bbox: [PointLike, PointLike] | undefined = undefined;
 
     const features = map.queryRenderedFeatures(bbox, { layers });
 
@@ -239,8 +239,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
     const sortedFeatures = features
       .sort((a: MapGeoJSONFeature, b: MapGeoJSONFeature) => {
         return (
-          priorities[a?.properties?.priority_level || ""] -
-          priorities[b?.properties?.priority_level || ""]
+          priorities[a?.properties?.priority_level || ''] -
+          priorities[b?.properties?.priority_level || '']
         );
       })
       .slice(0, 100);
@@ -252,7 +252,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   useEffect(() => {
     // This useEffect sets selectedProperty and map popup information after a property has been searched in the map's search form
-    if (!featuresInView || selectedProperty || searchedProperty.address === "")
+    if (!featuresInView || selectedProperty || searchedProperty.address === '')
       return;
 
     if (map) {
@@ -264,7 +264,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
       );
       if (features.length > 0) {
         setSelectedProperty(features[0]);
-        setSearchedProperty({ ...searchedProperty, address: "" });
+        setSearchedProperty({ ...searchedProperty, address: '' });
       } else {
         setSelectedProperty(null);
         setPopupInfo({
@@ -280,10 +280,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
   useEffect(() => {
     if (map) {
       // Add info icon to legend on map load
-      const legendSummary = document.getElementById("legend-summary");
+      const legendSummary = document.getElementById('legend-summary');
       if (legendSummary) {
         const infoString: string =
-          "We prioritize properties based on how much they can reduce gun violence considering the vacancy, gun violence, cleanliness, and tree canopy.";
+          'We prioritize properties based on how much they can reduce gun violence considering the vacancy, gun violence, cleanliness, and tree canopy.';
         summaryInfo = createPortal(
           <Tooltip
             showArrow
@@ -291,8 +291,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
             color="primary"
             content={infoString}
             classNames={{
-              base: ["before:-translate-x-2"],
-              content: ["max-w-96 -translate-x-2"],
+              base: ['before:-translate-x-2'],
+              content: ['max-w-96 -translate-x-2'],
             }}
           >
             <Info
@@ -314,10 +314,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
           filter: function (item) {
             return item.context.some((i) => {
               return (
-                (i.id.split(".").shift() === "place" &&
-                  i.text === "Philadelphia") ||
-                (i.id.split(".").shift() === "district" &&
-                  i.text === "Philadelphia County")
+                (i.id.split('.').shift() === 'place' &&
+                  i.text === 'Philadelphia') ||
+                (i.id.split('.').shift() === 'district' &&
+                  i.text === 'Philadelphia County')
               );
             });
           },
@@ -329,10 +329,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
           },
         });
 
-        map.addControl(geocoderRef.current as unknown as IControl, "top-right");
+        map.addControl(geocoderRef.current as unknown as IControl, 'top-right');
 
-        geocoderRef.current.on("result", (e) => {
-          const address = e.result.place_name.split(",")[0];
+        geocoderRef.current.on('result', (e) => {
+          const address = e.result.place_name.split(',')[0];
           setSelectedProperty(null);
           setSearchedProperty({
             coordinates: e.result.center,
@@ -385,8 +385,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
       });
 
       if (isAnyFilterEmpty) {
-        map.setFilter("vacant_properties_tiles_points", ["==", ["id"], ""]);
-        map.setFilter("vacant_properties_tiles_polygons", ["==", ["id"], ""]);
+        map.setFilter('vacant_properties_tiles_points', ['==', ['id'], '']);
+        map.setFilter('vacant_properties_tiles_polygons', ['==', ['id'], '']);
 
         return;
       }
@@ -394,16 +394,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
       const mapFilter = Object.entries(appFilter).reduce(
         (acc, [property, filterItem]) => {
           if (filterItem.values.length) {
-            const thisFilterGroup: any = ["any"];
+            const thisFilterGroup: any = ['any'];
             filterItem.values.forEach((item) => {
               if (filterItem.useIndexOfFilter) {
                 thisFilterGroup.push([
-                  ">=",
-                  ["index-of", item, ["get", property]],
+                  '>=',
+                  ['index-of', item, ['get', property]],
                   0,
                 ]);
               } else {
-                thisFilterGroup.push(["in", ["get", property], item]);
+                thisFilterGroup.push(['in', ['get', property], item]);
               }
             });
 
@@ -414,8 +414,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
         [] as any[]
       );
 
-      map.setFilter("vacant_properties_tiles_points", ["all", ...mapFilter]);
-      map.setFilter("vacant_properties_tiles_polygons", ["all", ...mapFilter]);
+      map.setFilter('vacant_properties_tiles_points', ['all', ...mapFilter]);
+      map.setFilter('vacant_properties_tiles_polygons', ['all', ...mapFilter]);
     };
 
     if (map) {
@@ -423,7 +423,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
     }
   }, [map, appFilter]);
 
-  const changeCursor = (e: any, cursorType: "pointer" | "default") => {
+  const changeCursor = (e: any, cursorType: 'pointer' | 'default') => {
     e.target.getCanvas().style.cursor = cursorType;
   };
 
@@ -434,8 +434,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
         mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
-        onMouseEnter={(e) => changeCursor(e, "pointer")}
-        onMouseLeave={(e) => changeCursor(e, "default")}
+        onMouseEnter={(e) => changeCursor(e, 'pointer')}
+        onMouseLeave={(e) => changeCursor(e, 'default')}
         onClick={onMapClick}
         minZoom={MIN_MAP_ZOOM}
         maxZoom={MAX_MAP_ZOOM}
@@ -470,7 +470,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         <Source
           type="vector"
           url={`pmtiles://https://storage.googleapis.com/${googleCloudBucketName}/vacant_properties_tiles${
-            useStagingTiles ? "_staging" : ""
+            useStagingTiles ? '_staging' : ''
           }.pmtiles`}
           id="vacant_properties_tiles"
         >

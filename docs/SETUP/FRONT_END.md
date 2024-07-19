@@ -30,7 +30,7 @@ You'll need to set up a free [MapTiler](https://www.maptiler.com/) and get an AP
 
 ### Google Cloud (GCP)
 
-If you are running your own backend and you want to use the tiles file from your own Google cloud bucket, put the bucket name in an environment variable called `GOOGLE_CLOUD_BUCKET_NAME`.  See the backend setup docs for more information on GCP.
+If you are running your own backend and you want to use the tiles file from your own Google cloud bucket, put the bucket name in an environment variable called `GOOGLE_CLOUD_BUCKET_NAME`. See the backend setup docs for more information on GCP.
 
 #### Formatting
 

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { NextUIProvider } from "@nextui-org/react";
-import { FC } from "react";
-import AccessibilityStatementPage from "./AccessibilityStatementPage";
+import { NextUIProvider } from '@nextui-org/react';
+import { FC } from 'react';
+import AccessibilityStatementPage from './AccessibilityStatementPage';
 
 const AccessibilityStatement: FC = () => {
   return (

@@ -1,11 +1,10 @@
-import { ExpressionName } from "mapbox-gl";
-import React, { ReactElement, Dispatch, SetStateAction } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
-import { FillLayerSpecification } from "maplibre-gl";
-import { IControl, MapboxMap } from "react-map-gl";
+import { ExpressionName } from 'mapbox-gl';
+import React, { ReactElement, Dispatch, SetStateAction } from 'react';
+import { renderToStaticMarkup } from 'react-dom/server';
+import { FillLayerSpecification } from 'maplibre-gl';
+import { IControl, MapboxMap } from 'react-map-gl';
 
-
-import "../../app/mapLegend.css";
+import '../../app/mapLegend.css';
 
 interface LayerStyleMetadata {
   name: string;
@@ -22,12 +21,12 @@ function parseBlocks(
 ): ReactElement[] | undefined {
   switch (attribute) {
     // value for fill-color attribute can be single value or array
-    case "fill-color": {
+    case 'fill-color': {
       if (value && Array.isArray(value) && value.length > 0) {
         const [name, ...args] = value;
 
         switch (name as ExpressionName) {
-          case "match": {
+          case 'match': {
             const [getter, ...paneLabels] = args;
             const elements: ReactElement[] = [];
 
@@ -37,15 +36,15 @@ function parseBlocks(
               let color: string = paneLabels[i + 1];
 
               // default color value
-              if (label.includes("#")) {
+              if (label.includes('#')) {
                 color = label;
-                label = "Other";
+                label = 'Other';
               }
 
               elements.push(
                 <li
                   key={`${label}-${color}-pane`}
-                  style={{ "--color": color } as React.CSSProperties}
+                  style={{ '--color': color } as React.CSSProperties}
                 >
                   {label}
                 </li>
@@ -81,7 +80,11 @@ function MapLegend(layerStyle: FillLayerSpecification) {
 
   return (
     <>
-      <div className="panes" style={{ display: "block" }}  onClick={() => console.log('hit') }>
+      <div
+        className="panes"
+        style={{ display: 'block' }}
+        onClick={() => console.log('hit')}
+      >
         <details
           className={`mapboxgl-ctrl-legend-pane mapboxgl-ctrl-legend-pane--${layerStyle.source}`}
           open
@@ -101,11 +104,14 @@ export class MapLegendControlClass implements IControl {
   private _container: HTMLElement;
   private handler: () => void;
 
-  constructor(layerStyle: FillLayerSpecification, setSmallScreenToggle: Dispatch<SetStateAction<boolean>>) {
-    this._container = document.createElement("div");
-    this._container.classList.add("mapboxgl-ctrl", "mapboxgl-ctrl-legend");
+  constructor(
+    layerStyle: FillLayerSpecification,
+    setSmallScreenToggle: Dispatch<SetStateAction<boolean>>
+  ) {
+    this._container = document.createElement('div');
+    this._container.classList.add('mapboxgl-ctrl', 'mapboxgl-ctrl-legend');
     // render legend as static markup so it can be rendered with map
-    this.handler = () => setSmallScreenToggle(s => !s);
+    this.handler = () => setSmallScreenToggle((s) => !s);
     this._container.innerHTML = renderToStaticMarkup(
       <MapLegend {...layerStyle} />
     );
@@ -114,12 +120,12 @@ export class MapLegendControlClass implements IControl {
   // able to add event listeners here for interactivity with layer
   onAdd = (map: MapboxMap) => {
     this._map = map;
-    this._container.addEventListener("click", this.handler);
+    this._container.addEventListener('click', this.handler);
     return this._container;
   };
 
   onRemove = () => {
-     this._container.removeEventListener("click", this.handler);
+    this._container.removeEventListener('click', this.handler);
     this._container.parentNode?.removeChild(this._container);
     this._map = undefined;
   };

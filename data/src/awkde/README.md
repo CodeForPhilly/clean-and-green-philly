@@ -12,6 +12,7 @@ Just clone the repository and invoke `pip`:
 git clone https://github.com/mennthor/awkde
 pip install [--user] [-e] ./awkde
 ```
+
 Note: `--user` and `-e` are optional. Use `--user` to install in your user site-package directory (recommended) and `-e` if you want to only link the files to the site-package directories, so that when you make any changes in your local copy, you don't have to reinstall all the time.
 
 Try to run the `example/examply.py`:
@@ -24,7 +25,6 @@ python example.py
 You should get this plot in the examples folder (you need matplotlib for the plot):
 
 ![example plot](example/example.png)
-
 
 ## Algorithm
 
@@ -58,8 +58,8 @@ All credit for the method goes to [1] and to S. Schoenen and L. Raedel for
 huge parts of the implementation.
 For information on Silverman or Scott rule, see [2] or [3].
 
-
 ## References
+
 - [1] B. Wang and X. Wang, "Bandwidth Selection for Weighted Kernel Density Estimation", Sep. 2007, DOI: 10.1214/154957804100000000.
 - [2] D.W. Scott, "Multivariate Density Estimation: Theory, Practice, and Visualization", John Wiley & Sons, New York, Chicester, 1992.
 - [3] B.W. Silverman, "Density Estimation for Statistics and Data Analysis", Vol. 26, Monographs on Statistics and Applied Probability, Chapman and Hall, London, 1986.

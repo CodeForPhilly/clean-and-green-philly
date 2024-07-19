@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Accessibility Statement",
+  title: 'Accessibility Statement',
 };
 
 const AccessibilityStatementLayout = ({

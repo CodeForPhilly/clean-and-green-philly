@@ -8,7 +8,7 @@ export default function RequestRemovalPage() {
       <p>
         If you represent a community organization or other stakeholder with a
         legitimate interest in a property listed on our dashboard, you may
-        request its removal by{" "}
+        request its removal by{' '}
         <a href="mailto:cleanandgreenphl@gmail.com" className="link">
           contacting us
         </a>
@@ -16,7 +16,7 @@ export default function RequestRemovalPage() {
         as protecting local community gardens.
         <br></br>
         <br></br>
-        In order to do this, please email us at{" "}
+        In order to do this, please email us at{' '}
         <a href="mailto:cleanandgreenphl@gmail.com" className="link">
           cleanandgreenphl@gmail.com
         </a>
