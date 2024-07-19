@@ -22,7 +22,7 @@ jobs:
     needs: label
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Assign Reviewers
         uses: kentaro-m/auto-assign-action@v2.0.0
