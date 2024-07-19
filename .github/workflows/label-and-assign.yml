@@ -1,9 +1,7 @@
 # .github/workflows/label-and-assign.yml
 name: Label and Assign Reviewers
 
-on:
-  pull_request:
-    types: [opened, ready_for_review]
+on: [pull_request]
 
 jobs:
   label:

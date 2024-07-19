@@ -1,2 +1,1 @@
-backend:
-  - data/**
+backend: data/**
