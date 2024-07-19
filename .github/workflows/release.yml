@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     branches:
-      - main
+      - test-release
 
 jobs:
   release:
@@ -16,6 +16,15 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20.8.1'
+
+      - name: List files in the root directory
+        run: ls -al
+
+      - name: Check if package-lock.json exists
+        run: test -f package-lock.json && echo "package-lock.json exists" || echo "package-lock.json does not exist"
+
+      - name: Clear NPM Cache
+        run: npm cache clean --force
 
       - name: Install dependencies
         run: npm ci
