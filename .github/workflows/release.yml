@@ -1,13 +1,14 @@
 name: Release
 
-# on:
-#   push:
-#     branches:
-#       - main
-#   workflow_dispatch:
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
 
 jobs:
   release:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
