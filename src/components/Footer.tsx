@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useCookieContext } from "@/context/CookieContext";
-import CookieConsentBanner from "./CookieConsentBanner";
-import Link from "next/link";
+import { useCookieContext } from '@/context/CookieContext';
+import CookieConsentBanner from './CookieConsentBanner';
+import Link from 'next/link';
 
 const Footer = () => {
-  let { setShouldShowBanner } = useCookieContext();
+  const { setShouldShowBanner } = useCookieContext();
 
   const onClickCookieSettings = () => {
     setShouldShowBanner(true);

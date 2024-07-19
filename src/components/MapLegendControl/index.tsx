@@ -1,1 +1,1 @@
-export { default as MapLegendControl } from "./MapLegendControl";
+export { default as MapLegendControl } from './MapLegendControl';

@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   FC,
@@ -8,9 +8,9 @@ import {
   useEffect,
   SetStateAction,
   Dispatch,
-} from "react";
-import { ThemeButton } from "./ThemeButton";
-import { PiCaretRight, PiCaretLeft } from "react-icons/pi";
+} from 'react';
+import { ThemeButton } from './ThemeButton';
+import { PiCaretRight, PiCaretLeft } from 'react-icons/pi';
 import {
   Table,
   TableHeader,
@@ -23,32 +23,32 @@ import {
   PaginationItemType,
   PaginationItemRenderProps,
   Spinner,
-} from "@nextui-org/react";
-import PropertyCard from "./PropertyCard";
-import SinglePropertyDetail from "./SinglePropertyDetail";
-import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
-import { MapGeoJSONFeature } from "maplibre-gl";
-import { X } from "@phosphor-icons/react";
-import { useFilter } from "@/context/FilterContext";
+} from '@nextui-org/react';
+import PropertyCard from './PropertyCard';
+import SinglePropertyDetail from './SinglePropertyDetail';
+import { BarClickOptions } from '@/app/find-properties/[[...opa_id]]/page';
+import { MapGeoJSONFeature } from 'maplibre-gl';
+import { X } from '@phosphor-icons/react';
+import { useFilter } from '@/context/FilterContext';
 
 const tableCols = [
   {
-    key: "ADDRESS",
-    label: "Address",
+    key: 'ADDRESS',
+    label: 'Address',
   },
   {
-    key: "guncrime_density",
-    label: "Crime Rate",
+    key: 'guncrime_density',
+    label: 'Crime Rate',
   },
   {
-    key: "tree_canopy_gap",
-    label: "Canopy Gap",
+    key: 'tree_canopy_gap',
+    label: 'Canopy Gap',
   },
 ];
 
 interface PropertyDetailSectionProps {
   featuresInView: MapGeoJSONFeature[];
-  display: "detail" | "list";
+  display: 'detail' | 'list';
   loading: boolean;
   hasLoadingError: boolean;
   selectedProperty: MapGeoJSONFeature | null;
@@ -113,8 +113,8 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
           key={key}
           className={`${className} ${
             page === 1
-              ? "bg-gray-100/50 text-gray-900/50 hover:bg-gray-100/50 text-gray-900/50"
-              : "content-center bg-gray-100 text-gray-900 min-w-8 w-9 h-9 shadow-none"
+              ? 'bg-gray-100/50 text-gray-900/50 hover:bg-gray-100/50 text-gray-900/50'
+              : 'content-center bg-gray-100 text-gray-900 min-w-8 w-9 h-9 shadow-none'
           }`}
           color="secondary"
           aria-label={page === 1 ? `No Previous Page` : `Go to Previous Page`}
@@ -141,11 +141,11 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
         color="tertiary"
         className={`${className} ${
           isActive
-            ? "text-green-700 !font-normal	bg-green-200 font-bold rounded-md shadow-none content-center"
-            : "bg-white text-gray-900 rounded-md shadow-none rounded-md content-center"
+            ? 'text-green-700 !font-normal	bg-green-200 font-bold rounded-md shadow-none content-center'
+            : 'bg-white text-gray-900 rounded-md shadow-none rounded-md content-center'
         }`}
         aria-label={isActive ? `Page ${value}` : `Go to page ${value}`}
-        aria-current={isActive ? "page" : false}
+        aria-current={isActive ? 'page' : false}
         onPress={() => setPage(value)}
         label={value}
       >
@@ -162,9 +162,9 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       Toggling from map (0 results) to results in mobile causes the component
       to miscalculate the 1st active span since parent width === 0.
     */
-    if (typeof window !== "undefined") {
+    if (typeof window !== 'undefined') {
       widthRef.current =
-        (smallScreenMode === "properties" && window.innerWidth < 640) ||
+        (smallScreenMode === 'properties' && window.innerWidth < 640) ||
         window.innerWidth >= 640;
     }
 
@@ -206,13 +206,13 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
   ) : featuresInView.length ? (
     <>
       <div className="flex flex-wrap flex-grow h-full min-h-[calc(100svh-101px)] max-h-[calc(100svh-101px)] mt-2">
-        {display === "list" ? (
+        {display === 'list' ? (
           <Table
             aria-label="Property Details"
             radius="none"
             removeWrapper
             classNames={{
-              th: "bg-white",
+              th: 'bg-white',
             }}
           >
             <TableHeader>
@@ -242,7 +242,10 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
           </Table>
         ) : (
           <>
-            <div aria-live="polite" className="sr-only"> {`You are on page ${page}`} </div>
+            <div aria-live="polite" className="sr-only">
+              {' '}
+              {`You are on page ${page}`}{' '}
+            </div>
             {items.map((feature, index) => (
               <PropertyCard
                 feature={feature}
@@ -268,12 +271,12 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
               ></Pagination>
             </div>
             <p className="text-center mt-4">
-              {`${((page - 1) * 6) + 1} to ${page === pages ? featuresInView.length : (page * 6)} of ${featuresInView.length}`}
+              {`${(page - 1) * 6 + 1} to ${page === pages ? featuresInView.length : page * 6} of ${featuresInView.length}`}
             </p>
             <div className="flex w-full justify-center py-4 px-6">
               <p className="body-sm text-gray-500">
                 Note: only the first 100 properties can be viewed in list.
-                Filter or zoom in to a smaller area to see more detail.{" "}
+                Filter or zoom in to a smaller area to see more detail.{' '}
               </p>
             </div>
           </div>
@@ -296,8 +299,8 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
               startContent={<X />}
               onPress={() =>
                 dispatch({
-                  type: "CLEAR_DIMENSIONS",
-                  property: "",
+                  type: 'CLEAR_DIMENSIONS',
+                  property: '',
                   dimensions: [],
                 })
               }

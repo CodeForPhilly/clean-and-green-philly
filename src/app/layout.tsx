@@ -1,38 +1,38 @@
-import type { Metadata } from "next";
-import "./globals.css";
-import { CookieProviderWrapper } from "./CookieProviderWrapper";
-import { FilterProviderWrapper } from "./FilterProviderWrapper";
+import type { Metadata } from 'next';
+import './globals.css';
+import { CookieProviderWrapper } from './CookieProviderWrapper';
+import { FilterProviderWrapper } from './FilterProviderWrapper';
 
 const defaultTitle =
-  "Clean & Green Philly - Helping communities clean vacant properties";
+  'Clean & Green Philly - Helping communities clean vacant properties';
 const description =
-  "The ultimate toolkit to help community groups clean and green vacant properties to reduce gun violence in Philadelphia.";
-const siteUrl = new URL("https://cleanandgreenphilly.org/");
+  'The ultimate toolkit to help community groups clean and green vacant properties to reduce gun violence in Philadelphia.';
+const siteUrl = new URL('https://cleanandgreenphilly.org/');
 
 export const metadata: Metadata = {
   title: {
     default: defaultTitle,
-    template: "%s - Clean & Green Philly",
+    template: '%s - Clean & Green Philly',
   },
   description: description,
   icons: {
-    icon: "/favicon.ico",
+    icon: '/favicon.ico',
   },
   metadataBase: siteUrl,
   openGraph: {
-    type: "website",
-    url: "/",
+    type: 'website',
+    url: '/',
     title: defaultTitle,
     description: description,
     images: [
       {
-        url: "/thumbnail.png",
+        url: '/thumbnail.png',
         width: 1200,
         height: 630,
-        alt: "Clean & Green Philly",
+        alt: 'Clean & Green Philly',
       },
     ],
-    siteName: "Clean & Green Philly",
+    siteName: 'Clean & Green Philly',
   },
 };
 
