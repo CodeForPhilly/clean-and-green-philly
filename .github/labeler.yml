@@ -1,7 +1,10 @@
 backend:
-  - data/**
+  - changed-files:
+      - any-glob-to-any-file: 'data/**'
+
 frontend:
-  - src/**
-documentation:
-  - docs/**
-  - README.md
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'src/**'
+          - '*'
+          - '!(data)/**'
