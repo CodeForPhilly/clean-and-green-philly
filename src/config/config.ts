@@ -1,7 +1,7 @@
-const EMPTY_STRING = "";
+const EMPTY_STRING = '';
 
 export const mapboxAccessToken =
-  "pk.eyJ1IjoibmxlYm92aXRzIiwiYSI6ImNsZXQ2Nzd3ZDBjZnYzcHFvYXhib2RqYzQifQ.PWg2LuNCH1E6-REjmYvdOg" ||
+  'pk.eyJ1IjoibmxlYm92aXRzIiwiYSI6ImNsZXQ2Nzd3ZDBjZnYzcHFvYXhib2RqYzQifQ.PWg2LuNCH1E6-REjmYvdOg' ||
   EMPTY_STRING;
 
 export const maptilerApiKey =
@@ -10,4 +10,4 @@ export const maptilerApiKey =
 export const useStagingTiles = false;
 
 export const googleCloudBucketName =
-  process.env.GOOGLE_CLOUD_BUCKET_NAME || "cleanandgreenphl";
+  process.env.GOOGLE_CLOUD_BUCKET_NAME || 'cleanandgreenphl';

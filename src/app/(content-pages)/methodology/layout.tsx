@@ -1,9 +1,9 @@
-import { generateMetadata } from "@/utilities/generateMetaData";
+import { generateMetadata } from '@/utilities/generateMetaData';
 
-const title = "Methodology";
+const title = 'Methodology';
 const description =
-  "Clean & Green Philly combines several public datasets to categorize Philadelphia’s vacant properties based on how important it is that someone intervene there.";
-const url = "/methodology";
+  'Clean & Green Philly combines several public datasets to categorize Philadelphia’s vacant properties based on how important it is that someone intervene there.';
+const url = '/methodology';
 
 export const metadata = generateMetadata({
   title,

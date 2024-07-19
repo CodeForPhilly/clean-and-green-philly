@@ -1,11 +1,11 @@
-import React, { forwardRef } from "react";
-import { Button as NextUIButton, Link } from "@nextui-org/react";
+import React, { forwardRef } from 'react';
+import { Button as NextUIButton, Link } from '@nextui-org/react';
 
 type NextUIButtonProps = React.ComponentProps<typeof NextUIButton>;
 
-type ButtonProps = Omit<NextUIButtonProps, "color"> & {
+type ButtonProps = Omit<NextUIButtonProps, 'color'> & {
   label?: string | React.ReactNode;
-  color?: "primary" | "secondary" | "tertiary";
+  color?: 'primary' | 'secondary' | 'tertiary';
   isSelected?: boolean;
 };
 
@@ -31,10 +31,10 @@ const btnColorStyles = {
 const getButtonColorStyles = (
   color: string,
   isSelected: boolean,
-  isDisabled: boolean,
+  isDisabled: boolean
 ) => {
   let styles;
-  if (color === "secondary") {
+  if (color === 'secondary') {
     if (isSelected) {
       styles = isDisabled
         ? btnColorStyles.secondarySelectedDisabled
@@ -44,7 +44,7 @@ const getButtonColorStyles = (
         ? btnColorStyles.secondaryDisabled
         : btnColorStyles.secondary;
     }
-  } else if (color === "tertiary") {
+  } else if (color === 'tertiary') {
     if (isSelected) {
       styles = isDisabled
         ? btnColorStyles.tertiarySelectedDisabled
@@ -71,28 +71,28 @@ const ThemeButton = forwardRef<Ref, ButtonProps>(function ThemeButton(
     onClick,
     startContent,
     endContent,
-    className = "",
+    className = '',
     isSelected = false,
     disabled = false,
     isDisabled = false,
-    color = "primary",
+    color = 'primary',
     isIconOnly = false,
     ...restProps
   },
-  ref,
+  ref
 ) {
   if (!!onClick) {
-    throw new Error("onClick is deprecated. Please use onPress instead.");
+    throw new Error('onClick is deprecated. Please use onPress instead.');
   }
   const iconOnly = isIconOnly || !label;
   isDisabled = isDisabled || disabled;
 
   const colorStyles = getButtonColorStyles(color, isSelected, isDisabled);
-  const padding = iconOnly ? "p-0" : "py-2.5 px-3";
+  const padding = iconOnly ? 'p-0' : 'py-2.5 px-3';
   const disabledStyles = isDisabled
     ? `cursor-not-allowed ${removedTransitionStyles}`
-    : "";
-  const iconStyles = "w-5 h-5 text-xl";
+    : '';
+  const iconStyles = 'w-5 h-5 text-xl';
 
   return (
     <NextUIButton
@@ -103,7 +103,7 @@ const ThemeButton = forwardRef<Ref, ButtonProps>(function ThemeButton(
       className={`${basedStyles}  ${colorStyles} ${padding} ${disabledStyles} ${className}`}
       ref={ref}
       aria-disabled={isDisabled}
-      aria-current={isSelected ? "true" : undefined}
+      aria-current={isSelected ? 'true' : undefined}
       startContent={
         startContent ? (
           <span className={iconStyles}>{startContent}</span>
@@ -130,7 +130,7 @@ const ThemeButtonLink = forwardRef<Ref, ThemeButtonLinkProps>(
     return (
       <ThemeButton as={Link} role="link" href={href} {...restProps} ref={ref} />
     );
-  },
+  }
 );
 
 export { ThemeButton, ThemeButtonLink };

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { ThemeButton } from "./ThemeButton";
-import { Check, X } from "@phosphor-icons/react";
-import { useCookieContext } from "@/context/CookieContext";
-import { useEffect, useState } from "react";
+import { ThemeButton } from './ThemeButton';
+import { Check, X } from '@phosphor-icons/react';
+import { useCookieContext } from '@/context/CookieContext';
+import { useEffect, useState } from 'react';
 
 const CookieConsentBanner = () => {
   const { shouldShowBanner, setShouldAllowCookies, setShouldShowBanner } =
@@ -27,8 +27,8 @@ const CookieConsentBanner = () => {
     <div
       className={`${
         shouldShowBanner
-          ? "md:flex fixed inset-x-0 bottom-0 z-20 justify-between bg-blue-200 p-4 sm:p-6"
-          : "hidden"
+          ? 'md:flex fixed inset-x-0 bottom-0 z-20 justify-between bg-blue-200 p-4 sm:p-6'
+          : 'hidden'
       }`}
     >
       <div>

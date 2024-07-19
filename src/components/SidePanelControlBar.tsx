@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import React, { FC, useMemo, useRef } from "react";
-import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
-import { BookmarkSimple, DownloadSimple, Funnel } from "@phosphor-icons/react";
-import { ThemeButton } from "./ThemeButton";
-import { useFilter } from "@/context/FilterContext";
-import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
+import React, { FC, useMemo, useRef } from 'react';
+import { BarClickOptions } from '@/app/find-properties/[[...opa_id]]/page';
+import { BookmarkSimple, DownloadSimple, Funnel } from '@phosphor-icons/react';
+import { ThemeButton } from './ThemeButton';
+import { useFilter } from '@/context/FilterContext';
+import { getPropertyIdsFromLocalStorage } from '@/utilities/localStorage';
 
 type SidePanelControlBarProps = {
   currentView: string;
@@ -33,35 +33,35 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   const { dispatch, appFilter } = useFilter();
 
   const filterCount: number = useMemo(() => {
-    let count = 0
-    for (let property of Object.keys(appFilter)) {
-        if (property === "access_process") {
-          count += appFilter[property].values.length
-        } else {
-          count++
-        }
+    let count = 0;
+    for (const property of Object.keys(appFilter)) {
+      if (property === 'access_process') {
+        count += appFilter[property].values.length;
+      } else {
+        count++;
       }
-      if (shouldFilterSavedProperties) {
-        count--
-      }
-    return count
-  }, [appFilter])
+    }
+    if (shouldFilterSavedProperties) {
+      count--;
+    }
+    return count;
+  }, [appFilter]);
 
   const onClickSavedButton = () => {
-    let propertyIds = getPropertyIdsFromLocalStorage();
+    const propertyIds = getPropertyIdsFromLocalStorage();
 
     if (shouldFilterSavedProperties) {
       setShouldFilterSavedProperties(false);
       dispatch({
-        type: "SET_DIMENSIONS",
-        property: "opa_id",
+        type: 'SET_DIMENSIONS',
+        property: 'opa_id',
         dimensions: [],
       });
     } else {
       setShouldFilterSavedProperties(true);
       dispatch({
-        type: "SET_DIMENSIONS",
-        property: "opa_id",
+        type: 'SET_DIMENSIONS',
+        property: 'opa_id',
         dimensions: [...propertyIds],
       });
     }
@@ -78,9 +78,9 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
             <span className="font-bold">
               {shouldFilterSavedProperties
                 ? savedPropertyCount
-                : featureCount.toLocaleString()}{" "}
+                : featureCount.toLocaleString()}{' '}
             </span>
-            <span className="sm:hidden lg:inline"> Total </span> Properties 
+            <span className="sm:hidden lg:inline"> Total </span> Properties
           </h1>
         </div>
         {/* Right-aligned content: Buttons */}
@@ -102,7 +102,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
               isSelected={shouldFilterSavedProperties}
               startContent={<BookmarkSimple />}
               className={`max-lg:min-w-[4rem] ${
-                smallScreenMode === "map" ? "max-sm:hidden" : ""
+                smallScreenMode === 'map' ? 'max-sm:hidden' : ''
               }`}
               ref={savedRef}
             />
@@ -111,15 +111,21 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           )}
           <ThemeButton
             color="tertiary"
-            aria-label={filterCount === 0 ? "Filter" : `Filter ${filterCount} filters active`}
+            aria-label={
+              filterCount === 0
+                ? 'Filter'
+                : `Filter ${filterCount} filters active`
+            }
             label={
               <div className="lg:space-x-1 body-md">
                 <span className="max-lg:hidden">Filter</span>
-                {filterCount !== 0 && <span aria-hidden="true">({filterCount})</span>}
+                {filterCount !== 0 && (
+                  <span aria-hidden="true">({filterCount})</span>
+                )}
               </div>
             }
-            onPress={() => updateCurrentView("filter")}
-            isSelected={currentView === "filter" || filterCount !== 0}
+            onPress={() => updateCurrentView('filter')}
+            isSelected={currentView === 'filter' || filterCount !== 0}
             startContent={<Funnel />}
             className="max-lg:min-w-[4rem]"
             data-hover={false}
@@ -127,13 +133,13 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
           />
           <ThemeButton
             color="tertiary"
-            aria-expanded={currentView === "download"}
+            aria-expanded={currentView === 'download'}
             aria-label="Download"
-            onPress={() => updateCurrentView("download")}
+            onPress={() => updateCurrentView('download')}
             startContent={<DownloadSimple />}
             label={<span className="body-md max-lg:hidden">Download</span>}
             className={`max-md:min-w-[4rem] ${
-              smallScreenMode === "map" ? "max-sm:hidden" : ""
+              smallScreenMode === 'map' ? 'max-sm:hidden' : ''
             } px-0`}
           />
         </div>

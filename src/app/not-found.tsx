@@ -1,5 +1,5 @@
-import { ThemeButtonLink } from "@/components/ThemeButton";
-import { Header } from "@/components";
+import { ThemeButtonLink } from '@/components/ThemeButton';
+import { Header } from '@/components';
 
 export default function NotFound() {
   return (
@@ -11,7 +11,7 @@ export default function NotFound() {
             <h2 className="heading-3xl mb-4">404</h2>
             <p className="body-md mb-4">This page cannot be found.</p>
             <ThemeButtonLink
-              href={"/"}
+              href={'/'}
               className="text-[#03141B] mx-auto inline-block"
               color="secondary"
               label="Return to Home"
