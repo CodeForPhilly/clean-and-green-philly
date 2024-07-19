@@ -1,6 +1,6 @@
 name: Dataset Request
 description: Request a datast for inclusion in the product
-title: "[Dataset Request]: "
+title: '[Dataset Request]: '
 labels: [dataset, triage]
 assignees:
   - switzersc-usds, lucasmbrown-usds
@@ -75,8 +75,8 @@ body:
     attributes:
       label: Is this dataset public?
       options:
-        - "Yes"
-        - "No"
+        - 'Yes'
+        - 'No'
     validations:
       required: true
   - type: input
@@ -134,7 +134,7 @@ body:
     attributes:
       label: What is the date of last update for this dataset?
       description: Please provide in the format YYYY-MM-DD
-      placeholder: "2017-01-01"
+      placeholder: '2017-01-01'
     validations:
       required: true
   - type: dropdown
@@ -160,8 +160,8 @@ body:
     attributes:
       label: Can this data be put on the cloud?
       options:
-        - "Yes"
-        - "No"
+        - 'Yes'
+        - 'No'
     validations:
       required: true
   - type: textarea
