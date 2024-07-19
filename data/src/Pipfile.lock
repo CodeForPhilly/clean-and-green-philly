@@ -2881,12 +2881,12 @@
         },
         "slack-sdk": {
             "hashes": [
-                "sha256:1a47700ae20566575ce494d1d1b6f594b011d06aad28e3b8e28c052cad1d6c4c",
-                "sha256:e6ece5cb70850492637e002e3b0d26d307939f4a33203b88cb274f7475c9a144"
+                "sha256:740d2f9c49cbfcbd46fca56b4be9d527934c225312aac18fd2c0fca0ef6bc935",
+                "sha256:a120cc461e8ebb7d9175f171dbe0ded37a6878d9f7b96b28e4bad1227399047b"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.6'",
-            "version": "==3.28.0"
+            "version": "==3.31.0"
         },
         "sniffio": {
             "hashes": [
