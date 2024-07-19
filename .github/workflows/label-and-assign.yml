@@ -1,0 +1,30 @@
+# .github/workflows/label-and-assign.yml
+name: Label and Assign Reviewers
+
+on:
+  pull_request:
+    types: [opened, ready_for_review]
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Label PR
+        uses: actions/labeler@v5
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+  assign-reviewers:
+    runs-on: ubuntu-latest
+    needs: label
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Assign Reviewers
+        uses: kentaro-m/auto-assign-action@v2.0.0
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          configuration-path: '.github/auto_assign.yml'

@@ -1,0 +1,6 @@
+backend:
+  - data/**
+frontend:
+  - src/**
+  - '*'
+  - '!(data)/**'
