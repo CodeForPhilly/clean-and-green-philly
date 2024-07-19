@@ -17,7 +17,7 @@
     "@turf/centroid": "^7.0.0",
     "autoprefixer": "10.4.15",
     "clsx": "^2.1.1",
-    "framer-motion": "^10.16.4",
+    "framer-motion": "^11.3.8",
     "lodash": "^4.17.21",
     "mapbox-gl": "^3.2.0",
     "maplibre-gl": "^4.5.0",
