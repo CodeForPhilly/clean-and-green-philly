@@ -5,24 +5,33 @@ updates:
     schedule:
       interval: 'daily'
     target-branch: 'staging'
-    open-pull-requests-limit: 1
     commit-message:
       prefix: 'deps'
+    groups:
+      all-actions:
+        patterns:
+          - '*'
 
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:
       interval: 'weekly'
     target-branch: 'staging'
-    open-pull-requests-limit: 1
     commit-message:
       prefix: 'deps'
+    groups:
+      all-npm:
+        patterns:
+          - '*'
 
   - package-ecosystem: 'pip'
     directory: '/data/src'
     schedule:
       interval: 'weekly'
     target-branch: 'staging'
-    open-pull-requests-limit: 1
     commit-message:
       prefix: 'deps'
+    groups:
+      all-pip:
+        patterns:
+          - '*'
