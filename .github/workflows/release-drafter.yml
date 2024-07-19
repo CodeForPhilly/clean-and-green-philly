@@ -4,15 +4,17 @@ on:
   push:
     branches:
       - main
+      - test-release-drafter
   pull_request:
-    types: [closed]
+    types: [opened, reopened, synchronize, edited, closed]
+  workflow_dispatch: # This allows manual triggering from the GitHub UI
 
 jobs:
   update_release_draft:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Update Release Draft
         uses: release-drafter/release-drafter@v6
