@@ -13,5 +13,6 @@ version-resolver:
   minor: 'feat'
   patch: 'fix'
 template: |
-  # Changelog
+  ## Changes
   $CHANGES
+no-changes-template: '* No changes'
