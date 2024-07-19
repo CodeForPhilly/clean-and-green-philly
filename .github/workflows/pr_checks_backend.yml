@@ -5,10 +5,10 @@ on:
     branches:
       - staging
     paths:
-      - "data/**"
-      - "Dockerfile-pg"
-      - "init_pg.sql"
-      - "docker-compose.yml"
+      - 'data/**'
+      - 'Dockerfile-pg'
+      - 'init_pg.sql'
+      - 'docker-compose.yml'
 
 jobs:
   build:
@@ -27,7 +27,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11.4"
+          python-version: '3.11.4'
 
       - name: Run Black Formatter in Docker
         run: |
