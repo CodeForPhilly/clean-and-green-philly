@@ -8,6 +8,10 @@ updates:
     open-pull-requests-limit: 1
     commit-message:
       prefix: 'deps'
+    groups:
+      all-actions:
+        patterns:
+          - '*'
 
   - package-ecosystem: 'npm'
     directory: '/'
@@ -17,6 +21,10 @@ updates:
     open-pull-requests-limit: 1
     commit-message:
       prefix: 'deps'
+    groups:
+      all-npm:
+        patterns:
+          - '*'
 
   - package-ecosystem: 'pip'
     directory: '/data/src'
@@ -26,3 +34,7 @@ updates:
     open-pull-requests-limit: 1
     commit-message:
       prefix: 'deps'
+    groups:
+      all-pip:
+        patterns:
+          - '*'
