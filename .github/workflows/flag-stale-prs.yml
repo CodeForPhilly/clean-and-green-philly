@@ -1,0 +1,17 @@
+name: Flag Stale PRs
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: 7
+          stale-pr-message: 'This PR has been marked as stale because it has been open for 7 days with no activity.'
+          stale-pr-label: 'stale'
+          only-labels: 'backend, frontend'
