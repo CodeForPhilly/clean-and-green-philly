@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - test-release-drafter
   pull_request:
     types: [opened, reopened, synchronize, edited, closed]
   workflow_dispatch:
