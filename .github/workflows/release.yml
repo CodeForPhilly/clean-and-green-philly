@@ -3,7 +3,8 @@ name: Release
 on:
   push:
     branches:
-      - test-release
+      - main
+  workflow_dispatch:
 
 jobs:
   release:
