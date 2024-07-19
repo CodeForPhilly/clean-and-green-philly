@@ -9,9 +9,9 @@ categories:
     labels: [documentation]
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 version-resolver:
-  major: 'feat!:'
-  minor: 'feat'
-  patch: 'fix'
+  major: { 'pattern': 'BREAKING CHANGE' }
+  minor: { 'pattern': 'feat' }
+  patch: { 'pattern': 'fix' }
 template: |
   ## Changes
   $CHANGES
