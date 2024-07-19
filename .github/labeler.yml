@@ -1,2 +1,7 @@
 backend:
   - data/**
+frontend:
+  - src/**
+documentation:
+  - docs/**
+  - README.md
