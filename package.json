@@ -20,6 +20,7 @@
     "autoprefixer": "10.4.19",
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.8",
+    "framer-motion": "^11.3.8",
     "lodash": "^4.17.21",
     "mapbox-gl": "^3.5.2",
     "maplibre-gl": "^4.5.0",
