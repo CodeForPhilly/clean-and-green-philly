@@ -6,13 +6,13 @@ module.exports = {
     PROJECT_ROOT: __dirname,
   },
   images: {
-    domains: ["storage.googleapis.com"],
+    domains: ['storage.googleapis.com'],
   },
   async redirects() {
     return [
       {
-        source: "/map",
-        destination: "/find-properties",
+        source: '/map',
+        destination: '/find-properties',
         permanent: true,
       },
     ];

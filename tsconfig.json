@@ -29,7 +29,5 @@
     ".next/types/**/*.ts",
     "eslint-plugin-custom-rules/**/*.js"
   ],
-  "exclude": [
-    "node_modules"
-  ]
+  "exclude": ["node_modules"]
 }

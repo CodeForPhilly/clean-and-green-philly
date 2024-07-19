@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { FilterProvider } from "@/context/FilterContext";
+import { FilterProvider } from '@/context/FilterContext';
 
 export const FilterProviderWrapper = ({
-    children,
+  children,
 }: {
-    children: React.ReactNode;
+  children: React.ReactNode;
 }) => {
-    return <FilterProvider>{children}</FilterProvider>
-}
+  return <FilterProvider>{children}</FilterProvider>;
+};

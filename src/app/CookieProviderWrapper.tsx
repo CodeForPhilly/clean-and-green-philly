@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import { CookieProvider } from "@/context/CookieContext";
+import { CookieProvider } from '@/context/CookieContext';
 
 export const CookieProviderWrapper = ({
   children,

@@ -1,4 +1,4 @@
-import { Handshake, Money, Gavel, Tag, XCircle } from "@phosphor-icons/react";
+import { Handshake, Money, Gavel, Tag, XCircle } from '@phosphor-icons/react';
 
 export default function GetAccessPage() {
   return (
@@ -46,7 +46,7 @@ export default function GetAccessPage() {
             access to a property, provided that you are able to find the owner
             of the property. When creating such an agreement, you must define
             the rights and responsibilities of yourself and the property owner.
-            Grounded in Philly provides{" "}
+            Grounded in Philly provides{' '}
             <a
               href="https://groundedinphilly.org/make-agreement-private-landowner/"
               target="_blank"
@@ -54,7 +54,7 @@ export default function GetAccessPage() {
               className="link"
             >
               a good list of key considerations
-            </a>{" "}
+            </a>{' '}
             as well as sample agreement language.
           </p>
         </div>
@@ -96,7 +96,7 @@ export default function GetAccessPage() {
             short, if a property meets certain specific criteria, it can be
             turned over to a court-appointed conservator for remediation.
             According to the law, it must be unoccupied, abandoned by its owner,
-            and unsafe and unhealthy. (For more information, consult{" "}
+            and unsafe and unhealthy. (For more information, consult{' '}
             <a
               href="https://www.vanderslicelaw.com/service_index/real-estate/act-135/"
               target="_blank"
@@ -127,7 +127,7 @@ export default function GetAccessPage() {
         <div>
           <h3 className="heading-xl font-bold mb-4">Get through Land Bank</h3>
           <p className="mb-4">
-            The{" "}
+            The{' '}
             <a
               href="https://phdcphila.org/"
               target="_blank"
@@ -135,7 +135,7 @@ export default function GetAccessPage() {
               className="link"
             >
               Philadelphia Land Bank
-            </a>{" "}
+            </a>{' '}
             is part of the Philadelphia Housing Development Corporation. It
             works to redistribute publicly-owned land and return vacant
             properties to productive use. Vacant properties owned by the Land
@@ -149,7 +149,7 @@ export default function GetAccessPage() {
             cost. However, one is still required to go through the Land Bank’s
             process, which also requires the support of the City Council member
             in whose district the property falls. Grounded in Philly provides a
-            good overview of how to{" "}
+            good overview of how to{' '}
             <a
               href="https://groundedinphilly.org/get-permission-to-use-land-city/"
               target="_blank"
@@ -198,7 +198,7 @@ export default function GetAccessPage() {
         Philly only uses public data, we have no way of knowing whether you
         specifically qualify for these programs. However, if you think you might
         qualify for one of these options, we encourage you to consult a tool
-        like{" "}
+        like{' '}
         <a
           href="https://groundedinphilly.org/#pathways"
           target="_blank"
@@ -222,7 +222,7 @@ export default function GetAccessPage() {
           are also difficult to resolve without legal support. If you are the
           rightful owner of a property with a tangled title, or if you believe
           that a vacant property in your neighborhood is the result of a tangled
-          title, consider reaching out to{" "}
+          title, consider reaching out to{' '}
           <a
             href="https://philalegal.org/services/tangled-title"
             target="_blank"
@@ -230,7 +230,7 @@ export default function GetAccessPage() {
             className="link"
           >
             Philadelphia Legal Assistance
-          </a>{" "}
+          </a>{' '}
           for help.
         </p>
       </div>
@@ -246,7 +246,7 @@ export default function GetAccessPage() {
           a member of a community garden). However, be aware that this is a very
           complicated process. It usually requires a lawyer and can require
           taking on years of unpaid property taxes. If you believe you may
-          qualify for adverse possession, we recommend reaching out to the{" "}
+          qualify for adverse possession, we recommend reaching out to the{' '}
           <a
             href="https://groundedinphilly.org/press/"
             target="_blank"
@@ -254,7 +254,7 @@ export default function GetAccessPage() {
             className="link"
           >
             Garden Justice Legal Initiative
-          </a>{" "}
+          </a>{' '}
           for help.
         </p>
       </div>
@@ -267,7 +267,7 @@ export default function GetAccessPage() {
           quick and easy way to make productive use of a vacant property, and we
           indicate in our dashboard whether or not a property is eligible for
           this program. If you believe you have the opportunity to acquire a
-          vacant property through the side yard program, please consult the{" "}
+          vacant property through the side yard program, please consult the{' '}
           <a
             href="https://phdcphila.org/land/buy-land/side-or-rear-yards/"
             target="_blank"

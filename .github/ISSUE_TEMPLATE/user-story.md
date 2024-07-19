@@ -4,7 +4,6 @@ about: Template for creating a user story
 title: As a [persona], I [want to], [so that].
 labels: ''
 assignees: ''
-
 ---
 
 **Description**
