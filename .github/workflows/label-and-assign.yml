@@ -8,10 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Add a step to print the content of .github/labeler.yml
-      - name: Print labeler configuration
-        run: cat .github/labeler.yml
-
       - name: Label PR
         uses: actions/labeler@v5
         with:
