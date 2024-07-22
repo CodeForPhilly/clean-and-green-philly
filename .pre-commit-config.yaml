@@ -1,0 +1,42 @@
+repos:
+  - repo: local
+    hooks:
+      #Formatting
+      - id: prettier
+        name: Prettier (Code formatting)
+        entry: npm run format
+        language: node
+        files: \.(js|jsx|ts|tsx)$
+
+      - id: black
+        name: Black (Python code formatter)
+        entry: black --line-length=88 .
+        language: system
+        files: data/
+        types: [python]
+
+      # Linting
+      - id: eslint
+        name: ESLint (JavaScript linting)
+        entry: npm run lint
+        language: node
+        files: \.(js|jsx|ts|tsx)$
+
+      - id: flake8
+        name: Flake8 (Python linting)
+        entry: flake8
+        language: system
+        files: data/
+        types: [python]
+
+      # Dependency checks
+      - id: npm-audit
+        name: NPM Audit (Check Node.js dependencies)
+        entry: npm audit fix
+        language: node
+
+      - id: check
+        name: Check (Check Python dependencies)
+        entry: pipenv check
+        language: system
+        files: data/

@@ -31,6 +31,8 @@ libpysal = "*"
 jenkspy = "*"
 
 [dev-packages]
+flake8 = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.11"
