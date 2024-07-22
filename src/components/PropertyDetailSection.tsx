@@ -1,14 +1,6 @@
 'use client';
 
-import {
-  FC,
-  useState,
-  useMemo,
-  useRef,
-  useEffect,
-  SetStateAction,
-  Dispatch,
-} from 'react';
+import { FC, useState, useMemo, useRef, SetStateAction, Dispatch } from 'react';
 import { ThemeButton } from './ThemeButton';
 import { PiCaretRight, PiCaretLeft } from 'react-icons/pi';
 import {
@@ -85,7 +77,6 @@ const PropertyDetailSection: FC<PropertyDetailSectionProps> = ({
       key,
       value,
       isActive,
-      isFirst,
       onNext,
       onPrevious,
       setPage,
