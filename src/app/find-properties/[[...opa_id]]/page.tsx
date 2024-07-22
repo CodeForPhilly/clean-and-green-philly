@@ -8,7 +8,6 @@ import {
   SidePanel,
   SidePanelControlBar,
 } from '@/components';
-import { FilterProvider } from '@/context/FilterContext';
 import { NextUIProvider, Spinner } from '@nextui-org/react';
 import { X, GlobeHemisphereWest, ListBullets } from '@phosphor-icons/react';
 import { MapGeoJSONFeature } from 'maplibre-gl';

@@ -1,5 +1,5 @@
 import { ControlPosition, FillLayerSpecification } from 'maplibre-gl';
-import React, { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction } from 'react';
 import { useControl } from 'react-map-gl';
 import { MapLegendControlClass } from './MapLegend';
 
