@@ -1,6 +1,7 @@
 import Image, { StaticImageData } from 'next/image';
 import type { IconType } from 'react-icons';
 import { ThemeButtonLink } from './ThemeButton';
+import './components-css/InfoGraphicSection.css';
 
 interface InfoGraphicBase {
   id?: string;
@@ -54,7 +55,7 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
         <Image
           src={props.image.data}
           alt={props.image.alt || ''}
-          className={`w-full rounded-[20px] ${
+          className={`w-full rounded-[20px] p-5 info-graphic ${
             props.image.className && props.image.className
           }`}
           priority={(props.image.priority && props.image.priority) || false}
