@@ -5,10 +5,12 @@ on:
     branches:
       - main
   pull_request:
-    types: [closed]
+    types: [opened, reopened, synchronize, edited, closed]
+  workflow_dispatch:
 
 jobs:
   update_release_draft:
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

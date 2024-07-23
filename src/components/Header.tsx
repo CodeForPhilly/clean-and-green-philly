@@ -1,6 +1,5 @@
 import { Navbar, NavbarBrand, NavbarContent } from '@nextui-org/react';
 import { PiBinoculars, PiKey, PiTree, PiInfo } from 'react-icons/pi';
-import { ThemeButton, ThemeButtonLink } from './ThemeButton';
 import Image from 'next/image';
 import Link from 'next/link';
 import IconLink from './IconLink';

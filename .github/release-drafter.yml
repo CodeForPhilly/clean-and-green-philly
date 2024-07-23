@@ -8,4 +8,11 @@ categories:
   - title: '📝 Documentation'
     labels: [documentation]
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
-version-resolver: semver
+version-resolver:
+  major: { 'pattern': 'BREAKING CHANGE' }
+  minor: { 'pattern': 'feat' }
+  patch: { 'pattern': 'fix' }
+template: |
+  ## Changes
+  $CHANGES
+no-changes-template: '* No changes'
