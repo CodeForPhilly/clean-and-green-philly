@@ -11,7 +11,7 @@ import {
 
 type MultiSelectProps = {
   display: string;
-  options: string[];
+  options: any[];
   selectedKeys: string[];
   toggleDimension: (dimension: string) => void;
   handleSelectionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
