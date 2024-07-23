@@ -1,7 +1,7 @@
-import { FC, ReactNode } from "react";
-import Image, { StaticImageData } from "next/image";
-import { ThemeButtonLink } from "./ThemeButton";
-import { ArrowUpRight, CaretRight } from "@phosphor-icons/react";
+import { FC, ReactNode } from 'react';
+import Image, { StaticImageData } from 'next/image';
+import { ThemeButtonLink } from './ThemeButton';
+import { ArrowUpRight, CaretRight } from '@phosphor-icons/react';
 
 interface Link {
   url: string;
@@ -45,11 +45,9 @@ const ContentCard: FC<ContentCardProps> = ({
 }) => {
   return (
     <div
-      className={
-        hasArrow
-          ? "bg-green-100 rounded-md hover:bg-green-200 transition-colors duration-[250ms]"
-          : "bg-green-100 rounded-md"
-      }
+      className={`bg-green-100 rounded-md outline outline-1 outline-transparent ${
+        hasArrow ? 'hover:bg-green-200 transition-colors duration-[250ms]' : ''
+      }`}
     >
       <div>
         <Image
@@ -69,7 +67,7 @@ const ContentCard: FC<ContentCardProps> = ({
             <div className="grid gap-4 grid-cols-2 pt-5">
               {details.map((detail, index) => (
                 <div key={index}>
-                  <span className="font-bold">{detail.label}</span>{" "}
+                  <span className="font-bold">{detail.label}</span>{' '}
                   {detail.data}
                 </div>
               ))}
@@ -83,7 +81,7 @@ const ContentCard: FC<ContentCardProps> = ({
                   key={index}
                   className="text-blue-900 !bg-green-100 !px-0 !py-0 mb-2 h-5 !text-left !items-start"
                   color="tertiary"
-                  aria-label={link.text + " Link opens in new tab"}
+                  aria-label={link.text + ' Link opens in new tab'}
                   href={link.url}
                   target="_blank"
                   rel="noreferrer"
