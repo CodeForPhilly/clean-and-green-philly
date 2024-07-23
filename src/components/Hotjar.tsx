@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
+import { useEffect } from 'react';
 
 const Hotjar = () => {
   useEffect(() => {
-    const script = document.createElement("script");
+    const script = document.createElement('script');
     script.innerHTML = `
       (function(h,o,t,j,a,r){
         h.hj=h.hj||function(){(h.hj.q=h.hj.q||[]).push(arguments)};

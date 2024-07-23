@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { NextUIProvider } from "@nextui-org/react";
-import { FC } from "react";
-import TakeActionOverviewPage from "./TakeActionOverviewPage";
+import { NextUIProvider } from '@nextui-org/react';
+import { FC } from 'react';
+import TakeActionOverviewPage from './TakeActionOverviewPage';
 
 const TakeActionOverview: FC = () => {
   return (

@@ -4,10 +4,10 @@ import React, {
   createContext,
   useContext,
   ReactNode,
-} from "react";
+} from 'react';
 
 export interface DimensionFilter {
-  type: "dimension";
+  type: 'dimension';
   values: string[];
   useIndexOfFilter?: boolean;
 }
@@ -22,7 +22,7 @@ interface FilterContextProps {
 }
 
 type FilterAction = {
-  type: "SET_DIMENSIONS" | "CLEAR_DIMENSIONS";
+  type: 'SET_DIMENSIONS' | 'CLEAR_DIMENSIONS';
   property: string;
   dimensions: string[];
   useIndexOfFilter?: boolean;
@@ -33,7 +33,7 @@ const filterReducer = (
   action: FilterAction
 ): FilterState => {
   switch (action.type) {
-    case "SET_DIMENSIONS":
+    case 'SET_DIMENSIONS':
       if (action.dimensions.length === 0) {
         const { [action.property]: _, ...rest } = state;
         return rest;
@@ -41,15 +41,15 @@ const filterReducer = (
       return {
         ...state,
         [action.property]: {
-          type: "dimension",
+          type: 'dimension',
           values: action.dimensions,
           useIndexOfFilter: action.useIndexOfFilter || false,
         },
       };
-    case "CLEAR_DIMENSIONS":
+    case 'CLEAR_DIMENSIONS':
       return {};
     default:
-      throw new Error("Unhandled action type");
+      throw new Error('Unhandled action type');
   }
 };
 
@@ -60,7 +60,7 @@ export const FilterContext = createContext<FilterContextProps | undefined>(
 export const useFilter = () => {
   const context = useContext(FilterContext);
   if (!context) {
-    throw new Error("useFilter must be used within a FilterProvider");
+    throw new Error('useFilter must be used within a FilterProvider');
   }
   return context;
 };

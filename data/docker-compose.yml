@@ -17,9 +17,9 @@ services:
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
 
-    extra_hosts: 
+    extra_hosts:
       - host.docker.internal:host-gateway
-    network_mode: "host"
+    network_mode: 'host'
 
   formatter:
     build:
@@ -28,7 +28,7 @@ services:
     volumes:
       - ./src:/usr/src/app
     command: sh -c "pipenv run black /usr/src/app"
-    network_mode: "host"
+    network_mode: 'host'
 
   streetview:
     build:
@@ -39,16 +39,16 @@ services:
       - CLEAN_GREEN_GOOGLE_KEY
       - VACANT_LOTS_DB
       - GOOGLE_CLOUD_BUCKET_NAME
-      
+
     volumes:
       - ./src:/usr/src/app
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
       - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro      
+      - /etc/localtime:/etc/localtime:ro
     command: sh -c "pipenv run python streetview.py"
-    extra_hosts: 
+    extra_hosts:
       - host.docker.internal:host-gateway
-    network_mode: "host"
+    network_mode: 'host'
 
   postgres:
     container_name: cagp-postgres
@@ -61,13 +61,13 @@ services:
       - POSTGRES_PASSWORD
     restart: always
     ports:
-      - "5433:5433"
+      - '5433:5433'
     volumes:
       - database_volume:/var/lib/postgresql/data
       - ./init_pg.sql:/docker-entrypoint-initdb.d/init_pg.sql
       - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro      
-    extra_hosts: 
+      - /etc/localtime:/etc/localtime:ro
+    extra_hosts:
       - host.docker.internal:host-gateway
 
 volumes:

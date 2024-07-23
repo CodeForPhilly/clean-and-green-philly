@@ -1,4 +1,4 @@
-import { Footer, Header, Hotjar } from "@/components";
+import { Footer, Header, Hotjar } from '@/components';
 
 const ContentPagesLayout = ({ children }: { children: React.ReactNode }) => {
   return (

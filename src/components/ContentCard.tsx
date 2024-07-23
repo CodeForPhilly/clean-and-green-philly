@@ -1,4 +1,4 @@
-import { FC, ReactNode } from 'react';
+import { FC } from 'react';
 import Image, { StaticImageData } from 'next/image';
 import { ThemeButtonLink } from './ThemeButton';
 import { ArrowUpRight, CaretRight } from '@phosphor-icons/react';
@@ -29,16 +29,10 @@ type ContentCardProps = {
 };
 
 const ContentCard: FC<ContentCardProps> = ({
-  // image,
   image,
   alt,
   title,
   body,
-  description,
-  linkurl,
-  linktext,
-  labelUpkeep,
-  upkeepLevel,
   links,
   details,
   hasArrow,

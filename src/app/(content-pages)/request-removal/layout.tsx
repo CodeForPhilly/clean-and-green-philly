@@ -1,8 +1,8 @@
-import { generateMetadata } from "@/utilities/generateMetaData";
+import { generateMetadata } from '@/utilities/generateMetaData';
 
-const title = "Request Removal";
-const description = "Request to Remove a Property Listing";
-const url = "/request-removal";
+const title = 'Request Removal';
+const description = 'Request to Remove a Property Listing';
+const url = '/request-removal';
 
 export const metadata = generateMetadata({
   title,

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import React, { useMemo, useState, FC } from "react";
-import { useFilter } from "@/context/FilterContext";
-import ButtonGroup from "./ButtonGroup";
-import MultiSelect from "./MultiSelect";
-import Panels from "./Panels";
+import React, { useMemo, useState, FC } from 'react';
+import { useFilter } from '@/context/FilterContext';
+import ButtonGroup from './ButtonGroup';
+import MultiSelect from './MultiSelect';
+import Panels from './Panels';
 
 type DimensionFilterProps = {
   property: string;
@@ -19,9 +19,9 @@ type OptionDisplayMapping = {
 };
 
 const optionsDisplayMapping: OptionDisplayMapping = {
-  "llc_owner": {
-    "Yes": "Business",
-    "No": "Individual",
+  llc_owner: {
+    Yes: 'Business',
+    No: 'Individual',
   },
 };
 
@@ -37,16 +37,21 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     appFilter[property]?.values || []
   );
   const initialSelectedPanelKeys = () => {
-    let panelKeyObj: {[key: string]: string[]} = {}
+    const panelKeyObj: { [key: string]: string[] } = {};
     for (const key in appFilter) {
-      panelKeyObj[key] = appFilter[key].values
+      panelKeyObj[key] = appFilter[key].values;
     }
-    return panelKeyObj
-  }
-  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{[property: string]: string[]}>(initialSelectedPanelKeys())
-  
-  const toggleDimensionForPanel = (dimension: string, panel_property: string) => {
-    let newSelectedPanelKeys
+    return panelKeyObj;
+  };
+  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{
+    [property: string]: string[];
+  }>(initialSelectedPanelKeys());
+
+  const toggleDimensionForPanel = (
+    dimension: string,
+    panel_property: string
+  ) => {
+    let newSelectedPanelKeys;
     if (selectedPanelKeys[panel_property]) {
       newSelectedPanelKeys = selectedPanelKeys[panel_property].includes(
         dimension
@@ -61,7 +66,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       [panel_property]: newSelectedPanelKeys,
     });
     dispatch({
-      type: "SET_DIMENSIONS",
+      type: 'SET_DIMENSIONS',
       property: panel_property,
       dimensions: newSelectedPanelKeys,
     });
@@ -73,17 +78,17 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       : [...selectedKeys, dimension];
     setSelectedKeys(newSelectedKeys);
     dispatch({
-      type: "SET_DIMENSIONS",
+      type: 'SET_DIMENSIONS',
       property,
       dimensions: newSelectedKeys,
     });
   };
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newMultiSelect: string[] = e.target.value.split(",");
+    const newMultiSelect: string[] = e.target.value.split(',');
     setSelectedKeys(newMultiSelect);
     dispatch({
-      type: "SET_DIMENSIONS",
+      type: 'SET_DIMENSIONS',
       property,
       dimensions: newMultiSelect,
       useIndexOfFilter,
@@ -91,7 +96,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   };
 
   const filter = useMemo(() => {
-    if (type === "buttonGroup") {
+    if (type === 'buttonGroup') {
       return (
         <ButtonGroup
           options={options}
@@ -100,7 +105,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           displayOptions={optionsDisplayMapping[property]}
         />
       );
-    } else if (type === "panels") {
+    } else if (type === 'panels') {
       return (
         <Panels
           options={options}
@@ -122,30 +127,30 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   }, [selectedKeys, selectedPanelKeys]);
 
   const filterDescription =
-    property === "priority_level"
+    property === 'priority_level'
       ? {
-          desc: "Find properties based on how much they can reduce gun violence considering the gun violence, cleanliness, and tree canopy nearby. ",
-          linkFragment: "priority-method",
+          desc: 'Find properties based on how much they can reduce gun violence considering the gun violence, cleanliness, and tree canopy nearby. ',
+          linkFragment: 'priority-method',
         }
       : {
-          desc: "Find properties based on what we think is the easiest method to get legal access to them, based on the data available to us. ",
-          linkFragment: "access-method",
-      };
+          desc: 'Find properties based on what we think is the easiest method to get legal access to them, based on the data available to us. ',
+          linkFragment: 'access-method',
+        };
 
   // text-gray-500, 600 ? or #586266 (figma)?
   return (
     <div className="pt-3 pb-6">
       <div className="flex flex-col mb-2">
         <h2 className="heading-lg">{display}</h2>
-        {(property === "get_access" || property === "priority_level") && (
+        {(property === 'get_access' || property === 'priority_level') && (
           <p className="body-sm text-gray-500 w-[90%] my-1">
             {filterDescription.desc}
             <a
               href={`/methodology/#${filterDescription.linkFragment}`}
               className="link"
-              aria-label={`Learn more about ${property === "priority_level" ? "priority level" : "access process"} from our Methodology Page`}
+              aria-label={`Learn more about ${property === 'priority_level' ? 'priority level' : 'access process'} from our Methodology Page`}
             >
-              Learn more{" "}
+              Learn more{' '}
             </a>
           </p>
         )}

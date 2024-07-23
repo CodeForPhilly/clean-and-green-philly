@@ -1,17 +1,17 @@
-"use client";
+'use client';
 
-import React, { FC } from "react";
-import { X } from "@phosphor-icons/react";
+import React, { FC } from 'react';
+import { X } from '@phosphor-icons/react';
 import {
   SelectFilter,
   SelectFilterItem,
   SelectFilterChip,
   BlankSelectorIcon,
-} from "./MultiSelectVariants";
+} from './MultiSelectVariants';
 
 type MultiSelectProps = {
   display: string;
-  options: string[];
+  options: any[];
   selectedKeys: string[];
   toggleDimension: (dimension: string) => void;
   handleSelectionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
@@ -49,7 +49,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
               {selectedKeys.map((option, index) => (
                 <SelectFilterChip
                   key={index}
-                  classNames={{ base: "multiSelectChip" }}
+                  classNames={{ base: 'multiSelectChip' }}
                   endContent={<X aria-label={`close ${option}`} />}
                   onClose={() => toggleDimension(option)}
                 >
@@ -65,7 +65,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
           <SelectFilterItem
             key={option}
             value={option}
-            classNames={{ base: "multiSelectItem" }}
+            classNames={{ base: 'multiSelectItem' }}
             shouldHighlightOnFocus={false}
           >
             {option}

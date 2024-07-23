@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function AccessibilityStatementPage() {
   return (
@@ -46,7 +46,7 @@ export default function AccessibilityStatementPage() {
       <ul className="list-disc ml-8 my-2">
         <li>cleanandgreenphl@gmail.com</li>
         <li>
-          Submit an issue through our{" "}
+          Submit an issue through our{' '}
           <a
             href="https://github.com/CodeForPhilly/clean-and-green-philly/issues"
             className="link"

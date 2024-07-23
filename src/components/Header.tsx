@@ -1,10 +1,9 @@
-import { Navbar, NavbarBrand, NavbarContent } from "@nextui-org/react";
-import { PiBinoculars, PiKey, PiTree, PiInfo } from "react-icons/pi";
-import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
-import Image from "next/image";
-import Link from "next/link";
-import IconLink from "./IconLink";
-import MobileNav from "./MobileNav";
+import { Navbar, NavbarBrand, NavbarContent } from '@nextui-org/react';
+import { PiBinoculars, PiKey, PiTree, PiInfo } from 'react-icons/pi';
+import Image from 'next/image';
+import Link from 'next/link';
+import IconLink from './IconLink';
+import MobileNav from './MobileNav';
 
 // Apply multiple CSS classes using CSS Modules
 // const buttonClasses = `${styles.button} ${primary ? styles.primary : ""} ${
@@ -14,7 +13,14 @@ import MobileNav from "./MobileNav";
 const Header = () => (
   <>
     <MobileNav />
-    <Navbar className="px-1" maxWidth="full" position="sticky" height="auto" as="div" isBordered>
+    <Navbar
+      className="px-1"
+      maxWidth="full"
+      position="sticky"
+      height="auto"
+      as="div"
+      isBordered
+    >
       <NavbarContent
         as="div"
         className="hidden min-[850px]:flex basis-1/5 sm:basis-full py-4"
