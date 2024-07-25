@@ -43,8 +43,8 @@ repos:
 
       # Commit message linting
       - id: commitlint
-        name: Lint commit message
-        entry: npm run lint-commit
-        language: system
+        name: commitlint
+        entry: commitlint --edit $1
+        language: node
         pass_filenames: false
         stages: [commit-msg]
