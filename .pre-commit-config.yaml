@@ -44,7 +44,7 @@ repos:
       # Commit message linting
       - id: commitlint
         name: commitlint
-        entry: npx commitlint --edit $1
+        entry: npx commitlint --edit
         language: node
         pass_filenames: false
         stages: [commit-msg]
