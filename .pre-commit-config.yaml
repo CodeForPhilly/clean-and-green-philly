@@ -8,12 +8,12 @@ repos:
       #   language: node
       #   files: \.(js|jsx|ts|tsx)$
 
-      - id: black
-        name: Black (Python code formatter)
-        entry: black --line-length=88 .
-        language: system
-        files: data/
-        types: [python]
+      # - id: black
+      #   name: Black (Python code formatter)
+      #   entry: black --line-length=88 .
+      #   language: system
+      #   files: data/
+      #   types: [python]
 
       # # Linting
       # - id: eslint
