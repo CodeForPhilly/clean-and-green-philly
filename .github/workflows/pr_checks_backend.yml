@@ -9,6 +9,7 @@ on:
       - 'Dockerfile-pg'
       - 'init_pg.sql'
       - 'docker-compose.yml'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -29,46 +30,42 @@ jobs:
         with:
           python-version: '3.11.4'
 
-      - name: Run Black Formatter in Docker
+      - name: Run Ruff Formatter in Docker
         run: |
           cd data
           docker-compose run --rm formatter
         continue-on-error: true
 
-      - name: Run Flake8
+      - name: Run Ruff Linter in Docker
         run: |
           cd data
-          pip install flake8
-          flake8 .
+          docker-compose run --rm linter
         continue-on-error: true
 
-      - name: Install dependencies and build Docker images
+      - name: Build vacant-lots-proj
         run: |
           cd data
-          docker-compose pull
-          docker-compose build
+          docker-compose build vacant-lots-proj
 
-      - name: Run vacant-lots-proj
+      - name: Build data-fetcher
         run: |
           cd data
-          docker-compose up -d vacant-lots-proj
-        continue-on-error: true
+          docker-compose build data-fetcher
 
-      - name: Build and check Postgres container
+      - name: Run all services
         run: |
           cd data
-          docker-compose build postgres
-        continue-on-error: true
+          docker-compose up -d
 
       - name: Check build status
         if: failure()
         run: |
-          echo "The vacant-lots-proj or postgres container failed to build and run."
+          echo "One or more services failed to build and run."
           exit 1
 
       - name: Report success
         if: success()
-        run: echo "The vacant-lots-proj and postgres container built and ran successfully."
+        run: echo "All services built and ran successfully."
 
       - name: Check formatter and linter status
         if: failure()

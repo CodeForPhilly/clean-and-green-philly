@@ -29,6 +29,7 @@ pytest = "*"
 networkx = "*"
 libpysal = "*"
 jenkspy = "*"
+pyarrow = "*"
 
 [dev-packages]
 

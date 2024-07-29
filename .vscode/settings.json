@@ -5,17 +5,17 @@
     "${workspaceFolder}/data/src",
     "${workspaceFolder}/data/src/awkde"
   ],
-  "python.testing.pytestEnabled": true,
-  "python.testing.cwd": "${workspaceFolder}/data/src",
   "[python]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
       "source.organizeImports": "explicit"
     },
-    "editor.defaultFormatter": "ms-python.black-formatter"
+    "editor.defaultFormatter": "charliermarsh.ruff"
   },
-  "python.formatting.provider": "black",
-  "python.linting.flake8Enabled": true,
-  "python.linting.enabled": true,
-  "python.linting.flake8Args": ["--max-line-length=88"]
+  "notebook.formatOnSave.enabled": true,
+  "notebook.codeActionsOnSave": {
+    "notebook.source.fixAll": "explicit",
+    "notebook.source.organizeImports": "explicit"
+  }
 }
