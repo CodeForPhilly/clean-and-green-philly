@@ -1,0 +1,14 @@
+# Use the existing main container image
+FROM vacant-lots-proj:latest
+
+# Set the working directory in the container
+WORKDIR /usr/src/app
+
+# Copy the fetch_and_save_data.py script to the container
+COPY src/fetch_and_save_data.py ./
+
+# Ensure Pipenv and dependencies are installed
+RUN pipenv install --ignore-pipfile --dev
+
+# Set the default command to run the script with pipenv and python
+ENTRYPOINT ["sh", "-c", "pipenv run python ./fetch_and_save_data.py \"$@\"", "--"]
