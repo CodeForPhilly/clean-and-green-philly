@@ -26,7 +26,15 @@ services:
       context: .
     volumes:
       - ./src:/usr/src/app
-    command: sh -c "pipenv run black /usr/src/app"
+    command: sh -c "pip install ruff && ruff /usr/src/app --fix || exit 0"
+    network_mode: 'host'
+
+  linter:
+    build:
+      context: .
+    volumes:
+      - ./src:/usr/src/app
+    command: sh -c "pip install ruff && ruff check /usr/src/app || exit 0"
     network_mode: 'host'
 
   streetview:
