@@ -9,6 +9,7 @@ on:
       - 'Dockerfile-pg'
       - 'init_pg.sql'
       - 'docker-compose.yml'
+  workflow_dispatch:
 
 jobs:
   build:
@@ -29,17 +30,16 @@ jobs:
         with:
           python-version: '3.11.4'
 
-      - name: Run Black Formatter in Docker
+      - name: Run Ruff Formatter in Docker
         run: |
           cd data
           docker-compose run --rm formatter
         continue-on-error: true
 
-      - name: Run Flake8
+      - name: Run Ruff Linter in Docker
         run: |
           cd data
-          pip install flake8
-          flake8 .
+          docker-compose run --rm linter
         continue-on-error: true
 
       - name: Build vacant-lots-proj
