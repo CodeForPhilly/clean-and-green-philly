@@ -1,5 +1,5 @@
 # Use the existing main container image
-FROM data-vacant-lots-proj:latest
+FROM vacant-lots-proj:latest
 
 # Set the working directory in the container
 WORKDIR /usr/src/app
