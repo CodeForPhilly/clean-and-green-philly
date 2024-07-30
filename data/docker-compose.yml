@@ -26,7 +26,7 @@ services:
       context: .
     volumes:
       - ./src:/usr/src/app
-    command: sh -c "pip install ruff && ruff /usr/src/app --fix --exclude '/usr/src/app/data/src/awkde/' || exit 0"
+    command: sh -c "pip install ruff && ruff /usr/src/app --fix --exclude '/usr/src/app/data/src/awkde/'"
     network_mode: 'host'
 
   linter:
@@ -34,7 +34,7 @@ services:
       context: .
     volumes:
       - ./src:/usr/src/app
-    command: sh -c "pip install ruff && ruff check /usr/src/app --exclude '/usr/src/app/data/src/awkde/' || exit 0"
+    command: sh -c "pip install ruff && ruff check /usr/src/app --exclude '/usr/src/app/data/src/awkde/'"
     network_mode: 'host'
 
   streetview:
