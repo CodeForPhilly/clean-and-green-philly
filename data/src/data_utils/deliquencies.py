@@ -1,4 +1,3 @@
-import pandas as pd
 from classes.featurelayer import FeatureLayer
 from constants.services import DELINQUENCIES_QUERY
 
@@ -17,7 +16,7 @@ def deliquencies(primary_featurelayer):
             "most_recent_year_owed",
             "total_assessment",
             "sheriff_sale",
-        ]
+        ],
     )
 
     primary_featurelayer.opa_join(

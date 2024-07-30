@@ -1,6 +1,3 @@
-import pandas as pd
-
-
 def access_process(dataset):
     access_processes = []
 

@@ -9,6 +9,7 @@ repos:
         language: python
         types_or: [python, pyi, jupyter]
         files: \.py$
+        exclude: ^data/src/awkde/
 
       # Ruff for Python formatting
       - id: ruff-format
@@ -17,6 +18,7 @@ repos:
         language: python
         types_or: [python, pyi, jupyter]
         files: \.py$
+        exclude: ^data/src/awkde/
 
       # Dependency checks for Python
       - id: check-python-dependencies
