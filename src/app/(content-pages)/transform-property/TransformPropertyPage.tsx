@@ -293,7 +293,7 @@ export default function TransformPropertyPage() {
         documentation for this in the future.
       </p>
 
-      <div className="bg-gray-100 rounded-lg p-8 mt-8">
+      <div className="bg-gray-100 rounded-lg p-8 mt-8 outline outline-1 outline-transparent">
         <h3 className="heading-xl font-bold mb-4">Park in a Truck</h3>
         <p className="body-md mb-4">
           Park in a Truck supports community residents in quickly building
@@ -314,7 +314,7 @@ export default function TransformPropertyPage() {
         />
       </div>
 
-      <div className="bg-gray-100 rounded-lg p-8 mt-8">
+      <div className="bg-gray-100 rounded-lg p-8 mt-8 outline outline-1 outline-transparent">
         <h3 className="heading-xl font-bold mb-4">Jump Start</h3>
         <p className="body-md mb-4">
           Jump Start is a community-oriented lender that offers acquisition and
@@ -337,9 +337,9 @@ export default function TransformPropertyPage() {
         />
       </div>
 
-      <div className="bg-gray-100 rounded-lg p-8 mt-8">
+      <div className="bg-gray-100 rounded-lg p-8 mt-8 outline outline-1 outline-transparent">
         <h3 className="heading-xl font-bold mb-4">Local Representatives</h3>
-        <p className="body-md">
+        <p className="body-md mb-4">
           Your local representatives will be crucially allies in helping you
           push your project forward and cut through red tape. Contact them with
           an explanation of what you want to do and why, and ask for their
@@ -362,7 +362,7 @@ export default function TransformPropertyPage() {
         Additional Considerations
       </h2>
 
-      <div className="bg-gray-100 rounded-lg p-8 mt-8">
+      <div className="bg-gray-100 rounded-lg p-8 mt-8 outline outline-1 outline-transparent">
         <h3 className="heading-xl font-bold mb-4">Funding</h3>
         <p className="body-md mb-4">
           Getting funding is a vital part of returning vacant properties to
@@ -388,7 +388,7 @@ export default function TransformPropertyPage() {
         </p>
       </div>
 
-      <div className="bg-gray-100 rounded-lg p-8 mt-8">
+      <div className="bg-gray-100 rounded-lg p-8 mt-8 outline outline-1 outline-transparent">
         <h3 className="heading-xl font-bold mb-4">Maintenance</h3>
         <p className="body-md mb-4">
           Transforming a vacant property isn&rsquo;t a one-and-done event. In
@@ -407,7 +407,7 @@ export default function TransformPropertyPage() {
         </p>
       </div>
 
-      <div className="bg-gray-100 rounded-lg p-8 mt-8">
+      <div className="bg-gray-100 rounded-lg p-8 mt-8 outline outline-1 outline-transparent">
         <h3 className="heading-xl font-bold mb-4">Gentrification </h3>
         <p className="body-md">
           Our goal is to help community groups reduce violence through cleaning
