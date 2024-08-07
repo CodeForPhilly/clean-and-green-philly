@@ -14,7 +14,7 @@ type MultiSelectProps = {
   options: any[];
   selectedKeys: string[];
   toggleDimension: (dimension: string) => void;
-  handleSelectionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleSelectionChange: (selection: React.ChangeEvent<HTMLSelectElement> | string) => void;
 };
 
 const MultiSelect: FC<MultiSelectProps> = ({
@@ -45,7 +45,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
                   key={index}
                   classNames={{ base: 'multiSelectChip' }}
                   endContent={<X aria-label={`close ${option}`} />}
-                  onClose={() => toggleDimension(option)}
+                  onClose={() => handleSelectionChange(option)}
                 >
                   {option}
                 </SelectFilterChip>
