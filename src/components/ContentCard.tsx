@@ -39,11 +39,9 @@ const ContentCard: FC<ContentCardProps> = ({
 }) => {
   return (
     <div
-      className={
-        hasArrow
-          ? 'bg-green-100 rounded-md hover:bg-green-200 transition-colors duration-[250ms]'
-          : 'bg-green-100 rounded-md'
-      }
+      className={`bg-green-100 rounded-md outline outline-1 outline-transparent ${
+        hasArrow ? 'hover:bg-green-200 transition-colors duration-[250ms]' : ''
+      }`}
     >
       <div>
         <Image

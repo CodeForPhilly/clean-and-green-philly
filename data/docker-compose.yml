@@ -2,7 +2,8 @@ services:
   vacant-lots-proj:
     build:
       context: .
-      network: host
+      dockerfile: Dockerfile
+    image: vacant-lots-proj:latest
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CFP_MAPBOX_TOKEN_UPLOADER
@@ -16,7 +17,6 @@ services:
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-
     extra_hosts:
       - host.docker.internal:host-gateway
     network_mode: 'host'
@@ -24,22 +24,27 @@ services:
   formatter:
     build:
       context: .
-      network: host
     volumes:
       - ./src:/usr/src/app
-    command: sh -c "pipenv run black /usr/src/app"
+    command: sh -c "pip install ruff && ruff /usr/src/app --fix --exclude '/usr/src/app/data/src/awkde/'"
+    network_mode: 'host'
+
+  linter:
+    build:
+      context: .
+    volumes:
+      - ./src:/usr/src/app
+    command: sh -c "pip install ruff && ruff check /usr/src/app --exclude '/usr/src/app/data/src/awkde/'"
     network_mode: 'host'
 
   streetview:
     build:
       context: .
-      network: host
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CLEAN_GREEN_GOOGLE_KEY
       - VACANT_LOTS_DB
       - GOOGLE_CLOUD_BUCKET_NAME
-
     volumes:
       - ./src:/usr/src/app
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
@@ -55,7 +60,6 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-pg
-      network: host
     environment:
       - PGPORT=5433
       - POSTGRES_PASSWORD
@@ -69,6 +73,20 @@ services:
       - /etc/localtime:/etc/localtime:ro
     extra_hosts:
       - host.docker.internal:host-gateway
+
+  data-fetcher:
+    build:
+      context: .
+      dockerfile: Dockerfile-fetch-data
+    depends_on:
+      - vacant-lots-proj
+    environment:
+      - VACANT_LOTS_DB
+    volumes:
+      - ./src:/usr/src/app
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    network_mode: 'host'
 
 volumes:
   database_volume:

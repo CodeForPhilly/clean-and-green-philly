@@ -20,6 +20,12 @@ If you are running Windows, you will need to [install NVM for Windows](https://g
 
 Note: make sure to keep your fork up to date with the original repository by following the instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo#keep-your-fork-synced).
 
+### Precommit hook
+
+We use a precommit hook to help with formatting and linting in our CI/CD pipeline. When setting up the repo, please first [make sure you have `pre-commit` installed](https://pre-commit.com/) using `pip` or another package manager.\* Once that's done, run `pre-commit install` in the root directory to set up the precommit hooks (configured in `.pre-commit-config.yaml`).
+
+\*`pre-commit` relies on Python and is installed with `pip`. Python 3 ships by default on Unix systems (macOS and Linux) and `pip` is normally included in this. So, unless you're running Windows, both of these should already be accessible to you without any extra steps. If you're running Windows, see [the Python installation instrutions here](https://docs.python.org/3/using/windows.html).
+
 ### Nextjs App
 
 Navigate to the root directory of the repository. Install dependencies by running `npm i`. Then, run the development server with `npm run dev`. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Congrats! You're all set up.
