@@ -85,7 +85,9 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   };
 
   const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newMultiSelect: string[] = e.target.value.split(',');
+    const newMultiSelect: string[] = e.target.value
+      ? e.target.value.split(',')
+      : [];
     setSelectedKeys(newMultiSelect);
     dispatch({
       type: 'SET_DIMENSIONS',
