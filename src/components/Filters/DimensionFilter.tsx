@@ -84,12 +84,14 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     });
   };
 
-  const handleSelectionChange = (selection: React.ChangeEvent<HTMLSelectElement> | string) => {
+  const handleSelectionChange = (
+    selection: React.ChangeEvent<HTMLSelectElement> | string
+  ) => {
     let newMultiSelect: string[] = [];
     if (typeof selection === 'string') {
       newMultiSelect = selectedKeys.includes(selection)
         ? selectedKeys.filter((key) => key !== selection)
-        : [...selectedKeys, selection]
+        : [...selectedKeys, selection];
     } else {
       if (selection.target.value !== '') {
         newMultiSelect = selection.target.value.split(',');

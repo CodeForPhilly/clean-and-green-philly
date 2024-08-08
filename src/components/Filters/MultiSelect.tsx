@@ -14,7 +14,9 @@ type MultiSelectProps = {
   options: any[];
   selectedKeys: string[];
   toggleDimension: (dimension: string) => void;
-  handleSelectionChange: (selection: React.ChangeEvent<HTMLSelectElement> | string) => void;
+  handleSelectionChange: (
+    selection: React.ChangeEvent<HTMLSelectElement> | string
+  ) => void;
 };
 
 const MultiSelect: FC<MultiSelectProps> = ({
