@@ -14,7 +14,9 @@ type MultiSelectProps = {
   options: any[];
   selectedKeys: string[];
   toggleDimension: (dimension: string) => void;
-  handleSelectionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleSelectionChange: (
+    selection: React.ChangeEvent<HTMLSelectElement> | string
+  ) => void;
 };
 
 const MultiSelect: FC<MultiSelectProps> = ({
@@ -24,12 +26,6 @@ const MultiSelect: FC<MultiSelectProps> = ({
   toggleDimension,
   handleSelectionChange,
 }) => {
-  const multiSelectOptions = options.filter((option) => {
-    if (!selectedKeys.includes(option)) {
-      return option;
-    }
-  });
-
   return (
     <div className="space-x-2 min-h-[33.5px]">
       <SelectFilter
@@ -51,7 +47,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
                   key={index}
                   classNames={{ base: 'multiSelectChip' }}
                   endContent={<X aria-label={`close ${option}`} />}
-                  onClose={() => toggleDimension(option)}
+                  onClose={() => handleSelectionChange(option)}
                 >
                   {option}
                 </SelectFilterChip>
@@ -61,7 +57,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
         }}
         onChange={handleSelectionChange}
       >
-        {multiSelectOptions.map((option) => (
+        {options.map((option) => (
           <SelectFilterItem
             key={option}
             value={option}
