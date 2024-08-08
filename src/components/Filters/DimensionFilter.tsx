@@ -84,8 +84,19 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     });
   };
 
-  const handleSelectionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newMultiSelect: string[] = e.target.value.split(',');
+  const handleSelectionChange = (
+    selection: React.ChangeEvent<HTMLSelectElement> | string
+  ) => {
+    let newMultiSelect: string[] = [];
+    if (typeof selection === 'string') {
+      newMultiSelect = selectedKeys.includes(selection)
+        ? selectedKeys.filter((key) => key !== selection)
+        : [...selectedKeys, selection];
+    } else {
+      if (selection.target.value !== '') {
+        newMultiSelect = selection.target.value.split(',');
+      }
+    }
     setSelectedKeys(newMultiSelect);
     dispatch({
       type: 'SET_DIMENSIONS',
