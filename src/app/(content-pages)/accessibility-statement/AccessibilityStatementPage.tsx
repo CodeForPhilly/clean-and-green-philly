@@ -119,8 +119,7 @@ export default function AccessibilityStatementPage() {
         </Link>
         )
       </p>
-      <hr className="my-6 border-gray-300" />
-
+      <hr className="my-6 border-gray-300" aria-hidden="true" />
       <p>This statement was created on June 10, 2024.</p>
     </>
   );
