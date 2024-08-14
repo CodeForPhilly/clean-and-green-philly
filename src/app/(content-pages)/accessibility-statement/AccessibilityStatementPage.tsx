@@ -111,11 +111,11 @@ export default function AccessibilityStatementPage() {
       </p>
       <h2 className="heading-2xl font-semibold mt-8">Evaluation Report</h2>
       <p>
-        You can find our full evaluation report in VPAT®️ format. (
+        You can find our{' '}
         <Link href="/vpat" className="link">
-          link
+          {' '}
+          full evaluation report in VPAT®️ format.
         </Link>
-        )
       </p>
       <hr className="my-6 border-gray-300" aria-hidden="true" />
       <p>This statement was created on June 10, 2024.</p>
