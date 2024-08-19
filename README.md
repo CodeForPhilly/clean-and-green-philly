@@ -76,7 +76,7 @@ Please see the documents in our [docs](/docs) folder for background on the proje
 2. The [code of conduct](/docs/CODE_OF_CONDUCT.md)
 3. The appropriate installation setup instructions ([front end](/docs/SETUP/FRONT_END.md) and/or [back end](/docs/SETUP/BACK_END.md))
 
-### Contributors
+### Point of Contact
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore-start -->
