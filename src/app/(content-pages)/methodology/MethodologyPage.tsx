@@ -262,7 +262,7 @@ export default function MethodologyPage() {
         <p className="body-md mb-4">
           Documentation of the data that we use is available on{' '}
           <a
-            href="https://github.com/CodeForPhilly/vacant-lots-proj"
+            href="https://github.com/CodeForPhilly/clean-and-green-philly"
             target="_blank"
             rel="noopener noreferrer"
             className="link"
