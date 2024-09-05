@@ -52,15 +52,17 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
   const renderGraphicContent = () => {
     if ('image' in props) {
       return (
-        <Image
-          src={props.image.data}
-          alt={props.image.alt || ''}
-          className={`w-full rounded-[20px] p-5 info-graphic ${
-            props.image.className && props.image.className
-          }`}
-          priority={(props.image.priority && props.image.priority) || false}
-          placeholder={'blur'}
-        />
+        <div className={'p-5'}>
+          <Image
+            src={props.image.data}
+            alt={props.image.alt || ''}
+            className={`w-full rounded-[20px] info-graphic ${
+              props.image.className && props.image.className
+            }`}
+            priority={(props.image.priority && props.image.priority) || false}
+            placeholder={'blur'}
+          />
+        </div>
       );
     } else if ('component' in props) {
       return props.component;
