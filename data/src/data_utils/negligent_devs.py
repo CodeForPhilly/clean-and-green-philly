@@ -40,41 +40,51 @@ def standardize_street(street):
 
 def create_standardized_address(row):
     parts = [
-        row["mailing_address_1"].strip(),
-        row["mailing_address_2"].strip(),
-        row["mailing_street"].strip(),
-        row["mailing_city_state"].strip(),
-        row["mailing_zip"].strip(),
+        row["mailing_address_1"].strip()
+        if pd.notnull(row["mailing_address_1"])
+        else "",
+        row["mailing_address_2"].strip()
+        if pd.notnull(row["mailing_address_2"])
+        else "",
+        row["mailing_street"].strip() if pd.notnull(row["mailing_street"]) else "",
+        row["mailing_city_state"].strip()
+        if pd.notnull(row["mailing_city_state"])
+        else "",
+        row["mailing_zip"].strip() if pd.notnull(row["mailing_zip"]) else "",
     ]
-    standardized_address = ", ".join(part for part in parts if part)
+    standardized_address = ", ".join([part for part in parts if part])
     return standardized_address.lower()
 
 
 def negligent_devs(primary_featurelayer):
     devs = primary_featurelayer.gdf
-    city_owners = devs[~devs["city_owner_agency"].isna()]
-    non_city_owners = devs[devs["city_owner_agency"].isna()]
+    city_owners = devs.loc[~devs["city_owner_agency"].isna()].copy()
+    non_city_owners = devs.loc[devs["city_owner_agency"].isna()].copy()
 
-    non_city_owners["mailing_street"] = (
+    non_city_owners.loc[:, "mailing_street"] = (
         non_city_owners["mailing_street"].astype(str).apply(standardize_street)
     )
+
     for term in ["ST", "AVE", "RD", "BLVD"]:
-        non_city_owners["mailing_street"] = non_city_owners["mailing_street"].replace(
-            regex={f"{term}.*": term}
-        )
-    non_city_owners["mailing_address_1"] = non_city_owners["mailing_address_1"].fillna(
+        non_city_owners.loc[:, "mailing_street"] = non_city_owners[
+            "mailing_street"
+        ].replace(regex={f"{term}.*": term})
+
+    non_city_owners.loc[:, "mailing_address_1"] = non_city_owners[
+        "mailing_address_1"
+    ].fillna("")
+    non_city_owners.loc[:, "mailing_address_2"] = non_city_owners[
+        "mailing_address_2"
+    ].fillna("")
+    non_city_owners.loc[:, "mailing_street"] = non_city_owners["mailing_street"].fillna(
         ""
     )
-    non_city_owners["mailing_address_2"] = non_city_owners["mailing_address_2"].fillna(
-        ""
-    )
-    non_city_owners["mailing_street"] = non_city_owners["mailing_street"].fillna("")
-    non_city_owners["mailing_city_state"] = non_city_owners[
+    non_city_owners.loc[:, "mailing_city_state"] = non_city_owners[
         "mailing_city_state"
     ].fillna("")
-    non_city_owners["mailing_zip"] = non_city_owners["mailing_zip"].fillna("")
+    non_city_owners.loc[:, "mailing_zip"] = non_city_owners["mailing_zip"].fillna("")
 
-    non_city_owners["standardized_address"] = non_city_owners.apply(
+    non_city_owners.loc[:, "standardized_address"] = non_city_owners.apply(
         create_standardized_address, axis=1
     )
 
@@ -107,7 +117,7 @@ def negligent_devs(primary_featurelayer):
     primary_featurelayer.gdf.rename(
         columns={"property_count": "n_properties_owned"}, inplace=True
     )
-    primary_featurelayer.gdf["negligent_dev"] = (
+    primary_featurelayer.gdf.loc[:, "negligent_dev"] = (
         primary_featurelayer.gdf["n_properties_owned"] > 5
     ) & (primary_featurelayer.gdf["city_owner_agency"].isna())
 
