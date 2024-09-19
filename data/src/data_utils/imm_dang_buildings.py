@@ -10,10 +10,10 @@ def imm_dang_buildings(primary_featurelayer):
         cols=["opa_account_num"],
     )
 
-    imm_dang_buildings.gdf["imm_dang_building"] = "Y"
+    imm_dang_buildings.gdf.loc[:, "imm_dang_building"] = "Y"
 
-    imm_dang_buildings.gdf.rename(
-        columns={"opa_account_num": "opa_number"}, inplace=True
+    imm_dang_buildings.gdf = imm_dang_buildings.gdf.rename(
+        columns={"opa_account_num": "opa_number"}
     )
 
     primary_featurelayer.opa_join(
@@ -21,6 +21,8 @@ def imm_dang_buildings(primary_featurelayer):
         "opa_number",
     )
 
-    primary_featurelayer.gdf["imm_dang_building"].fillna("N", inplace=True)
+    primary_featurelayer.gdf.loc[:, "imm_dang_building"] = primary_featurelayer.gdf[
+        "imm_dang_building"
+    ].fillna("N")
 
     return primary_featurelayer
