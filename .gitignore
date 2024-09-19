@@ -61,3 +61,7 @@ data/src/app/service-account-key.json
 # awkde build files
 data/src/awkde/build/
 tmp/
+Unknown command: "error"
+
+To see a list of supported npm commands, run:
+  npm help
