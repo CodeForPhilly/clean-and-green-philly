@@ -79,3 +79,4 @@ const Footer = () => {
 };
 
 export default Footer;
+//Test sonarqube config
