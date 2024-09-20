@@ -47,11 +47,6 @@ jobs:
           cd data
           docker compose build vacant-lots-proj
 
-      - name: Build data-fetcher
-        run: |
-          cd data
-          docker compose build data-fetcher
-
       - name: Run all services
         run: |
           cd data
