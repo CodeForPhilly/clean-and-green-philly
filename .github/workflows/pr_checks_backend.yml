@@ -8,7 +8,7 @@ on:
       - 'data/**'
       - 'Dockerfile-pg'
       - 'init_pg.sql'
-      - 'docker-compose.yml'
+      - 'docker compose.yml'
   workflow_dispatch:
 
 jobs:
@@ -33,29 +33,29 @@ jobs:
       - name: Run Ruff Formatter in Docker
         run: |
           cd data
-          docker-compose run --rm formatter
+          docker compose run --rm formatter
         continue-on-error: true
 
       - name: Run Ruff Linter in Docker
         run: |
           cd data
-          docker-compose run --rm linter
+          docker compose run --rm linter
         continue-on-error: true
 
       - name: Build vacant-lots-proj
         run: |
           cd data
-          docker-compose build vacant-lots-proj
+          docker compose build vacant-lots-proj
 
       - name: Build data-fetcher
         run: |
           cd data
-          docker-compose build data-fetcher
+          docker compose build data-fetcher
 
       - name: Run all services
         run: |
           cd data
-          docker-compose up -d
+          docker compose up -d
 
       - name: Check build status
         if: failure()
