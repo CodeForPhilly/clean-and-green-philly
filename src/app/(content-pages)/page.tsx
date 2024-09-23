@@ -139,7 +139,7 @@ const LandingPage: FC = () => {
             text: 'Community groups and organizations are taking action.',
           }}
           body={{
-            text: 'Community groups have been cleaning up lots in their own neighborhoods for decades. Large organizations like the Pennsylvania Horticulture Society have cleaned, greened and now maintain thousands of lots. Their efforts have been instrumental in proving this approach works.',
+            text: 'Community groups have been cleaning up lots in their own neighborhoods for decades. Large organizations like the Pennsylvania Horticultural Society have cleaned, greened and now maintain thousands of lots. Their efforts have been instrumental in proving this approach works.',
           }}
           image={{
             data: imageCleaning,
