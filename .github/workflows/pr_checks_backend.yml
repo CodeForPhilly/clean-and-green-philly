@@ -12,62 +12,100 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  checkout:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+  setup-docker:
+    runs-on: ubuntu-latest
+    needs: checkout
+
+    steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Set up Docker Compose
         uses: docker/setup-qemu-action@v3
 
+  setup-python:
+    runs-on: ubuntu-latest
+    needs: checkout
+
+    steps:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11.4'
 
+  run-formatter:
+    runs-on: ubuntu-latest
+    needs: [checkout, setup-docker]
+    continue-on-error: true
+
+    steps:
       - name: Run Ruff Formatter in Docker
         run: |
           cd data
           docker compose run --rm formatter
-        continue-on-error: true
 
+  run-linter:
+    runs-on: ubuntu-latest
+    needs: [checkout, setup-docker]
+    continue-on-error: true
+
+    steps:
       - name: Run Ruff Linter in Docker
         run: |
           cd data
           docker compose run --rm linter
-        continue-on-error: true
 
+  build-project:
+    runs-on: ubuntu-latest
+    needs: [checkout, setup-docker]
+
+    steps:
       - name: Build vacant-lots-proj
         run: |
           cd data
           docker compose build vacant-lots-proj
 
+  run-services:
+    runs-on: ubuntu-latest
+    needs: build-project
+
+    steps:
       - name: Run all services
         run: |
           cd data
           docker compose up -d
 
+  check-build-status:
+    runs-on: ubuntu-latest
+    needs: run-services
+
+    steps:
       - name: Check build status
         if: failure()
         run: |
           echo "One or more services failed to build and run."
           exit 1
-
       - name: Report success
         if: success()
         run: echo "All services built and ran successfully."
 
+  check-lint-format-status:
+    runs-on: ubuntu-latest
+    needs: [run-formatter, run-linter]
+
+    steps:
       - name: Check formatter and linter status
         if: failure()
         run: |
           echo "Formatting or linting issues found. Please fix the issues."
           exit 1
-
       - name: Formatter and linter success
         if: success()
         run: echo "Formatting and linting passed successfully."
