@@ -32,11 +32,10 @@ repos:
     hooks:
       - id: vulture
         name: vulture (Dead code detection)
-        entry: vulture --exclude=data/src/awkde
+        entry: vulture data/ --exclude=data/src/awkde
         language: python
         types: [python]
         files: ^data/
-        pass_failing_tests: true # Report, do not fail
 
   # JavaScript hooks
   - repo: local
