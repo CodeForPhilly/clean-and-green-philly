@@ -12,9 +12,8 @@ on:
   workflow_dispatch:
 
 jobs:
-  setup-docker:
+  setup:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -25,14 +24,6 @@ jobs:
       - name: Set up Docker Compose
         uses: docker/setup-qemu-action@v3
 
-  setup-python:
-    runs-on: ubuntu-latest
-    needs: setup-docker
-
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -40,7 +31,7 @@ jobs:
 
   run-formatter:
     runs-on: ubuntu-latest
-    needs: setup-docker
+    needs: setup
     continue-on-error: true
 
     steps:
@@ -62,7 +53,7 @@ jobs:
 
   run-linter:
     runs-on: ubuntu-latest
-    needs: setup-docker
+    needs: setup
     continue-on-error: true
 
     steps:
@@ -76,7 +67,7 @@ jobs:
 
   build-project:
     runs-on: ubuntu-latest
-    needs: setup-docker
+    needs: setup
 
     steps:
       - name: Checkout repository
