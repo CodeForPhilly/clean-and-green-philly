@@ -16,8 +16,16 @@ class TestDataUtils(unittest.TestCase):
     Test methods for data utils feature layer classes
     """
 
+    def test_get_latest_shapefile_url(self):
+        """
+        Test the get_latest_shapefile_url function.
+        """
+        url = get_latest_shapefile_url()
+        self.assertTrue(url.startswith("https://"))
+        self.assertTrue(url.endswith(".zip"))
+
     @patch("data_utils.park_priority.requests.get")
-    def test_get_latest_shapefile_url(self, mock_get):
+    def test_get_latest_shapefile_url_mock(self, mock_get):
         """
         Test the get_latest_shapefile_url function.
         """
