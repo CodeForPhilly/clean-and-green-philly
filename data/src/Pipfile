@@ -30,6 +30,7 @@ networkx = "*"
 libpysal = "*"
 jenkspy = "*"
 pyarrow = "*"
+tqdm = "*"
 
 [dev-packages]
 
