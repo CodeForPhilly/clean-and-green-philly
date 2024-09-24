@@ -46,6 +46,13 @@ jobs:
     continue-on-error: true
 
     steps:
+      - name: Install tree
+        run: sudo apt-get update && sudo apt-get install -y tree
+
+      - name: Display directory structure
+        run: |
+          tree
+
       - name: Run Ruff Formatter in Docker
         run: |
           pwd
