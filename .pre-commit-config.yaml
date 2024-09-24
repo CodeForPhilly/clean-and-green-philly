@@ -27,6 +27,17 @@ repos:
         language: system
         files: ^data/src/Pipfile$
 
+  - repo: https://github.com/jendrikseipp/vulture
+    rev: 'v2.3' # or any later Vulture version
+    hooks:
+      - id: vulture
+        name: vulture (Dead code detection)
+        entry: vulture --exclude=data/src/awkde
+        language: python
+        types: [python]
+        files: ^data/
+        pass_failing_tests: true # Report, do not fail
+
   # JavaScript hooks
   - repo: local
     hooks:
