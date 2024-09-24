@@ -142,7 +142,7 @@ const LandingPage: FC = () => {
             text: (
               <>
                 Community groups have been cleaning up lots in their own
-                neighborhoods for decades. Large organizations like the
+                neighborhoods for decades. Large organizations like the{' '}
                 <a
                   target="_blank"
                   rel="noopener noreferrer nofollow"
