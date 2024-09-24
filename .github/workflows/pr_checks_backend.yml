@@ -12,18 +12,13 @@ on:
   workflow_dispatch:
 
 jobs:
-  checkout:
+  setup-docker:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-  setup-docker:
-    runs-on: ubuntu-latest
-    needs: checkout
-
-    steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -32,9 +27,12 @@ jobs:
 
   setup-python:
     runs-on: ubuntu-latest
-    needs: checkout
+    needs: setup-docker
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -42,10 +40,13 @@ jobs:
 
   run-formatter:
     runs-on: ubuntu-latest
-    needs: [checkout, setup-docker]
+    needs: setup-docker
     continue-on-error: true
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Install tree
         run: sudo apt-get update && sudo apt-get install -y tree
 
@@ -61,10 +62,13 @@ jobs:
 
   run-linter:
     runs-on: ubuntu-latest
-    needs: [checkout, setup-docker]
+    needs: setup-docker
     continue-on-error: true
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Run Ruff Linter in Docker
         run: |
           cd data
@@ -72,9 +76,12 @@ jobs:
 
   build-project:
     runs-on: ubuntu-latest
-    needs: [checkout, setup-docker]
+    needs: setup-docker
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Build vacant-lots-proj
         run: |
           cd data
@@ -85,6 +92,9 @@ jobs:
     needs: build-project
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Run all services
         run: |
           cd data
@@ -95,6 +105,9 @@ jobs:
     needs: run-services
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Check build status
         if: failure()
         run: |
@@ -109,6 +122,9 @@ jobs:
     needs: [run-formatter, run-linter]
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Check formatter and linter status
         if: failure()
         run: |
