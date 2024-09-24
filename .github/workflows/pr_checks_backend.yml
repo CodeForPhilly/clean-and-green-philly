@@ -48,6 +48,7 @@ jobs:
     steps:
       - name: Run Ruff Formatter in Docker
         run: |
+          pwd
           cd data
           docker compose run --rm formatter
 
