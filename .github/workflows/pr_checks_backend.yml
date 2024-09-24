@@ -41,7 +41,7 @@ jobs:
       - name: Run Ruff Formatter in Docker
         run: |
           cd data
-          docker compose run --rm formatter ruff check . --exclude src/awkde
+          docker compose run --rm formatter
 
   run-linter:
     runs-on: ubuntu-latest
@@ -55,7 +55,7 @@ jobs:
       - name: Run Ruff Linter in Docker
         run: |
           cd data
-          docker compose run --rm linter ruff check . --exclude src/awkde
+          docker compose run --rm linter
 
   build-project:
     runs-on: ubuntu-latest
