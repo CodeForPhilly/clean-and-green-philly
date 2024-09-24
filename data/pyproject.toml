@@ -1,0 +1,49 @@
+[tool.pylint]
+ignore = ["awkde/"]
+output-format = "colorized,parseable"
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = ["all"]
+enable = ["duplicate-code"]
+
+[tool.vulture]
+exclude = ["awkde/"]
+make_whitelist = true
+# min_confidence = 80
+sort_by_size = true
+
+[tool.mypy]
+ignore_missing_imports = true
+exclude = 'awkde/'
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories, plus our own
+exclude = [
+    "awkde/",
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".ipynb_checkpoints",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pyenv",
+    ".pytest_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    ".vscode",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "site-packages",
+    "venv",
+]
