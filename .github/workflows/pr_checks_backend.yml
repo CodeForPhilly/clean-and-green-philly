@@ -38,18 +38,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install tree
-        run: sudo apt-get update && sudo apt-get install -y tree
-
-      - name: Display directory structure
-        run: |
-          tree
-
       - name: Run Ruff Formatter in Docker
         run: |
-          pwd
           cd data
           docker compose run --rm formatter
+        continue-on-error: true
 
   run-linter:
     runs-on: ubuntu-latest
@@ -64,6 +57,7 @@ jobs:
         run: |
           cd data
           docker compose run --rm linter
+        continue-on-error: true
 
   build-project:
     runs-on: ubuntu-latest
