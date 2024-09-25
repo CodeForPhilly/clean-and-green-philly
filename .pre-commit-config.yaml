@@ -23,9 +23,20 @@ repos:
       # Dependency checks for Python
       - id: check-python-dependencies
         name: Check Python dependencies
-        entry: bash -c 'cd data/src && pipenv check --bare --quiet || (echo "Python dependencies check failed" && exit 1)'
+        entry: |
+          bash -c 'cd data/src && pipenv check --bare --quiet || (echo "Python dependencies check failed" && exit 1)'
         language: system
         files: ^data/src/Pipfile$
+
+      # Radon MI and Halstead checks
+      - id: radon-check
+        name: Radon Maintainability and Halstead Checks
+        entry: |
+          bash -c 'radon mi -s {} | grep -E " - [CDEF] \(" && echo "Radon MI grade below B detected!" && exit 1 || echo "All MI grades are B or above."
+          radon hal {} -s | awk "/effort/ { if (\$3 > 2000) print FILENAME \": High Halstead effort:\" \$3 }"'
+        language: system
+        files: \.py$
+        exclude: ^data/src/awkde/
 
   # JavaScript hooks
   - repo: local
