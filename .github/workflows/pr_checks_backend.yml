@@ -36,15 +36,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Radon MI and Halstead Checks in Docker
+      - name: Install Radon
+        run: pip install radon
+
+      - name: Run Radon MI and Halstead Checks
         run: |
-          # Run the Radon container
-          docker compose run --rm radon
+          # Run MI checks
+          radon mi ./data/ -s
+
+          # Run Halstead complexity analysis
+          radon hal ./data/ -s
 
       - name: Flag issues from Radon MI and Halstead checks
         run: |
           # Check Maintainability Index (MI) results and flag any grade below B
-          bad_grades=$(docker compose run --rm radon | grep -E " - [CDEF] \(" || true)
+          bad_grades=$(radon mi ./data/ -s | grep -E " - [CDEF] \(" || true)
           if [[ ! -z "$bad_grades" ]]; then
             echo "Warning: Bad MI grades found (below B):"
             echo "$bad_grades"
@@ -53,7 +59,7 @@ jobs:
           fi
 
           # Check Halstead complexity for effort > 2000
-          high_effort=$(docker compose run --rm radon | awk '/effort/ { if ($3 > 2000) print $0 }')
+          high_effort=$(radon hal ./data/ -s | awk '/effort/ { if ($3 > 2000) print $0 }')
           if [[ ! -z "$high_effort" ]]; then
             echo "Warning: High Halstead effort found (above 2000):"
             echo "$high_effort"
