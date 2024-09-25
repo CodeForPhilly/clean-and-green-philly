@@ -1,20 +1,27 @@
+import logging as log
 import os
 import subprocess
 import traceback
-import sqlalchemy as sa
-import logging as log
+
 import geopandas as gpd
 import pandas as pd
 import requests
+import sqlalchemy as sa
+from config.config import (
+    FORCE_RELOAD,
+    USE_CRS,
+    log_level,
+    min_tiles_file_size_in_bytes,
+    write_production_tiles_file,
+)
 from config.psql import conn, local_engine
 from esridump.dumper import EsriDumper
 from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
 from shapely import Point, wkb
 
-from config.config import FORCE_RELOAD, USE_CRS, write_production_tiles_file, min_tiles_file_size_in_bytes, log_level
-
 log.basicConfig(level=log_level)
+
 
 def google_cloud_bucket() -> Bucket:
     """Build the google cloud bucket with name configured in your environ or default of cleanandgreenphl
@@ -23,17 +30,19 @@ def google_cloud_bucket() -> Bucket:
         Bucket: the gcp bucket
     """
     credentials_path = os.path.expanduser("/app/service-account-key.json")
-    
+
     if not os.path.exists(credentials_path):
         raise FileNotFoundError(f"Credentials file not found at {credentials_path}")
-    
+
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
     bucket_name = os.getenv("GOOGLE_CLOUD_BUCKET_NAME", "cleanandgreenphl")
-    
+
     storage_client = storage.Client(project="clean-and-green-philly")
     return storage_client.bucket(bucket_name)
 
+
 bucket = google_cloud_bucket()
+
 
 class FeatureLayer:
     """
@@ -50,7 +59,7 @@ class FeatureLayer:
         force_reload=FORCE_RELOAD,
         from_xy=False,
         use_wkb_geom_field=None,
-        cols: list[str] = None
+        cols: list[str] = None,
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -230,7 +239,7 @@ class FeatureLayer:
         self.gdf.drop_duplicates(inplace=True)
 
         # Coerce opa_id to integer and drop rows where opa_id is null or non-numeric
-        self.gdf["opa_id"] = pd.to_numeric(self.gdf["opa_id"], errors="coerce")
+        self.gdf.loc[:, "opa_id"] = pd.to_numeric(self.gdf["opa_id"], errors="coerce")
         self.gdf = self.gdf.dropna(subset=["opa_id"])
 
     def opa_join(self, other_df, opa_column):
@@ -239,11 +248,13 @@ class FeatureLayer:
         """
 
         # Coerce opa_column to integer and drop rows where opa_column is null or non-numeric
-        other_df[opa_column] = pd.to_numeric(other_df[opa_column], errors="coerce")
+        other_df.loc[:, opa_column] = pd.to_numeric(
+            other_df[opa_column], errors="coerce"
+        )
         other_df = other_df.dropna(subset=[opa_column])
 
         # Coerce opa_id to integer and drop rows where opa_id is null or non-numeric
-        self.gdf["opa_id"] = pd.to_numeric(self.gdf["opa_id"], errors="coerce")
+        self.gdf.loc[:, "opa_id"] = pd.to_numeric(self.gdf["opa_id"], errors="coerce")
         self.gdf = self.gdf.dropna(subset=["opa_id"])
 
         # Perform the merge
@@ -253,13 +264,14 @@ class FeatureLayer:
 
         # Check if 'geometry' column exists in both dataframes and clean up
         if "geometry_x" in joined.columns and "geometry_y" in joined.columns:
-            joined = joined.drop(columns=["geometry_y"])
+            joined = joined.drop(columns=["geometry_y"]).copy()  # Ensure a full copy
             joined = joined.rename(columns={"geometry_x": "geometry"})
 
         if opa_column != "opa_id":
             joined = joined.drop(columns=[opa_column])
 
-        self.gdf = joined
+        # Assign the joined DataFrame to self.gdf as a full copy
+        self.gdf = joined.copy()
         self.rebuild_gdf()
 
     def rebuild_gdf(self):
@@ -270,7 +282,7 @@ class FeatureLayer:
         Convert the geometry of the GeoDataFrame to centroids.
         """
         self.centroid_gdf = self.gdf.copy()
-        self.centroid_gdf["geometry"] = self.gdf["geometry"].centroid
+        self.centroid_gdf.loc[:, "geometry"] = self.gdf["geometry"].centroid
 
     def build_and_publish_pmtiles(self, tileset_id):
         zoom_threshold = 13
@@ -336,16 +348,18 @@ class FeatureLayer:
             subprocess.run(command)
 
         write_files = [f"{tileset_id}_staging.pmtiles"]
-        
+
         if write_production_tiles_file:
             write_files.append(f"{tileset_id}.pmtiles")
-        
+
         # check whether the temp saved tiles files is big enough.
         # If not then it might be corrupted so log error and don't upload to gcp.
         file_size = os.stat(temp_merged_pmtiles).st_size
         if file_size < min_tiles_file_size_in_bytes:
-            raise ValueError(f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}.  Therefore, we are not uploading any files to the GCP bucket.  The file may be corrupt or incomplete.")
-        
+            raise ValueError(
+                f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}.  Therefore, we are not uploading any files to the GCP bucket.  The file may be corrupt or incomplete."
+            )
+
         # Upload to Google Cloud Storage
         for file in write_files:
             blob = bucket.blob(file)
