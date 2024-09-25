@@ -1,47 +1,9 @@
-name: Create PR from staging to main
-
-permissions:
-  contents: write
-  pull-requests: write
-
+name: Test Workflow
 on:
-  schedule:
-    # Run every Sunday at midnight
-    - cron: '0 0 * * 0'
-  workflow_dispatch: # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
-  create-pr:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        with:
-          ref: staging # Ensure we're working with the staging branch
-
-      - name: Set up git
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Check if staging is ahead of main
-        id: check_diff
-        run: |
-          git fetch origin main
-          # Check if staging is ahead of main
-          if git rev-list --right-only --count main...staging > 0; then
-            echo "::set-output name=should_open_pr::true"
-          else
-            echo "::set-output name=should_open_pr::false"
-          fi
-
-      - name: Create pull request
-        if: steps.check_diff.outputs.should_open_pr == 'true'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          base: staging
-          branch: lebovits/issu849-weekly-deployment-PR
-          title: 'Merge staging into main'
-          body: 'This PR was automatically created by a scheduled workflow to merge staging into main.'
+      - run: echo "Workflow is running!"
