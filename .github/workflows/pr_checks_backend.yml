@@ -24,44 +24,41 @@ jobs:
       - name: Set up Docker Compose
         uses: docker/setup-qemu-action@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11.4'
-
       - name: Install Dependencies
         run: |
-          pip install radon
           pip install ruff
 
   run-radon:
     runs-on: ubuntu-latest
     needs: setup
-    continue-on-error: true
+    continue-on-error: true # Continue even if Radon flags issues
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run Radon Maintainability Index (MI) and Halstead Checks
+      - name: Run Radon MI and Halstead Checks in Docker
         run: |
-          # Run Maintainability Index analysis and capture bad grades (below B)
-          bad_grades=$(radon mi -s data/ | grep -E " - [CDEF] \(" || true)
+          # Run the Radon container
+          docker compose run --rm radon
 
+      - name: Flag issues from Radon MI and Halstead checks
+        run: |
+          # Check Maintainability Index (MI) results and flag any grade below B
+          bad_grades=$(docker compose run --rm radon | grep -E " - [CDEF] \(" || true)
           if [[ ! -z "$bad_grades" ]]; then
-            echo "Bad MI grades found:"
+            echo "Warning: Bad MI grades found (below B):"
             echo "$bad_grades"
           else
-            echo "Radon MI checks passed successfully"
+            echo "Radon MI checks passed successfully."
           fi
 
-          # Run Halstead complexity analysis and check for effort > 2000
-          high_effort=$(radon hal data/ -s | awk '/effort/ { if ($3 > 2000) print $0 }')
-
+          # Check Halstead complexity for effort > 2000
+          high_effort=$(docker compose run --rm radon | awk '/effort/ { if ($3 > 2000) print $0 }')
           if [[ ! -z "$high_effort" ]]; then
-            echo "High Halstead effort found:"
+            echo "Warning: High Halstead effort found (above 2000):"
             echo "$high_effort"
           else
-            echo "Halstead checks passed successfully"
+            echo "Halstead checks passed successfully."
           fi
 
   run-formatter:

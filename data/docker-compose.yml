@@ -37,6 +37,14 @@ services:
     command: sh -c "pip install ruff && ruff check --fix --exclude '/usr/src/app/awkde/'"
     network_mode: 'host'
 
+  radon:
+    build:
+      context: .
+    volumes:
+      - ./src:/usr/src/app
+    command: sh -c "pip install radon && radon mi /usr/src/app && radon hal /usr/src/app"
+    network_mode: 'host'
+
   streetview:
     build:
       context: .
