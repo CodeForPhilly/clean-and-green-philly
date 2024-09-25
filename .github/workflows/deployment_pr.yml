@@ -1,5 +1,9 @@
 name: Create PR from staging to main
 
+permissions:
+  contents: write
+  pull-requests: write
+
 on:
   schedule:
     # Run every Sunday at midnight
