@@ -38,6 +38,6 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: staging
-          head: lebovits/issu849-weekly-deployment-PR
+          branch: lebovits/issu849-weekly-deployment-PR
           title: 'Merge staging into main'
           body: 'This PR was automatically created by a scheduled workflow to merge staging into main.'
