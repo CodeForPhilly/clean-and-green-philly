@@ -37,7 +37,7 @@ jobs:
         uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          base: main
-          head: staging
+          base: staging
+          head: lebovits/issu849-weekly-deployment-PR
           title: 'Merge staging into main'
           body: 'This PR was automatically created by a scheduled workflow to merge staging into main.'
