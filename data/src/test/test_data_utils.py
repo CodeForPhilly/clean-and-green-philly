@@ -68,6 +68,8 @@ class TestDataUtils(unittest.TestCase):
             b'<html><a href="https://example.com/shapefile.zip">Shapefile</a></html>'
         )
 
+        # test comment to see how vulture config works in precommit hook
+
         # Second call to requests.get (actual shapefile download)
         mock_zip_content = BytesIO()
         with zipfile.ZipFile(mock_zip_content, "w") as zf:
