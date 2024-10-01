@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: '0 0 * * *' # Runs every day at midnight
   workflow_dispatch:
+    inputs:
+      branch:
+        description: 'The branch to run this workflow on'
+        required: true
+        default: 'main'
 
 jobs:
   stale:
