@@ -1,8 +1,14 @@
-name: Flag Stale PRs
+name: Flag Stale PRs and Issues
 
 on:
   schedule:
     - cron: '0 0 * * *' # Runs every day at midnight
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'The branch to run this workflow on'
+        required: true
+        default: 'main'
 
 jobs:
   stale:
@@ -14,4 +20,6 @@ jobs:
           days-before-stale: 7
           stale-pr-message: 'This PR has been marked as stale because it has been open for 7 days with no activity.'
           stale-pr-label: 'stale'
-          only-labels: 'backend, frontend'
+          days-before-issue-stale: 30
+          stale-issue-message: 'This issue has been marked as stale because it has been open for 30 days with no activity.'
+          stale-issue-label: 'stale'
