@@ -33,6 +33,7 @@ pyarrow = "*"
 tqdm = "*"
 vulture = "*"
 pylint = "*"
+radon = "*"
 
 [dev-packages]
 
