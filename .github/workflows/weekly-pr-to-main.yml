@@ -16,6 +16,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history for all branches and tags
 
       - name: Set up Git
         run: |
@@ -23,21 +25,21 @@ jobs:
           git config user.email "actions@github.com"
 
       - name: Check if staging is ahead of main
-        id: check_diff # Fix indentation here
+        id: check_diff
         run: |
-          git fetch origin main
-          git fetch origin staging
-          if [ $(git rev-list --count main..staging) -gt 0 ]; then
+          git fetch origin main staging
+          if [ $(git rev-list --count origin/main..origin/staging) -gt 0 ]; then
             echo "staging is ahead"
             echo "staging_ahead=true" >> $GITHUB_OUTPUT
           else
             echo "staging is not ahead"
             echo "staging_ahead=false" >> $GITHUB_OUTPUT
+          fi
         shell: bash
 
       - name: Open PR if staging is ahead
         if: steps.check_diff.outputs.staging_ahead == 'true'
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: main
