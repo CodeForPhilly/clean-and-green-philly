@@ -1,0 +1,51 @@
+name: Open PR from Staging to Main
+
+on:
+  schedule:
+    - cron: '0 0 * * 0' # Runs every Sunday at midnight
+  workflow_dispatch: # Allows manual triggering
+    inputs:
+      branch:
+        description: 'The branch to create the PR from'
+        required: true
+        default: 'staging'
+
+jobs:
+  open-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+
+      - name: Check if staging is ahead of main
+        id: check_diff
+        run: |
+          git fetch origin main
+          git fetch origin staging
+          if git rev-list --count main..staging > 0; then
+            echo "::set-output name=staging_ahead::true"
+          else
+            echo "::set-output name=staging_ahead::false"
+        shell: bash
+
+      - name: Open PR if staging is ahead
+        if: steps.check_diff.outputs.staging_ahead == 'true'
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          base: main
+          branch: staging
+          title: 'Weekly PR from Staging to Main'
+          body: 'Automated PR to merge staging into main. This PR was generated as part of the weekly process.'
+          labels: 'automated-pr'
+          commit-message: '[create-pull-request] Merge staging into main'
+          draft: false
+
+      - name: Skip PR if no changes
+        if: steps.check_diff.outputs.staging_ahead == 'false'
+        run: echo "No changes to merge from staging to main."

@@ -32,7 +32,7 @@ POSTGRES_PASSWORD=a-strong-password-here
 VACANT_LOTS_DB=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5433/vacantlotdb
 ```
 
-All local environment variables will be passed through to docker-compose, so if you have them set up in the `.env` file, you should not need to hard-code them elsewhere.
+All local environment variables will be passed through to docker compose, so if you have them set up in the `.env` file, you should not need to hard-code them elsewhere.
 
 #### Setting Environment Variables Locally
 
@@ -45,13 +45,13 @@ export POSTGRES_PASSWORD=a-strong-password-here
 export VACANT_LOTS_DB=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5433/vacantlotdb
 ```
 
-All of your local environment variables will be passed through to docker-compose, so if you have them locally, you should not have to hard-code them.
+All of your local environment variables will be passed through to docker compose, so if you have them locally, you should not have to hard-code them.
 
 ### Docker Build
 
 Docker is a platform that allows you to containerize and run applications in isolated environments, making it easier to manage dependencies and ensure consistent deployments. Download the [latest version of Docker Desktop for your operating system](https://www.docker.com/products/docker-desktop/).
 
-We use [docker compose](https://docs.docker.com/compose/) to manage the backend Docker services. The `data/docker compose.yaml` file defines the services. The only service that runs perpetually in Docker is `postgres`. The other services are one-time batch jobs to build the data sets.
+We use [docker compose](https://docs.docker.com/compose/) to manage the backend Docker services. The `data/docker-compose.yaml` file defines the services. The only service that runs perpetually in Docker is `postgres`. The other services are one-time batch jobs to build the data sets.
 
 1. The first time you set up your backend, or any time either of the two Docker files change, build the Docker services by running:
 
@@ -84,7 +84,7 @@ All Docker commands should be run from the `data/` directory. There is one main 
 
 1. In the terminal, navigate to your repository location using `cd path/to/clean-and-green-philly`. Then run `cd data` to move into the `data` directory.
 2. Run `docker compose run vacant-lots-proj`. Enter your password if requested. If you run into an error message related to "KEY_ID" or something similar, you may have to do the following:
-   - Hard-code your `VACANT_LOTS_DB` variable in `docker compose.yml`.
+   - Hard-code your `VACANT_LOTS_DB` variable in `docker-compose.yml`.
 
 The backend also works on WSL Ubuntu running Docker for Linux on Windows 10.
 
@@ -92,7 +92,7 @@ The backend also works on WSL Ubuntu running Docker for Linux on Windows 10.
 
 #### macOS
 
-In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker compose run vacant-lots-proj`. This command starts Docker Compose and sets up your environment as defined in your `docker compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker compose down`.
+In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker compose run vacant-lots-proj`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker compose down`.
 
 ### PostgreSQL
 
