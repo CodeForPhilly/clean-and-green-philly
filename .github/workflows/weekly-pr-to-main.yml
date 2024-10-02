@@ -34,8 +34,7 @@ jobs:
         run: |
           pr_url=$(gh pr create --base main --head staging \
             --title "Weekly PR from Staging to Main" \
-            --body "Automated PR to merge staging into main. This PR was generated as part of the weekly process." \
-            --label "automated-pr")
+            --body "Automated PR to merge staging into main. This PR was generated as part of the weekly process.")
           echo "Pull request created: $pr_url"
 
       - name: Skip PR if no changes
