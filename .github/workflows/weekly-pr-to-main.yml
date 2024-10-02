@@ -23,22 +23,21 @@ jobs:
           git config user.email "actions@github.com"
 
       - name: Check if staging is ahead of main
-        id: check_diff
+        id: check_diff # Fix indentation here
         run: |
           git fetch origin main
           git fetch origin staging
           if [ $(git rev-list --count main..staging) -gt 0 ]; then
             echo "staging is ahead"
-            echo "::set-output name=staging_ahead::true"
+            echo "staging_ahead=true" >> $GITHUB_OUTPUT
           else
             echo "staging is not ahead"
-            echo "::set-output name=staging_ahead::false"
-          fi
+            echo "staging_ahead=false" >> $GITHUB_OUTPUT
         shell: bash
 
       - name: Open PR if staging is ahead
         if: steps.check_diff.outputs.staging_ahead == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           base: main
