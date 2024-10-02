@@ -27,10 +27,13 @@ jobs:
         run: |
           git fetch origin main
           git fetch origin staging
-          if git rev-list --count main..staging > 0; then
+          if [ $(git rev-list --count main..staging) -gt 0 ]; then
+            echo "staging is ahead"
             echo "::set-output name=staging_ahead::true"
           else
+            echo "staging is not ahead"
             echo "::set-output name=staging_ahead::false"
+          fi
         shell: bash
 
       - name: Open PR if staging is ahead
