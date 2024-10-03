@@ -284,15 +284,25 @@ class FeatureLayer:
         self.centroid_gdf = self.gdf.copy()
         self.centroid_gdf.loc[:, "geometry"] = self.gdf["geometry"].centroid
 
-    def build_and_publish_pmtiles(self, tileset_id):
-        zoom_threshold = 13
+    def build_and_publish(self, tiles_file_id_prefix: str) -> None:
+        """
+        Builds PMTiles and a Parquet file from a GeoDataFrame and publishes them to Google Cloud Storage.
+
+        Args:
+            tiles_file_id_prefix (str): The ID prefix used for naming the PMTiles and Parquet files, coming from config.
+
+        Raises:
+            ValueError: Raised if the generated PMTiles file is smaller than the minimum allowed size, indicating a potential corruption or incomplete file.
+        """
+        zoom_threshold: int = 13
 
         # Export the GeoDataFrame to a temporary GeoJSON file
-        temp_geojson_points = f"tmp/temp_{tileset_id}_points.geojson"
-        temp_geojson_polygons = f"tmp/temp_{tileset_id}_polygons.geojson"
-        temp_pmtiles_points = f"tmp/temp_{tileset_id}_points.pmtiles"
-        temp_pmtiles_polygons = f"tmp/temp_{tileset_id}_polygons.pmtiles"
-        temp_merged_pmtiles = f"tmp/temp_{tileset_id}_merged.pmtiles"
+        temp_geojson_points: str = f"tmp/temp_{tiles_file_id_prefix}_points.geojson"
+        temp_geojson_polygons: str = f"tmp/temp_{tiles_file_id_prefix}_polygons.geojson"
+        temp_pmtiles_points: str = f"tmp/temp_{tiles_file_id_prefix}_points.pmtiles"
+        temp_pmtiles_polygons: str = f"tmp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
+        temp_merged_pmtiles: str = f"tmp/temp_{tiles_file_id_prefix}_merged.pmtiles"
+        temp_parquet: str = f"tmp/{tiles_file_id_prefix}.parquet"
 
         # Reproject
         gdf_wm = self.gdf.to_crs(epsg=4326)
@@ -304,8 +314,36 @@ class FeatureLayer:
         self.centroid_gdf = self.centroid_gdf.to_crs(epsg=4326)
         self.centroid_gdf.to_file(temp_geojson_points, driver="GeoJSON")
 
+        # Load the GeoJSON from the polygons, drop geometry, and save as Parquet
+        gdf_polygons = gpd.read_file(temp_geojson_polygons)
+        df_no_geom = gdf_polygons.drop(columns=["geometry"])
+
+        # Check if the DataFrame has fewer than 25,000 rows
+        num_rows, num_cols = df_no_geom.shape
+        if num_rows < 25000:
+            print(
+                f"Parquet file has {num_rows} rows, which is fewer than 25,000. Skipping upload."
+            )
+            return
+
+        # Save the DataFrame as Parquet
+        df_no_geom.to_parquet(temp_parquet)
+
+        # Upload Parquet to Google Cloud Storage
+        blob_parquet = bucket.blob(f"{tiles_file_id_prefix}.parquet")
+        try:
+            blob_parquet.upload_from_filename(temp_parquet)
+            parquet_size = os.stat(temp_parquet).st_size
+            parquet_size_mb = parquet_size / (1024 * 1024)
+            print(
+                f"Parquet upload successful! Size: {parquet_size} bytes ({parquet_size_mb:.2f} MB), Dimensions: {num_rows} rows, {num_cols} columns."
+            )
+        except Exception as e:
+            print(f"Parquet upload failed: {e}")
+            return
+
         # Command for generating PMTiles for points up to zoom level zoom_threshold
-        points_command = [
+        points_command: list[str] = [
             "tippecanoe",
             f"--output={temp_pmtiles_points}",
             f"--maximum-zoom={zoom_threshold}",
@@ -320,7 +358,7 @@ class FeatureLayer:
         ]
 
         # Command for generating PMTiles for polygons from zoom level zoom_threshold
-        polygons_command = [
+        polygons_command: list[str] = [
             "tippecanoe",
             f"--output={temp_pmtiles_polygons}",
             f"--minimum-zoom={zoom_threshold}",
@@ -334,7 +372,7 @@ class FeatureLayer:
         ]
 
         # Command for merging the two PMTiles files into a single output file
-        merge_command = [
+        merge_command: list[str] = [
             "tile-join",
             f"--output={temp_merged_pmtiles}",
             "--no-tile-size-limit",
@@ -347,20 +385,23 @@ class FeatureLayer:
         for command in [points_command, polygons_command, merge_command]:
             subprocess.run(command)
 
-        write_files = [f"{tileset_id}_staging.pmtiles"]
+        write_files: list[str] = [f"{tiles_file_id_prefix}_staging.pmtiles"]
 
         if write_production_tiles_file:
-            write_files.append(f"{tileset_id}.pmtiles")
+            write_files.append(f"{tiles_file_id_prefix}.pmtiles")
 
-        # check whether the temp saved tiles files is big enough.
-        # If not then it might be corrupted so log error and don't upload to gcp.
-        file_size = os.stat(temp_merged_pmtiles).st_size
+        # Check whether the temp saved tiles files is big enough.
+        file_size: int = os.stat(temp_merged_pmtiles).st_size
         if file_size < min_tiles_file_size_in_bytes:
             raise ValueError(
-                f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}.  Therefore, we are not uploading any files to the GCP bucket.  The file may be corrupt or incomplete."
+                f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}. Therefore, we are not uploading any files to the GCP bucket. The file may be corrupt or incomplete."
             )
 
-        # Upload to Google Cloud Storage
+        # Upload PMTiles to Google Cloud Storage
         for file in write_files:
             blob = bucket.blob(file)
-            blob.upload_from_filename(temp_merged_pmtiles)
+            try:
+                blob.upload_from_filename(temp_merged_pmtiles)
+                print(f"PMTiles upload successful for {file}!")
+            except Exception as e:
+                print(f"PMTiles upload failed for {file}: {e}")
