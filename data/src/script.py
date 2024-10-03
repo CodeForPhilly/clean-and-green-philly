@@ -99,7 +99,7 @@ dataset.gdf.to_postgis("vacant_properties_end", conn, if_exists="replace", index
 conn.commit()
 
 # Post to Mapbox
-dataset.build_and_publish_pmtiles(tiles_file_id_prefix)
+dataset.build_and_publish(tiles_file_id_prefix)
 
 # if we are reloading, run the diff report, then archive the backup and finally prune old archives
 if FORCE_RELOAD:

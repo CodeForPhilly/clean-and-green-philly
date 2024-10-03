@@ -74,19 +74,5 @@ services:
     extra_hosts:
       - host.docker.internal:host-gateway
 
-  data-fetcher:
-    build:
-      context: .
-      dockerfile: Dockerfile-fetch-data
-    depends_on:
-      - vacant-lots-proj
-    environment:
-      - VACANT_LOTS_DB
-    volumes:
-      - ./src:/usr/src/app
-      - /etc/timezone:/etc/timezone:ro
-      - /etc/localtime:/etc/localtime:ro
-    network_mode: 'host'
-
 volumes:
   database_volume:
