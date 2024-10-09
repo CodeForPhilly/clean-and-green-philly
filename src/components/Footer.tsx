@@ -2,6 +2,7 @@
 
 import { useCookieContext } from "@/context/CookieContext";
 import CookieConsentBanner from "./CookieConsentBanner";
+import { ThemeButton } from "./ThemeButton";
 import Link from "next/link";
 
 const Footer = () => {
@@ -25,12 +26,12 @@ const Footer = () => {
             <span className="max-sm:hidden">—</span>
 
             <li className="base-sm underline text-gray-600 mx-auto">
-              <a
-                className="hover:text-gray-800 cursor-pointer"
-                onClick={onClickCookieSettings}
-              >
-                Cookie Settings
-              </a>
+              <ThemeButton
+                color="tertiary"
+                label="Cookie Settings"
+                onPress={onClickCookieSettings}
+                className="hover:text-gray-800 cursor-pointer text-gray-600"
+              />
             </li>
 
             <span className="max-sm:hidden">—</span>
