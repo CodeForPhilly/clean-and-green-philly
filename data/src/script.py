@@ -16,7 +16,7 @@ from data_utils.drug_crimes import drug_crimes
 from data_utils.gun_crimes import gun_crimes
 from data_utils.imm_dang_buildings import imm_dang_buildings
 from data_utils.l_and_i import l_and_i
-from data_utils.llc_owner import llc_owner
+from data_utils.owner_type import owner_type
 from data_utils.nbhoods import nbhoods
 from data_utils.negligent_devs import negligent_devs
 from data_utils.opa_properties import opa_properties
@@ -50,7 +50,7 @@ services = [
     imm_dang_buildings,
     tactical_urbanism,
     conservatorship,
-    llc_owner,
+    owner_type,
     community_gardens,
     park_priority,
     ppr_properties,

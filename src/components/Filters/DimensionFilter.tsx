@@ -19,9 +19,10 @@ type OptionDisplayMapping = {
 };
 
 const optionsDisplayMapping: OptionDisplayMapping = {
-  llc_owner: {
-    Yes: 'Business',
-    No: 'Individual',
+  owner_type: {
+    Public: 'Public',
+    'Business (LLC)': 'Business (LLC)',
+    Individual: 'Individual',
   },
 };
 
