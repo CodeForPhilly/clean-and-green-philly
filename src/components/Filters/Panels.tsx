@@ -84,6 +84,8 @@ const Panels: FC<PanelsProps> = ({
     return (
       <Card
         key={index}
+        role="checkbox"
+        aria-checked={isSelected ? "true" : "false"}
         className={isSelected ? "panelSelected " : "panelDefault"}
         isPressable
         onPress={() => toggleDimensionForPanel(panel.dimension, panel.property)}
@@ -109,7 +111,11 @@ const Panels: FC<PanelsProps> = ({
     );
   });
 
-  return <div className="flex flex-col space-y-2">{optionPanels}</div>;
+  return (
+    <div className="flex flex-col space-y-2" aria-label="get access">
+      {optionPanels}
+    </div>
+  );
 };
 
 export default Panels;
