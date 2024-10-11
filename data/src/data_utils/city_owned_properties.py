@@ -7,7 +7,6 @@ def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Processes city-owned property data by joining it with the primary feature layer,
     renaming columns, and updating access information for properties based on ownership.
     All instances where the "city_owner_agency" is "PLB" are changed to "Land Bank (PHDC)".
-    The function also prints the counts of properties with "PLB" and "Land Bank (PHDC)" agencies.
 
     Args:
         primary_featurelayer (FeatureLayer): The primary feature layer to which city-owned 
@@ -78,9 +77,5 @@ def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     primary_featurelayer.gdf.loc[
         primary_featurelayer.gdf["city_owner_agency"] == "PLB", "city_owner_agency"
     ] = "Land Bank (PHDC)"
-
-    # Print the counts for "PLB" and "Land Bank (PHDC)"
-    plb_count = primary_featurelayer.gdf["city_owner_agency"].eq("PLB").sum()
-    land_bank_count = primary_featurelayer.gdf["city_owner_agency"].eq("Land Bank (PHDC)").sum()
 
     return primary_featurelayer
