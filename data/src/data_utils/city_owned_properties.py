@@ -1,8 +1,21 @@
+from typing import Any
 from classes.featurelayer import FeatureLayer
 from constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
 
+def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Processes city-owned property data by joining it with the primary feature layer,
+    renaming columns, and updating access information for properties based on ownership.
+    All instances where the "city_owner_agency" is "PLB" are changed to "Land Bank (PHDC)".
 
-def city_owned_properties(primary_featurelayer):
+    Args:
+        primary_featurelayer (FeatureLayer): The primary feature layer to which city-owned 
+                                             property data will be joined.
+
+    Returns:
+        FeatureLayer: The updated primary feature layer with processed city ownership 
+                      information.
+    """
     city_owned_properties = FeatureLayer(
         name="City Owned Properties",
         esri_rest_urls=CITY_OWNED_PROPERTIES_TO_LOAD,
@@ -59,5 +72,10 @@ def city_owned_properties(primary_featurelayer):
     primary_featurelayer.gdf.loc[:, "side_yard_eligible"] = primary_featurelayer.gdf[
         "side_yard_eligible"
     ].fillna("No")
+
+    # Update all instances where city_owner_agency is "PLB" to "Land Bank (PHDC)"
+    primary_featurelayer.gdf.loc[
+        primary_featurelayer.gdf["city_owner_agency"] == "PLB", "city_owner_agency"
+    ] = "Land Bank (PHDC)"
 
     return primary_featurelayer

@@ -51,9 +51,9 @@ const filters = [
     type: 'buttonGroup',
   },
   {
-    property: 'llc_owner',
+    property: 'owner_type',
     display: 'Owner',
-    options: ['Yes', 'No'],
+    options: ['Public', 'Business (LLC)', 'Individual'],
     type: 'buttonGroup',
   },
 ];
