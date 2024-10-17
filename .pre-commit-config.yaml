@@ -1,0 +1,71 @@
+repos:
+  # Python hooks
+  - repo: local
+    hooks:
+      # Ruff for Python linting
+      - id: ruff
+        name: ruff (Python linting)
+        entry: ruff check --fix
+        language: python
+        types_or: [python, pyi, jupyter]
+        files: \.py$
+        exclude: ^data/src/awkde/
+
+      # Ruff for Python formatting
+      - id: ruff-format
+        name: ruff-format (Python formatting)
+        entry: ruff format
+        language: python
+        types_or: [python, pyi, jupyter]
+        files: \.py$
+        exclude: ^data/src/awkde/
+
+      # Dependency checks for Python
+      - id: check-python-dependencies
+        name: Check Python dependencies
+        entry: bash -c 'cd data/src && pipenv check --bare --quiet || (echo "Python dependencies check failed" && exit 1)'
+        language: system
+        files: ^data/src/Pipfile$
+
+      # Radon MI and Halstead checks
+      - id: radon-check
+        name: Radon Maintainability and Halstead Checks
+        entry: |
+          bash -c 'radon mi -s {} | grep -E " - [CDEF] \(" && echo "Radon MI grade below B detected!" && exit 1 || echo "All MI grades are B or above."
+          radon hal {} -s | awk "/effort/ { if (\$3 > 2000) print FILENAME \": High Halstead effort:\" \$3 }"'
+        language: system
+        files: \.py$
+        exclude: ^data/src/awkde/
+
+  - repo: https://github.com/jendrikseipp/vulture
+    rev: 'v2.3' # or any later Vulture version
+    hooks:
+      - id: vulture
+        name: vulture (Dead code detection)
+        entry: vulture data/ --exclude=data/src/awkde
+        language: python
+        types: [python]
+        files: ^data/
+
+  # JavaScript hooks
+  - repo: local
+    hooks:
+      # Formatting with Prettier
+      - id: prettier
+        name: Prettier (Code formatting)
+        entry: npm run format
+        language: node
+        files: \.(js|jsx|ts|tsx)$
+
+      # Linting with ESLint
+      - id: eslint
+        name: ESLint (JavaScript linting)
+        entry: npm run lint
+        language: node
+        files: \.(js|jsx|ts|tsx)$
+
+      # Dependency checks for Node.js
+      - id: npm-audit
+        name: Check Node.js dependencies
+        entry: npm audit
+        language: node

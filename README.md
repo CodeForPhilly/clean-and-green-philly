@@ -76,41 +76,7 @@ Please see the documents in our [docs](/docs) folder for background on the proje
 2. The [code of conduct](/docs/CODE_OF_CONDUCT.md)
 3. The appropriate installation setup instructions ([front end](/docs/SETUP/FRONT_END.md) and/or [back end](/docs/SETUP/BACK_END.md))
 
-### Contributors
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tbody>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/nlebovits"><img src="https://avatars.githubusercontent.com/u/111617674?v=4?s=100" width="100px;" alt="Nissim Lebovits"/><br /><sub><b>Nissim Lebovits</b></sub></a><br /><a href="#doc-nlebovits" title="Documentation">📖</a> <a href="#code-nlebovits" title="Code">💻</a> <a href="#content-nlebovits" title="Content">🖋</a> <a href="#data-nlebovits" title="Data">🔣</a> <a href="#fundingFinding-nlebovits" title="Funding Finding">🔍</a> <a href="#maintenance-nlebovits" title="Maintenance">🚧</a> <a href="#projectManagement-nlebovits" title="Project Management">📆</a> <a href="#research-nlebovits" title="Research">🔬</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://kedgard-cordero.netlify.app"><img src="https://avatars.githubusercontent.com/u/97119018?v=4?s=100" width="100px;" alt="Kedgard Cordero"/><br /><sub><b>Kedgard Cordero</b></sub></a><br /><a href="#code-Kenny4297" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/brandonfcohen1"><img src="https://avatars.githubusercontent.com/u/2308834?v=4?s=100" width="100px;" alt="Brandon Cohen"/><br /><sub><b>Brandon Cohen</b></sub></a><br /><a href="#code-brandonfcohen1" title="Code">💻</a> <a href="#doc-brandonfcohen1" title="Documentation">📖</a> <a href="#infra-brandonfcohen1" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jroper-scottlogic"><img src="https://avatars.githubusercontent.com/u/125047199?v=4?s=100" width="100px;" alt="Jack Roper"/><br /><sub><b>Jack Roper</b></sub></a><br /><a href="#code-jroper-scottlogic" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://coroflot.com/willonabike"><img src="https://avatars.githubusercontent.com/u/1652510?v=4?s=100" width="100px;" alt="Will"/><br /><sub><b>Will</b></sub></a><br /><a href="#research-willonabike" title="Research">🔬</a> <a href="#design-willonabike" title="Design">🎨</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thansidwell"><img src="https://avatars.githubusercontent.com/u/1965986?v=4?s=100" width="100px;" alt="Nathaniel Sidwell"/><br /><sub><b>Nathaniel Sidwell</b></sub></a><br /><a href="#design-thansidwell" title="Design">🎨</a> <a href="#research-thansidwell" title="Research">🔬</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/marvieqa"><img src="https://avatars.githubusercontent.com/u/102739972?v=4?s=100" width="100px;" alt="Marvie Mulder"/><br /><sub><b>Marvie Mulder</b></sub></a><br /><a href="#a11y-marvieqa" title="Accessibility">️️️️♿️</a></td>
-    </tr>
-    <tr>
-      <td align="center" valign="top" width="14.28%"><a href="http://markandrewgoetz.com"><img src="https://avatars.githubusercontent.com/u/4121678?v=4?s=100" width="100px;" alt="Mark Goetz"/><br /><sub><b>Mark Goetz</b></sub></a><br /><a href="#code-markgoetz" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://www.linkedin.com/in/tracyctran/"><img src="https://avatars.githubusercontent.com/u/7329799?v=4?s=100" width="100px;" alt="Tracy Tran"/><br /><sub><b>Tracy Tran</b></sub></a><br /><a href="#a11y-bacitracin" title="Accessibility">️️️️♿️</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://elizabethwalker.site"><img src="https://avatars.githubusercontent.com/u/44076192?v=4?s=100" width="100px;" alt="Elizabeth Walker"/><br /><sub><b>Elizabeth Walker</b></sub></a><br /><a href="#code-19ewalker" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://alexbyrdleitner-portfolio.netlify.app/"><img src="https://avatars.githubusercontent.com/u/111008425?v=4?s=100" width="100px;" alt="Alex Byrd-Leitner"/><br /><sub><b>Alex Byrd-Leitner</b></sub></a><br /><a href="#code-AZBL" title="Code">💻</a> <a href="#a11y-AZBL" title="Accessibility">️️️️♿️</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/gturmel"><img src="https://avatars.githubusercontent.com/u/16137908?v=4?s=100" width="100px;" alt="Greg Turmel"/><br /><sub><b>Greg Turmel</b></sub></a><br /><a href="#code-gturmel" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/liathirsh"><img src="https://avatars.githubusercontent.com/u/110303683?v=4?s=100" width="100px;" alt="Liat"/><br /><sub><b>Liat</b></sub></a><br /><a href="#code-liathirsh" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/jgaye"><img src="https://avatars.githubusercontent.com/u/4049458?v=4?s=100" width="100px;" alt="Julien Gaye"/><br /><sub><b>Julien Gaye</b></sub></a><br /><a href="#code-jgaye" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/BayLadyCoder"><img src="https://avatars.githubusercontent.com/u/33296817?v=4?s=100" width="100px;" alt="Bay Chairangsaris"/><br /><sub><b>Bay Chairangsaris</b></sub></a><br /><a href="#code-BayLadyCoder" title="Code">💻</a> <a href="#doc-BayLadyCoder" title="Documentation">📖</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="http://paulchoi.dev"><img src="https://avatars.githubusercontent.com/u/8061917?v=4?s=100" width="100px;" alt="Paul Choi"/><br /><sub><b>Paul Choi</b></sub></a><br /><a href="#code-paulhchoi" title="Code">💻</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Amberroseweeks"><img src="https://avatars.githubusercontent.com/u/61482332?v=4?s=100" width="100px;" alt="Amberroseweeks"/><br /><sub><b>Amberroseweeks</b></sub></a><br /><a href="#code-Amberroseweeks" title="Code">💻</a> <a href="#a11y-Amberroseweeks" title="Accessibility">️️️️♿️</a></td>
-    </tr>
-  </tbody>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
+### Point of Contact
 
 ## License
 

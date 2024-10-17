@@ -1,20 +1,22 @@
-"use client";
+'use client';
 
-import React, { FC } from "react";
-import { X } from "@phosphor-icons/react";
+import React, { FC } from 'react';
+import { X } from '@phosphor-icons/react';
 import {
   SelectFilter,
   SelectFilterItem,
   SelectFilterChip,
   BlankSelectorIcon,
-} from "./MultiSelectVariants";
+} from './MultiSelectVariants';
 
 type MultiSelectProps = {
   display: string;
-  options: string[];
+  options: any[];
   selectedKeys: string[];
   toggleDimension: (dimension: string) => void;
-  handleSelectionChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  handleSelectionChange: (
+    selection: React.ChangeEvent<HTMLSelectElement> | string
+  ) => void;
 };
 
 const MultiSelect: FC<MultiSelectProps> = ({
@@ -24,12 +26,6 @@ const MultiSelect: FC<MultiSelectProps> = ({
   toggleDimension,
   handleSelectionChange,
 }) => {
-  const multiSelectOptions = options.filter((option) => {
-    if (!selectedKeys.includes(option)) {
-      return option;
-    }
-  });
-
   return (
     <div className="space-x-2 min-h-[33.5px]">
       <SelectFilter
@@ -49,9 +45,9 @@ const MultiSelect: FC<MultiSelectProps> = ({
               {selectedKeys.map((option, index) => (
                 <SelectFilterChip
                   key={index}
-                  classNames={{ base: "multiSelectChip" }}
+                  classNames={{ base: 'multiSelectChip' }}
                   endContent={<X aria-label={`close ${option}`} />}
-                  onClose={() => toggleDimension(option)}
+                  onClose={() => handleSelectionChange(option)}
                 >
                   {option}
                 </SelectFilterChip>
@@ -61,11 +57,11 @@ const MultiSelect: FC<MultiSelectProps> = ({
         }}
         onChange={handleSelectionChange}
       >
-        {multiSelectOptions.map((option) => (
+        {options.map((option) => (
           <SelectFilterItem
             key={option}
             value={option}
-            classNames={{ base: "multiSelectItem" }}
+            classNames={{ base: 'multiSelectItem' }}
             shouldHighlightOnFocus={false}
           >
             {option}

@@ -1,19 +1,20 @@
-import Image, { StaticImageData } from "next/image";
-import type { IconType } from "react-icons";
-import { ThemeButtonLink } from "./ThemeButton";
+import Image, { StaticImageData } from 'next/image';
+import type { IconType } from 'react-icons';
+import { ThemeButtonLink } from './ThemeButton';
+import './components-css/InfoGraphicSection.css';
 
 interface InfoGraphicBase {
   id?: string;
   header: {
     text: string | JSX.Element;
-    as?: "h2" | "div";
+    as?: 'h2' | 'div';
   };
   body: { text: string | JSX.Element; className?: string };
   link?: {
     icon: IconType;
     label: string;
     href: string;
-    color?: "primary" | "secondary" | "tertiary";
+    color?: 'primary' | 'secondary' | 'tertiary';
   };
 }
 
@@ -45,23 +46,25 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
     body,
     link,
   } = props;
-  const HeaderTag = headerAs || "h2";
+  const HeaderTag = headerAs || 'h2';
 
   // Dynamically renders the graphic content based on prop type.
   const renderGraphicContent = () => {
-    if ("image" in props) {
+    if ('image' in props) {
       return (
-        <Image
-          src={props.image.data}
-          alt={props.image.alt || ""}
-          className={`w-full rounded-[20px] ${
-            props.image.className && props.image.className
-          }`}
-          priority={(props.image.priority && props.image.priority) || false}
-          placeholder={"blur"}
-        />
+        <div className={'p-5'}>
+          <Image
+            src={props.image.data}
+            alt={props.image.alt || ''}
+            className={`w-full rounded-[20px] info-graphic ${
+              props.image.className && props.image.className
+            }`}
+            priority={(props.image.priority && props.image.priority) || false}
+            placeholder={'blur'}
+          />
+        </div>
       );
-    } else if ("component" in props) {
+    } else if ('component' in props) {
       return props.component;
     }
   };
@@ -72,7 +75,7 @@ export const InfoGraphicSection = (props: InfoGraphicProps) => {
         <HeaderTag id={id} className="heading-2xl text-pretty">
           {headerText}
         </HeaderTag>
-        <div className={body.className || ""}>
+        <div className={body.className || ''}>
           <p className="body-md text-balance">{body.text}</p>
           {link && (
             <ThemeButtonLink

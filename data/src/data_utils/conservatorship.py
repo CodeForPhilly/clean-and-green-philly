@@ -1,4 +1,3 @@
-import pandas as pd
 import datetime
 from dateutil.parser import parse
 import pytz
@@ -45,7 +44,7 @@ def conservatorship(primary_featurelayer):
             sale_date_6_months_ago = False
 
         # Simplified decision logic
-        if city_owner_agency == "PLB" or (
+        if city_owner_agency == "Land Bank (PHDC)" or (
             not sale_date_6_months_ago and market_value_over_1000
         ):
             conservatorship = "No"

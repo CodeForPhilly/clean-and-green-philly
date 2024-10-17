@@ -1,0 +1,26 @@
+name: Flag Stale PRs and Issues
+
+on:
+  schedule:
+    - cron: '0 0 * * *' # Runs every day at midnight
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'The branch to run this workflow on'
+        required: true
+        default: 'main'
+
+jobs:
+  stale:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/stale@v9
+        with:
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+          days-before-stale: 7
+          stale-pr-message: 'This PR has been marked as stale because it has been open for 7 days with no activity.'
+          stale-pr-label: 'stale'
+          days-before-issue-stale: 30
+          stale-issue-message: 'This issue has been marked as stale because it has been open for 30 days with no activity.'
+          stale-issue-label: 'stale'
+          days-before-close: -1
