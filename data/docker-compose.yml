@@ -12,6 +12,7 @@ services:
       - PYTHONUNBUFFERED=1
       - GOOGLE_CLOUD_BUCKET_NAME
       - CAGP_SLACK_API_TOKEN
+      - PYTHONPATH=/usr/src/app # Add this line to set PYTHONPATH
     volumes:
       - ./src:/usr/src/app
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
