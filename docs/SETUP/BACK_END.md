@@ -164,6 +164,10 @@ GOOGLE_CLOUD_BUCKET_NAME=your-bucket-name-here
 
 The python script loads the tiles to Google Cloud as `vacant_properties_tiles_staging.pmtiles`. You can check this tileset by changing the config setting on the frontend `useStagingTiles` to `true`. If the tiles look OK, manually change the name in Google Cloud to remove the `_staging` and archive the previous copy.
 
+##### Converting PMTiles to Vector Data
+
+Pmtiles stored in the cloud or locally can be converted back to a vector dataset (e.g., GeoJson) by using [tippecanoe](https://github.com/mapbox/tippecanoe) in the terminal: `tippecanoe-decode -c vacant_properties_tiles.pmtiles > vacant_properties_tiles.geojson`. (Note that this can likely be done in the Docker container to avoid installing a local copy of tippecanoe, but we haven't explored this yet.)
+
 #### Google Streetview
 
 To update streetview images, after running the full data script run:

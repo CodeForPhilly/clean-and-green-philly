@@ -1,5 +1,5 @@
 import { Navbar, NavbarBrand, NavbarContent } from '@nextui-org/react';
-import { PiBinoculars, PiKey, PiTree, PiInfo } from 'react-icons/pi';
+import { PiBinoculars, PiKey, PiTree, PiInfo, PiHeart } from 'react-icons/pi';
 import Image from 'next/image';
 import Link from 'next/link';
 import IconLink from './IconLink';
@@ -64,6 +64,11 @@ const Header = () => (
             icon={<PiInfo className="h-6 w-6" />}
             text="About"
             href="/about"
+          />
+          <IconLink
+            icon={<PiHeart className="h-6 w-6" />}
+            text="Donate"
+            href="/donate"
           />
         </ul>
       </NavbarContent>
