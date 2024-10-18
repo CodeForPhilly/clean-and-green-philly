@@ -19,9 +19,9 @@ type OptionDisplayMapping = {
 };
 
 const optionsDisplayMapping: OptionDisplayMapping = {
-  "llc_owner": {
-    "Yes": "Business",
-    "No": "Individual",
+  llc_owner: {
+    Yes: "Business",
+    No: "Individual",
   },
 };
 
@@ -37,16 +37,21 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     appFilter[property]?.values || []
   );
   const initialSelectedPanelKeys = () => {
-    let panelKeyObj: {[key: string]: string[]} = {}
+    let panelKeyObj: { [key: string]: string[] } = {};
     for (const key in appFilter) {
-      panelKeyObj[key] = appFilter[key].values
+      panelKeyObj[key] = appFilter[key].values;
     }
-    return panelKeyObj
-  }
-  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{[property: string]: string[]}>(initialSelectedPanelKeys())
-  
-  const toggleDimensionForPanel = (dimension: string, panel_property: string) => {
-    let newSelectedPanelKeys
+    return panelKeyObj;
+  };
+  const [selectedPanelKeys, setSelectedPanelkeys] = useState<{
+    [property: string]: string[];
+  }>(initialSelectedPanelKeys());
+
+  const toggleDimensionForPanel = (
+    dimension: string,
+    panel_property: string
+  ) => {
+    let newSelectedPanelKeys;
     if (selectedPanelKeys[panel_property]) {
       newSelectedPanelKeys = selectedPanelKeys[panel_property].includes(
         dimension
@@ -121,6 +126,8 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     }
   }, [selectedKeys, selectedPanelKeys]);
 
+  const filterLabelID = display.replace(/\s/g, "");
+
   const filterDescription =
     property === "priority_level"
       ? {
@@ -130,13 +137,15 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       : {
           desc: "Find properties based on what we think is the easiest method to get legal access to them, based on the data available to us. ",
           linkFragment: "access-method",
-      };
+        };
 
   // text-gray-500, 600 ? or #586266 (figma)?
   return (
     <div className="pt-3 pb-6">
       <div className="flex flex-col mb-2">
-        <h2 className="heading-lg">{display}</h2>
+        <h2 className="heading-lg" id={filterLabelID}>
+          {display}
+        </h2>
         {(property === "get_access" || property === "priority_level") && (
           <p className="body-sm text-gray-500 w-[90%] my-1">
             {filterDescription.desc}
@@ -150,7 +159,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           </p>
         )}
       </div>
-      {filter}
+      <div aria-labelledby={filterLabelID}>{filter}</div>
     </div>
   );
 };

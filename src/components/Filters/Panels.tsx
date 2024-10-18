@@ -111,11 +111,7 @@ const Panels: FC<PanelsProps> = ({
     );
   });
 
-  return (
-    <div className="flex flex-col space-y-2" aria-label="get access">
-      {optionPanels}
-    </div>
-  );
+  return <div className="flex flex-col space-y-2">{optionPanels}</div>;
 };
 
 export default Panels;
