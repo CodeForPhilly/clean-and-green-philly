@@ -5,7 +5,7 @@ def priority_level(dataset):
 
         # Decision Points
         guncrime_density_percentile = row["gun_crimes_density_percentile"]
-        in_phs_landcare = row["phs_partner_agency"] == "PHS"
+        in_phs_landcare = row["phs_care_program"] == "yes"
         has_li_complaint_or_violation = (
             row["li_complaints"] is not None
             and float(row["all_violations_past_year"]) > 0
