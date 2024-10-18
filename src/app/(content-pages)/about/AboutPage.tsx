@@ -1,10 +1,10 @@
-import { InfoGraphicSection } from "@/components/InfoGraphicSection";
-import imageLots from "@/images/Graphic-Lots-Streets.png";
-import imageShootings from "@/images/Graphic-Map-Shootings.png";
-import imageMerge from "@/images/Graphic-Merge-Data.png";
-import imageResearch from "@/images/Graphic-Research-about.png";
-import imageSkills from "@/images/Graphic-Skills.png";
-import { PiArrowRight } from "react-icons/pi";
+import { InfoGraphicSection } from '@/components/InfoGraphicSection';
+import imageLots from '@/images/Graphic-Lots-Streets.png';
+import imageShootings from '@/images/Graphic-Map-Shootings.png';
+import imageMerge from '@/images/Graphic-Merge-Data.png';
+import imageResearch from '@/images/Graphic-Research-about.png';
+import imageSkills from '@/images/Graphic-Skills.png';
+import { PiArrowRight } from 'react-icons/pi';
 
 export default function AboutPage() {
   return (
@@ -16,9 +16,9 @@ export default function AboutPage() {
       </p>
       <br></br>
 
-      <div id={"problem"} className="mb-20">
+      <div id={'problem'} className="mb-20">
         <InfoGraphicSection
-          header={{ text: "The Gun Violence Problem" }}
+          header={{ text: 'The Gun Violence Problem' }}
           body={{
             text: (
               <>
@@ -36,9 +36,9 @@ export default function AboutPage() {
         />
       </div>
 
-      <div id={"research"} className="my-20">
+      <div id={'research'} className="my-20">
         <InfoGraphicSection
-          header={{ text: "The Research" }}
+          header={{ text: 'The Research' }}
           body={{
             text: (
               <>
@@ -53,14 +53,14 @@ export default function AboutPage() {
           }}
           image={{
             data: imageResearch,
-            className: "ring-1 ring-black/5",
+            className: 'ring-1 ring-black/5',
           }}
         />
       </div>
 
-      <div id={"challenge"} className="my-20">
+      <div id={'challenge'} className="my-20">
         <InfoGraphicSection
-          header={{ text: "The Challenge" }}
+          header={{ text: 'The Challenge' }}
           body={{
             text: (
               <>
@@ -78,9 +78,9 @@ export default function AboutPage() {
         />
       </div>
 
-      <div id={"Vision"} className="my-20">
+      <div id={'Vision'} className="my-20">
         <InfoGraphicSection
-          header={{ text: "Our Vision" }}
+          header={{ text: 'Our Vision' }}
           body={{
             text: (
               <>
@@ -98,9 +98,9 @@ export default function AboutPage() {
         />
       </div>
 
-      <div id={"methodology"} className="my-20">
+      <div id={'methodology'} className="my-20">
         <InfoGraphicSection
-          header={{ text: "Our Methodology" }}
+          header={{ text: 'Our Methodology' }}
           body={{
             text: (
               <>
@@ -118,8 +118,8 @@ export default function AboutPage() {
           }}
           link={{
             icon: PiArrowRight,
-            label: "Learn More",
-            href: "/methodology",
+            label: 'Learn More',
+            href: '/methodology',
           }}
         />
       </div>
@@ -128,7 +128,7 @@ export default function AboutPage() {
         <h2 className="heading-2xl font-semibold mb-4">Contributors</h2>
         <p className="body-md mb-4">
           Clean & Green Philly was built by a team of Code for Philly
-          volunteers. The project was created and led by{" "}
+          volunteers. The project was created and led by{' '}
           <a
             href="https://nlebovits.github.io/"
             target="_blank"
@@ -137,7 +137,7 @@ export default function AboutPage() {
           >
             Nissim Lebovits
           </a>
-          .{" "}
+          .{' '}
           <a
             href="https://www.willonabike.com"
             target="_blank"
@@ -145,8 +145,8 @@ export default function AboutPage() {
             className="link"
           >
             Will Budreau
-          </a>{" "}
-          was responsible for user testing and research,{" "}
+          </a>{' '}
+          was responsible for user testing and research,{' '}
           <a
             href="https://www.brandonfcohen.com"
             target="_blank"
@@ -154,17 +154,17 @@ export default function AboutPage() {
             className="link"
           >
             Brandon Cohen
-          </a>{" "}
-          was the lead developer, and{" "}
+          </a>{' '}
+          was the lead developer, and{' '}
           <a
             href="https://www.nathanielsidwell.com"
             target="_blank"
             rel="noopener noreferrer"
             className="link"
           >
-            {" "}
+            {' '}
             Nathaniel Sidwell
-          </a>{" "}
+          </a>{' '}
           led the UX team. Thanks, too, to the many other contributors along the
           way.
         </p>
@@ -184,7 +184,7 @@ export default function AboutPage() {
         <h2 className="heading-2xl font-semibold mb-4">Feedback</h2>
         <p className="body-md mb-4">
           If you find issues in this website or would like to offer us feedback,
-          please reach out to us at{" "}
+          please reach out to us at{' '}
           <a
             href="mailto:cleanandgreenphl@gmail.com"
             target="_blank"
@@ -192,17 +192,17 @@ export default function AboutPage() {
             className="link"
           >
             cleanandgreenphl@gmail.com.
-          </a>{" "}
+          </a>{' '}
         </p>
       </div>
       <div className="my-6">
         <h2 className="heading-2xl font-semibold mb-4">Removing Properties</h2>
         <p className="body-md mb-4">
           If you would like to request that we remove a property from the
-          dashboard, please see our{" "}
+          dashboard, please see our{' '}
           <a href="/request-removal" className="link">
             Request Removal
-          </a>{" "}
+          </a>{' '}
           page.
         </p>
       </div>

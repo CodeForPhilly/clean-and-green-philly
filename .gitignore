@@ -1,8 +1,13 @@
+## Env files
+.env
+data.env
+
 ## Data
 /notebooks/.ipynb_checkpoints/
 .idea
 data/src/tmp
 .DS_Store
+/data/src/local_outputs/
 
 ## App
 

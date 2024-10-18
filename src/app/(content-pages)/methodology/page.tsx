@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { NextUIProvider } from "@nextui-org/react";
-import { FC } from "react";
-import MethodologyPage from "./MethodologyPage";
+import { NextUIProvider } from '@nextui-org/react';
+import { FC } from 'react';
+import MethodologyPage from './MethodologyPage';
 
 const Methodology: FC = () => {
   return (

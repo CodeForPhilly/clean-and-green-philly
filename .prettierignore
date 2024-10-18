@@ -1,0 +1,3 @@
+# Ignore Ruff cache
+.ruff_cache
+data/src/.ruff_cache

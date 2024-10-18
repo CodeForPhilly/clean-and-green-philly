@@ -1,4 +1,4 @@
-import { FC, ReactNode } from "react";
+import { FC, ReactNode } from 'react';
 
 type SinglePropertyInfoCardProps = {
   title: string;

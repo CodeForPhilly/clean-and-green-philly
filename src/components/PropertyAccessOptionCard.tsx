@@ -1,60 +1,60 @@
-import { PropertyAccessOption } from "@/config/propertyAccessOptions";
-import { Chip } from "@nextui-org/react";
-import Link from "next/link";
-import React from "react";
-import { PiCaretRight, PiCheck, PiHouse, PiStar, PiX } from "react-icons/pi";
-import clsx from "clsx";
+import { PropertyAccessOption } from '@/config/propertyAccessOptions';
+import { Chip } from '@nextui-org/react';
+import Link from 'next/link';
+import React from 'react';
+import { PiCaretRight, PiCheck, PiHouse, PiStar, PiX } from 'react-icons/pi';
+import clsx from 'clsx';
 
 interface Props {
-  type: "best" | "available" | "neighbors" | "unavailable";
+  type: 'best' | 'available' | 'neighbors' | 'unavailable';
   option: PropertyAccessOption;
 }
 
-function getChip(type: Props["type"]) {
+function getChip(type: Props['type']) {
   switch (type) {
-    case "best":
+    case 'best':
       return (
         <Chip
           startContent={<PiStar size={18} />}
           classNames={{
             base: `bg-[#BAE4F5] text-[#003144] flex flex-row space-x-1 py-[3px] px-[6px]`,
-            content: "body-sm",
+            content: 'body-sm',
           }}
         >
           Best Option
         </Chip>
       );
-    case "available":
+    case 'available':
       return (
         <Chip
           startContent={<PiCheck size={18} />}
           classNames={{
             base: `bg-[#C2F5BA] text-[#094400] flex flex-row space-x-1 py-[3px] px-[6px]`,
-            content: "body-sm",
+            content: 'body-sm',
           }}
         >
           Available
         </Chip>
       );
-    case "neighbors":
+    case 'neighbors':
       return (
         <Chip
           startContent={<PiHouse size={18} />}
           classNames={{
             base: `bg-[#FFF0BB] text-[#443500] flex flex-row space-x-1 py-[3px] px-[6px]`,
-            content: "body-sm",
+            content: 'body-sm',
           }}
         >
           For Neighbors
         </Chip>
       );
-    case "unavailable":
+    case 'unavailable':
       return (
         <Chip
           startContent={<PiX size={18} />}
           classNames={{
             base: `bg-[#F7C4BC] text-[#440900] flex flex-row space-x-1 py-[3px] px-[6px]`,
-            content: "body-sm",
+            content: 'body-sm',
           }}
         >
           Unavailable
@@ -63,16 +63,16 @@ function getChip(type: Props["type"]) {
   }
 }
 
-function getBackgroundStyle(type: Props["type"]) {
+function getBackgroundStyle(type: Props['type']) {
   switch (type) {
-    case "best":
-      return "bg-[#E5F8FF]";
-    case "available":
-      return "bg-[#E9FFE5]";
-    case "neighbors":
-      return "bg-[#FFF5D0]";
-    case "unavailable":
-      return "bg-[#FFE9E5]";
+    case 'best':
+      return 'bg-[#E5F8FF]';
+    case 'available':
+      return 'bg-[#E9FFE5]';
+    case 'neighbors':
+      return 'bg-[#FFF5D0]';
+    case 'unavailable':
+      return 'bg-[#FFE9E5]';
   }
 }
 
@@ -98,8 +98,8 @@ const PropertyAccessOptionCard = ({ type, option }: Props) => {
       <div className="flex-1">
         <PiCaretRight
           aria-hidden={true}
-          className={clsx("size-6", {
-            ["invisible"]: !option.slug,
+          className={clsx('size-6', {
+            ['invisible']: !option.slug,
           })}
         />
       </div>

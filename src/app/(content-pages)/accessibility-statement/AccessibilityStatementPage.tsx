@@ -1,4 +1,4 @@
-import Link from "next/link";
+import Link from 'next/link';
 
 export default function AccessibilityStatementPage() {
   return (
@@ -14,18 +14,16 @@ export default function AccessibilityStatementPage() {
         physical or cognitive abilities.
       </p>
       <h2 className="heading-2xl font-semibold mt-8">
-        Measures to support accessibility
+        Measures to Support Accessibility
       </h2>
       <p>Our team prioritizes accessibility by:</p>
       <ul className="list-disc ml-8 my-2">
+        <li>Integrating accessibility as part of the design process</li>
+        <li>Integrating accessibility in the development process</li>
+        <li>Utilizing automated accessibility tools as part of our testing</li>
         <li>
-          Integrating accessibility as part of the design process Integrating
-        </li>
-        <li>accessibility in the development process Utilizing automated</li>
-        <li>accessibility tools as part of our testing Designating an</li>
-        <li>
-          Accessibility Specialist that serves as a resource for our
-          contributors
+          Designating an Accessibility Specialist that serves as a resource for
+          our contributors
         </li>
       </ul>
       <h2 className="heading-2xl font-semibold mt-8">Conformance Status</h2>
@@ -46,7 +44,7 @@ export default function AccessibilityStatementPage() {
       <ul className="list-disc ml-8 my-2">
         <li>cleanandgreenphl@gmail.com</li>
         <li>
-          Submit an issue through our{" "}
+          Submit an issue through our{' '}
           <a
             href="https://github.com/CodeForPhilly/clean-and-green-philly/issues"
             className="link"
@@ -113,14 +111,13 @@ export default function AccessibilityStatementPage() {
       </p>
       <h2 className="heading-2xl font-semibold mt-8">Evaluation Report</h2>
       <p>
-        You can find our full evaluation report in VPAT®️ format. (
+        You can find our{' '}
         <Link href="/vpat" className="link">
-          link
+          {' '}
+          full evaluation report in VPAT®️ format.
         </Link>
-        )
       </p>
-      <hr className="my-6 border-gray-300" />
-
+      <hr className="my-6 border-gray-300" aria-hidden="true" />
       <p>This statement was created on June 10, 2024.</p>
     </>
   );

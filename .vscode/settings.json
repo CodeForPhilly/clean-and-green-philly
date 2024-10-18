@@ -1,13 +1,21 @@
 {
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
-  "python.analysis.extraPaths": ["${workspaceFolder}/data/src","${workspaceFolder}/data/src/awkde"],
-  "python.testing.pytestEnabled": true,
-  "python.testing.cwd": "${workspaceFolder}/data/src",
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/data/src",
+    "${workspaceFolder}/data/src/awkde"
+  ],
   "[python]": {
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-        "source.organizeImports": "explicit"
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
     },
+    "editor.defaultFormatter": "charliermarsh.ruff"
+  },
+  "notebook.formatOnSave.enabled": true,
+  "notebook.codeActionsOnSave": {
+    "notebook.source.fixAll": "explicit",
+    "notebook.source.organizeImports": "explicit"
   }
 }

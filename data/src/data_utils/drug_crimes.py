@@ -4,10 +4,9 @@ import numpy as np
 import rasterio
 from awkde.awkde import GaussianKDE
 from classes.featurelayer import FeatureLayer
+from config.config import USE_CRS
 from constants.services import DRUGCRIME_SQL_QUERY
 from rasterio.transform import Affine
-
-from config.config import USE_CRS
 
 
 def drug_crimes(primary_featurelayer):
@@ -30,9 +29,10 @@ def drug_crimes(primary_featurelayer):
 
     # Generate grid for plotting
     grid_length = 2500
-    
-    x_grid, y_grid = np.linspace(x.min(), x.max(), grid_length), np.linspace(
-        y.min(), y.max(), grid_length
+
+    x_grid, y_grid = (
+        np.linspace(x.min(), x.max(), grid_length),
+        np.linspace(y.min(), y.max(), grid_length),
     )
     xx, yy = np.meshgrid(x_grid, y_grid)
     grid_points = np.array([xx.ravel(), yy.ravel()]).T
@@ -90,21 +90,36 @@ def drug_crimes(primary_featurelayer):
 
     primary_featurelayer.gdf["drugcrime_density"] = sampled_values
 
+    percentile_breaks = list(range(101))  # [0, 1, 2, ..., 100]
+
     drugcrime_classifier = mapclassify.Percentiles(
-        primary_featurelayer.gdf["drugcrime_density"], pct=[50, 75, 90, 95, 99, 100]
+        primary_featurelayer.gdf["drugcrime_density"], pct=percentile_breaks
     )
-    primary_featurelayer.gdf["drugcrime_density"] = primary_featurelayer.gdf[
+
+    primary_featurelayer.gdf["drugcrime_density_percentile"] = primary_featurelayer.gdf[
         "drugcrime_density"
     ].apply(drugcrime_classifier)
-    primary_featurelayer.gdf["drugcrime_density"] = primary_featurelayer.gdf[
-        "drugcrime_density"
+
+    def label_percentile(value):
+        if value == 1:
+            return "1st Percentile"
+        elif value == 2:
+            return "2nd Percentile"
+        elif value == 3:
+            return "3rd Percentile"
+        else:
+            return f"{value}th Percentile"
+
+    primary_featurelayer.gdf["drugcrime_density_label"] = primary_featurelayer.gdf[
+        "drugcrime_density_percentile"
+    ].apply(label_percentile)
+
+    primary_featurelayer.gdf["drugcrime_density_percentile"] = primary_featurelayer.gdf[
+        "drugcrime_density_percentile"
     ].astype(float)
 
-    primary_featurelayer.gdf["drugcrime_density"] = primary_featurelayer.gdf[
-        "drugcrime_density"
-    ].replace(
-        [0, 1, 2, 3, 4, 5],
-        ["Bottom 50%", "Top 50%", "Top 25%", "Top 10%", "Top 5%", "Top 1%"],
+    primary_featurelayer.gdf = primary_featurelayer.gdf.drop(
+        columns=["drugcrime_density"]
     )
 
     return primary_featurelayer

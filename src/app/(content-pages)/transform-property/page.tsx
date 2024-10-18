@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { NextUIProvider } from "@nextui-org/react";
-import { FC } from "react";
-import TransformPropertyPage from "./TransformPropertyPage";
+import { NextUIProvider } from '@nextui-org/react';
+import { FC } from 'react';
+import TransformPropertyPage from './TransformPropertyPage';
 
 const TransformProperty: FC = () => {
   return (
