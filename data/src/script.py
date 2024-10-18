@@ -76,8 +76,6 @@ if FORCE_RELOAD:
 # Load Vacant Property Data
 dataset = vacant_properties()
 
-print("Initial vacant properties dataset columns:", dataset.gdf.columns)
-
 # Load and join other datasets
 for service in services:
     dataset = service(dataset)

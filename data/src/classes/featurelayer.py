@@ -36,8 +36,9 @@ def google_cloud_bucket() -> Bucket:
 
     os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
     bucket_name = os.getenv("GOOGLE_CLOUD_BUCKET_NAME", "cleanandgreenphl")
+    project_name = os.getenv("GOOGLE_CLOUD_PROJECT", "clean-and-green-philly")
 
-    storage_client = storage.Client(project="clean-and-green-philly")
+    storage_client = storage.Client(project=project_name)
     return storage_client.bucket(bucket_name)
 
 
