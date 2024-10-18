@@ -4,20 +4,33 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
   useDisclosure,
 } from '@nextui-org/react';
 import { ThemeButton } from './ThemeButton';
-import { useEffect } from 'react';
 import { PiX } from 'react-icons/pi';
+import { useEffect, useState } from 'react';
 
 export default function DataDisclaimerModal() {
-  const { isOpen, onOpen, onClose } = useDisclosure(); // Get onClose too
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isClientSide, setIsClientSide] = useState(false);
 
-  // Use useEffect to open the modal when the page loads
+  // Use useEffect to check if modal has been shown and open it if not
   useEffect(() => {
-    onOpen(); // Open modal on component mount
+    setIsClientSide(true); // Ensure client-side rendering
+
+    const hasSeenModal = localStorage.getItem('hasSeenModal'); // Check localStorage
+
+    if (!hasSeenModal) {
+      onOpen(); // Open modal if not seen before
+    }
   }, [onOpen]);
+
+  const closeHandler = () => {
+    localStorage.setItem('hasSeenModal', 'true'); // Set flag so modal doesn't show again
+    onClose(); // Close modal
+  };
+
+  if (!isClientSide) return null;
 
   return (
     <>
@@ -36,7 +49,7 @@ export default function DataDisclaimerModal() {
               className="right-4 lg:right-[24px] absolute top-4 min-w-[3rem]"
               aria-label="Close"
               startContent={<PiX />}
-              onPress={onClose}
+              onPress={closeHandler} // Close modal and set flag
             />
           </ModalHeader>
 
@@ -56,7 +69,7 @@ export default function DataDisclaimerModal() {
               className=""
               aria-label="Close"
               label="I understand"
-              onPress={onClose}
+              onPress={closeHandler} // Close modal and set flag
             />
           </ModalFooter>
         </ModalContent>
