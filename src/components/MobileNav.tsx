@@ -8,7 +8,14 @@ import {
   NavbarMenu,
   NavbarMenuToggle,
 } from '@nextui-org/react';
-import { PiBinoculars, PiKey, PiTree, PiInfo, PiList } from 'react-icons/pi';
+import {
+  PiBinoculars,
+  PiKey,
+  PiTree,
+  PiInfo,
+  PiList,
+  PiHeart,
+} from 'react-icons/pi';
 import Image from 'next/image';
 import React, { FC } from 'react';
 import IconLink from './IconLink';
@@ -73,6 +80,11 @@ const MobileNav: FC = () => {
           icon={<PiInfo className="h-6 w-6" />}
           text="About"
           href="/about"
+        />
+        <IconLink
+          icon={<PiHeart className="h-6 w-6" />}
+          text="Donate"
+          href="/donate"
         />
       </NavbarMenu>
     </Navbar>
