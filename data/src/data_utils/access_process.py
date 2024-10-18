@@ -1,5 +1,6 @@
 from typing import Any
 
+
 def access_process(dataset: Any) -> Any:
     """
     Process a dataset to determine the access process for each property based on
