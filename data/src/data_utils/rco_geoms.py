@@ -1,5 +1,8 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import RCOS_LAYERS_TO_LOAD
+import pandas as pd
+
+pd.set_option("future.no_silent_downcasting", True)
 
 
 def rco_geoms(primary_featurelayer):
