@@ -18,6 +18,7 @@ import { ThemeButton } from '../../../components/ThemeButton';
 import { useRouter } from 'next/navigation';
 import { ViewState } from 'react-map-gl';
 import { PiX } from 'react-icons/pi';
+import DataDisclaimerModal from '@/components/DataDisclaimerModal';
 
 export type BarClickOptions = 'filter' | 'download' | 'detail' | 'list';
 
@@ -209,6 +210,7 @@ const MapPage = ({ params }: MapPageProps) => {
 
   return (
     <NextUIProvider>
+      <DataDisclaimerModal />
       <div className="flex flex-col">
         <div className="flex flex-grow overflow-hidden">
           <StreetViewModal
@@ -223,6 +225,7 @@ const MapPage = ({ params }: MapPageProps) => {
               fov="0.7"
             />
           </StreetViewModal>
+
           <div className={`flex-grow ${isVisible('map')}`}>
             <div className={`sticky top-0 z-10 sm:hidden ${isVisible('map')}`}>
               <SidePanelControlBar {...controlBarProps} />
