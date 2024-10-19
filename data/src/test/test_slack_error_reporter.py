@@ -33,6 +33,22 @@ class TestSlackNotifier(unittest.TestCase):
             username="Backend Error Reporter",
         )
 
+    @patch(
+        "classes.slack_error_reporter.WebClient.chat_postMessage"
+    )  # Correct patching
+    @patch(
+        "classes.slack_error_reporter.os.getenv", return_value=None
+    )  # Simulate missing Slack token
+    def test_no_error_no_slack_message(self, mock_getenv, mock_slack_post):
+        """Test that Slack notification is not triggered if there's no error."""
+
+        # Call the Slack notification function (with no valid token)
+        with self.assertRaises(ValueError):
+            send_error_to_slack("Test error message")
+
+        # Ensure Slack's chat_postMessage was not called due to missing token
+        mock_slack_post.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()
