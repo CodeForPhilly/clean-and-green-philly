@@ -80,11 +80,31 @@ dataset = vacant_properties()
 for service in services:
     dataset = service(dataset)
 
+before_drop = dataset.gdf.shape[0]
+dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
+after_drop = dataset.gdf.shape[0]
+print(f"Duplicate dataset rows dropped after initial services: {before_drop - after_drop}")
+
 # Add Priority Level
 dataset = priority_level(dataset)
 
+# Print the distribution of "priority_level"
+distribution = dataset.gdf["priority_level"].value_counts()
+print("Distribution of priority level:")
+print(distribution)
+    
 # Add Access Process
 dataset = access_process(dataset)
+
+# Print the distribution of "access_process"
+distribution = dataset.gdf["access_process"].value_counts()
+print("Distribution of access process:")
+print(distribution)
+
+before_drop = dataset.gdf.shape[0]
+dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
+after_drop = dataset.gdf.shape[0]
+print(f"Duplicate final dataset rows droppeds: {before_drop - after_drop}")
 
 # back up old tiles file whether we are reloading data or not
 if backup is None:
