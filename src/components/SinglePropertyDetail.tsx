@@ -88,7 +88,7 @@ const SinglePropertyDetail = ({
   const {
     address,
     council_district,
-    guncrime_density,
+    gun_crimes_density_label,
     market_value,
     neighborhood,
     open_violations_past_year,
@@ -101,7 +101,7 @@ const SinglePropertyDetail = ({
     tree_canopy_gap,
     zipcode,
     opa_id,
-    phs_partner_agency,
+    phs_care_program,
   } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphl/${opa_id}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
@@ -310,7 +310,7 @@ const SinglePropertyDetail = ({
         rows={[
           {
             label: 'Gun Crime Rate',
-            content: guncrime_density,
+            content: gun_crimes_density_label,
           },
           {
             label: 'Tree Canopy Gap',
@@ -321,8 +321,8 @@ const SinglePropertyDetail = ({
             content: open_violations_past_year,
           },
           {
-            label: 'PHS LandCare',
-            content: phs_partner_agency,
+            label: 'In PHS LandCare?',
+            content: phs_care_program,
           },
           {
             label: 'Suggested Priority',

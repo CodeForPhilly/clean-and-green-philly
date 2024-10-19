@@ -145,13 +145,7 @@ def vacant_properties() -> FeatureLayer:
             vacant_properties.gdf, geometry="geometry"
         )
 
-    print(
-        f"Vacant properties data size before dropping NAs: {len(vacant_properties.gdf)} rows."
-    )
     vacant_properties.gdf.dropna(subset=["opa_id"], inplace=True)
-    print(
-        f"Vacant properties data size after dropping NAs: {len(vacant_properties.gdf)} rows."
-    )
 
     # Final null value check before returning
     check_null_percentage(vacant_properties.gdf)
@@ -183,5 +177,10 @@ def vacant_properties() -> FeatureLayer:
 
     # Ensure concatenated data is still a GeoDataFrame
     vacant_properties.gdf = gpd.GeoDataFrame(vacant_properties.gdf, geometry="geometry")
+
+    before_drop = vacant_properties.gdf.shape[0]
+    vacant_properties.gdf = vacant_properties.gdf.drop_duplicates(subset="opa_id")
+    after_drop = vacant_properties.gdf.shape[0]
+    print(f"Duplicate vacant properties dropped: {before_drop - after_drop}")
 
     return vacant_properties

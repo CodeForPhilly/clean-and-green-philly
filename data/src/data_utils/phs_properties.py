@@ -22,10 +22,10 @@ def phs_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     primary_featurelayer.spatial_join(phs_properties)
 
     # Initialize 'phs_care_program' column with default "no" for all rows
-    primary_featurelayer.gdf["phs_care_program"] = "no"
+    primary_featurelayer.gdf["phs_care_program"] = "No"
     
     # Set 'phs_care_program' to "yes" for matched rows
-    primary_featurelayer.gdf.loc[primary_featurelayer.gdf["phs_care_program"] != "no", "phs_care_program"] = "yes"
+    primary_featurelayer.gdf.loc[primary_featurelayer.gdf["program"].notna(), "phs_care_program"] = "Yes"
 
     # Rebuild the GeoDataFrame after updates
     primary_featurelayer.rebuild_gdf()

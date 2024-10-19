@@ -314,35 +314,7 @@ class FeatureLayer:
         self.centroid_gdf["geometry"] = self.centroid_gdf["geometry"].centroid
         self.centroid_gdf = self.centroid_gdf.to_crs(epsg=4326)
         self.centroid_gdf.to_file(temp_geojson_points, driver="GeoJSON")
-
-        # Load the GeoJSON from the polygons, drop geometry, and save as Parquet
-        gdf_polygons = gpd.read_file(temp_geojson_polygons)
-        df_no_geom = gdf_polygons.drop(columns=["geometry"])
-
-        # Check if the DataFrame has fewer than 25,000 rows
-        num_rows, num_cols = df_no_geom.shape
-        if num_rows < 25000:
-            print(
-                f"Parquet file has {num_rows} rows, which is fewer than 25,000. Skipping upload."
-            )
-            return
-
-        # Save the DataFrame as Parquet
-        df_no_geom.to_parquet(temp_parquet)
-
-        # Upload Parquet to Google Cloud Storage
-        blob_parquet = bucket.blob(f"{tiles_file_id_prefix}.parquet")
-        try:
-            blob_parquet.upload_from_filename(temp_parquet)
-            parquet_size = os.stat(temp_parquet).st_size
-            parquet_size_mb = parquet_size / (1024 * 1024)
-            print(
-                f"Parquet upload successful! Size: {parquet_size} bytes ({parquet_size_mb:.2f} MB), Dimensions: {num_rows} rows, {num_cols} columns."
-            )
-        except Exception as e:
-            print(f"Parquet upload failed: {e}")
-            return
-
+        
         # Command for generating PMTiles for points up to zoom level zoom_threshold
         points_command: list[str] = [
             "tippecanoe",

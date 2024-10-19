@@ -39,10 +39,5 @@ def access_process(dataset: Any) -> Any:
         access_processes.append(access_process)
 
     dataset.gdf["access_process"] = access_processes
-
-    # Print the distribution of "access_process"
-    distribution = dataset.gdf["access_process"].value_counts()
-    print("Distribution of access process:")
-    print(distribution)
-
+    
     return dataset
