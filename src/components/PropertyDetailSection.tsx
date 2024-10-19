@@ -29,7 +29,7 @@ const tableCols = [
     label: 'Address',
   },
   {
-    key: 'guncrime_density',
+    key: 'gun_crimes_density_label',
     label: 'Crime Rate',
   },
   {

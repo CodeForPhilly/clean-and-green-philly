@@ -21,7 +21,7 @@ function getPriorityClass(priorityLevel: string) {
 }
 
 const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
-  const { address, guncrime_density, priority_level, opa_id } =
+  const { address, gun_crimes_density_label, priority_level, opa_id } =
     feature.properties;
 
   const image = `https://storage.googleapis.com/cleanandgreenphl/${opa_id}.jpg`;
@@ -62,7 +62,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
               {formattedAddress}
             </button>
             <div className="text-gray-700 body-sm">
-              {guncrime_density} Gun Crime Rate
+              {gun_crimes_density_label} Gun Crime Rate
             </div>
           </div>
           <Chip

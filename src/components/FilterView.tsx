@@ -50,12 +50,6 @@ const filters = [
     options: ['Land', 'Building'],
     type: 'buttonGroup',
   },
-  {
-    property: 'owner_type',
-    display: 'Owner',
-    options: ['Public', 'Business (LLC)', 'Individual'],
-    type: 'buttonGroup',
-  },
 ];
 
 interface FilterViewProps {
