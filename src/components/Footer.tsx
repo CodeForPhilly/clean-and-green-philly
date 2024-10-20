@@ -1,8 +1,10 @@
 'use client';
 
-import { useCookieContext } from '@/context/CookieContext';
-import CookieConsentBanner from './CookieConsentBanner';
-import Link from 'next/link';
+import { useCookieContext } from "@/context/CookieContext";
+import CookieConsentBanner from "./CookieConsentBanner";
+import { ThemeButton } from "./ThemeButton";
+import Link from "next/link";
+
 
 const Footer = () => {
   const { setShouldShowBanner } = useCookieContext();
@@ -25,16 +27,15 @@ const Footer = () => {
               </span>
             </li>
 
-            <li className="base-sm  text-gray-600 mx-auto">
-              <a
-                className="hover:text-gray-800 cursor-pointer underline"
-                onClick={onClickCookieSettings}
-              >
-                Cookie Settings
-              </a>
-              <span className="max-sm:hidden pl-2 pr-1" aria-hidden="true">
-                —
-              </span>
+            <span className="max-sm:hidden">—</span>
+
+            <li className="base-sm underline text-gray-600 mx-auto">
+              <ThemeButton
+                color="tertiary"
+                label="Cookie Settings"
+                onPress={onClickCookieSettings}
+                className="hover:text-gray-800 cursor-pointer text-gray-600"
+              />
             </li>
 
             <li className="base-sm text-gray-600 mx-auto">
