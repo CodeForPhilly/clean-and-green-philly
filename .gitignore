@@ -8,6 +8,7 @@ data.env
 data/src/tmp
 .DS_Store
 /data/src/local_outputs/
+/data/notebooks/
 
 ## App
 
