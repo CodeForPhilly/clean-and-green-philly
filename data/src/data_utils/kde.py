@@ -147,11 +147,13 @@ def apply_kde_to_primary(primary_featurelayer, name, query, resolution=resolutio
 
 
 def label_percentile(value):
-    if value == 1:
-        return "1st Percentile"
-    elif value == 2:
-        return "2nd Percentile"
-    elif value == 3:
-        return "3rd Percentile"
+    if 10 <= value % 100 <= 13:
+        return f"{value}th Percentile"
+    elif value % 10 == 1:
+        return f"{value}st Percentile"
+    elif value % 10 == 2:
+        return f"{value}nd Percentile"
+    elif value % 10 == 3:
+        return f"{value}rd Percentile"
     else:
         return f"{value}th Percentile"
