@@ -2,7 +2,8 @@ services:
   vacant-lots-proj:
     build:
       context: .
-      network: host
+      dockerfile: Dockerfile
+    image: vacant-lots-proj:latest
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CFP_MAPBOX_TOKEN_UPLOADER
@@ -10,54 +11,68 @@ services:
       - CLEAN_GREEN_GOOGLE_KEY
       - PYTHONUNBUFFERED=1
       - GOOGLE_CLOUD_BUCKET_NAME
+      - GOOGLE_CLOUD_PROJECT
       - CAGP_SLACK_API_TOKEN
     volumes:
       - ./src:/usr/src/app
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
-    extra_hosts: 
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    extra_hosts:
       - host.docker.internal:host-gateway
-    network_mode: "host"
+    network_mode: 'host'
 
   formatter:
     build:
       context: .
-      network: host
     volumes:
       - ./src:/usr/src/app
-    command: sh -c "pipenv run black /usr/src/app"
-    network_mode: "host"
+    command: sh -c "pip install ruff && ruff format --exclude '/usr/src/app/awkde/'"
+    network_mode: 'host'
+
+  linter:
+    build:
+      context: .
+    volumes:
+      - ./src:/usr/src/app
+    command: sh -c "pip install ruff && ruff check --fix --exclude '/usr/src/app/awkde/'"
+    network_mode: 'host'
 
   streetview:
     build:
       context: .
-      network: host
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CLEAN_GREEN_GOOGLE_KEY
       - VACANT_LOTS_DB
       - GOOGLE_CLOUD_BUCKET_NAME
-      
     volumes:
       - ./src:/usr/src/app
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
     command: sh -c "pipenv run python streetview.py"
-    network_mode: "host"
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    network_mode: 'host'
 
   postgres:
     container_name: cagp-postgres
     build:
       context: .
       dockerfile: Dockerfile-pg
-      network: host
     environment:
+      - PGPORT=5433
       - POSTGRES_PASSWORD
     restart: always
     ports:
-      - "5432:5432"
+      - '5433:5433'
     volumes:
       - database_volume:/var/lib/postgresql/data
       - ./init_pg.sql:/docker-entrypoint-initdb.d/init_pg.sql
-    extra_hosts: 
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    extra_hosts:
       - host.docker.internal:host-gateway
 
 volumes:

@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { FC } from "react";
-import { Button } from "@nextui-org/react";
-import { Check } from "@phosphor-icons/react";
+import React, { FC } from 'react';
+import { Button } from '@nextui-org/react';
+import { Check } from '@phosphor-icons/react';
 
 type ButtonGroupProps = {
   options: string[];
@@ -25,12 +25,12 @@ const ButtonGroup: FC<ButtonGroupProps> = ({
           disableAnimation
           onPress={() => toggleDimension(option)}
           size="sm"
-          color={selectedKeys.includes(option) ? "success" : "default"}
+          color={selectedKeys.includes(option) ? 'success' : 'default'}
           className={
-            (selectedKeys.includes(option) ? "tagSelected" : "tagDefault") +
-            (option === "Private Land Use Agreement"
-              ? " max-[475px]:mt-2 sm:max-[1103px]:mt-2"
-              : "")
+            (selectedKeys.includes(option) ? 'tagSelected' : 'tagDefault') +
+            (option === 'Private Land Use Agreement'
+              ? ' max-[475px]:mt-2 sm:max-[1103px]:mt-2'
+              : '')
           }
           radius="full"
           aria-pressed={selectedKeys.includes(option)}

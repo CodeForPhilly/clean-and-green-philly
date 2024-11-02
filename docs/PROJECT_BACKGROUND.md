@@ -1,6 +1,6 @@
 ## Essential Reading
 
-1. [Research Paper - The research this is based on](https://www.pnas.org/doi/full/10.1073/pnas.1718503115): Dr. South's research is the foundation of Clean & Green Philly. Read the abstract (and more, if you're interested) to understand her team's findings. 
+1. [Research Paper - The research this is based on](https://www.pnas.org/doi/full/10.1073/pnas.1718503115): Dr. South's research is the foundation of Clean & Green Philly. Read the abstract (and more, if you're interested) to understand her team's findings.
 
 2. [Community Groups Using Cleanups to Mitigate Gun Violence](https://whyy.org/articles/grays-ferry-community-garden-honors-gun-violence-victim-strives-to-prevent-future-killings/): This article highlights the work of community groups leveraging cleanup efforts to combat gun violence here in Philly
 
@@ -16,7 +16,7 @@
 
 ## Detailed References
 
-1. [Grounded in Philly’s Vacant Land 215 Toolkit (PDF)](https://pubintlaw.org/wp-content/uploads/2014/06/Vacant_Land_215-toolkit_2021.pdf): This toolkit from the Public Interest Law Center gives in-depth inforamation 
+1. [Grounded in Philly’s Vacant Land 215 Toolkit (PDF)](https://pubintlaw.org/wp-content/uploads/2014/06/Vacant_Land_215-toolkit_2021.pdf): This toolkit from the Public Interest Law Center gives in-depth inforamation
 
 2. [Park in a Truck Initiative](https://www.jefferson.edu/academics/colleges-schools-institutes/architecture-and-the-built-environment/programs/landscape-architecture/park-in-a-truck.html): Explore the "Park in a Truck" initiative, which demonstrates innovative approaches to creating green spaces in urban areas here in Philadelphia.
 

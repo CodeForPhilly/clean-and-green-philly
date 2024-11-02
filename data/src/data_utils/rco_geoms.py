@@ -1,5 +1,8 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import RCOS_LAYERS_TO_LOAD
+import pandas as pd
+
+pd.set_option("future.no_silent_downcasting", True)
 
 
 def rco_geoms(primary_featurelayer):
@@ -14,13 +17,13 @@ def rco_geoms(primary_featurelayer):
 
     rco_use_cols = ["rco_info", "rco_names", "geometry"]
 
-    rco_geoms.gdf["rco_info"] = rco_geoms.gdf[rco_aggregate_cols].apply(
+    rco_geoms.gdf.loc[:, "rco_info"] = rco_geoms.gdf[rco_aggregate_cols].apply(
         lambda x: "; ".join(map(str, x)), axis=1
     )
 
-    rco_geoms.gdf["rco_names"] = rco_geoms.gdf["ORGANIZATION_NAME"]
+    rco_geoms.gdf.loc[:, "rco_names"] = rco_geoms.gdf["ORGANIZATION_NAME"]
 
-    rco_geoms.gdf = rco_geoms.gdf[rco_use_cols]
+    rco_geoms.gdf = rco_geoms.gdf.loc[:, rco_use_cols].copy()
     rco_geoms.rebuild_gdf()
 
     primary_featurelayer.spatial_join(rco_geoms)
@@ -29,8 +32,12 @@ def rco_geoms(primary_featurelayer):
     group_columns = [
         col for col in primary_featurelayer.gdf.columns if col not in rco_use_cols
     ]
+
     for col in group_columns:
-        primary_featurelayer.gdf[col].fillna("", inplace=True)
+        # Use .infer_objects() after fillna() to fix the warning
+        primary_featurelayer.gdf.loc[:, col] = (
+            primary_featurelayer.gdf[col].fillna("").infer_objects(copy=False)
+        )
 
     primary_featurelayer.gdf = (
         primary_featurelayer.gdf.groupby(group_columns)

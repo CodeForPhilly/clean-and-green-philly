@@ -10,8 +10,7 @@ CITY_OWNED_PROPERTIES_TO_LOAD = [
 ]
 
 PHS_LAYERS_TO_LOAD = [
-    "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PHS_CommunityLandcare/FeatureServer/0/",
-    "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PHS_PhilaLandCare_Maintenance/FeatureServer/0/",
+    "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/phs_landcare/FeatureServer/0",
 ]
 
 RCOS_LAYERS_TO_LOAD = [

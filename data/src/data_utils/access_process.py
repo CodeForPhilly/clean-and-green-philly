@@ -1,7 +1,21 @@
-import pandas as pd
+from typing import Any
 
 
-def access_process(dataset):
+def access_process(dataset: Any) -> Any:
+    """
+    Process a dataset to determine the access process for each property based on
+    city ownership and market value. The result is added as a new column in the dataset.
+
+    Args:
+        dataset (Any): The dataset containing a GeoDataFrame named `gdf` with
+                       columns "city_owner_agency" and "market_value".
+
+    Returns:
+        Any: The updated dataset with an additional "access_process" column.
+
+    Side Effects:
+        Prints the distribution of the "access_process" column.
+    """
     access_processes = []
 
     for _, row in dataset.gdf.iterrows():
@@ -12,9 +26,9 @@ def access_process(dataset):
         )
 
         # Simplified decision logic
-        if city_owner_agency == "PLB":
-            access_process = "Land Bank"
-        elif city_owner_agency in ["PRA", "PHDC"]:
+        if city_owner_agency == "Land Bank (PHDC)":
+            access_process = "Go through Land Bank"
+        elif city_owner_agency == "PRA":
             access_process = "Do Nothing"
         else:
             if market_value_over_1000:
@@ -25,4 +39,5 @@ def access_process(dataset):
         access_processes.append(access_process)
 
     dataset.gdf["access_process"] = access_processes
+    
     return dataset

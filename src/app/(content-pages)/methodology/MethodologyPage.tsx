@@ -9,7 +9,7 @@ export default function MethodologyPage() {
           Clean & Green Philly combines several public datasets in order to
           categorize Philadelphia’s vacant properties based on how important it
           is that someone intervene there and what the easiest way to do that
-          is. To do this, we created a dataset based on{" "}
+          is. To do this, we created a dataset based on{' '}
           <a
             href="https://www.pnas.org/doi/10.1073/pnas.1718503115"
             target="_blank"
@@ -29,9 +29,9 @@ export default function MethodologyPage() {
           Although we aim to simplify the decision-making process for users of
           Clean & Green Philly, we value transparency. Below, we lay out key
           aspects of our methodology. For further questions, feel free to reach
-          out to us at{" "}
+          out to us at{' '}
           <a href="mailto:cleanandgreenphl@gmail.com" className="link">
-            {" "}
+            {' '}
             cleanandgreenphl@gmail.com
           </a>
           .
@@ -68,7 +68,7 @@ export default function MethodologyPage() {
             <li>
               <p>
                 <span className="font-bold"> Tree canopy. </span>
-                We use the{" "}
+                We use the{' '}
                 <a
                   href="https://www.treeequityscore.org/"
                   target="_blank"
@@ -77,14 +77,14 @@ export default function MethodologyPage() {
                   aria-label="Tree Canopy, link opens in a new window"
                 >
                   Tree Equity Score
-                </a>{" "}
+                </a>{' '}
                 data on tree canopy coverage.
               </p>
             </li>
             <li>
               <p>
                 <span className="font-bold"> In Care. </span>
-                We use the{" "}
+                We use the{' '}
                 <a
                   href="https://phsonline.org/programs/transforming-vacant-land"
                   target="_blank"
@@ -93,7 +93,7 @@ export default function MethodologyPage() {
                   aria-label="Pennsylvania Horticultural Society's LandCare Program, link opens in a new window"
                 >
                   Pennsylvania Horticultural Society&rsquo;s LandCare Program
-                </a>{" "}
+                </a>{' '}
                 data to determine if the property is either in Community
                 LandCare or Philadelphia LandCare initiatives. which is
                 Philadelphia&rsquo;s original cleaning and greening initiative
@@ -146,7 +146,7 @@ export default function MethodologyPage() {
           <p className="body-md mb-4">
             We based our criteria on local law and land disposition policies, as
             well as the availability and applicability of data. Some of our
-            guiding references include{" "}
+            guiding references include{' '}
             <a
               href="https://groundedinphilly.org/"
               target="_blank"
@@ -155,8 +155,8 @@ export default function MethodologyPage() {
               aria-label="Grounded in Philly, link opens in a new window"
             >
               Grounded in Philly&rsquo;s
-            </a>{" "}
-            work and{" "}
+            </a>{' '}
+            work and{' '}
             <a
               href="https://k05f3c.p3cdn1.secureserver.net/wp-content/uploads/Resources/Philadelphia-Land-Bank-Disposition-Policies-2020.pdf"
               target="_blank"
@@ -165,7 +165,7 @@ export default function MethodologyPage() {
               aria-label="the Philadelphia Land Bank, opens in a new window"
             >
               the Philadelphia Land Bank&rsquo;s
-            </a>{" "}
+            </a>{' '}
             disposition policies.
           </p>
 
@@ -174,14 +174,14 @@ export default function MethodologyPage() {
             suggestions. Anyone using Clean & Green Philly should verify the
             information we have provided before acting on it. When applicable,
             we encourage users to seek legal advice to ensure that they are in
-            compliance with relevant laws. Please see{" "}
+            compliance with relevant laws. Please see{' '}
             <a
               href="https://www.cleanandgreenphilly.org/legal-disclaimer"
               rel="noopener noreferrer"
               className="link"
             >
               our legal disclaimer
-            </a>{" "}
+            </a>{' '}
             for more detail.
           </p>
         </div>
@@ -203,7 +203,7 @@ export default function MethodologyPage() {
             given point in Philadelphia. Specifically, we use an adaptive
             bandwidth to better capture the local nuances of gun crime at small
             spatial scales. (For more on this, please see this memo from the
-            data analysis team at the{" "}
+            data analysis team at the{' '}
             <a
               href="##"
               target="_blank"
@@ -228,7 +228,7 @@ export default function MethodologyPage() {
           Society and Neighborhoods Garden Trust as community gardens. If you
           believe that a property listed on Clean & Green Philly is a community
           garden, or should be removed from the site for another reason, please
-          see our{" "}
+          see our{' '}
           <a href="/request-removal" rel="noopener noreferrer" className="link">
             Request Removal page.
           </a>
@@ -241,7 +241,7 @@ export default function MethodologyPage() {
         <p className="body-md mb-4">
           Clean & Green Philly was created by a Code for Philly team. In keeping
           with the open source ethos of Code for Philly, all of the code used to
-          build this tool is available on our{" "}
+          build this tool is available on our{' '}
           <a
             href="https://github.com/CodeForPhilly/vacant-lots-proj"
             target="_blank"
@@ -250,7 +250,7 @@ export default function MethodologyPage() {
             aria-label="GitHub repository, link opens in a new window"
           >
             GitHub repository.
-          </a>{" "}
+          </a>{' '}
           We welcome feature requests, bug reports, code contributions, and
           more.
         </p>
@@ -260,9 +260,9 @@ export default function MethodologyPage() {
         <h2 className="heading-2xl font-semibold mb-4">Data Sources</h2>
 
         <p className="body-md mb-4">
-          Documentation of the data that we use is available on{" "}
+          Documentation of the data that we use is available on{' '}
           <a
-            href="https://www.figma.com/exit?url=https%3A%2F%2Fgithub.com%2FCodeForPhilly%2Fvacant-lots-proj"
+            href="https://github.com/CodeForPhilly/clean-and-green-philly"
             target="_blank"
             rel="noopener noreferrer"
             className="link"

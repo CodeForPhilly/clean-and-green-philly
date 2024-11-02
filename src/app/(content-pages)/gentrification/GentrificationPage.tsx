@@ -1,6 +1,6 @@
 export default function GentrificationPage() {
   const fairClothUrl =
-    "https://www.brookings.edu/articles/four-reasons-why-more-public-housing-isnt-the-solution-to-affordability-concerns/";
+    'https://www.brookings.edu/articles/four-reasons-why-more-public-housing-isnt-the-solution-to-affordability-concerns/';
 
   return (
     <>
@@ -38,7 +38,7 @@ export default function GentrificationPage() {
         <li>
           Zoning reform to address unnecessarily restrictive zoning policies,
           such as those that prohibit structures other than single-family
-          housing in most U.S. cities and suburbs{" "}
+          housing in most U.S. cities and suburbs{' '}
         </li>
         <li>
           Mandatory citywide affordability laws, which led to a fivefold
@@ -53,7 +53,7 @@ export default function GentrificationPage() {
         </li>
         <li>
           Meaningful increases in federal funding for public housing (and
-          repealing{" "}
+          repealing{' '}
           <a
             target="_blank"
             rel="noopener noreferrer nofollow"

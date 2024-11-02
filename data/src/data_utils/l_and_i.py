@@ -1,18 +1,43 @@
 import pandas as pd
+import geopandas as gpd
+from typing import List
 from classes.featurelayer import FeatureLayer
 from constants.services import COMPLAINTS_SQL_QUERY, VIOLATIONS_SQL_QUERY
 
+def l_and_i(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Process L&I (Licenses and Inspections) data for complaints and violations.
 
-def l_and_i(primary_featurelayer):
+    This function filters and processes L&I complaints and violations data,
+    joining it with the primary feature layer based on spatial relationships
+    and OPA (Office of Property Assessment) identifiers.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The primary feature layer to join L&I data to.
+
+    Returns:
+        FeatureLayer: The primary feature layer updated with L&I data.
+    """
+    keywords: List[str] = [
+        'dumping', 'blight', 'rubbish', 'weeds', 'graffiti',
+        'abandoned', 'sanitation', 'litter', 'vacant', 'trash',
+        'unsafe'
+    ]
+
     # Load complaints data from L&I
-    l_and_i_complaints = FeatureLayer(
+    l_and_i_complaints: FeatureLayer = FeatureLayer(
         name="LI Complaints",
         carto_sql_queries=COMPLAINTS_SQL_QUERY
     )
 
-    # filter for only Status = 'Open'
+    # Filter for rows where 'subject' contains any of the keywords
     l_and_i_complaints.gdf = l_and_i_complaints.gdf[
-        l_and_i_complaints.gdf["status"] == "Open"
+        l_and_i_complaints.gdf["subject"].str.lower().str.contains('|'.join(keywords))
+    ]
+
+    # Filter for only Status = 'Open'
+    l_and_i_complaints.gdf = l_and_i_complaints.gdf[
+        l_and_i_complaints.gdf["status"].str.lower() == "open"
     ]
 
     # Group by geometry and concatenate the violationcodetitle values into a list with a semicolon separator
@@ -30,13 +55,18 @@ def l_and_i(primary_featurelayer):
     )
 
     # Load data for violations from L&I
-    l_and_i_violations = FeatureLayer(
+    l_and_i_violations: FeatureLayer = FeatureLayer(
         name="LI Violations",
         carto_sql_queries=VIOLATIONS_SQL_QUERY,
         from_xy=True
     )
 
-    all_violations_count_df = (
+    # Filter for rows where 'casetype' contains any of the keywords, handling NaN values
+    l_and_i_violations.gdf = l_and_i_violations.gdf[
+        l_and_i_violations.gdf["violationcodetitle"].fillna('').str.lower().str.contains('|'.join(keywords))
+    ]
+
+    all_violations_count_df: pd.DataFrame = (
         l_and_i_violations.gdf.groupby("opa_account_num")
         .count()
         .reset_index()[["opa_account_num", "violationnumber", "geometry"]]
@@ -45,11 +75,11 @@ def l_and_i(primary_featurelayer):
         columns={"violationnumber": "all_violations_past_year"}
     )
     # filter for only cases where the casestatus is 'IN VIOLATION' or 'UNDER INVESTIGATION'
-    violations_gdf = l_and_i_violations.gdf[
-        (l_and_i_violations.gdf["violationstatus"] == "OPEN")
+    violations_gdf: gpd.GeoDataFrame = l_and_i_violations.gdf[
+        (l_and_i_violations.gdf["violationstatus"].str.lower() == "open")
     ]
 
-    open_violations_count_df = (
+    open_violations_count_df: pd.DataFrame = (
         violations_gdf.groupby("opa_account_num")
         .count()
         .reset_index()[["opa_account_num", "violationnumber", "geometry"]]
@@ -58,7 +88,7 @@ def l_and_i(primary_featurelayer):
         columns={"violationnumber": "open_violations_past_year"}
     )
     # join the all_violations_count_df and open_violations_count_df dataframes on opa_account_num
-    violations_count_gdf = all_violations_count_df.merge(
+    violations_count_gdf: gpd.GeoDataFrame = all_violations_count_df.merge(
         open_violations_count_df, how="left", on="opa_account_num"
     )
 
@@ -96,7 +126,7 @@ def l_and_i(primary_featurelayer):
     )
 
     # Complaints need a spatial join, but we need to take special care to merge on just the parcel geoms first to get opa_id
-    complaints_with_opa_id = primary_featurelayer.gdf.sjoin(
+    complaints_with_opa_id: gpd.GeoDataFrame = primary_featurelayer.gdf.sjoin(
         l_and_i_complaints.gdf, how="left", predicate="contains"
     )
     complaints_with_opa_id.drop(columns=["index_right"], inplace=True)
@@ -109,7 +139,16 @@ def l_and_i(primary_featurelayer):
     )
 
     # Clean up the NaN values in the li_complaints column
-    def remove_nan_strings(x):
+    def remove_nan_strings(x: str) -> str | None:
+        """
+        Remove 'nan' strings from the input.
+
+        Args:
+            x (str): Input string.
+
+        Returns:
+            str | None: Cleaned string or None if only 'nan' values.
+        """
         if x == "nan" or ("nan;" in x):
             return None
         else:

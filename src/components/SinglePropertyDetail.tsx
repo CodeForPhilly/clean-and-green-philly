@@ -1,5 +1,5 @@
-import { BarClickOptions } from "@/app/find-properties/[[...opa_id]]/page";
-import { Chip, Tooltip, Link } from "@nextui-org/react";
+import { BarClickOptions } from '@/app/find-properties/[[...opa_id]]/page';
+import { Chip, Tooltip, Link } from '@nextui-org/react';
 import {
   ArrowLeft,
   BookmarkSimple,
@@ -7,18 +7,18 @@ import {
   ArrowsOut,
   Share,
   Check,
-} from "@phosphor-icons/react";
-import { MapGeoJSONFeature } from "maplibre-gl";
-import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import PropertyAccessOptionContainer from "./PropertyAccessOptionContainer";
-import { ThemeButton, ThemeButtonLink } from "./ThemeButton";
-import ContentCard from "./ContentCard";
-import cleanup from "@/images/transform-a-property.png";
-import { PiEyeSlash } from "react-icons/pi";
-import { useFilter } from "@/context/FilterContext";
-import { useCookieContext } from "@/context/CookieContext";
-import { getPropertyIdsFromLocalStorage } from "@/utilities/localStorage";
+} from '@phosphor-icons/react';
+import { MapGeoJSONFeature } from 'maplibre-gl';
+import Image from 'next/image';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import PropertyAccessOptionContainer from './PropertyAccessOptionContainer';
+import { ThemeButton, ThemeButtonLink } from './ThemeButton';
+import ContentCard from './ContentCard';
+import cleanup from '@/images/transform-a-property.png';
+import { PiEyeSlash } from 'react-icons/pi';
+import { useFilter } from '@/context/FilterContext';
+import { useCookieContext } from '@/context/CookieContext';
+import { getPropertyIdsFromLocalStorage } from '@/utilities/localStorage';
 
 interface PropertyDetailProps {
   property: MapGeoJSONFeature | null;
@@ -38,14 +38,14 @@ interface PropertyIdLocalStorage {
 
 function getPriorityClass(priorityLevel: string) {
   switch (priorityLevel) {
-    case "High":
-      return "bg-red-200 text-red-800"; // Style for High Priority
-    case "Medium":
-      return "bg-yellow-200 text-yellow-800"; // Style for Medium Priority
-    case "Low":
-      return "bg-green-200 text-green-800"; // Style for Low Priority
+    case 'High':
+      return 'bg-red-200 text-red-800'; // Style for High Priority
+    case 'Medium':
+      return 'bg-yellow-200 text-yellow-800'; // Style for Medium Priority
+    case 'Low':
+      return 'bg-green-200 text-green-800'; // Style for Low Priority
     default:
-      return "bg-gray-500 border-gray-700"; // Default style
+      return 'bg-gray-500 border-gray-700'; // Default style
   }
 }
 
@@ -63,14 +63,14 @@ const SinglePropertyDetail = ({
   const [hover, setHover] = useState<boolean>(false);
   const [isPropertySavedToLocalStorage, setIsPropertySavedToLocalStorage] =
     useState(false);
-  let { shouldAllowCookies, setShouldShowBanner } = useCookieContext();
+  const { shouldAllowCookies, setShouldShowBanner } = useCookieContext();
 
   useEffect(() => {
-    if (!localStorage.getItem("opa_ids")) {
+    if (!localStorage.getItem('opa_ids')) {
       initializeLocalStorage();
     }
 
-    const localStorageData = localStorage.getItem("opa_ids");
+    const localStorageData = localStorage.getItem('opa_ids');
     const parsedLocalStorageData = localStorageData
       ? JSON.parse(localStorageData)
       : {};
@@ -88,7 +88,7 @@ const SinglePropertyDetail = ({
   const {
     address,
     council_district,
-    guncrime_density,
+    gun_crimes_density_label,
     market_value,
     neighborhood,
     open_violations_past_year,
@@ -101,27 +101,27 @@ const SinglePropertyDetail = ({
     tree_canopy_gap,
     zipcode,
     opa_id,
-    phs_partner_agency,
+    phs_care_program,
   } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphl/${opa_id}.jpg`;
   const atlasUrl = `https://atlas.phila.gov/${address}`;
   const priorityClass = getPriorityClass(priority_level);
 
-  const priorityBgClassName = priority_level.includes("High")
-    ? "bg-red-200 text-red-800"
-    : priority_level.includes("Medium")
-    ? "bg-priority-medium"
-    : priority_level.includes("Low")
-    ? "bg-priority-low"
-    : "";
+  const priorityBgClassName = priority_level.includes('High')
+    ? 'bg-red-200 text-red-800'
+    : priority_level.includes('Medium')
+      ? 'bg-priority-medium'
+      : priority_level.includes('Low')
+        ? 'bg-priority-low'
+        : '';
 
   const savePropertyIdToLocalStorage = (localCache: PropertyIdLocalStorage) => {
-    let newLocalCache: PropertyIdLocalStorage = {
+    const newLocalCache: PropertyIdLocalStorage = {
       ...localCache,
     };
     newLocalCache.opa_ids[opa_id] = opa_id;
     newLocalCache.count++;
-    localStorage.setItem("opa_ids", JSON.stringify(newLocalCache));
+    localStorage.setItem('opa_ids', JSON.stringify(newLocalCache));
   };
 
   const removePropertyIdFromLocalStorage = (
@@ -129,16 +129,16 @@ const SinglePropertyDetail = ({
   ) => {
     delete localStorageData.opa_ids[opa_id];
     localStorageData.count--;
-    localStorage.setItem("opa_ids", JSON.stringify(localStorageData));
+    localStorage.setItem('opa_ids', JSON.stringify(localStorageData));
   };
 
   const initializeLocalStorage = () => {
-    let opa_ids: PropertyIdLocalStorage = {
+    const opa_ids: PropertyIdLocalStorage = {
       count: 0,
       opa_ids: {},
     };
 
-    localStorage.setItem("opa_ids", JSON.stringify(opa_ids));
+    localStorage.setItem('opa_ids', JSON.stringify(opa_ids));
   };
 
   const onClickSaveButton = () => {
@@ -150,7 +150,7 @@ const SinglePropertyDetail = ({
   };
 
   const findPropertyIdInLocalStorage = () => {
-    const localStorageData = localStorage.getItem("opa_ids");
+    const localStorageData = localStorage.getItem('opa_ids');
     const parsedLocalStorageData = localStorageData
       ? JSON.parse(localStorageData)
       : {};
@@ -168,17 +168,17 @@ const SinglePropertyDetail = ({
   const dispatchFilterAction = (data: any) => {
     if (data.count === 0) {
       dispatch({
-        type: "SET_DIMENSIONS",
-        property: "opa_id",
+        type: 'SET_DIMENSIONS',
+        property: 'opa_id',
         dimensions: [],
       });
       setShouldFilterSavedProperties(false);
     } else {
       if (shouldFilterSavedProperties) {
-        let propertyIds = getPropertyIdsFromLocalStorage();
+        const propertyIds = getPropertyIdsFromLocalStorage();
         dispatch({
-          type: "SET_DIMENSIONS",
-          property: "opa_id",
+          type: 'SET_DIMENSIONS',
+          property: 'opa_id',
           dimensions: [...propertyIds],
         });
       }
@@ -194,8 +194,8 @@ const SinglePropertyDetail = ({
           startContent={<ArrowLeft />}
           onPress={() => {
             setSelectedProperty(null);
-            updateCurrentView("detail");
-            history.replaceState(null, "", `/find-properties`);
+            updateCurrentView('detail');
+            history.replaceState(null, '', `/find-properties`);
           }}
         />
 
@@ -203,7 +203,9 @@ const SinglePropertyDetail = ({
         <div className="flex items-center">
           <ThemeButton
             color="tertiary"
-            label={isPropertySavedToLocalStorage ? "Saved" : "Save"}
+            label={isPropertySavedToLocalStorage ? 'Saved' : 'Save'}
+            aria-current={undefined}
+            aria-pressed={isPropertySavedToLocalStorage ? 'true' : undefined}
             startContent={
               isPropertySavedToLocalStorage ? <Check /> : <BookmarkSimple />
             }
@@ -217,10 +219,10 @@ const SinglePropertyDetail = ({
             disableAnimation
             closeDelay={100}
             placement="top"
-            content={shareLabel ? "Link Copied" : "Copy Link"}
+            content={shareLabel ? 'Link Copied' : 'Copy Link'}
             isOpen={hover}
             classNames={{
-              content: "bg-gray-900 rounded-[14px] text-white relative top-1",
+              content: 'bg-gray-900 rounded-[14px] text-white relative top-1',
             }}
           >
             <ThemeButton
@@ -255,7 +257,7 @@ const SinglePropertyDetail = ({
             content="Street View"
             classNames={{
               content:
-                "bg-gray-900 rounded-[14px] text-white relative top-[5px]",
+                'bg-gray-900 rounded-[14px] text-white relative top-[5px]',
             }}
           >
             <button
@@ -264,7 +266,7 @@ const SinglePropertyDetail = ({
               aria-label="Open full screen street view map"
               id="outside-iframe-element"
             >
-              <ArrowsOut color="#3D3D3D" size={24} />
+              <ArrowsOut color="ButtonText" size={24} />
             </button>
           </Tooltip>
         </div>
@@ -274,7 +276,7 @@ const SinglePropertyDetail = ({
           <h2
             className="font-bold heading-2xl"
             style={{
-              textTransform: "capitalize",
+              textTransform: 'capitalize',
             }}
           >
             {address.toLowerCase()}
@@ -286,7 +288,7 @@ const SinglePropertyDetail = ({
               placement="top"
               content="View on City Atlas"
               classNames={{
-                content: "bg-gray-900 rounded-[14px] text-white relative top-1",
+                content: 'bg-gray-900 rounded-[14px] text-white relative top-1',
               }}
             >
               <ThemeButtonLink
@@ -307,31 +309,31 @@ const SinglePropertyDetail = ({
         tableLabel="Community Impact"
         rows={[
           {
-            label: "Gun Crime Rate",
-            content: guncrime_density,
+            label: 'Gun Crime Rate',
+            content: gun_crimes_density_label,
           },
           {
-            label: "Tree Canopy Gap",
+            label: 'Tree Canopy Gap',
             content: `${Math.round(tree_canopy_gap * 100)}%`,
           },
           {
-            label: "L&I Violations",
+            label: 'L&I Violations',
             content: open_violations_past_year,
           },
           {
-            label: "PHS LandCare",
-            content: phs_partner_agency,
+            label: 'In PHS LandCare?',
+            content: phs_care_program,
           },
           {
-            label: "Suggested Priority",
+            label: 'Suggested Priority',
             content: (
               <Chip
                 classNames={{
                   base: `${priorityClass} border-small border-white/50`,
-                  content: "body-sm",
+                  content: 'body-sm',
                 }}
               >
-                {priority_level + " Priority"}
+                {priority_level + ' Priority'}
               </Chip>
             ),
           },
@@ -342,7 +344,7 @@ const SinglePropertyDetail = ({
         tableLabel="Land Information"
         rows={[
           {
-            label: "Owner",
+            label: 'Owner',
             content: (
               <div className="flex flex-col">
                 <span>{owner_1}</span>
@@ -351,37 +353,37 @@ const SinglePropertyDetail = ({
             ),
           },
           {
-            label: "Zip Code",
+            label: 'Zip Code',
             content: zipcode,
           },
           {
-            label: "Neighborhood",
+            label: 'Neighborhood',
             content: neighborhood,
           },
           {
-            label: "Registered Community Orgs",
-            content: rco_names.split("|").join(", "),
+            label: 'Registered Community Orgs',
+            content: rco_names.split('|').join(', '),
           },
           {
-            label: "Zoning",
+            label: 'Zoning',
             content: zoning_base_district,
           },
           {
-            label: "Council District",
+            label: 'Council District',
             content: council_district,
           },
           {
-            label: "Market Value",
-            content: new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
+            label: 'Market Value',
+            content: new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'USD',
               minimumFractionDigits: 0,
               maximumFractionDigits: 0,
             }).format(market_value),
           },
           {
-            label: "Tax Delinquency",
-            content: total_due ? "Yes" : "No",
+            label: 'Tax Delinquency',
+            content: total_due ? 'Yes' : 'No',
           },
         ]}
       />
@@ -390,7 +392,7 @@ const SinglePropertyDetail = ({
       <p className="mb-4">
         Before you can transform this property, you need to get legal access to
         it. Here are the possible options for this property including which are
-        available, not available and likely the best option.{" "}
+        available, not available and likely the best option.{' '}
         <Link href="/get-access" className="link">
           Learn more on Get Access.
         </Link>
@@ -422,7 +424,7 @@ const SinglePropertyDetail = ({
             color="secondary"
             href="/request-removal"
             startContent={<PiEyeSlash />}
-            label={"Request we hide this property"}
+            label={'Request we hide this property'}
           />
         </div>
       </div>

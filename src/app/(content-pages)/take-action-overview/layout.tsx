@@ -1,9 +1,9 @@
-import { generateMetadata } from "@/utilities/generateMetaData";
+import { generateMetadata } from '@/utilities/generateMetaData';
 
-const title = "Overview";
+const title = 'Overview';
 const description =
-  "Clean & Green Philly can help you prioritize vacant properties to return to productive use.";
-const url = "/take-action-overview";
+  'Clean & Green Philly can help you prioritize vacant properties to return to productive use.';
+const url = '/take-action-overview';
 
 export const metadata = generateMetadata({
   title,

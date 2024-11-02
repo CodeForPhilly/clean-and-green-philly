@@ -1,12 +1,12 @@
-"use client";
+'use client';
 
-import { useCookieContext } from "@/context/CookieContext";
-import CookieConsentBanner from "./CookieConsentBanner";
-import { ThemeButton } from "./ThemeButton";
-import Link from "next/link";
+import { useCookieContext } from '@/context/CookieContext';
+import CookieConsentBanner from './CookieConsentBanner';
+import { ThemeButton } from './ThemeButton';
+import Link from 'next/link';
 
 const Footer = () => {
-  let { setShouldShowBanner } = useCookieContext();
+  const { setShouldShowBanner } = useCookieContext();
 
   const onClickCookieSettings = () => {
     setShouldShowBanner(true);
@@ -21,6 +21,9 @@ const Footer = () => {
               <span className="base-sm text-gray-600">
                 © 2024 Clean & Green Philly
               </span>
+              <span className="max-sm:hidden pl-2 pr-1" aria-hidden="true">
+                —
+              </span>
             </li>
 
             <span className="max-sm:hidden">—</span>
@@ -34,15 +37,17 @@ const Footer = () => {
               />
             </li>
 
-            <span className="max-sm:hidden">—</span>
-
-            <li className="base-sm underline text-gray-600 mx-auto">
-              <Link href="/legal-disclaimer" className="hover:text-gray-800">
+            <li className="base-sm text-gray-600 mx-auto">
+              <Link
+                href="/legal-disclaimer"
+                className="hover:text-gray-800 underline"
+              >
                 Legal Disclaimer
               </Link>
+              <span className="max-sm:hidden pl-2 pr-1" aria-hidden="true">
+                —
+              </span>
             </li>
-
-            <span className="max-sm:hidden">—</span>
 
             <li>
               <a
@@ -51,9 +56,10 @@ const Footer = () => {
               >
                 Contact Us
               </a>
+              <span className="max-sm:hidden pl-2 pr-1" aria-hidden="true">
+                —
+              </span>
             </li>
-
-            <span className="max-sm:hidden">—</span>
 
             <li className="base-sm underline text-gray-600 mx-auto">
               <Link
@@ -73,3 +79,4 @@ const Footer = () => {
 };
 
 export default Footer;
+//Test sonarqube config

@@ -4,10 +4,10 @@ about: For cards that are not user stories, but may be technical, UX-related, or
 title: 'Task: X'
 labels: task
 assignees: ''
-
 ---
 
 ## Describe the task
+
 A clear and concise description of what the task is.
 
 ## Acceptance Criteria
@@ -18,5 +18,5 @@ A clear and concise description of what the task is.
 
 ## Additional context
 
-* Add any other context about the task here.
-* Or here
+- Add any other context about the task here.
+- Or here
