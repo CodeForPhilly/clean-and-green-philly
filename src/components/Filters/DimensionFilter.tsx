@@ -152,14 +152,18 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
             <a
               href={`/methodology/#${filterDescription.linkFragment}`}
               className="link"
-              aria-label={`Learn more about ${property === "priority_level" ? "priority level" : "access process"} from our Methodology Page`}
+              aria-label={`Learn more about ${
+                property === "priority_level"
+                  ? "priority level"
+                  : "access process"
+              } from our Methodology Page`}
             >
               Learn more{" "}
             </a>
           </p>
         )}
       </div>
-      <div aria-labelledby={filterLabelID}>{filter}</div>
+      <div aria-describedby={filterLabelID}>{filter}</div>
     </div>
   );
 };

@@ -23,7 +23,7 @@
     "multi-range-slider-react": "^2.0.5",
     "next": "^14.0.3",
     "pmtiles": "^3.0.5",
-    "postcss": "8.4.29",
+    "postcss": "^8.4.47",
     "protobufjs": "^7.2.5",
     "react": "18.2.0",
     "react-dom": "18.2.0",
@@ -41,11 +41,11 @@
     "@types/react": "^18.2.69",
     "@types/react-dom": "^18.2.22",
     "@typescript-eslint/parser": "^7.1.1",
-    "eslint": "^8.57.0",
+    "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.2",
     "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-custom-rules": "file:./eslint-plugin-custom-rules",
+    "eslint-plugin-react": "^7.34.1",
     "postcss-nesting": "^12.1.1",
     "postcss-preset-env": "^9.5.6"
   }
