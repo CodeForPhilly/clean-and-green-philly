@@ -18,6 +18,7 @@ type PanelFilterOptions = PropertyAccessOption & {
 type PanelsProps = {
   options: string[] | PropertyAccess[];
   selectedPanelKeys: { [property: string]: string[] };
+  aria_describedby_label?: string;
   toggleDimensionForPanel: (dimension: string, property: string) => void;
 };
 
@@ -71,6 +72,7 @@ const Panels: FC<PanelsProps> = ({
   options,
   selectedPanelKeys,
   toggleDimensionForPanel,
+  aria_describedby_label,
 }) => {
   const optionPanels = options.map((option, index) => {
     const panel = panel_access_options[option];
@@ -84,6 +86,9 @@ const Panels: FC<PanelsProps> = ({
     return (
       <Card
         key={index}
+        role="checkbox"
+        aria-describedby={aria_describedby_label}
+        aria-checked={isSelected ? 'true' : 'false'}
         className={isSelected ? 'panelSelected ' : 'panelDefault'}
         isPressable
         onPress={() => toggleDimensionForPanel(panel.dimension, panel.property)}
