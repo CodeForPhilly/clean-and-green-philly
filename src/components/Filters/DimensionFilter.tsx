@@ -19,10 +19,9 @@ type OptionDisplayMapping = {
 };
 
 const optionsDisplayMapping: OptionDisplayMapping = {
-  owner_type: {
-    Public: 'Public',
-    'Business (LLC)': 'Business (LLC)',
-    Individual: 'Individual',
+  llc_owner: {
+    Yes: "Business",
+    No: "Individual",
   },
 };
 
@@ -138,6 +137,8 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
     }
   }, [selectedKeys, selectedPanelKeys]);
 
+  const filterLabelID = display.replace(/\s/g, "");
+
   const filterDescription =
     property === 'priority_level'
       ? {
@@ -153,21 +154,27 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   return (
     <div className="pt-3 pb-6">
       <div className="flex flex-col mb-2">
-        <h2 className="heading-lg">{display}</h2>
-        {(property === 'get_access' || property === 'priority_level') && (
+        <h2 className="heading-lg" id={filterLabelID}>
+          {display}
+        </h2>
+        {(property === "get_access" || property === "priority_level") && (
           <p className="body-sm text-gray-500 w-[90%] my-1">
             {filterDescription.desc}
             <a
               href={`/methodology/#${filterDescription.linkFragment}`}
               className="link"
-              aria-label={`Learn more about ${property === 'priority_level' ? 'priority level' : 'access process'} from our Methodology Page`}
+              aria-label={`Learn more about ${
+                property === "priority_level"
+                  ? "priority level"
+                  : "access process"
+              } from our Methodology Page`}
             >
               Learn more{' '}
             </a>
           </p>
         )}
       </div>
-      {filter}
+      <div aria-describedby={filterLabelID}>{filter}</div>
     </div>
   );
 };
