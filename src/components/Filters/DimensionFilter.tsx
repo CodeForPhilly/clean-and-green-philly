@@ -20,8 +20,8 @@ type OptionDisplayMapping = {
 
 const optionsDisplayMapping: OptionDisplayMapping = {
   llc_owner: {
-    Yes: "Business",
-    No: "Individual",
+    Yes: 'Business',
+    No: 'Individual',
   },
 };
 
@@ -46,6 +46,8 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const [selectedPanelKeys, setSelectedPanelkeys] = useState<{
     [property: string]: string[];
   }>(initialSelectedPanelKeys());
+
+  const filterLabelID = display.replace(/\s/g, '');
 
   const toggleDimensionForPanel = (
     dimension: string,
@@ -118,10 +120,13 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       );
     } else if (type === 'panels') {
       return (
+        /* the filterLabelID is pulled from the form field header text and uses aria-describedby to tie each component to the form header label using a unique ID applied to the form area header
+         */
         <Panels
           options={options}
           selectedPanelKeys={selectedPanelKeys}
           toggleDimensionForPanel={toggleDimensionForPanel}
+          aria_describedby_label={filterLabelID}
         />
       );
     } else {
@@ -136,8 +141,6 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
       );
     }
   }, [selectedKeys, selectedPanelKeys]);
-
-  const filterLabelID = display.replace(/\s/g, "");
 
   const filterDescription =
     property === 'priority_level'
@@ -157,16 +160,16 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
         <h2 className="heading-lg" id={filterLabelID}>
           {display}
         </h2>
-        {(property === "get_access" || property === "priority_level") && (
+        {(property === 'get_access' || property === 'priority_level') && (
           <p className="body-sm text-gray-500 w-[90%] my-1">
             {filterDescription.desc}
             <a
               href={`/methodology/#${filterDescription.linkFragment}`}
               className="link"
               aria-label={`Learn more about ${
-                property === "priority_level"
-                  ? "priority level"
-                  : "access process"
+                property === 'priority_level'
+                  ? 'priority level'
+                  : 'access process'
               } from our Methodology Page`}
             >
               Learn more{' '}
@@ -174,7 +177,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           </p>
         )}
       </div>
-      <div aria-describedby={filterLabelID}>{filter}</div>
+      <div>{filter}</div>
     </div>
   );
 };
