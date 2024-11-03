@@ -116,6 +116,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           selectedKeys={selectedKeys}
           toggleDimension={toggleDimension}
           displayOptions={optionsDisplayMapping[property]}
+          aria_describedby_label={filterLabelID}
         />
       );
     } else if (type === 'panels') {
@@ -137,6 +138,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           selectedKeys={selectedKeys}
           toggleDimension={toggleDimension}
           handleSelectionChange={handleSelectionChange}
+          aria_describedby_label={filterLabelID}
         />
       );
     }
