@@ -88,7 +88,7 @@ const Panels: FC<PanelsProps> = ({
         key={index}
         role="checkbox"
         aria-describedby={aria_describedby_label}
-        aria-checked={isSelected ? 'true' : 'false'}
+        aria-checked={isSelected}
         className={isSelected ? 'panelSelected ' : 'panelDefault'}
         isPressable
         onPress={() => toggleDimensionForPanel(panel.dimension, panel.property)}
