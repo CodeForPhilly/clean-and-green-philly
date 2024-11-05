@@ -13,6 +13,7 @@ type MultiSelectProps = {
   display: string;
   options: any[];
   selectedKeys: string[];
+  aria_describedby_label?: string;
   toggleDimension: (dimension: string) => void;
   handleSelectionChange: (
     selection: React.ChangeEvent<HTMLSelectElement> | string
@@ -23,13 +24,14 @@ const MultiSelect: FC<MultiSelectProps> = ({
   display,
   options,
   selectedKeys,
+  aria_describedby_label,
   toggleDimension,
   handleSelectionChange,
 }) => {
   return (
     <div className="space-x-2 min-h-[33.5px]">
       <SelectFilter
-        aria-label={display}
+        aria-describedby={aria_describedby_label}
         items={options}
         variant="flat"
         size="md"

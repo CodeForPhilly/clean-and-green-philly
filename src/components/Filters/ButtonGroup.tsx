@@ -7,6 +7,7 @@ import { Check } from '@phosphor-icons/react';
 type ButtonGroupProps = {
   options: string[];
   selectedKeys: string[];
+  aria_describedby_label?: string;
   toggleDimension: (dimension: string) => void;
   displayOptions?: { [key: string]: string };
 };
@@ -15,6 +16,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({
   options,
   selectedKeys,
   toggleDimension,
+  aria_describedby_label,
   displayOptions = {},
 }) => {
   return (
@@ -23,6 +25,7 @@ const ButtonGroup: FC<ButtonGroupProps> = ({
         <Button
           key={index}
           disableAnimation
+          role="checkbox"
           onPress={() => toggleDimension(option)}
           size="sm"
           color={selectedKeys.includes(option) ? 'success' : 'default'}
@@ -33,7 +36,8 @@ const ButtonGroup: FC<ButtonGroupProps> = ({
               : '')
           }
           radius="full"
-          aria-pressed={selectedKeys.includes(option)}
+          aria-checked={selectedKeys.includes(option)}
+          aria-describedby={aria_describedby_label}
           startContent={
             selectedKeys.includes(option) ? (
               <Check className="w-3 w-3.5 max-h-6" />
