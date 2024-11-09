@@ -116,6 +116,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
                 ? 'Filter'
                 : `Filter ${filterCount} filters active`
             }
+            aria-expanded={currentView === 'filter'}
             label={
               <div className="lg:space-x-1 body-md">
                 <span className="max-lg:hidden">Filter</span>
