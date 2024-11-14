@@ -27,7 +27,7 @@ const determineCardEnums = (property: any) => {
     unavailable.add(PropertyAccess.PRIVATE_LAND_USE);
   }
 
-  property.access_process === 'Land Bank'
+  property.access_process === 'Go through Land Bank'
     ? (best = PropertyAccess.LAND_BANK)
     : unavailable.add(PropertyAccess.LAND_BANK);
 

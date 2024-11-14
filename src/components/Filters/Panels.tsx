@@ -56,7 +56,7 @@ const panel_access_options: Record<
     ...access_options[PropertyAccess.LAND_BANK],
     alt_description:
       'Properties available for discount prices from the Land Bank',
-    dimension: 'Land Bank',
+    dimension: 'Go through Land Bank',
     property: 'access_process',
   },
   [PropertyAccess.CONSERVATORSHIP]: {
