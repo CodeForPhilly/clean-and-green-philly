@@ -18,6 +18,7 @@ type PanelFilterOptions = PropertyAccessOption & {
 type PanelsProps = {
   options: string[] | PropertyAccess[];
   selectedPanelKeys: { [property: string]: string[] };
+  aria_describedby_label?: string;
   toggleDimensionForPanel: (dimension: string, property: string) => void;
 };
 
@@ -55,7 +56,7 @@ const panel_access_options: Record<
     ...access_options[PropertyAccess.LAND_BANK],
     alt_description:
       'Properties available for discount prices from the Land Bank',
-    dimension: 'Land Bank',
+    dimension: 'Go through Land Bank',
     property: 'access_process',
   },
   [PropertyAccess.CONSERVATORSHIP]: {
@@ -71,6 +72,7 @@ const Panels: FC<PanelsProps> = ({
   options,
   selectedPanelKeys,
   toggleDimensionForPanel,
+  aria_describedby_label,
 }) => {
   const optionPanels = options.map((option, index) => {
     const panel = panel_access_options[option];
@@ -84,6 +86,9 @@ const Panels: FC<PanelsProps> = ({
     return (
       <Card
         key={index}
+        role="checkbox"
+        aria-describedby={aria_describedby_label}
+        aria-checked={isSelected}
         className={isSelected ? 'panelSelected ' : 'panelDefault'}
         isPressable
         onPress={() => toggleDimensionForPanel(panel.dimension, panel.property)}
