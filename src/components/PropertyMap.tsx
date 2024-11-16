@@ -422,7 +422,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
             markerOnSelected={false}
             filter={(feature: any) => {
               return feature.context.some((i: any) => {
-                return i.text.includes("Philadelphia");
+                return i.text.includes('Philadelphia');
               });
             }}
             proximity={[
