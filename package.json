@@ -13,7 +13,6 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
-    "@mapbox/mapbox-gl-geocoder": "^5.0.2",
     "@maptiler/geocoding-control": "^1.4.1",
     "@nextui-org/react": "^2.4.6",
     "@phosphor-icons/react": "^2.1.7",
@@ -22,7 +21,6 @@
     "clsx": "^2.1.1",
     "framer-motion": "^11.3.8",
     "lodash": "^4.17.21",
-    "mapbox-gl": "3.2.0",
     "maplibre-gl": "^4.5.0",
     "multi-range-slider-react": "^2.0.7",
     "next": "^14.2.5",
@@ -44,7 +42,6 @@
     "@semantic-release/github": "^10.1.1",
     "@semantic-release/npm": "^12.0.1",
     "@semantic-release/release-notes-generator": "^14.0.1",
-    "@types/mapbox__mapbox-gl-geocoder": "^5.0.0",
     "@types/node": "^20.14.11",
     "@types/pbf": "^3.0.5",
     "@types/pg": "^8.11.6",
