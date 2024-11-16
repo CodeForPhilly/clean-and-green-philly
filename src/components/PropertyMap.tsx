@@ -422,12 +422,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
             markerOnSelected={false}
             filter={(feature: any) => {
               return feature.context.some((i: any) => {
-                return (
-                  (i.id.split('.').shift() === 'place' &&
-                    i.text === 'Philadelphia') ||
-                  (i.id.split('.').shift() === 'district' &&
-                    i.text === 'Philadelphia County')
-                );
+                return i.text.includes("Philadelphia");
               });
             }}
             proximity={[
