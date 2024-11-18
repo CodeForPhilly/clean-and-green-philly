@@ -1,8 +1,69 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import OPA_PROPERTIES_QUERY
+import pandas as pd
+import re
+
+replacements = {
+    "STREET": "ST",
+    "AVENUE": "AVE",
+    "ROAD": "RD",
+    "BOULEVARD": "BLVD",
+    "PLACE": "PL",
+    "FLOOR": "FL",
+    "FLR": "FL",
+    "FIRST": "1ST",
+    "SECOND": "2ND",
+    "THIRD": "3RD",
+    "FOURTH": "4TH",
+    "FIFTH": "5TH",
+    "SIXTH": "6TH",
+    "SEVENTH": "7TH",
+    "EIGHTH": "8TH",
+    "NINTH": "9TH",
+    "NORTH": "N",
+    "SOUTH": "S",
+    "EAST": "E",
+    "WEST": "W",
+    "SUITE": "STE",
+    "LA": "LN",
+    "LANE": "LN",
+    "PARKWAY": "PKY",
+}
 
 
-def opa_properties(primary_featurelayer):
+def standardize_street(street):
+    if not isinstance(street, str):
+        return ""
+    for full, abbr in replacements.items():
+        street = re.sub(r"\b{}\b".format(full), abbr, street, flags=re.IGNORECASE)
+    return street
+
+
+def create_standardized_address(row):
+    parts = [
+        (
+            row["mailing_address_1"].strip()
+            if pd.notnull(row["mailing_address_1"])
+            else ""
+        ),
+        (
+            row["mailing_address_2"].strip()
+            if pd.notnull(row["mailing_address_2"])
+            else ""
+        ),
+        row["mailing_street"].strip() if pd.notnull(row["mailing_street"]) else "",
+        (
+            row["mailing_city_state"].strip()
+            if pd.notnull(row["mailing_city_state"])
+            else ""
+        ),
+        row["mailing_zip"].strip() if pd.notnull(row["mailing_zip"]) else "",
+    ]
+    standardized_address = ", ".join([part for part in parts if part])
+    return standardized_address.lower()
+
+
+def opa_properties():
     opa = FeatureLayer(
         name="OPA Properties",
         carto_sql_queries=OPA_PROPERTIES_QUERY,
@@ -12,18 +73,54 @@ def opa_properties(primary_featurelayer):
             "sale_date",
             "sale_price",
             "parcel_number",
-            "mailing_address_1", 
-            "mailing_address_2", 
-            "mailing_care_of", 
+            "owner_1",
+            "owner_2",
+            "mailing_address_1",
+            "mailing_address_2",
+            "mailing_care_of",
             "mailing_city_state",
             "mailing_street",
-            "mailing_zip"
-        ]
+            "mailing_zip",
+            "building_code_description",
+            "zip_code",
+            "zoning",
+        ],
     )
 
-    primary_featurelayer.opa_join(
-        opa.gdf,
-        "parcel_number",
+    # Rename columns
+    opa.gdf = opa.gdf.rename(columns={"parcel_number": "opa_id"})
+
+    # Convert 'sale_price' and 'market_value' to numeric values
+    opa.gdf["sale_price"] = pd.to_numeric(opa.gdf["sale_price"], errors="coerce")
+    opa.gdf["market_value"] = pd.to_numeric(opa.gdf["market_value"], errors="coerce")
+
+    # Add parcel_type
+    opa.gdf["parcel_type"] = (
+        opa.gdf["building_code_description"]
+        .str.contains("VACANT LAND", case=False, na=False)
+        .map({True: "Land", False: "Building"})
     )
 
-    return primary_featurelayer
+    # Standardize mailing street addresses
+    opa.gdf["mailing_street"] = (
+        opa.gdf["mailing_street"].astype(str).apply(standardize_street)
+    )
+
+    # Create standardized address column
+    opa.gdf["standardized_address"] = opa.gdf.apply(create_standardized_address, axis=1)
+
+    # Drop columns starting with "mailing_"
+    opa.gdf = opa.gdf.loc[:, ~opa.gdf.columns.str.startswith("mailing_")]
+
+    # Use GeoSeries.make_valid to repair geometries
+    opa.gdf["geometry"] = opa.gdf["geometry"].make_valid()
+
+    # Drop empty geometries
+    opa.gdf = opa.gdf[~opa.gdf.is_empty]
+    final_row_count = len(opa.gdf)
+    print(f"Final row count after cleaning geometries: {final_row_count}")
+
+    # Exclude the geometry column when checking NA counts
+    print("NA Counts:\n", opa.gdf.drop(columns="geometry").isna().sum())
+
+    return opa

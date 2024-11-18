@@ -1,6 +1,6 @@
-from typing import Any
 from classes.featurelayer import FeatureLayer
 from constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
+
 
 def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
@@ -9,11 +9,11 @@ def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     All instances where the "city_owner_agency" is "PLB" are changed to "Land Bank (PHDC)".
 
     Args:
-        primary_featurelayer (FeatureLayer): The primary feature layer to which city-owned 
+        primary_featurelayer (FeatureLayer): The primary feature layer to which city-owned
                                              property data will be joined.
 
     Returns:
-        FeatureLayer: The updated primary feature layer with processed city ownership 
+        FeatureLayer: The updated primary feature layer with processed city ownership
                       information.
     """
     city_owned_properties = FeatureLayer(
@@ -21,6 +21,8 @@ def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         esri_rest_urls=CITY_OWNED_PROPERTIES_TO_LOAD,
         cols=["OPABRT", "AGENCY", "SIDEYARDELIGIBLE"],
     )
+
+    print("Columns for city_owned_properties:", city_owned_properties.gdf.columns)
 
     city_owned_properties.gdf.dropna(subset=["opabrt"], inplace=True)
 

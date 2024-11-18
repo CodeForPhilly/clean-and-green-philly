@@ -1,13 +1,11 @@
 from classes.featurelayer import FeatureLayer, google_cloud_bucket
 from constants.services import VACANT_PROPS_LAYERS_TO_LOAD
 import geopandas as gpd
-from config.config import USE_CRS
 from io import BytesIO
-
 import pandas as pd
 
 
-def load_backup_data_from_gcs(file_name: str) -> gpd.GeoDataFrame:
+def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame:
     bucket = google_cloud_bucket()
     blob = bucket.blob(file_name)
     if not blob.exists():
@@ -15,25 +13,18 @@ def load_backup_data_from_gcs(file_name: str) -> gpd.GeoDataFrame:
 
     file_bytes = blob.download_as_bytes()
     try:
+        # Read GeoJSON as a GeoDataFrame
         gdf = gpd.read_file(BytesIO(file_bytes))
     except Exception as e:
         raise ValueError(f"Error reading GeoJSON file: {e}")
 
     print("Loaded backup data from GCS.")
 
-    # Ensure column names are consistent
-    gdf = gdf.rename(
-        columns={
-            "ADDRESS": "address",
-            "OWNER1": "owner_1",
-            "OWNER2": "owner_2",
-            "BLDG_DESC": "building_description",
-            "CouncilDistrict": "council_district",
-            "ZoningBaseDistrict": "zoning_base_district",
-            "ZipCode": "zipcode",
-            "OPA_ID": "opa_id",
-        }
-    )
+    # Ensure only opa_id is retained and convert to DataFrame (drop geometry)
+    gdf = gdf[["OPA_ID"]].rename(columns={"OPA_ID": "opa_id"})
+
+    # Drop the geometry column to avoid CRS issues (we don't need the geometry for matching)
+    gdf = gdf.drop(columns=["geometry"], errors="ignore")
 
     return gdf
 
@@ -42,97 +33,49 @@ def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05):
     """Checks if any column in the dataframe has more than the given threshold of null values."""
     null_percentages = df.isnull().mean()
     for col, pct in null_percentages.items():
-        if col not in ["owner1", "owner2"] and pct > threshold:
+        if pct > threshold:
             raise ValueError(
                 f"Column '{col}' has more than {threshold * 100}% null values ({pct * 100}%)."
             )
 
 
-def vacant_properties() -> FeatureLayer:
+def vacant_properties(primary_featurelayer) -> FeatureLayer:
     vacant_properties = FeatureLayer(
         name="Vacant Properties",
         esri_rest_urls=VACANT_PROPS_LAYERS_TO_LOAD,
         cols=[
-            "ADDRESS",
-            "OWNER1",
-            "OWNER2",
-            "BLDG_DESC",
-            "COUNCILDISTRICT",
-            "ZONINGBASEDISTRICT",
-            "ZIPCODE",
             "OPA_ID",
             "parcel_type",
-        ],
+        ],  # Only need opa_id and parcel_type from the vacancy layers
     )
+
+    print("Columns in vacant properties dataset:", vacant_properties.gdf.columns)
 
     # Rename columns for consistency in the original data
-    vacant_properties.gdf = vacant_properties.gdf.rename(
-        columns={
-            "ADDRESS": "address",
-            "OWNER1": "owner_1",
-            "OWNER2": "owner_2",
-            "BLDG_DESC": "building_description",
-            "COUNCILDISTRICT": "council_district",
-            "ZONINGBASEDISTRICT": "zoning_base_district",
-            "ZIPCODE": "zipcode",
-            "OPA_ID": "opa_id",
-        }
-    )
+    vacant_properties.gdf = vacant_properties.gdf.rename(columns={"OPA_ID": "opa_id"})
 
+    # Check for "Land" properties in the default dataset
     vacant_land_gdf = vacant_properties.gdf[
         vacant_properties.gdf["parcel_type"] == "Land"
     ]
-    print(f"Vacant land data size: {len(vacant_land_gdf)} rows.")
+    print(f"Vacant land data size in the default dataset: {len(vacant_land_gdf)} rows.")
 
+    # If vacant land properties are below the threshold (20,000 rows), load backup data
     if len(vacant_land_gdf) < 20000:
-        print("Vacant land data is below the threshold. Loading backup data from GCS.")
-        backup_gdf = load_backup_data_from_gcs("vacant_indicators_land_06_2024.geojson")
-
-        # Ensure CRS is consistent with project-wide CRS (USE_CRS)
-        if backup_gdf.crs != USE_CRS:
-            print(f"Reprojecting backup data from {backup_gdf.crs} to {USE_CRS}")
-            backup_gdf = backup_gdf.to_crs(USE_CRS)
-
-        # Ensure CRS is the same
-        if backup_gdf.crs != vacant_properties.gdf.crs:
-            backup_gdf = backup_gdf.to_crs(vacant_properties.gdf.crs)
-
-        # Map backup dataset column names to match the original dataset
-        backup_gdf = backup_gdf.rename(
-            columns={
-                "owner_1": "owner1",
-                "owner_2": "owner2",
-                "building_description": "bldg_desc",
-                "council_district": "councildistrict",
-                "zoning_base_district": "zoningbasedistrict",
-            }
+        print(
+            "Vacant land data is below the threshold. Removing vacant land rows and loading backup data from GCS."
         )
 
-        # Set parcel_type to "Land" for backup data
-        backup_gdf["parcel_type"] = "Land"
-
-        # Select only the columns present in the original dataset
-        backup_gdf = backup_gdf[vacant_properties.gdf.columns]
-
-        # Ensure all necessary columns are present in backup data
-        for col in vacant_properties.gdf.columns:
-            if col not in backup_gdf.columns:
-                backup_gdf[col] = None
-
-        # Check for column mismatches between original and backup datasets
-        for col in vacant_properties.gdf.columns:
-            if vacant_properties.gdf[col].dtype != backup_gdf[col].dtype:
-                print(
-                    f"Warning: Data type mismatch in column '{col}'. Original: {vacant_properties.gdf[col].dtype}, Backup: {backup_gdf[col].dtype}"
-                )
-
-        # Verify if backup data contains more than expected null values
-        check_null_percentage(backup_gdf)
-
-        # Remove existing Land data
+        # Drop vacant land rows from the current dataset
         vacant_properties.gdf = vacant_properties.gdf[
             vacant_properties.gdf["parcel_type"] != "Land"
         ]
+
+        # Load backup data and ensure it's a DataFrame (dropping geometry)
+        backup_gdf = load_backup_data_from_gcs("vacant_indicators_land_06_2024.geojson")
+
+        # Add a parcel_type column with value "Land" for all rows in the backup data
+        backup_gdf["parcel_type"] = "Land"
 
         # Concatenate the backup data with the existing data
         print(f"Appending backup data ({len(backup_gdf)} rows) to the existing data.")
@@ -140,47 +83,24 @@ def vacant_properties() -> FeatureLayer:
             [vacant_properties.gdf, backup_gdf], ignore_index=True
         )
 
-        # Ensure concatenated data is still a GeoDataFrame
-        vacant_properties.gdf = gpd.GeoDataFrame(
-            vacant_properties.gdf, geometry="geometry"
-        )
+    # Drop the geometry column to convert to a regular DataFrame
+    df = vacant_properties.gdf.drop(columns=["geometry"], errors="ignore")
 
-    vacant_properties.gdf.dropna(subset=["opa_id"], inplace=True)
+    # Drop rows where opa_id is missing
+    df.dropna(subset=["opa_id"], inplace=True)
 
     # Final null value check before returning
-    check_null_percentage(vacant_properties.gdf)
+    check_null_percentage(df)
 
-    # Final column renaming and selection
-    vacant_properties.gdf = vacant_properties.gdf.rename(
-        columns={
-            "owner1": "owner_1",
-            "owner2": "owner_2",
-            "councildistrict": "council_district",
-            "zoningbasedistrict": "zoning_base_district",
-        }
+    # Create vacant column in the primary feature layer based on opa_id match
+    primary_featurelayer.gdf["vacant"] = (
+        primary_featurelayer.gdf["opa_id"].isin(df["opa_id"]).astype(int)
     )
 
-    # Select only the final columns needed
-    final_columns = [
-        "address",
-        "owner_1",
-        "owner_2",
-        "council_district",
-        "zoning_base_district",
-        "zipcode",
-        "opa_id",
-        "parcel_type",
-        "geometry",
-    ]
+    print("Vacant column added based on opa_id match.")
 
-    vacant_properties.gdf = vacant_properties.gdf[final_columns]
+    # Drop the parcel_type column once the decision has been made
+    df.drop(columns=["parcel_type"], inplace=True)
 
-    # Ensure concatenated data is still a GeoDataFrame
-    vacant_properties.gdf = gpd.GeoDataFrame(vacant_properties.gdf, geometry="geometry")
-
-    before_drop = vacant_properties.gdf.shape[0]
-    vacant_properties.gdf = vacant_properties.gdf.drop_duplicates(subset="opa_id")
-    after_drop = vacant_properties.gdf.shape[0]
-    print(f"Duplicate vacant properties dropped: {before_drop - after_drop}")
-
-    return vacant_properties
+    # Return primary_featurelayer after adding vacant column
+    return primary_featurelayer

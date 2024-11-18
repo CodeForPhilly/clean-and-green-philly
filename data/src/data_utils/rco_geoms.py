@@ -9,33 +9,31 @@ def rco_geoms(primary_featurelayer):
     rco_geoms = FeatureLayer(name="RCOs", esri_rest_urls=RCOS_LAYERS_TO_LOAD)
 
     rco_aggregate_cols = [
-        "ORGANIZATION_NAME",
-        "ORGANIZATION_ADDRESS",
-        "PRIMARY_EMAIL",
-        "PRIMARY_PHONE",
+        "organization_name",
+        "organization_address",
+        "primary_email",
+        "primary_phone",
     ]
 
     rco_use_cols = ["rco_info", "rco_names", "geometry"]
 
-    rco_geoms.gdf.loc[:, "rco_info"] = rco_geoms.gdf[rco_aggregate_cols].apply(
+    rco_geoms.gdf["rco_info"] = rco_geoms.gdf[rco_aggregate_cols].apply(
         lambda x: "; ".join(map(str, x)), axis=1
     )
 
-    rco_geoms.gdf.loc[:, "rco_names"] = rco_geoms.gdf["ORGANIZATION_NAME"]
+    rco_geoms.gdf["rco_names"] = rco_geoms.gdf["organization_name"]
 
-    rco_geoms.gdf = rco_geoms.gdf.loc[:, rco_use_cols].copy()
+    rco_geoms.gdf = rco_geoms.gdf[rco_use_cols].copy()
     rco_geoms.rebuild_gdf()
 
     primary_featurelayer.spatial_join(rco_geoms)
 
-    # Collapse columns and aggregate rco_info
     group_columns = [
         col for col in primary_featurelayer.gdf.columns if col not in rco_use_cols
     ]
 
     for col in group_columns:
-        # Use .infer_objects() after fillna() to fix the warning
-        primary_featurelayer.gdf.loc[:, col] = (
+        primary_featurelayer.gdf[col] = (
             primary_featurelayer.gdf[col].fillna("").infer_objects(copy=False)
         )
 

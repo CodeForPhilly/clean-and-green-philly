@@ -5,7 +5,7 @@ from .rco_geoms import rco_geoms
 from .tree_canopy import tree_canopy
 from .nbhoods import nbhoods
 from .gun_crimes import gun_crimes
-from .deliquencies import deliquencies
+from .delinquencies import delinquencies
 from .opa_properties import opa_properties
 from .vacant_properties import vacant_properties
 from .priority_level import priority_level
@@ -19,7 +19,7 @@ __all__ = [
     "tree_canopy",
     "nbhoods",
     "gun_crimes",
-    "deliquencies",
+    "delinquencies",
     "opa_properties",
     "vacant_properties",
     "priority_level",

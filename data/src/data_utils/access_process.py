@@ -39,5 +39,5 @@ def access_process(dataset: Any) -> Any:
         access_processes.append(access_process)
 
     dataset.gdf["access_process"] = access_processes
-    
+
     return dataset
