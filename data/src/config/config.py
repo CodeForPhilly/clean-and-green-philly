@@ -2,14 +2,11 @@ import logging
 import os
 from pathlib import Path
 
-FORCE_RELOAD = False
+FORCE_RELOAD = True
 """ During the data load, whether to query the various GIS API services for the data to load into the postgres tables.  If True, will query the API services, backup the database, reload the database and report on data differences.  If false will read the data from postgres."""
 
 USE_CRS = "EPSG:2272"
 """ the standard geospatial code for Pennsylvania South (ftUS) """
-
-MAPBOX_TOKEN = os.environ.get("CFP_MAPBOX_TOKEN_UPLOADER")
-""" The location of the token for your mapbox account in your environment """
 
 log_level: int = logging.WARN
 """ overall log level for the project """
