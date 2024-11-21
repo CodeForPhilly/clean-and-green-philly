@@ -9,10 +9,10 @@ def priority_level(dataset):
         # Decision Points
         guncrime_density_percentile = row["gun_crimes_density_percentile"]
         in_phs_landcare = pd.notna(row["phs_care_program"])
-        has_li_complaint_or_violation = (
-            row["li_complaints"] is not None
-            and float(row["all_violations_past_year"]) > 0
-        ) or (row["l_and_i_complaints_density_percentile"] > 50)
+        has_violation_or_high_density = (
+            float(row["all_violations_past_year"]) > 0
+            or row["l_and_i_complaints_density_percentile"] > 50
+        )
         very_low_tree_canopy = row["tree_canopy_gap"] >= 0.3
 
         # Updated logic based on percentile values
@@ -23,7 +23,7 @@ def priority_level(dataset):
         elif guncrime_density_percentile > 75:
             # High Gun Crime Density (Top 25%)
 
-            if has_li_complaint_or_violation:
+            if has_violation_or_high_density:
                 priority_level = "High"
             else:
                 if in_phs_landcare:
@@ -36,7 +36,7 @@ def priority_level(dataset):
 
         else:
             # Medium Gun Crime Density (Between 50% and 75%)
-            if has_li_complaint_or_violation:
+            if has_violation_or_high_density:
                 if in_phs_landcare:
                     priority_level = "Medium"
                 else:

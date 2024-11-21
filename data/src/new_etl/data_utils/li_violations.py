@@ -104,22 +104,6 @@ def li_violations(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         "opa_account_num",
     )
 
-    # Clean up the NaN values in the li_complaints column
-    def remove_nan_strings(x: str) -> str | None:
-        """
-        Remove 'nan' strings from the input.
-
-        Args:
-            x (str): Input string.
-
-        Returns:
-            str | None: Cleaned string or None if only 'nan' values.
-        """
-        if x == "nan" or ("nan;" in x):
-            return None
-        else:
-            return x
-
     primary_featurelayer.gdf[
         ["all_violations_past_year", "open_violations_past_year"]
     ] = (

@@ -94,3 +94,7 @@ NBHOODS_URL = "https://raw.githubusercontent.com/opendataphilly/open-geo-data/ma
 CENSUS_BGS_URL = (
     "https://opendata.arcgis.com/datasets/2f982bada233478ea0100528227febce_0.geojson"
 )
+
+DOR_PARCELS_URL = (
+    "https://opendata.arcgis.com/datasets/1c57dd1b3ff84449a4b0e3fb29d3cafd_0.geojson"
+    )

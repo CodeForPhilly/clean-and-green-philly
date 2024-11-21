@@ -1,36 +1,36 @@
 import sys
 import time
 
-from classes.backup_archive_database import BackupArchiveDatabase
 from config.config import FORCE_RELOAD
 from config.psql import conn
-from data_utils.access_process import access_process
-from data_utils.contig_neighbors import contig_neighbors
-from data_utils.dev_probability import dev_probability
-from data_utils.negligent_devs import negligent_devs
-from data_utils.opa_properties import opa_properties
-from data_utils.priority_level import priority_level
-from data_utils.vacant_properties import vacant_properties
-from data_utils.pwd_parcels import pwd_parcels
-from data_utils.city_owned_properties import city_owned_properties
-from data_utils.phs_properties import phs_properties
-from data_utils.li_violations import li_violations
-from data_utils.li_complaints import li_complaints
-from data_utils.rco_geoms import rco_geoms
-from data_utils.council_dists import council_dists
-from data_utils.tree_canopy import tree_canopy
-from data_utils.nbhoods import nbhoods
-from data_utils.gun_crimes import gun_crimes
-from data_utils.drug_crimes import drug_crimes
-from data_utils.delinquencies import delinquencies
-from data_utils.unsafe_buildings import unsafe_buildings
-from data_utils.imm_dang_buildings import imm_dang_buildings
-from data_utils.tactical_urbanism import tactical_urbanism
-from data_utils.conservatorship import conservatorship
-from data_utils.owner_type import owner_type
-from data_utils.community_gardens import community_gardens
-from data_utils.park_priority import park_priority
-from data_utils.ppr_properties import ppr_properties
+from new_etl.data_utils.access_process import access_process
+from new_etl.data_utils.contig_neighbors import contig_neighbors
+from new_etl.data_utils.dev_probability import dev_probability
+from new_etl.data_utils.negligent_devs import negligent_devs
+from new_etl.data_utils.opa_properties import opa_properties
+from new_etl.data_utils.priority_level import priority_level
+from new_etl.data_utils.vacant_properties import vacant_properties
+from new_etl.data_utils.pwd_parcels import pwd_parcels
+from new_etl.data_utils.dor_parcels import dor_parcels
+from new_etl.data_utils.city_owned_properties import city_owned_properties
+from new_etl.data_utils.phs_properties import phs_properties
+from new_etl.data_utils.li_violations import li_violations
+from new_etl.data_utils.li_complaints import li_complaints
+from new_etl.data_utils.rco_geoms import rco_geoms
+from new_etl.data_utils.council_dists import council_dists
+from new_etl.data_utils.tree_canopy import tree_canopy
+from new_etl.data_utils.nbhoods import nbhoods
+from new_etl.data_utils.gun_crimes import gun_crimes
+from new_etl.data_utils.drug_crimes import drug_crimes
+from new_etl.data_utils.delinquencies import delinquencies
+from new_etl.data_utils.unsafe_buildings import unsafe_buildings
+from new_etl.data_utils.imm_dang_buildings import imm_dang_buildings
+from new_etl.data_utils.tactical_urbanism import tactical_urbanism
+from new_etl.data_utils.conservatorship import conservatorship
+from new_etl.data_utils.owner_type import owner_type
+from new_etl.data_utils.community_gardens import community_gardens
+from new_etl.data_utils.park_priority import park_priority
+from new_etl.data_utils.ppr_properties import ppr_properties
 
 import pandas as pd
 import geopandas as gpd
@@ -46,7 +46,7 @@ services = [
     vacant_properties, # needs to run early so that other utils can make use of the `vacant` designation
 
     # geometries/areas
-    pwd_parcels,
+    dor_parcels,
     council_dists,
     nbhoods,
     rco_geoms,
@@ -80,20 +80,6 @@ services = [
 
 
 ]
-
-# backup sql schema if we are reloading data
-backup: BackupArchiveDatabase = None
-if FORCE_RELOAD:
-    # first archive any remaining backup that may exist from a previous run that errored
-    backup = BackupArchiveDatabase()
-    if backup.is_backup_schema_exists():
-        backup.archive_backup_schema()
-        conn.commit()
-        time.sleep(1)  # make sure we get a different timestamp
-        backup = BackupArchiveDatabase()  # create a new one so we get a new timestamp
-
-    backup.backup_schema()
-    conn.commit()
 
 dataset = opa_properties()
 

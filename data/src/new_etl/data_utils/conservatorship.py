@@ -7,24 +7,6 @@ six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astime
     est
 )
 
-blight_words = [
-    "weed",
-    "rubbish",
-    "garbage",
-    "tire",
-    "debris",
-    "clean",
-    "waste",
-    "vegetation",
-    "dumping",
-    "scrap",
-    "auto",
-    "vehicle",
-    "graffiti",
-    "dangerous",
-]
-
-
 def conservatorship(primary_featurelayer):
     conservatorships = []
 
@@ -34,8 +16,7 @@ def conservatorship(primary_featurelayer):
         market_value_over_1000 = (
             row["market_value"] and float(row["market_value"]) > 1000
         )
-        li_complaints_lower = str(row["li_complaints"]).lower().split(" ")
-        contains_blight_word = any(word in li_complaints_lower for word in blight_words)
+        violations_exist = float(row["all_violations_past_year"]) > 0
 
         try:
             sale_date = parse(row["sale_date"]).astimezone(est)
@@ -48,7 +29,7 @@ def conservatorship(primary_featurelayer):
             not sale_date_6_months_ago and market_value_over_1000
         ):
             conservatorship = "No"
-        elif contains_blight_word and not sheriff_sale and sale_date_6_months_ago:
+        elif violations_exist and not sheriff_sale and sale_date_6_months_ago:
             conservatorship = "Yes"
         else:
             conservatorship = "No"
