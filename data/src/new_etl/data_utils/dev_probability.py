@@ -2,10 +2,11 @@ import geopandas as gpd
 import jenkspy
 import pandas as pd
 import requests
-from classes.featurelayer import FeatureLayer
-from constants.services import CENSUS_BGS_URL, PERMITS_QUERY
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import CENSUS_BGS_URL, PERMITS_QUERY
 
 from config.config import USE_CRS
+
 
 
 def dev_probability(primary_featurelayer):

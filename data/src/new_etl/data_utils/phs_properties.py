@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import PHS_LAYERS_TO_LOAD
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import PHS_LAYERS_TO_LOAD
 
 
 def phs_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:

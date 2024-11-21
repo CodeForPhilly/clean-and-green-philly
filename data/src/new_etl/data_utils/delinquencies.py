@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import DELINQUENCIES_QUERY
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import DELINQUENCIES_QUERY
 
 
 def delinquencies(primary_featurelayer):

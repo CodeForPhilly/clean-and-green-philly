@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import PWD_PARCELS_QUERY
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import PWD_PARCELS_QUERY
 import geopandas as gpd
 
 

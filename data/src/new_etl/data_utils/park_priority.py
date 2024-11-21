@@ -6,7 +6,7 @@ from typing import List, Union
 import geopandas as gpd
 import requests
 from bs4 import BeautifulSoup
-from classes.featurelayer import FeatureLayer
+from ..classes.featurelayer import FeatureLayer
 from config.config import USE_CRS
 from tqdm import tqdm
 import pyogrio

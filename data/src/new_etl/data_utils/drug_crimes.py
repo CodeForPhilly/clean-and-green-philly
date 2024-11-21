@@ -1,7 +1,7 @@
-from constants.services import DRUGCRIME_SQL_QUERY
+from ..constants.services import DRUGCRIME_SQL_QUERY
 
 
-from data_utils.kde import apply_kde_to_primary
+from new_etl.data_utils.kde import apply_kde_to_primary
 
 
 def drug_crimes(primary_featurelayer):

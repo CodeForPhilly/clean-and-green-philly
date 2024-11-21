@@ -1,5 +1,5 @@
 import pandas as pd
-from classes.featurelayer import FeatureLayer
+from ..classes.featurelayer import FeatureLayer
 
 
 def owner_type(primary_featurelayer: FeatureLayer) -> FeatureLayer:

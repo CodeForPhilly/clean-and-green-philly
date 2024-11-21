@@ -1,7 +1,7 @@
 import numpy as np
 import rasterio
 from awkde.awkde import GaussianKDE
-from classes.featurelayer import FeatureLayer
+from ..classes.featurelayer import FeatureLayer
 from config.config import USE_CRS
 from rasterio.transform import Affine
 from tqdm import tqdm

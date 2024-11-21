@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import OPA_PROPERTIES_QUERY
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import OPA_PROPERTIES_QUERY
 import pandas as pd
 import re
 

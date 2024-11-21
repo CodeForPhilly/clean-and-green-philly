@@ -2,7 +2,7 @@ import requests
 import io
 import zipfile
 import geopandas as gpd
-from classes.featurelayer import FeatureLayer
+from ..classes.featurelayer import FeatureLayer
 from config.config import USE_CRS
 
 

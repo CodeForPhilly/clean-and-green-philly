@@ -1,6 +1,5 @@
-from classes.featurelayer import (
-    FeatureLayer,
-)  # Replace with the actual module where FeatureLayer is defined
+from ..classes.featurelayer import FeatureLayer
+
 
 
 def tactical_urbanism(primary_featurelayer: FeatureLayer) -> FeatureLayer:

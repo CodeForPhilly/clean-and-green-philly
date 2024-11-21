@@ -1,6 +1,6 @@
 import geopandas as gpd
-from classes.featurelayer import FeatureLayer
-from constants.services import NBHOODS_URL
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import NBHOODS_URL
 
 from config.config import USE_CRS
 

@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import COUNCIL_DISTRICTS_TO_LOAD
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import COUNCIL_DISTRICTS_TO_LOAD
 import pandas as pd
 
 

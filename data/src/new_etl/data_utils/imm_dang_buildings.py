@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import IMMINENT_DANGER_BUILDINGS_QUERY
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import IMMINENT_DANGER_BUILDINGS_QUERY
 
 
 def imm_dang_buildings(primary_featurelayer):

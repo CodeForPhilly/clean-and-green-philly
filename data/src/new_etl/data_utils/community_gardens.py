@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import COMMUNITY_GARDENS_TO_LOAD
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
 
 
 def community_gardens(primary_featurelayer):

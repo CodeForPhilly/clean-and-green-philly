@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer, google_cloud_bucket
-from constants.services import VACANT_PROPS_LAYERS_TO_LOAD
+from ..classes.featurelayer import FeatureLayer, google_cloud_bucket
+from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
 import geopandas as gpd
 from io import BytesIO
 import pandas as pd

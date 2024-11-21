@@ -1,8 +1,8 @@
 import pandas as pd
 import geopandas as gpd
 from typing import List
-from classes.featurelayer import FeatureLayer
-from constants.services import VIOLATIONS_SQL_QUERY
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import VIOLATIONS_SQL_QUERY
 
 
 def li_violations(primary_featurelayer: FeatureLayer) -> FeatureLayer:
