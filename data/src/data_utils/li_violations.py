@@ -2,14 +2,14 @@ import pandas as pd
 import geopandas as gpd
 from typing import List
 from classes.featurelayer import FeatureLayer
-from constants.services import COMPLAINTS_SQL_QUERY, VIOLATIONS_SQL_QUERY
+from constants.services import VIOLATIONS_SQL_QUERY
 
 
-def l_and_i(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def li_violations(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
-    Process L&I (Licenses and Inspections) data for complaints and violations.
+    Process L&I (Licenses and Inspections) data for violations.
 
-    This function filters and processes L&I complaints and violations data,
+    This function filters and processes L&I violations data,
     joining it with the primary feature layer based on spatial relationships
     and OPA (Office of Property Assessment) identifiers.
 
@@ -32,35 +32,6 @@ def l_and_i(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         "trash",
         "unsafe",
     ]
-
-    # Load complaints data from L&I
-    l_and_i_complaints: FeatureLayer = FeatureLayer(
-        name="LI Complaints", carto_sql_queries=COMPLAINTS_SQL_QUERY
-    )
-
-    # Filter for rows where 'subject' contains any of the keywords
-    l_and_i_complaints.gdf = l_and_i_complaints.gdf[
-        l_and_i_complaints.gdf["subject"].str.lower().str.contains("|".join(keywords))
-    ]
-
-    # Filter for only Status = 'Open'
-    l_and_i_complaints.gdf = l_and_i_complaints.gdf[
-        l_and_i_complaints.gdf["status"].str.lower() == "open"
-    ]
-
-    # Group by geometry and concatenate the violationcodetitle values into a list with a semicolon separator
-    l_and_i_complaints.gdf = (
-        l_and_i_complaints.gdf.groupby("geometry")["service_name"]
-        .apply(lambda x: "; ".join([val for val in x if val is not None]))
-        .reset_index()
-    )
-
-    l_and_i_complaints.rebuild_gdf()
-
-    # rename the column to 'li_complaints'
-    l_and_i_complaints.gdf.rename(
-        columns={"service_name": "li_complaints"}, inplace=True
-    )
 
     # Load data for violations from L&I
     l_and_i_violations: FeatureLayer = FeatureLayer(
@@ -121,7 +92,6 @@ def l_and_i(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         .apply(lambda x: "; ".join([val for val in x if val is not None]))
         .reset_index()
     )
-    l_and_i_complaints.rebuild_gdf()
 
     # rename the column to 'li_violations'
     l_and_i_violations.gdf.rename(
@@ -132,19 +102,6 @@ def l_and_i(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     primary_featurelayer.opa_join(
         violations_count_gdf,
         "opa_account_num",
-    )
-
-    # Complaints need a spatial join, but we need to take special care to merge on just the parcel geoms first to get opa_id
-    complaints_with_opa_id: gpd.GeoDataFrame = primary_featurelayer.gdf.sjoin(
-        l_and_i_complaints.gdf, how="left", predicate="contains"
-    )
-    complaints_with_opa_id.drop(columns=["index_right"], inplace=True)
-
-    # Concatenate the complaints values into a list with a semicolon separator by opa_id
-    complaints_with_opa_id = (
-        complaints_with_opa_id.groupby("opa_id")["li_complaints"]
-        .apply(lambda x: "; ".join([str(val) for val in x if val is not None]))
-        .reset_index()[["opa_id", "li_complaints"]]
     )
 
     # Clean up the NaN values in the li_complaints column
@@ -162,16 +119,6 @@ def l_and_i(primary_featurelayer: FeatureLayer) -> FeatureLayer:
             return None
         else:
             return x
-
-    complaints_with_opa_id["li_complaints"] = complaints_with_opa_id[
-        "li_complaints"
-    ].apply(remove_nan_strings)
-
-    # Merge the complaints values back into the primary_featurelayer
-    primary_featurelayer.opa_join(
-        complaints_with_opa_id,
-        "opa_id",
-    )
 
     primary_featurelayer.gdf[
         ["all_violations_past_year", "open_violations_past_year"]

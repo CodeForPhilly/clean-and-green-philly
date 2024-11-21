@@ -1,5 +1,6 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import PWD_PARCELS_QUERY
+import geopandas as gpd
 
 
 def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
@@ -52,6 +53,13 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         how="left",
     )
 
+    # Coerce merged_gdf into a GeoDataFrame
+    merged_gdf = gpd.GeoDataFrame(
+        merged_gdf,
+        geometry="geometry",
+        crs=primary_featurelayer.gdf.crs,  # Ensure the CRS matches the original
+    )
+
     # Log observations with no polygon geometry
     no_geometry_count = merged_gdf["geometry"].isnull().sum()
     print("Number of observations with no polygon geometry:", no_geometry_count)
@@ -62,10 +70,16 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     )
     print("Number of observations retaining point geometry:", no_geometry_count)
 
-    # Validate the merged GeoDataFrame
-    updated_gdf = FeatureLayer(
-        name=primary_featurelayer.name,
-        gdf=merged_gdf,
+    # Count observations with point geometry grouped by 'vacant'
+    point_geometry_counts = (
+        merged_gdf[merged_gdf["geometry"].geom_type == "Point"]
+        .groupby("vacant")
+        .size()
     )
 
-    return updated_gdf
+    # Log the results
+    print("Counts of point geometry grouped by 'vacant':")
+    print(point_geometry_counts)
+
+    # Wrap the GeoDataFrame back into a FeatureLayer
+    return FeatureLayer(name=primary_featurelayer.name, gdf=merged_gdf)

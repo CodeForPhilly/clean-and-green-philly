@@ -92,10 +92,8 @@ def vacant_properties(primary_featurelayer) -> FeatureLayer:
     # Final null value check before returning
     check_null_percentage(df)
 
-    # Create vacant column in the primary feature layer based on opa_id match
-    primary_featurelayer.gdf["vacant"] = (
-        primary_featurelayer.gdf["opa_id"].isin(df["opa_id"]).astype(int)
-    )
+    # Create vacant column in the primary feature layer as True/False
+    primary_featurelayer.gdf["vacant"] = primary_featurelayer.gdf["opa_id"].isin(df["opa_id"])
 
     print("Vacant column added based on opa_id match.")
 

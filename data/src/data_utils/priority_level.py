@@ -1,3 +1,5 @@
+import pandas as pd
+
 def priority_level(dataset):
     priority_levels = []
     for idx, row in dataset.gdf.iterrows():
@@ -5,11 +7,11 @@ def priority_level(dataset):
 
         # Decision Points
         guncrime_density_percentile = row["gun_crimes_density_percentile"]
-        in_phs_landcare = row["phs_care_program"] == "yes"
+        in_phs_landcare = pd.notna(row["phs_care_program"])
         has_li_complaint_or_violation = (
             row["li_complaints"] is not None
             and float(row["all_violations_past_year"]) > 0
-        )
+        ) or (row["l_and_i_complaints_density_percentile"] > 50)
         very_low_tree_canopy = row["tree_canopy_gap"] >= 0.3
 
         # Updated logic based on percentile values
