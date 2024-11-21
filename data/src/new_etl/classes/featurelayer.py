@@ -90,7 +90,9 @@ class FeatureLayer:
             self.type = (
                 "esri"
                 if self.esri_rest_urls
-                else "carto" if self.carto_sql_queries else "gdf"
+                else "carto"
+                if self.carto_sql_queries
+                else "gdf"
             )
             if force_reload or not self.check_psql():
                 self.load_data()

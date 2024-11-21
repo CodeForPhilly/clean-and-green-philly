@@ -72,9 +72,7 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     # Count observations with point geometry grouped by 'vacant'
     point_geometry_counts = (
-        merged_gdf[merged_gdf["geometry"].geom_type == "Point"]
-        .groupby("vacant")
-        .size()
+        merged_gdf[merged_gdf["geometry"].geom_type == "Point"].groupby("vacant").size()
     )
 
     # Log the results

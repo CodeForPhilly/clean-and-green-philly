@@ -1,5 +1,6 @@
 import pandas as pd
 
+
 def priority_level(dataset):
     priority_levels = []
     for idx, row in dataset.gdf.iterrows():

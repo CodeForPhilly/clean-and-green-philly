@@ -1,6 +1,5 @@
 from classes.featurelayer import FeatureLayer
 from constants.services import PHS_LAYERS_TO_LOAD
-import pandas as pd
 
 
 def phs_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
@@ -24,7 +23,9 @@ def phs_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     primary_featurelayer.spatial_join(phs_properties)
 
     # Create 'phs_care_program' column with values from 'program', drop 'program'
-    primary_featurelayer.gdf["phs_care_program"] = primary_featurelayer.gdf.pop("program")
+    primary_featurelayer.gdf["phs_care_program"] = primary_featurelayer.gdf.pop(
+        "program"
+    )
 
     # Rebuild the GeoDataFrame after updates
     primary_featurelayer.rebuild_gdf()

@@ -1,5 +1,3 @@
-import pandas as pd
-
 def negligent_devs(primary_featurelayer):
     devs = primary_featurelayer.gdf
 
@@ -39,7 +37,12 @@ def negligent_devs(primary_featurelayer):
     print("Final feature layer data with negligent_dev flag:")
     print(
         primary_featurelayer.gdf[
-            ["opa_id", "n_total_properties_owned", "n_vacant_properties_owned", "negligent_dev"]
+            [
+                "opa_id",
+                "n_total_properties_owned",
+                "n_vacant_properties_owned",
+                "negligent_dev",
+            ]
         ].head(10)
     )
 

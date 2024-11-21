@@ -7,9 +7,9 @@ import numpy as np
 def contig_neighbors(primary_featurelayer):
     # Create a filtered dataframe with only vacant properties and polygon geometries
     vacant_parcels = primary_featurelayer.gdf.loc[
-        (primary_featurelayer.gdf["vacant"]) &
-        (primary_featurelayer.gdf.geometry.type.isin(["Polygon", "MultiPolygon"])),
-        ["opa_id", "geometry"]
+        (primary_featurelayer.gdf["vacant"])
+        & (primary_featurelayer.gdf.geometry.type.isin(["Polygon", "MultiPolygon"])),
+        ["opa_id", "geometry"],
     ]
 
     if vacant_parcels.empty:
@@ -50,7 +50,9 @@ def contig_neighbors(primary_featurelayer):
     )
 
     # Assign NA for non-vacant properties
-    primary_featurelayer.gdf.loc[~primary_featurelayer.gdf["vacant"], "n_contiguous"] = np.nan
+    primary_featurelayer.gdf.loc[
+        ~primary_featurelayer.gdf["vacant"], "n_contiguous"
+    ] = np.nan
 
     print("Process completed. Returning updated primary feature layer.")
     return primary_featurelayer
