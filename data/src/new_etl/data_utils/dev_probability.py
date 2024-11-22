@@ -8,7 +8,6 @@ from ..constants.services import CENSUS_BGS_URL, PERMITS_QUERY
 from config.config import USE_CRS
 
 
-
 def dev_probability(primary_featurelayer):
     census_bgs_gdf = gpd.read_file(CENSUS_BGS_URL)
     census_bgs_gdf = census_bgs_gdf.to_crs(USE_CRS)

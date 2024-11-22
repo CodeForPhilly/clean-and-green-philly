@@ -7,6 +7,7 @@ six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astime
     est
 )
 
+
 def conservatorship(primary_featurelayer):
     conservatorships = []
 

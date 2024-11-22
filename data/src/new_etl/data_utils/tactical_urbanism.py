@@ -1,7 +1,6 @@
 from ..classes.featurelayer import FeatureLayer
 
 
-
 def tactical_urbanism(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Assigns a 'tactical_urbanism' value to each row in the primary feature layer based on specific conditions.

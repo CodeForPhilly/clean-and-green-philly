@@ -1,8 +1,5 @@
 import sys
-import time
 
-from config.config import FORCE_RELOAD
-from config.psql import conn
 from new_etl.data_utils.access_process import access_process
 from new_etl.data_utils.contig_neighbors import contig_neighbors
 from new_etl.data_utils.dev_probability import dev_probability
@@ -11,7 +8,6 @@ from new_etl.data_utils.opa_properties import opa_properties
 from new_etl.data_utils.priority_level import priority_level
 from new_etl.data_utils.vacant_properties import vacant_properties
 from new_etl.data_utils.pwd_parcels import pwd_parcels
-from new_etl.data_utils.dor_parcels import dor_parcels
 from new_etl.data_utils.city_owned_properties import city_owned_properties
 from new_etl.data_utils.phs_properties import phs_properties
 from new_etl.data_utils.li_violations import li_violations
@@ -33,7 +29,6 @@ from new_etl.data_utils.park_priority import park_priority
 from new_etl.data_utils.ppr_properties import ppr_properties
 
 import pandas as pd
-import geopandas as gpd
 
 
 # Ensure the directory containing awkde is in the Python path
@@ -43,21 +38,18 @@ if awkde_path not in sys.path:
 
 services = [
     # vacant designation
-    vacant_properties, # needs to run early so that other utils can make use of the `vacant` designation
-
+    vacant_properties,  # needs to run early so that other utils can make use of the `vacant` designation
     # geometries/areas
-    dor_parcels,
+    pwd_parcels,
     council_dists,
     nbhoods,
     rco_geoms,
-
     # ownership
     city_owned_properties,
     phs_properties,
-    community_gardens, 
+    community_gardens,
     ppr_properties,
     owner_type,
-
     # quality of life
     li_violations,
     li_complaints,
@@ -67,18 +59,14 @@ services = [
     delinquencies,
     unsafe_buildings,
     imm_dang_buildings,
-
     # development
     contig_neighbors,
     dev_probability,
     negligent_devs,
-
     # access/interventions
     tactical_urbanism,
     conservatorship,
     park_priority,
-
-
 ]
 
 dataset = opa_properties()
@@ -151,9 +139,12 @@ print(dataset.gdf.isna().sum())
 # 2) Mean, median, and std of numeric columns
 print("\nMean, Median, and Standard Deviation of numeric columns:")
 numeric_columns = dataset.gdf.select_dtypes(include=["float", "int"]).columns
-numeric_summary = dataset.gdf[numeric_columns].describe().loc[["mean", "50%", "std"]]
-numeric_summary.rename(index={"50%": "median"}, inplace=True)
-print(numeric_summary)
+
+for column in numeric_columns:
+    mean = dataset.gdf[column].mean()
+    median = dataset.gdf[column].median()
+    std = dataset.gdf[column].std()
+    print(f"{column}:\n  Mean: {mean:.2f}\n  Median: {median:.2f}\n  Std: {std:.2f}")
 
 # 3) Number of unique values in string columns
 print("\nNumber of unique values in string columns:")
