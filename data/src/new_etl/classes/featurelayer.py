@@ -10,7 +10,6 @@ import sqlalchemy as sa
 from config.config import (
     FORCE_RELOAD,
     USE_CRS,
-    log_level,
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
@@ -18,9 +17,15 @@ from config.psql import conn, local_engine
 from esridump.dumper import EsriDumper
 from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
-from shapely import Point, wkb
+from shapely import wkb
 
-log.basicConfig(level=log_level)
+from concurrent.futures import ThreadPoolExecutor, as_completed
+from tqdm.auto import tqdm
+
+from tqdm import tqdm
+
+
+log.basicConfig(level=log.INFO)
 
 
 def google_cloud_bucket() -> Bucket:
@@ -46,10 +51,6 @@ bucket = google_cloud_bucket()
 
 
 class FeatureLayer:
-    """
-    FeatureLayer is a class to represent a GIS dataset. It can be initialized with a URL to an Esri Feature Service, a SQL query to Carto, or a GeoDataFrame.
-    """
-
     def __init__(
         self,
         name,
@@ -61,6 +62,8 @@ class FeatureLayer:
         from_xy=False,
         use_wkb_geom_field=None,
         cols: list[str] = None,
+        max_workers=16,
+        chunk_size=100000,
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -77,147 +80,165 @@ class FeatureLayer:
         self.psql_table = name.lower().replace(" ", "_")
         self.input_crs = "EPSG:4326" if not from_xy else USE_CRS
         self.use_wkb_geom_field = use_wkb_geom_field
+        self.max_workers = max_workers
+        self.chunk_size = chunk_size
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
 
         if len(non_none_inputs) > 0:
-            if self.esri_rest_urls is not None:
-                self.type = "esri"
-            elif self.carto_sql_queries is not None:
-                self.type = "carto"
-            elif self.gdf is not None:
-                self.type = "gdf"
-
-            if force_reload:
+            self.type = (
+                "esri"
+                if self.esri_rest_urls
+                else "carto"
+                if self.carto_sql_queries
+                else "gdf"
+            )
+            if force_reload or not self.check_psql():
                 self.load_data()
-            else:
-                psql_exists = self.check_psql()
-                if not psql_exists:
-                    self.load_data()
         else:
-            print(f"Initialized FeatureLayer {self.name} with no data.")
+            log.info(f"Initialized FeatureLayer {self.name} with no data.")
 
     def check_psql(self):
         try:
             if not sa.inspect(local_engine).has_table(self.psql_table):
-                print(f"Table {self.psql_table} does not exist")
+                log.debug(f"Table {self.psql_table} does not exist")
                 return False
             psql_table = gpd.read_postgis(
                 f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
             )
             if len(psql_table) == 0:
                 return False
-            else:
-                print(f"Loading data for {self.name} from psql...")
-                self.gdf = psql_table
-                return True
+            log.info(f"Loading data for {self.name} from psql...")
+            self.gdf = psql_table
+            return True
         except Exception as e:
-            print(f"Error loading data for {self.name}: {e}")
+            log.error(f"Error loading data for {self.name}: {e}")
             return False
 
     def load_data(self):
-        print(f"Loading data for {self.name} from {self.type}...")
+        log.info(f"Loading data for {self.name} from {self.type}...")
         if self.type == "gdf":
             pass
         else:
             try:
                 if self.type == "esri":
-                    if self.esri_rest_urls is None:
+                    if not self.esri_rest_urls:
                         raise ValueError("Must provide a URL to load data from Esri")
 
                     gdfs = []
                     for url in self.esri_rest_urls:
-                        parcel_type = (
-                            "Land"
-                            if "Vacant_Indicators_Land" in url
-                            else "Building"
-                            if "Vacant_Indicators_Bldg" in url
-                            else None
-                        )
-                        self.dumper = EsriDumper(url)
-                        features = [feature for feature in self.dumper]
+                        print(f"Processing URL: {url}")  # Debugging: Print the URL
+
+                        # Use EsriDumper to get features
+                        dumper = EsriDumper(url)
+                        features = [feature for feature in dumper]
+
+                        if not features:
+                            log.error(f"No features returned for URL: {url}")
+                            continue
 
                         geojson_features = {
                             "type": "FeatureCollection",
                             "features": features,
                         }
-
-                        this_gdf = gpd.GeoDataFrame.from_features(
+                        gdf = gpd.GeoDataFrame.from_features(
                             geojson_features, crs=self.input_crs
                         )
+                        gdf = gdf.to_crs(self.crs)
 
-                        # Check if 'X' and 'Y' columns exist and create geometry if necessary
-                        if "X" in this_gdf.columns and "Y" in this_gdf.columns:
-                            this_gdf["geometry"] = this_gdf.apply(
-                                lambda row: Point(row["X"], row["Y"]), axis=1
-                            )
-                        elif "geometry" not in this_gdf.columns:
-                            raise ValueError(
-                                "No geometry information found in the data."
-                            )
+                        # Add parcel_type based on the URL
+                        if "Vacant_Indicators_Land" in url:
+                            gdf["parcel_type"] = "Land"
+                        elif "Vacant_Indicators_Bldg" in url:
+                            gdf["parcel_type"] = "Building"
 
-                        this_gdf = this_gdf.to_crs(USE_CRS)
+                        gdfs.append(gdf)
 
-                        # Assign the parcel_type to the GeoDataFrame
-                        if parcel_type:
-                            this_gdf["parcel_type"] = parcel_type
-
-                        gdfs.append(this_gdf)
-
+                    # Concatenate all dataframes
                     self.gdf = pd.concat(gdfs, ignore_index=True)
 
                 elif self.type == "carto":
-                    if self.carto_sql_queries is None:
-                        raise ValueError(
-                            "Must provide a SQL query to load data from Carto"
-                        )
+                    self._load_carto_data()
 
-                    gdfs = []
-                    for sql_query in self.carto_sql_queries:
-                        response = requests.get(
-                            "https://phl.carto.com/api/v2/sql", params={"q": sql_query}
-                        )
+                # Convert all column names to lowercase
+                if not self.gdf.empty:
+                    self.gdf.columns = [col.lower() for col in self.gdf.columns]
 
-                        data = response.json()["rows"]
-                        df = pd.DataFrame(data)
-                        geometry = (
-                            wkb.loads(df[self.use_wkb_geom_field], hex=True)
-                            if self.use_wkb_geom_field
-                            else gpd.points_from_xy(df.x, df.y)
-                        )
-
-                        gdf = gpd.GeoDataFrame(
-                            df,
-                            geometry=geometry,
-                            crs=self.input_crs,
-                        )
-                        gdf = gdf.to_crs(USE_CRS)
-
-                        gdfs.append(gdf)
-                    self.gdf = pd.concat(gdfs, ignore_index=True)
-
-                # Drop columns
+                # Drop columns not in self.cols, if specified
                 if self.cols:
+                    self.cols = [
+                        col.lower() for col in self.cols
+                    ]  # Ensure self.cols is lowercase
                     self.cols.append("geometry")
-                    self.gdf = self.gdf[self.cols]
+                    self.gdf = self.gdf[
+                        [col for col in self.cols if col in self.gdf.columns]
+                    ]
 
-                # save self.gdf to psql
-                # rename columns to lowercase for table creation in postgres
-                if self.cols:
-                    self.gdf = self.gdf.rename(
-                        columns={x: x.lower() for x in self.cols}
-                    )
+                # Save to PostGIS
                 self.gdf.to_postgis(
                     name=self.psql_table,
                     con=conn,
                     if_exists="replace",
                     chunksize=1000,
                 )
+
             except Exception as e:
-                print(f"Error loading data for {self.name}: {e}")
+                log.error(f"Error loading data for {self.name}: {e}")
                 traceback.print_exc()
-                self.gdf = None
+                self.gdf = gpd.GeoDataFrame()
+
+    def _load_carto_data(self):
+        if not self.carto_sql_queries:
+            raise ValueError("Must provide SQL query to load data from Carto")
+        gdfs = []
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            futures = []
+            for query in self.carto_sql_queries:
+                total_rows = self._get_carto_total_rows(query)
+                for offset in range(0, total_rows, self.chunk_size):
+                    futures.append(
+                        executor.submit(
+                            self._fetch_carto_chunk, query, offset, self.chunk_size
+                        )
+                    )
+            for future in tqdm(
+                as_completed(futures),
+                total=len(futures),
+                desc="Processing Carto chunks",
+            ):
+                try:
+                    gdfs.append(future.result())
+                except Exception as e:
+                    log.error(f"Error processing Carto chunk: {e}")
+        self.gdf = pd.concat(gdfs, ignore_index=True)
+
+    def _fetch_carto_chunk(self, query, offset, chunk_size):
+        chunk_query = f"{query} LIMIT {chunk_size} OFFSET {offset}"
+        response = requests.get(
+            "https://phl.carto.com/api/v2/sql", params={"q": chunk_query}
+        )
+        response.raise_for_status()
+        data = response.json().get("rows", [])
+        if not data:
+            return gpd.GeoDataFrame()
+        df = pd.DataFrame(data)
+        geometry = (
+            wkb.loads(df[self.use_wkb_geom_field], hex=True)
+            if self.use_wkb_geom_field
+            else gpd.points_from_xy(df.x, df.y)
+        )
+        return gpd.GeoDataFrame(df, geometry=geometry, crs=self.input_crs).to_crs(
+            self.crs
+        )
+
+    def _get_carto_total_rows(self, query):
+        count_query = f"SELECT COUNT(*) as count FROM ({query}) as subquery"
+        response = requests.get(
+            "https://phl.carto.com/api/v2/sql", params={"q": count_query}
+        )
+        response.raise_for_status()
+        return response.json()["rows"][0]["count"]
 
     def spatial_join(self, other_layer, how="left", predicate="intersects"):
         """
@@ -314,7 +335,7 @@ class FeatureLayer:
         self.centroid_gdf["geometry"] = self.centroid_gdf["geometry"].centroid
         self.centroid_gdf = self.centroid_gdf.to_crs(epsg=4326)
         self.centroid_gdf.to_file(temp_geojson_points, driver="GeoJSON")
-        
+
         # Command for generating PMTiles for points up to zoom level zoom_threshold
         points_command: list[str] = [
             "tippecanoe",
