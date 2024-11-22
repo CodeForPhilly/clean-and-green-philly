@@ -1,9 +1,11 @@
+'use client';
+
 import { FC } from 'react';
-import DimensionFilter from './Filters/DimensionFilter';
 import { PiX } from 'react-icons/pi';
-import { BarClickOptions } from '@/app/find-properties/[[...opa_id]]/page';
 import { ThemeButton } from './ThemeButton';
+import { BarClickOptions } from '@/app/find-properties/[[...opa_id]]/page';
 import { rcos, neighborhoods, zoning } from './Filters/filterOptions';
+import DimensionFilter from './Filters/DimensionFilter';
 
 const filters = [
   {
@@ -59,12 +61,16 @@ interface FilterViewProps {
 const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
   return (
     <div className="relative p-6">
+      {/* Add ID to the close button */}
       <ThemeButton
         color="secondary"
         className="right-4 lg:right-[24px] absolute top-8 min-w-[3rem]"
         aria-label="Close filter panel"
         startContent={<PiX />}
-        onPress={() => updateCurrentView('filter')}
+        id="close-filter-button" // Add an ID to this button
+        onPress={() => {
+          updateCurrentView('filter');
+        }}
       />
       {filters.map((attr) => (
         <DimensionFilter key={attr.property} {...attr} />
