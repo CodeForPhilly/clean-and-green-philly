@@ -118,6 +118,22 @@ To stop the postgres container run:
 docker compose down postgres
 ```
 
+### PostgreSQL Extensions
+
+We use Postgres extensions for GIS and time series functionality not included in base Postgres.
+
+#### PostGIS
+[PostGIS](https://postgis.net/) is an open-source extension for PostgreSQL that adds support for spatial and geographic data types and functions. It enables the storage, querying, and analysis of location-based data directly within the database, replacing the need for many external tools and libraries.
+
+#### Timescale DB
+[TimescaleDB](https://docs.timescale.com/) is an open-source relational database built on PostgreSQL, optimized for handling time-series data efficiently. 
+
+At the core of TimescaleDB are hypertables, which partition data across time for efficient querying. Hypertables behave like normal Postgres tables, but are optimized for querying data based on timestamps. For our use case, hypertables simplify data management by automatically creating monthly partitions, replacing our previous method of manually creating a separate schema for each month.
+
+#### pg_stat_statements
+
+The [pg_stat_statements](https://www.postgresql.org/docs/current/pgstatstatements.html) extension provides detailed statistics on query performance, helping to identify slow or resource-intensive queries. It tracks execution counts, execution times, and rows returned, making it a useful tool for analyzing slow or problematic queries.
+
 ## Python Development
 
 You can set up your local Python environment so you can develop and run the backend `script.py` and create and run unit tests outside of Docker. Build your local environment to match what is defined in the `Dockerfile`. Install the same python version as is in the Dockerfile, using `pyenv` to manage multiple distributions if needed. Use `pipenv` to create a virtual environment. Install the pip dependencies that are defined in the `Pipfile` into your virtual environment. Install the executables with `apt-get`. Now you can develop in Python in your terminal and IDE and run unit tests with `pytest`.
