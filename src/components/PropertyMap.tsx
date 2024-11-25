@@ -11,7 +11,6 @@ import {
 } from 'react';
 import {
   maptilerApiKey,
-  mapboxAccessToken,
   useStagingTiles,
   googleCloudBucketName,
 } from '../config/config';
@@ -39,10 +38,10 @@ import maplibregl, {
   LngLat,
 } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import mapboxgl from 'mapbox-gl';
 import { Protocol } from 'pmtiles';
-import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import { GeocodingControl } from '@maptiler/geocoding-control/react';
+import { createMapLibreGlMapController } from '@maptiler/geocoding-control/maplibregl-controller';
+import '@maptiler/geocoding-control/style.css';
 import { MapLegendControl } from './MapLegendControl';
 import { createPortal } from 'react-dom';
 import { Tooltip } from '@nextui-org/react';
@@ -164,7 +163,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
-  const geocoderRef = useRef<MapboxGeocoder | null>(null);
+  const [mapController, setMapController] = useState();
   const [searchedProperty, setSearchedProperty] = useState<SearchedProperty>({
     coordinates: [-75.1628565788269, 39.97008211622267],
     address: '',
@@ -305,53 +304,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
         );
       }
 
-      // Add Geocoder
-      if (!geocoderRef.current) {
-        const center = map.getCenter();
-        geocoderRef.current = new MapboxGeocoder({
-          accessToken: mapboxAccessToken,
-          bbox: [-75.288283, 39.864114, -74.945063, 40.140129],
-          filter: function (item) {
-            return item.context.some((i) => {
-              return (
-                (i.id.split('.').shift() === 'place' &&
-                  i.text === 'Philadelphia') ||
-                (i.id.split('.').shift() === 'district' &&
-                  i.text === 'Philadelphia County')
-              );
-            });
-          },
-          mapboxgl: mapboxgl,
-          marker: false,
-          proximity: {
-            longitude: center.lng,
-            latitude: center.lat,
-          },
-        });
-
-        map.addControl(geocoderRef.current as unknown as IControl, 'top-right');
-
-        geocoderRef.current.on('result', (e) => {
-          const address = e.result.place_name.split(',')[0];
-          setSelectedProperty(null);
-          setSearchedProperty({
-            coordinates: e.result.center,
-            address: address,
-          });
-          map.easeTo({
-            center: e.result.center,
-          });
-        });
-      }
+      setMapController(createMapLibreGlMapController(map, maplibregl) as any);
     }
 
-    return () => {
-      // Remove Geocoder
-      if (map && geocoderRef.current) {
-        map.removeControl(geocoderRef.current as unknown as IControl);
-        geocoderRef.current = null;
-      }
-    };
+    return () => {};
   }, [map, setSelectedProperty]);
 
   useEffect(() => {
@@ -451,6 +407,44 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }}
         onMoveEnd={handleSetFeatures}
       >
+        <div
+          className="geocoding"
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+          }}
+        >
+          <GeocodingControl
+            apiKey={maptilerApiKey}
+            mapController={mapController}
+            bbox={[-75.288283, 39.864114, -74.945063, 40.140129]} // Bounding box for Philadelphia
+            markerOnSelected={false}
+            filter={(feature: any) => {
+              return feature.context.some((i: any) => {
+                return i.text.includes('Philadelphia');
+              });
+            }}
+            proximity={[
+              {
+                type: 'map-center',
+              },
+            ]}
+            onPick={(feature) => {
+              if (feature) {
+                const address = feature.place_name.split(',')[0];
+                setSelectedProperty(null);
+                setSearchedProperty({
+                  coordinates: feature.center,
+                  address: address,
+                });
+                map?.easeTo({
+                  center: feature.center,
+                });
+              }
+            }}
+          />
+        </div>
         <MapControls />
         {popupInfo && (
           <Popup

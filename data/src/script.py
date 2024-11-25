@@ -127,7 +127,7 @@ try:
 
     conn.commit()
 
-    # Post to Mapbox
+    # Post to GCP
     dataset.build_and_publish(tiles_file_id_prefix)
 
     # if we are reloading, run the diff report, then archive the backup and finally prune old archives
