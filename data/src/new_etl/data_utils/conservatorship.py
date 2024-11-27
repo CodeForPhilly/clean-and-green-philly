@@ -1,3 +1,4 @@
+from ..classes.featurelayer import FeatureLayer
 import datetime
 from dateutil.parser import parse
 import pytz
@@ -8,7 +9,17 @@ six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astime
 )
 
 
-def conservatorship(primary_featurelayer):
+def conservatorship(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Determines conservatorship eligibility for properties in a feature layer.
+
+    Args:
+        primary_featurelayer (FeatureLayer): A feature layer containing property data in a GeoDataFrame (`gdf`).
+
+    Returns:
+        FeatureLayer: The input feature layer with an added "conservatorship" column indicating
+        whether each property qualifies for conservatorship ("Yes" or "No").
+    """
     conservatorships = []
 
     for idx, row in primary_featurelayer.gdf.iterrows():

@@ -2,7 +2,18 @@ from ..classes.featurelayer import FeatureLayer
 from ..constants.services import DELINQUENCIES_QUERY
 
 
-def delinquencies(primary_featurelayer):
+def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Adds property tax delinquency information to the primary feature layer by
+    joining with a tax delinquencies dataset.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with added columns for tax delinquency
+        information, including total due, actionable status, payment agreements, and more.
+    """
     tax_delinquencies = FeatureLayer(
         name="Property Tax Delinquencies",
         carto_sql_queries=DELINQUENCIES_QUERY,

@@ -20,8 +20,6 @@ from google.cloud.storage.bucket import Bucket
 from shapely import wkb
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from tqdm.auto import tqdm
-
 from tqdm import tqdm
 
 
@@ -62,7 +60,7 @@ class FeatureLayer:
         from_xy=False,
         use_wkb_geom_field=None,
         cols: list[str] = None,
-        max_workers=16,
+        max_workers=os.cpu_count(),
         chunk_size=100000,
     ):
         self.name = name
@@ -324,7 +322,7 @@ class FeatureLayer:
         temp_pmtiles_points: str = f"tmp/temp_{tiles_file_id_prefix}_points.pmtiles"
         temp_pmtiles_polygons: str = f"tmp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
         temp_merged_pmtiles: str = f"tmp/temp_{tiles_file_id_prefix}_merged.pmtiles"
-        temp_parquet: str = f"tmp/{tiles_file_id_prefix}.parquet"
+        # temp_parquet: str = f"tmp/{tiles_file_id_prefix}.parquet"
 
         # Reproject
         gdf_wm = self.gdf.to_crs(epsg=4326)

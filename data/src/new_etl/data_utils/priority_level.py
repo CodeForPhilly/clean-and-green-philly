@@ -1,7 +1,19 @@
 import pandas as pd
+from ..classes.featurelayer import FeatureLayer
 
 
-def priority_level(dataset):
+def priority_level(dataset: FeatureLayer) -> FeatureLayer:
+    """
+    Determines priority levels for properties based on gun crime density,
+    violations, tree canopy gaps, and PHS Landcare status.
+
+    Args:
+        dataset (FeatureLayer): A feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with an added "priority_level" column,
+        indicating the priority for each property as "Low", "Medium", or "High".
+    """
     priority_levels = []
     for idx, row in dataset.gdf.iterrows():
         priority_level = ""
@@ -15,14 +27,13 @@ def priority_level(dataset):
         )
         very_low_tree_canopy = row["tree_canopy_gap"] >= 0.3
 
-        # Updated logic based on percentile values
+        # Logic for priority levels
         if guncrime_density_percentile <= 50:
             # Low Gun Crime Density (Bottom 50%)
             priority_level = "Low"
 
         elif guncrime_density_percentile > 75:
             # High Gun Crime Density (Top 25%)
-
             if has_violation_or_high_density:
                 priority_level = "High"
             else:

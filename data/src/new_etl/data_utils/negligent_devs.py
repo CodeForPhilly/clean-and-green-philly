@@ -1,4 +1,18 @@
-def negligent_devs(primary_featurelayer):
+from ..classes.featurelayer import FeatureLayer
+
+
+def negligent_devs(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Identifies negligent developers based on the number of vacant properties owned
+    and flags them in the primary feature layer.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with additional columns for total properties
+        owned, vacant properties owned, and a "negligent_dev" flag.
+    """
     devs = primary_featurelayer.gdf
 
     print("Columns in 'devs' DataFrame:", devs.columns)
