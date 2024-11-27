@@ -1,4 +1,5 @@
 import sys
+import pandas as pd
 
 from new_etl.data_utils.access_process import access_process
 from new_etl.data_utils.contig_neighbors import contig_neighbors
@@ -27,8 +28,6 @@ from new_etl.data_utils.owner_type import owner_type
 from new_etl.data_utils.community_gardens import community_gardens
 from new_etl.data_utils.park_priority import park_priority
 from new_etl.data_utils.ppr_properties import ppr_properties
-
-import pandas as pd
 
 
 # Ensure the directory containing awkde is in the Python path
@@ -106,6 +105,9 @@ dataset = access_process(dataset)
 distribution = dataset.gdf["access_process"].value_counts()
 print("Distribution of access process:")
 print(distribution)
+
+# add createdate
+dataset.gdf["create_date"] = pd.Timestamp.now().strftime("%Y-%m-%d")
 
 before_drop = dataset.gdf.shape[0]
 dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
