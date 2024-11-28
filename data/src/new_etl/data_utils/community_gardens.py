@@ -12,11 +12,6 @@ def community_gardens(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     if "vacant" not in primary_featurelayer.gdf.columns:
         raise ValueError("The 'vacant' column is missing in the primary feature layer.")
 
-    print(
-        "Geometry types in primary feature layer:",
-        primary_featurelayer.gdf.geometry.type.value_counts(),
-    )
-
     # Load community gardens
     community_gardens = FeatureLayer(
         name="Community Gardens", esri_rest_urls=COMMUNITY_GARDENS_TO_LOAD
@@ -29,12 +24,9 @@ def community_gardens(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         )
         community_gardens.gdf = community_gardens.gdf.to_crs(USE_CRS)
 
-    # Check geometry types
-    geom_types = community_gardens.gdf.geometry.geom_type.value_counts()
-    print("\nCommunity gardens geometry types:")
-    print(geom_types)
-
     # Identify problematic gardens
+    geom_types = community_gardens.gdf.geometry.geom_type.value_counts()
+
     if len(geom_types) > 1:
         print("\nGardens with non-Point geometries:")
         non_point_gardens = community_gardens.gdf[
@@ -68,10 +60,6 @@ def community_gardens(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     # Count matches per garden
     matches_per_garden = joined_gdf.groupby("site_name").size()
-    print("\nMatches per garden:")
-    print(f"Min matches: {matches_per_garden.min()}")
-    print(f"Max matches: {matches_per_garden.max()}")
-    print(f"Average matches: {matches_per_garden.mean():.2f}")
 
     # Print details for gardens with unusually high matches
     # Gardens with high number of matches

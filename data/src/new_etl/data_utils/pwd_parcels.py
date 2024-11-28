@@ -24,8 +24,6 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         cols=["brt_id"],
     )
 
-    print("Columns in PWD Parcels:", pwd_parcels.gdf.columns)
-
     # Drop rows with null brt_id, rename to opa_id, and validate geometries
     pwd_parcels.gdf.dropna(subset=["brt_id"], inplace=True)
     pwd_parcels.gdf.rename(columns={"brt_id": "opa_id"}, inplace=True)

@@ -22,8 +22,6 @@ def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         cols=["OPABRT", "AGENCY", "SIDEYARDELIGIBLE"],
     )
 
-    print("Columns for city_owned_properties:", city_owned_properties.gdf.columns)
-
     city_owned_properties.gdf.dropna(subset=["opabrt"], inplace=True)
 
     primary_featurelayer.opa_join(city_owned_properties.gdf, "opabrt")

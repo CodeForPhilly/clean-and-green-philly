@@ -10,6 +10,7 @@ import sqlalchemy as sa
 from config.config import (
     FORCE_RELOAD,
     USE_CRS,
+    log_level,
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
@@ -23,7 +24,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 
 
-log.basicConfig(level=log.INFO)
+log.basicConfig(level=log_level)
 
 
 def google_cloud_bucket() -> Bucket:

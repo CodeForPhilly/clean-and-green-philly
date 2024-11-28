@@ -28,8 +28,6 @@ def contig_neighbors(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         primary_featurelayer.gdf["n_contiguous"] = np.nan
         return primary_featurelayer
 
-    print(f"Found {len(vacant_parcels)} vacant properties.")
-
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
         warnings.filterwarnings(
