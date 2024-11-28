@@ -1,5 +1,7 @@
 import sys
 import pandas as pd
+from config.psql import conn
+from sqlalchemy import text
 
 from new_etl.data_utils.access_process import access_process
 from new_etl.data_utils.contig_neighbors import contig_neighbors
@@ -70,41 +72,14 @@ services = [
 
 dataset = opa_properties()
 
-print("Initial Dataset:")
-print("Shape:", dataset.gdf.shape)
-print("Head:\n", dataset.gdf.head())
-print("NA Counts:\n", dataset.gdf.isna().sum())
-
 for service in services:
     dataset = service(dataset)
-    print(f"After {service.__name__}:")
-    print("Dataset type:", type(dataset.gdf).__name__)
-    print("Shape:", dataset.gdf.shape)
-    print("Head:\n", dataset.gdf.head())
-    print("NA Counts:\n", dataset.gdf.isna().sum())
-
-before_drop = dataset.gdf.shape[0]
-dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
-after_drop = dataset.gdf.shape[0]
-print(
-    f"Duplicate dataset rows dropped after initial services: {before_drop - after_drop}"
-)
 
 # Add Priority Level
 dataset = priority_level(dataset)
 
-# Print the distribution of "priority_level"
-distribution = dataset.gdf["priority_level"].value_counts()
-print("Distribution of priority level:")
-print(distribution)
-
 # Add Access Process
 dataset = access_process(dataset)
-
-# Print the distribution of "access_process"
-distribution = dataset.gdf["access_process"].value_counts()
-print("Distribution of access process:")
-print(distribution)
 
 # add createdate
 dataset.gdf["create_date"] = pd.Timestamp.now().strftime("%Y-%m-%d")
@@ -155,3 +130,80 @@ unique_values = dataset.gdf[string_columns].nunique()
 print(unique_values)
 
 dataset.gdf.to_parquet("tmp/test_output.parquet")
+print("Final dataset saved to tmp/ folder.")
+
+
+def table_exists_and_valid(conn, table_name, required_columns):
+    # Check if the table exists
+    result = conn.execute(
+        text(f"SELECT EXISTS (SELECT FROM information_schema.tables WHERE table_name = :table_name)"),
+        {"table_name": table_name}
+    )
+    exists = result.scalar()
+
+    if not exists:
+        return False
+
+    # If the table exists, verify its schema
+    result = conn.execute(
+        text(f"""
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = :table_name
+        """),
+        {"table_name": table_name}
+    )
+    columns = {row["column_name"] for row in result}
+    return set(required_columns).issubset(columns)
+
+def table_is_hypertable(conn, table_name):
+    # Check if the table is a hypertable
+    result = conn.execute(
+        text(
+            "SELECT * FROM timescaledb_information.hypertables WHERE hypertable_name = :table_name"
+        ),
+        {"table_name": table_name}
+    )
+    return result.rowcount > 0
+
+# Dynamically derive the required columns from the GeoDataFrame
+required_columns = list(dataset.gdf.columns)
+
+# Ensure geometry column is included
+if dataset.gdf.geometry.name not in required_columns:
+    required_columns.append(dataset.gdf.geometry.name)
+
+# Check if the table exists and is valid
+if table_exists_and_valid(conn, "vacant_properties_end", required_columns):
+    print("Table exists and schema is valid. Checking if it's a hypertable...")
+    
+    if not table_is_hypertable(conn, "vacant_properties_end"):
+        print("Table is not a hypertable. Converting now...")
+        with conn.begin():
+            conn.execute(
+                text(
+                    "SELECT create_hypertable('vacant_properties_end', 'create_date', migrate_data => true);"
+                )
+            )
+            print("Table converted to a TimescaleDB hypertable with data migration.")
+    else:
+        print("Table is already a TimescaleDB hypertable. Appending data.")
+
+    # Append the data
+    dataset.gdf.to_postgis("vacant_properties_end", conn, if_exists="append", index=False)
+else:
+    print("Table does not exist or schema is invalid. Replacing table.")
+    dataset.gdf.to_postgis("vacant_properties_end", conn, if_exists="replace", index=False)
+    conn.commit()
+    print("Data committed to PostgreSQL.")
+
+    # Convert the table to a hypertable
+    with conn.begin():
+        conn.execute(
+            text(
+                "SELECT create_hypertable('vacant_properties_end', 'create_date', migrate_data => true);"
+            )
+        )
+        print("Table converted to a TimescaleDB hypertable.")
+
+conn.close()
