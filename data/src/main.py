@@ -2,6 +2,8 @@ import sys
 import pandas as pd
 from config.psql import conn
 from sqlalchemy import text
+import traceback
+from sqlalchemy.types import DateTime
 
 from new_etl.data_utils.access_process import access_process
 from new_etl.data_utils.contig_neighbors import contig_neighbors
@@ -137,135 +139,68 @@ dataset.gdf.to_parquet("tmp/test_output.parquet")
 print("Final dataset saved to tmp/ folder.")
 
 
-import traceback
-from sqlalchemy.types import DateTime
-
-def table_exists_and_valid(conn, table_name, required_columns, date_column="create_date"):
-    try:
-        # Check if the table exists
-        result = conn.execute(
-            text("""
-            SELECT EXISTS (
+try:
+    # Check if the table exists
+    table_exists = conn.execute(
+        text("""
+        SELECT EXISTS (
             SELECT 1
             FROM information_schema.tables
-            WHERE table_name = :table_name
+            WHERE table_name = 'vacant_properties_end'
+        )
+        """)
+    ).scalar()
+
+    if not table_exists:
+        # Create the table and convert to a hypertable
+        print("Table does not exist. Creating table...")
+        dataset.gdf.to_postgis(
+            "vacant_properties_end",
+            conn,
+            if_exists="replace",  # Creates the table
+            dtype={"create_date": DateTime}
+        )
+        print("Converting table to hypertable...")
+        conn.execute(
+            text("""
+            SELECT create_hypertable('vacant_properties_end', 'create_date', migrate_data => true);
+            """)
+        )
+        print("Table successfully created and converted to a hypertable.")
+    else:
+        # Check if it's already a hypertable
+        is_hypertable = conn.execute(
+            text("""
+            SELECT EXISTS (
+                SELECT 1
+                FROM timescaledb_information.hypertables
+                WHERE hypertable_name = 'vacant_properties_end'
             )
-            """),
-            {"table_name": table_name}
-        )
-        exists = result.scalar()
-        if not exists:
-            return False
+            """)
+        ).scalar()
 
-        # Check if the required columns exist
-        result = conn.execute(
-            text("""
-            SELECT column_name
-            FROM information_schema.columns
-            WHERE table_name = :table_name
-            """),
-            {"table_name": table_name}
-        )
-        columns = {row[0] for row in result}
-        if not set(required_columns).issubset(columns):
-            return False
-
-        # Ensure create_date column is compatible
-        result = conn.execute(
-            text("""
-            SELECT data_type
-            FROM information_schema.columns
-            WHERE table_name = :table_name AND column_name = :column_name
-            """),
-            {"table_name": table_name, "column_name": date_column}
-        )
-        actual_type = result.scalar()
-
-        if actual_type not in ["timestamp without time zone", "timestamp with time zone", "date"]:
-            print(f"Column {date_column} is {actual_type}, which is incompatible. Converting to TIMESTAMP...")
+        if not is_hypertable:
+            print("Table exists but is not a hypertable. Converting...")
             conn.execute(
-                text(f"""
-                ALTER TABLE {table_name} 
-                ALTER COLUMN {date_column} 
-                TYPE timestamp without time zone 
-                USING {date_column}::timestamp;
+                text("""
+                SELECT create_hypertable('vacant_properties_end', 'create_date', migrate_data => true);
                 """)
             )
-            print(f"Column {date_column} converted to TIMESTAMP.")
-
-        return True
-    except Exception as e:
-        print(f"Error during table validation: {e}")
-        traceback.print_exc()
-        return False
-
-def table_is_hypertable(conn, table_name):
-    try:
-        result = conn.execute(
-            text("""
-            SELECT 1
-            FROM timescaledb_information.hypertables
-            WHERE hypertable_name = :table_name
-            """),
-            {"table_name": table_name}
-        )
-        return result.rowcount > 0
-    except Exception as e:
-        print(f"Error checking hypertable status: {e}")
-        traceback.print_exc()
-        return False
-
-# Diagnostic prints
-print("Columns and their dtypes:")
-print(dataset.gdf.dtypes)
-
-print("\nCreate date column details:")
-print("dtype:", dataset.gdf['create_date'].dtype)
-print("Sample value:", dataset.gdf['create_date'].iloc[0])
-
-required_columns = list(dataset.gdf.columns)
-if dataset.gdf.geometry.name not in required_columns:
-    required_columns.append(dataset.gdf.geometry.name)
-
-try:
-    if table_exists_and_valid(conn, "vacant_properties_end", required_columns):
-        print("Table exists and schema is valid. Checking if it's a hypertable...")
-        if not table_is_hypertable(conn, "vacant_properties_end"):
-            print("Table is not a hypertable. Converting now...")
-            try:
-                conn.execute(
-                    text(
-                        "SELECT create_hypertable('vacant_properties_end', 'create_date', migrate_data => true);"
-                    )
-                )
-                print("Table converted to a TimescaleDB hypertable with data migration.")
-            except Exception as e:
-                print("Error converting to hypertable:")
-                traceback.print_exc()
+            print("Table successfully converted to a hypertable.")
         else:
-            print("Table is already a TimescaleDB hypertable. Appending data.")
-        
-        dataset.gdf.to_postgis("vacant_properties_end", conn, if_exists="append", dtype={'create_date': DateTime}, index=False)
-    else:
-        print("Table does not exist or schema is invalid. Replacing table.")
-        dataset.gdf.to_postgis("vacant_properties_end", conn, if_exists="replace", dtype={'create_date': DateTime}, index=False)
-        conn.commit()
-        print("Data committed to PostgreSQL.")
+            print("Table exists and is already a hypertable. Appending data...")
 
-        try:
-            conn.execute(
-                text(
-                    "SELECT create_hypertable('vacant_properties_end', 'create_date', migrate_data => true);"
-                )
-            )
-            print("Table converted to a TimescaleDB hypertable.")
-        except Exception as e:
-            print("Error creating hypertable:")
-            traceback.print_exc()
-
+    # Append data
+    dataset.gdf.to_postgis(
+        "vacant_properties_end",
+        conn,
+        if_exists="append",  # Append data only
+        dtype={"create_date": DateTime}
+    )
+    print("Data successfully appended.")
 except Exception as e:
-    print(f"An error occurred: {e}")
+    print(f"Error during the table operation: {e}")
     traceback.print_exc()
-    conn.rollback()  # Ensure any open transaction is rolled back on failure
+    conn.rollback()  # Rollback the transaction in case of failure
 finally:
     conn.close()
