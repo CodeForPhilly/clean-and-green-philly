@@ -181,6 +181,7 @@ class FeatureLayer:
                     if_exists="replace", # Replace the table if it already exists
                     chunksize=1000,
                 )
+
                 # Ensure the `create_date` column exists
                 conn.execute(
                     text(f"""
@@ -197,6 +198,7 @@ class FeatureLayer:
                     END $$;
                     """)
                 )
+
                 # Convert the table to a hypertable
                 try:
                     conn.execute(
@@ -205,18 +207,50 @@ class FeatureLayer:
                         """)
                     )
                     print(f"Table {self.psql_table} successfully converted to a hypertable.")
-                    
-                    # Commit the transaction
-                    conn.commit()
                 except Exception as e:
-                    # Handle the case where the table is already a hypertable
                     if "already a hypertable" in str(e):
                         print(f"Table {self.psql_table} is already a hypertable.")
-                        # Still need to commit if the table exists
-                        conn.commit()
                     else:
                         raise
+
+                # Set chunk interval to 1 month
+                try:
+                    conn.execute(
+                        text(f"""
+                        SELECT set_chunk_time_interval('{self.psql_table}', INTERVAL '1 month');
+                        """)
+                    )
+                    print(f"Chunk time interval set to 1 month for table {self.psql_table}.")
+                except Exception as e:
+                    print(f"Error setting chunk interval for table {self.psql_table}: {e}")
+
+               # Enable compression on the hypertable
+                try:
+                    conn.execute(
+                        text(f"""
+                        ALTER TABLE {self.psql_table} SET (
+                            timescaledb.compress
+                        );
+                        """)
+                    )
+                    print(f"Compression enabled on table {self.psql_table}.")
+                except Exception as e:
+                    print(f"Error enabling compression on table {self.psql_table}: {e}")
                     
+                # Add compression policy for chunks older than 3 months
+                try:
+                    conn.execute(
+                        text(f"""
+                        SELECT add_compression_policy('{self.psql_table}', INTERVAL '3 months');
+                        """)
+                    )
+                    print(f"Compression policy added for chunks older than 3 months on table {self.psql_table}.")
+                except Exception as e:
+                    print(f"Error adding compression policy for table {self.psql_table}: {e}")
+
+                # Commit the transaction
+                conn.commit()
+
         except Exception as e:
             log.error(f"Error loading data for {self.name}: {e}")
             traceback.print_exc()

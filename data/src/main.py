@@ -165,15 +165,52 @@ try:
         )
         print("Table successfully converted to a hypertable.")
     except Exception as e:
-        # Handle the case where the table is already a hypertable
         if "already a hypertable" in str(e):
             print("Table is already a hypertable.")
         else:
             raise
     
+    # Set chunk interval to 1 month
+    try:
+        conn.execute(
+            text("""
+            SELECT set_chunk_time_interval('vacant_properties_end', INTERVAL '1 month');
+            """)
+        )
+        print("Chunk time interval set to 1 month.")
+    except Exception as e:
+        print(f"Error setting chunk interval: {e}")
+        traceback.print_exc()
+
+    # Enable compression on the hypertable
+    try:
+        conn.execute(
+            text(f"""
+            ALTER TABLE vacant_properties_end SET (
+                timescaledb.compress,
+                timescaledb.compress_segmentby = 'opa_id'
+            );
+            """)
+        )
+        print(f"Compression enabled on table vacant_properties_end.")
+    except Exception as e:
+        print(f"Error enabling compression on table vacant_properties_end: {e}")
+
+    # Set up compression policy for chunks older than 3 months
+    try:
+        conn.execute(
+            text("""
+            SELECT add_compression_policy('vacant_properties_end', INTERVAL '6 months');
+            """)
+        )
+        print("Compression policy added for chunks older than 6 months.")
+    except Exception as e:
+        print(f"Error adding compression policy: {e}")
+        traceback.print_exc()
+
     # Commit the transaction
     conn.commit()
-    print("Data successfully saved and table prepared as a hypertable.")
+    print("Data successfully saved and table prepared with partitioning and compression.")
 
 except Exception as e:
     print(f"Error during the table operation: {e}")

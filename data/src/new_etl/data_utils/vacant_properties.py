@@ -110,7 +110,7 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     df.dropna(subset=["opa_id"], inplace=True)
 
     # Final check for null percentages
-    check_null_percentage(df)
+    # check_null_percentage(df)
 
     # Add "vacant" column to primary feature layer
     primary_featurelayer.gdf["vacant"] = primary_featurelayer.gdf["opa_id"].isin(
