@@ -19,7 +19,12 @@ from esridump.dumper import EsriDumper
 from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
 from shapely import wkb
-
+import pandas as pd
+import geopandas as gpd
+from sqlalchemy.sql import text
+from sqlalchemy.types import DateTime
+import traceback
+import logging
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 
@@ -117,75 +122,106 @@ class FeatureLayer:
 
     def load_data(self):
         log.info(f"Loading data for {self.name} from {self.type}...")
+        
         if self.type == "gdf":
-            pass
-        else:
-            try:
-                if self.type == "esri":
-                    if not self.esri_rest_urls:
-                        raise ValueError("Must provide a URL to load data from Esri")
-
-                    gdfs = []
-                    for url in self.esri_rest_urls:
-                        print(f"Processing URL: {url}")  # Debugging: Print the URL
-
-                        # Use EsriDumper to get features
-                        dumper = EsriDumper(url)
-                        features = [feature for feature in dumper]
-
-                        if not features:
-                            log.error(f"No features returned for URL: {url}")
-                            continue
-
-                        geojson_features = {
-                            "type": "FeatureCollection",
-                            "features": features,
-                        }
-                        gdf = gpd.GeoDataFrame.from_features(
-                            geojson_features, crs=self.input_crs
-                        )
-                        gdf = gdf.to_crs(self.crs)
-
-                        # Add parcel_type based on the URL
-                        if "Vacant_Indicators_Land" in url:
-                            gdf["parcel_type"] = "Land"
-                        elif "Vacant_Indicators_Bldg" in url:
-                            gdf["parcel_type"] = "Building"
-
-                        gdfs.append(gdf)
-
-                    # Concatenate all dataframes
-                    self.gdf = pd.concat(gdfs, ignore_index=True)
-
-                elif self.type == "carto":
-                    self._load_carto_data()
-
-                # Convert all column names to lowercase
-                if not self.gdf.empty:
-                    self.gdf.columns = [col.lower() for col in self.gdf.columns]
-
+            return  # Skip processing for gdf type
+        
+        try:
+            if self.type == "esri":
+                if not self.esri_rest_urls:
+                    raise ValueError("Must provide a URL to load data from Esri")
+                gdfs = []
+                for url in self.esri_rest_urls:
+                    print(f"Processing URL: {url}")
+                    
+                    # Use EsriDumper to get features
+                    dumper = EsriDumper(url)
+                    features = [feature for feature in dumper]
+                    if not features:
+                        log.error(f"No features returned for URL: {url}")
+                        continue
+                    
+                    geojson_features = {
+                        "type": "FeatureCollection",
+                        "features": features,
+                    }
+                    gdf = gpd.GeoDataFrame.from_features(
+                        geojson_features, crs=self.input_crs
+                    )
+                    gdf = gdf.to_crs(self.crs)
+                    
+                    # Add parcel_type based on the URL
+                    if "Vacant_Indicators_Land" in url:
+                        gdf["parcel_type"] = "Land"
+                    elif "Vacant_Indicators_Bldg" in url:
+                        gdf["parcel_type"] = "Building"
+                    
+                    gdfs.append(gdf)
+                
+                # Concatenate all dataframes
+                self.gdf = pd.concat(gdfs, ignore_index=True)
+            
+            elif self.type == "carto":
+                self._load_carto_data()
+            
+            # Convert all column names to lowercase
+            if not self.gdf.empty:
+                self.gdf.columns = [col.lower() for col in self.gdf.columns]
+                
                 # Drop columns not in self.cols, if specified
                 if self.cols:
-                    self.cols = [
-                        col.lower() for col in self.cols
-                    ]  # Ensure self.cols is lowercase
+                    self.cols = [col.lower() for col in self.cols]
                     self.cols.append("geometry")
-                    self.gdf = self.gdf[
-                        [col for col in self.cols if col in self.gdf.columns]
-                    ]
-
-                # Save to PostGIS
+                    self.gdf = self.gdf[[col for col in self.cols if col in self.gdf.columns]]
+                
+                # Save GeoDataFrame to PostgreSQL
                 self.gdf.to_postgis(
                     name=self.psql_table,
                     con=conn,
-                    if_exists="replace",
+                    if_exists="replace", # Replace the table if it already exists
                     chunksize=1000,
                 )
-
-            except Exception as e:
-                log.error(f"Error loading data for {self.name}: {e}")
-                traceback.print_exc()
-                self.gdf = gpd.GeoDataFrame()
+                # Ensure the `create_date` column exists
+                conn.execute(
+                    text(f"""
+                    DO $$
+                    BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1
+                        FROM information_schema.columns
+                        WHERE table_name = '{self.psql_table}' AND column_name = 'create_date'
+                    ) THEN
+                    ALTER TABLE {self.psql_table}
+                    ADD COLUMN create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+                    END IF;
+                    END $$;
+                    """)
+                )
+                # Convert the table to a hypertable
+                try:
+                    conn.execute(
+                        text(f"""
+                        SELECT create_hypertable('{self.psql_table}', 'create_date', migrate_data => true);
+                        """)
+                    )
+                    print(f"Table {self.psql_table} successfully converted to a hypertable.")
+                    
+                    # Commit the transaction
+                    conn.commit()
+                except Exception as e:
+                    # Handle the case where the table is already a hypertable
+                    if "already a hypertable" in str(e):
+                        print(f"Table {self.psql_table} is already a hypertable.")
+                        # Still need to commit if the table exists
+                        conn.commit()
+                    else:
+                        raise
+                    
+        except Exception as e:
+            log.error(f"Error loading data for {self.name}: {e}")
+            traceback.print_exc()
+            conn.rollback() # Rollback the transaction in case of failure
+            self.gdf = gpd.GeoDataFrame()
 
     def _load_carto_data(self):
         if not self.carto_sql_queries:

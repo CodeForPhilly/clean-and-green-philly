@@ -83,13 +83,6 @@ dataset = priority_level(dataset)
 # Add Access Process
 dataset = access_process(dataset)
 
-from sqlalchemy.types import DateTime
-
-# Convert to PostgreSQL-friendly timestamp
-dataset.gdf['create_date'] = pd.Timestamp.now().normalize()
-dataset.gdf['create_date'] = dataset.gdf['create_date'].astype('datetime64[ns]')
-
-
 before_drop = dataset.gdf.shape[0]
 dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
 after_drop = dataset.gdf.shape[0]
@@ -135,69 +128,53 @@ string_columns = dataset.gdf.select_dtypes(include=["object", "string"]).columns
 unique_values = dataset.gdf[string_columns].nunique()
 print(unique_values)
 
+
 dataset.gdf.to_parquet("tmp/test_output.parquet")
 print("Final dataset saved to tmp/ folder.")
 
-
 try:
-    # Check if the table exists
-    table_exists = conn.execute(
+    # Save GeoDataFrame to PostgreSQL
+    dataset.gdf.to_postgis(
+        "vacant_properties_end",
+        conn,
+        if_exists="replace",  # Replace the table if it already exists
+    )
+    
+    # Ensure the `create_date` column exists
+    conn.execute(
         text("""
-        SELECT EXISTS (
+        DO $$
+        BEGIN
+        IF NOT EXISTS (
             SELECT 1
-            FROM information_schema.tables
-            WHERE table_name = 'vacant_properties_end'
-        )
+            FROM information_schema.columns
+            WHERE table_name = 'vacant_properties_end' AND column_name = 'create_date'
+        ) THEN
+            ALTER TABLE vacant_properties_end ADD COLUMN create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+        END IF;
+        END $$;
         """)
-    ).scalar()
-
-    if not table_exists:
-        # Create the table and convert to a hypertable
-        print("Table does not exist. Creating table...")
-        dataset.gdf.to_postgis(
-            "vacant_properties_end",
-            conn,
-            if_exists="replace",  # Creates the table
-            dtype={"create_date": DateTime}
-        )
-        print("Converting table to hypertable...")
+    )
+    
+    # Convert the table to a hypertable
+    try:
         conn.execute(
             text("""
             SELECT create_hypertable('vacant_properties_end', 'create_date', migrate_data => true);
             """)
         )
-        print("Table successfully created and converted to a hypertable.")
-    else:
-        # Check if it's already a hypertable
-        is_hypertable = conn.execute(
-            text("""
-            SELECT EXISTS (
-                SELECT 1
-                FROM timescaledb_information.hypertables
-                WHERE hypertable_name = 'vacant_properties_end'
-            )
-            """)
-        ).scalar()
-
-        if not is_hypertable:
-            print("Table exists but is not a hypertable. Converting...")
-            conn.execute(
-                text("""
-                SELECT create_hypertable('vacant_properties_end', 'create_date', migrate_data => true);
-                """)
-            )
-            print("Table successfully converted to a hypertable.")
+        print("Table successfully converted to a hypertable.")
+    except Exception as e:
+        # Handle the case where the table is already a hypertable
+        if "already a hypertable" in str(e):
+            print("Table is already a hypertable.")
         else:
-            print("Table exists and is already a hypertable. Appending data...")
+            raise
+    
+    # Commit the transaction
+    conn.commit()
+    print("Data successfully saved and table prepared as a hypertable.")
 
-    # Append data
-    dataset.gdf.to_postgis(
-        "vacant_properties_end",
-        conn,
-        if_exists="append",  # Append data only
-        dtype={"create_date": DateTime}
-    )
-    print("Data successfully appended.")
 except Exception as e:
     print(f"Error during the table operation: {e}")
     traceback.print_exc()
