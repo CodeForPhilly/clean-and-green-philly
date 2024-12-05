@@ -2,6 +2,7 @@ from sqlalchemy import text
 import os
 from slack_sdk import WebClient
 
+
 def send_pg_stats_to_slack(conn):
     """
     Report total sizes for all hypertables using hypertable_detailed_size
@@ -22,22 +23,26 @@ def send_pg_stats_to_slack(conn):
         size_result = conn.execute(text(size_query))
         for row in size_result:
             # Append the total size (row[3] = total_bytes)
-            detailed_sizes.append({
-                'hypertable': hypertable,
-                'total_bytes': row[3],
-            })
+            detailed_sizes.append(
+                {
+                    "hypertable": hypertable,
+                    "total_bytes": row[3],
+                }
+            )
 
     # Step 3: Format the message for Slack
     message = "*Hypertable Total Sizes:*\n"
     for size in detailed_sizes:
-        total_bytes = size['total_bytes']
+        total_bytes = size["total_bytes"]
         total_size = (
-            f"{total_bytes / 1073741824:.2f} GB" if total_bytes >= 1073741824 else
-            f"{total_bytes / 1048576:.2f} MB" if total_bytes >= 1048576 else
-            f"{total_bytes / 1024:.2f} KB"
+            f"{total_bytes / 1073741824:.2f} GB"
+            if total_bytes >= 1073741824
+            else f"{total_bytes / 1048576:.2f} MB"
+            if total_bytes >= 1048576
+            else f"{total_bytes / 1024:.2f} KB"
         )
         message += f"- {size['hypertable']}: {total_size}\n"
-    
+
     # Step 4: Send to Slack
     token = os.getenv("CAGP_SLACK_API_TOKEN")
     if token:

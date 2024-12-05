@@ -3,7 +3,6 @@ import pandas as pd
 from config.psql import conn
 from sqlalchemy import text
 import traceback
-from sqlalchemy.types import DateTime
 
 from new_etl.classes.slack_pg_reporter import send_pg_stats_to_slack
 
@@ -143,7 +142,7 @@ try:
         conn,
         if_exists="replace",  # Replace the table if it already exists
     )
-    
+
     # Ensure the `create_date` column exists
     conn.execute(
         text("""
@@ -159,7 +158,7 @@ try:
         END $$;
         """)
     )
-    
+
     # Convert the table to a hypertable
     try:
         conn.execute(
@@ -173,7 +172,7 @@ try:
             print("Table is already a hypertable.")
         else:
             raise
-    
+
     # Set chunk interval to 1 month
     try:
         conn.execute(
@@ -189,14 +188,14 @@ try:
     # Enable compression on the hypertable
     try:
         conn.execute(
-            text(f"""
+            text("""
             ALTER TABLE vacant_properties_end SET (
                 timescaledb.compress,
                 timescaledb.compress_segmentby = 'opa_id'
             );
             """)
         )
-        print(f"Compression enabled on table vacant_properties_end.")
+        print("Compression enabled on table vacant_properties_end.")
     except Exception as e:
         print(f"Error enabling compression on table vacant_properties_end: {e}")
 
@@ -214,7 +213,9 @@ try:
 
     # Commit the transaction
     conn.commit()
-    print("Data successfully saved and table prepared with partitioning and compression.")
+    print(
+        "Data successfully saved and table prepared with partitioning and compression."
+    )
 
 except Exception as e:
     print(f"Error during the table operation: {e}")
