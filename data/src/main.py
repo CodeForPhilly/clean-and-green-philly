@@ -5,6 +5,8 @@ from sqlalchemy import text
 import traceback
 from sqlalchemy.types import DateTime
 
+from new_etl.classes.slack_pg_reporter import send_pg_stats_to_slack
+
 from new_etl.data_utils.access_process import access_process
 from new_etl.data_utils.contig_neighbors import contig_neighbors
 from new_etl.data_utils.dev_probability import dev_probability
@@ -33,6 +35,8 @@ from new_etl.data_utils.community_gardens import community_gardens
 from new_etl.data_utils.park_priority import park_priority
 from new_etl.data_utils.ppr_properties import ppr_properties
 
+
+send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
 
 # Ensure the directory containing awkde is in the Python path
 awkde_path = "/usr/src/app"
