@@ -13,7 +13,6 @@ matplotlib = "*"
 rasterio = "*"
 scikit-learn = "*"
 mapclassify = "*"
-black = "*"
 fiona = "*"
 esridump = "*"
 sqlalchemy = "*"
@@ -25,18 +24,19 @@ pydantic = "==2.8.2"
 data-diff = {extras = ["postgresql"], version = "*"}
 future = "*"
 slack-sdk = "*"
-pytest = "*"
 networkx = "*"
 libpysal = "*"
 jenkspy = "*"
 pyarrow = "*"
 tqdm = "*"
+
+[dev-packages]
+black = "*"
+pytest = "*"
 vulture = "*"
 pylint = "*"
 radon = "*"
 ruff = "*"
-
-[dev-packages]
 
 [requires]
 python_version = "3.11"
