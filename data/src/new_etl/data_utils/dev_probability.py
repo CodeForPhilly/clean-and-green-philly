@@ -4,11 +4,22 @@ import pandas as pd
 import requests
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import CENSUS_BGS_URL, PERMITS_QUERY
-
 from config.config import USE_CRS
 
 
-def dev_probability(primary_featurelayer):
+def dev_probability(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Calculates development probability based on permit counts and assigns
+    development ranks to census block groups. The results are joined to the
+    primary feature layer.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with added spatial join data for
+        development probability and ranks.
+    """
     census_bgs_gdf = gpd.read_file(CENSUS_BGS_URL)
     census_bgs_gdf = census_bgs_gdf.to_crs(USE_CRS)
 

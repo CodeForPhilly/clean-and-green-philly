@@ -2,7 +2,18 @@ from ..classes.featurelayer import FeatureLayer
 from ..constants.services import IMMINENT_DANGER_BUILDINGS_QUERY
 
 
-def imm_dang_buildings(primary_featurelayer):
+def imm_dang_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Adds information about imminently dangerous buildings to the primary feature layer
+    by joining with a dataset of dangerous buildings.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with an added "imm_dang_building" column,
+        indicating whether each property is categorized as imminently dangerous ("Y" or "N").
+    """
     imm_dang_buildings = FeatureLayer(
         name="Imminently Dangerous Buildings",
         use_wkb_geom_field="the_geom",

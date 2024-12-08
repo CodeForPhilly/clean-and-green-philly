@@ -1,4 +1,10 @@
 import sys
+import pandas as pd
+from config.psql import conn
+from sqlalchemy import text
+import traceback
+
+from new_etl.classes.slack_pg_reporter import send_pg_stats_to_slack
 
 from new_etl.data_utils.access_process import access_process
 from new_etl.data_utils.contig_neighbors import contig_neighbors
@@ -28,8 +34,8 @@ from new_etl.data_utils.community_gardens import community_gardens
 from new_etl.data_utils.park_priority import park_priority
 from new_etl.data_utils.ppr_properties import ppr_properties
 
-import pandas as pd
 
+send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
 
 # Ensure the directory containing awkde is in the Python path
 awkde_path = "/usr/src/app"
@@ -71,41 +77,14 @@ services = [
 
 dataset = opa_properties()
 
-print("Initial Dataset:")
-print("Shape:", dataset.gdf.shape)
-print("Head:\n", dataset.gdf.head())
-print("NA Counts:\n", dataset.gdf.isna().sum())
-
 for service in services:
     dataset = service(dataset)
-    print(f"After {service.__name__}:")
-    print("Dataset type:", type(dataset.gdf).__name__)
-    print("Shape:", dataset.gdf.shape)
-    print("Head:\n", dataset.gdf.head())
-    print("NA Counts:\n", dataset.gdf.isna().sum())
-
-before_drop = dataset.gdf.shape[0]
-dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
-after_drop = dataset.gdf.shape[0]
-print(
-    f"Duplicate dataset rows dropped after initial services: {before_drop - after_drop}"
-)
 
 # Add Priority Level
 dataset = priority_level(dataset)
 
-# Print the distribution of "priority_level"
-distribution = dataset.gdf["priority_level"].value_counts()
-print("Distribution of priority level:")
-print(distribution)
-
 # Add Access Process
 dataset = access_process(dataset)
-
-# Print the distribution of "access_process"
-distribution = dataset.gdf["access_process"].value_counts()
-print("Distribution of access process:")
-print(distribution)
 
 before_drop = dataset.gdf.shape[0]
 dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
@@ -152,4 +131,95 @@ string_columns = dataset.gdf.select_dtypes(include=["object", "string"]).columns
 unique_values = dataset.gdf[string_columns].nunique()
 print(unique_values)
 
+
 dataset.gdf.to_parquet("tmp/test_output.parquet")
+print("Final dataset saved to tmp/ folder.")
+
+try:
+    # Save GeoDataFrame to PostgreSQL
+    dataset.gdf.to_postgis(
+        "vacant_properties_end",
+        conn,
+        if_exists="replace",  # Replace the table if it already exists
+    )
+
+    # Ensure the `create_date` column exists
+    conn.execute(
+        text("""
+        DO $$
+        BEGIN
+        IF NOT EXISTS (
+            SELECT 1
+            FROM information_schema.columns
+            WHERE table_name = 'vacant_properties_end' AND column_name = 'create_date'
+        ) THEN
+            ALTER TABLE vacant_properties_end ADD COLUMN create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+        END IF;
+        END $$;
+        """)
+    )
+
+    # Convert the table to a hypertable
+    try:
+        conn.execute(
+            text("""
+            SELECT create_hypertable('vacant_properties_end', 'create_date', migrate_data => true);
+            """)
+        )
+        print("Table successfully converted to a hypertable.")
+    except Exception as e:
+        if "already a hypertable" in str(e):
+            print("Table is already a hypertable.")
+        else:
+            raise
+
+    # Set chunk interval to 1 month
+    try:
+        conn.execute(
+            text("""
+            SELECT set_chunk_time_interval('vacant_properties_end', INTERVAL '1 month');
+            """)
+        )
+        print("Chunk time interval set to 1 month.")
+    except Exception as e:
+        print(f"Error setting chunk interval: {e}")
+        traceback.print_exc()
+
+    # Enable compression on the hypertable
+    try:
+        conn.execute(
+            text("""
+            ALTER TABLE vacant_properties_end SET (
+                timescaledb.compress,
+                timescaledb.compress_segmentby = 'opa_id'
+            );
+            """)
+        )
+        print("Compression enabled on table vacant_properties_end.")
+    except Exception as e:
+        print(f"Error enabling compression on table vacant_properties_end: {e}")
+
+    # Set up compression policy for chunks older than 6 months
+    try:
+        conn.execute(
+            text("""
+            SELECT add_compression_policy('vacant_properties_end', INTERVAL '6 months');
+            """)
+        )
+        print("Compression policy added for chunks older than 6 months.")
+    except Exception as e:
+        print(f"Error adding compression policy: {e}")
+        traceback.print_exc()
+
+    # Commit the transaction
+    conn.commit()
+    print(
+        "Data successfully saved and table prepared with partitioning and compression."
+    )
+
+except Exception as e:
+    print(f"Error during the table operation: {e}")
+    traceback.print_exc()
+    conn.rollback()  # Rollback the transaction in case of failure
+finally:
+    conn.close()
