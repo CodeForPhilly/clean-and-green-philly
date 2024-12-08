@@ -400,7 +400,6 @@ class FeatureLayer:
         temp_pmtiles_points: str = f"tmp/temp_{tiles_file_id_prefix}_points.pmtiles"
         temp_pmtiles_polygons: str = f"tmp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
         temp_merged_pmtiles: str = f"tmp/temp_{tiles_file_id_prefix}_merged.pmtiles"
-        # temp_parquet: str = f"tmp/{tiles_file_id_prefix}.parquet"
 
         # Reproject
         gdf_wm = self.gdf.to_crs(epsg=4326)
