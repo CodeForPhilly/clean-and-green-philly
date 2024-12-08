@@ -199,7 +199,7 @@ try:
     except Exception as e:
         print(f"Error enabling compression on table vacant_properties_end: {e}")
 
-    # Set up compression policy for chunks older than 3 months
+    # Set up compression policy for chunks older than 6 months
     try:
         conn.execute(
             text("""
