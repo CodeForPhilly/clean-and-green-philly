@@ -1,4 +1,11 @@
 import sys
+import pandas as pd
+from config.psql import conn
+from sqlalchemy import text
+import traceback
+
+from new_etl.classes.slack_reporters import send_dataframe_profile_to_slack, send_pg_stats_to_slack
+from new_etl.classes.diff_report import DiffReport
 
 from new_etl.data_utils.access_process import access_process
 from new_etl.data_utils.contig_neighbors import contig_neighbors
@@ -27,8 +34,9 @@ from new_etl.data_utils.owner_type import owner_type
 from new_etl.data_utils.community_gardens import community_gardens
 from new_etl.data_utils.park_priority import park_priority
 from new_etl.data_utils.ppr_properties import ppr_properties
+from new_etl.database import to_postgis_with_schema
 
-import pandas as pd
+from config.config import FORCE_RELOAD, tiles_file_id_prefix
 
 
 # Ensure the directory containing awkde is in the Python path
@@ -71,41 +79,14 @@ services = [
 
 dataset = opa_properties()
 
-print("Initial Dataset:")
-print("Shape:", dataset.gdf.shape)
-print("Head:\n", dataset.gdf.head())
-print("NA Counts:\n", dataset.gdf.isna().sum())
-
 for service in services:
     dataset = service(dataset)
-    print(f"After {service.__name__}:")
-    print("Dataset type:", type(dataset.gdf).__name__)
-    print("Shape:", dataset.gdf.shape)
-    print("Head:\n", dataset.gdf.head())
-    print("NA Counts:\n", dataset.gdf.isna().sum())
-
-before_drop = dataset.gdf.shape[0]
-dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
-after_drop = dataset.gdf.shape[0]
-print(
-    f"Duplicate dataset rows dropped after initial services: {before_drop - after_drop}"
-)
 
 # Add Priority Level
 dataset = priority_level(dataset)
 
-# Print the distribution of "priority_level"
-distribution = dataset.gdf["priority_level"].value_counts()
-print("Distribution of priority level:")
-print(distribution)
-
 # Add Access Process
 dataset = access_process(dataset)
-
-# Print the distribution of "access_process"
-distribution = dataset.gdf["access_process"].value_counts()
-print("Distribution of access process:")
-print(distribution)
 
 before_drop = dataset.gdf.shape[0]
 dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
@@ -126,30 +107,25 @@ for col in numeric_columns:
 
 dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].astype(str)
 
-print("Column data types before exporting to Parquet:")
-print(dataset.gdf.dtypes)
-
 # Quick dataset profiling
-print("\nQuick dataset profile:")
+send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
 
-# 1) Number of NA values per column
-print("\nNumber of NA values per column:")
-print(dataset.gdf.isna().sum())
+diff_report = DiffReport(conn, table_name="vacant_properties_end")
+diff_report.run()
 
-# 2) Mean, median, and std of numeric columns
-print("\nMean, Median, and Standard Deviation of numeric columns:")
-numeric_columns = dataset.gdf.select_dtypes(include=["float", "int"]).columns
+to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
+send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
 
-for column in numeric_columns:
-    mean = dataset.gdf[column].mean()
-    median = dataset.gdf[column].median()
-    std = dataset.gdf[column].std()
-    print(f"{column}:\n  Mean: {mean:.2f}\n  Median: {median:.2f}\n  Std: {std:.2f}")
+# write local parquet file
+parquet_path = "tmp/test_output.parquet"
+dataset.gdf.to_parquet(parquet_path)
+print(f"Final dataset saved to Parquet: {parquet_path}")
 
-# 3) Number of unique values in string columns
-print("\nNumber of unique values in string columns:")
-string_columns = dataset.gdf.select_dtypes(include=["object", "string"]).columns
-unique_values = dataset.gdf[string_columns].nunique()
-print(unique_values)
+# Post only vacant properties to GCP
+dataset.gdf = dataset.gdf[dataset.gdf["vacant"]]
+dataset.build_and_publish(tiles_file_id_prefix)
+conn.commit()
 
-dataset.gdf.to_parquet("tmp/test_output.parquet")
+# Close the connection
+conn.close()
+print("ETL process completed successfully.")
