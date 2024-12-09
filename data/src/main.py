@@ -4,7 +4,8 @@ from config.psql import conn
 from sqlalchemy import text
 import traceback
 
-from new_etl.classes.slack_pg_reporter import send_pg_stats_to_slack
+from new_etl.classes.slack_reporters import send_dataframe_profile_to_slack, send_pg_stats_to_slack
+from new_etl.classes.diff_report import DiffReport
 
 from new_etl.data_utils.access_process import access_process
 from new_etl.data_utils.contig_neighbors import contig_neighbors
@@ -33,9 +34,10 @@ from new_etl.data_utils.owner_type import owner_type
 from new_etl.data_utils.community_gardens import community_gardens
 from new_etl.data_utils.park_priority import park_priority
 from new_etl.data_utils.ppr_properties import ppr_properties
+from new_etl.database import to_postgis_with_schema
 
+from config.config import FORCE_RELOAD, tiles_file_id_prefix
 
-send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
 
 # Ensure the directory containing awkde is in the Python path
 awkde_path = "/usr/src/app"
@@ -105,121 +107,25 @@ for col in numeric_columns:
 
 dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].astype(str)
 
-print("Column data types before exporting to Parquet:")
-print(dataset.gdf.dtypes)
-
 # Quick dataset profiling
-print("\nQuick dataset profile:")
+send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
 
-# 1) Number of NA values per column
-print("\nNumber of NA values per column:")
-print(dataset.gdf.isna().sum())
+diff_report = DiffReport(conn, table_name="vacant_properties_end")
+diff_report.run()
 
-# 2) Mean, median, and std of numeric columns
-print("\nMean, Median, and Standard Deviation of numeric columns:")
-numeric_columns = dataset.gdf.select_dtypes(include=["float", "int"]).columns
+to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
+send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
 
-for column in numeric_columns:
-    mean = dataset.gdf[column].mean()
-    median = dataset.gdf[column].median()
-    std = dataset.gdf[column].std()
-    print(f"{column}:\n  Mean: {mean:.2f}\n  Median: {median:.2f}\n  Std: {std:.2f}")
+# write local parquet file
+parquet_path = "tmp/test_output.parquet"
+dataset.gdf.to_parquet(parquet_path)
+print(f"Final dataset saved to Parquet: {parquet_path}")
 
-# 3) Number of unique values in string columns
-print("\nNumber of unique values in string columns:")
-string_columns = dataset.gdf.select_dtypes(include=["object", "string"]).columns
-unique_values = dataset.gdf[string_columns].nunique()
-print(unique_values)
+# Post only vacant properties to GCP
+dataset.gdf = dataset.gdf[dataset.gdf["vacant"]]
+dataset.build_and_publish(tiles_file_id_prefix)
+conn.commit()
 
-
-dataset.gdf.to_parquet("tmp/test_output.parquet")
-print("Final dataset saved to tmp/ folder.")
-
-try:
-    # Save GeoDataFrame to PostgreSQL
-    dataset.gdf.to_postgis(
-        "vacant_properties_end",
-        conn,
-        if_exists="replace",  # Replace the table if it already exists
-    )
-
-    # Ensure the `create_date` column exists
-    conn.execute(
-        text("""
-        DO $$
-        BEGIN
-        IF NOT EXISTS (
-            SELECT 1
-            FROM information_schema.columns
-            WHERE table_name = 'vacant_properties_end' AND column_name = 'create_date'
-        ) THEN
-            ALTER TABLE vacant_properties_end ADD COLUMN create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
-        END IF;
-        END $$;
-        """)
-    )
-
-    # Convert the table to a hypertable
-    try:
-        conn.execute(
-            text("""
-            SELECT create_hypertable('vacant_properties_end', 'create_date', migrate_data => true);
-            """)
-        )
-        print("Table successfully converted to a hypertable.")
-    except Exception as e:
-        if "already a hypertable" in str(e):
-            print("Table is already a hypertable.")
-        else:
-            raise
-
-    # Set chunk interval to 1 month
-    try:
-        conn.execute(
-            text("""
-            SELECT set_chunk_time_interval('vacant_properties_end', INTERVAL '1 month');
-            """)
-        )
-        print("Chunk time interval set to 1 month.")
-    except Exception as e:
-        print(f"Error setting chunk interval: {e}")
-        traceback.print_exc()
-
-    # Enable compression on the hypertable
-    try:
-        conn.execute(
-            text("""
-            ALTER TABLE vacant_properties_end SET (
-                timescaledb.compress,
-                timescaledb.compress_segmentby = 'opa_id'
-            );
-            """)
-        )
-        print("Compression enabled on table vacant_properties_end.")
-    except Exception as e:
-        print(f"Error enabling compression on table vacant_properties_end: {e}")
-
-    # Set up compression policy for chunks older than 6 months
-    try:
-        conn.execute(
-            text("""
-            SELECT add_compression_policy('vacant_properties_end', INTERVAL '6 months');
-            """)
-        )
-        print("Compression policy added for chunks older than 6 months.")
-    except Exception as e:
-        print(f"Error adding compression policy: {e}")
-        traceback.print_exc()
-
-    # Commit the transaction
-    conn.commit()
-    print(
-        "Data successfully saved and table prepared with partitioning and compression."
-    )
-
-except Exception as e:
-    print(f"Error during the table operation: {e}")
-    traceback.print_exc()
-    conn.rollback()  # Rollback the transaction in case of failure
-finally:
-    conn.close()
+# Close the connection
+conn.close()
+print("ETL process completed successfully.")
