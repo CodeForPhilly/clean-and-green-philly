@@ -15,14 +15,14 @@ from config.config import (
     write_production_tiles_file,
 )
 from config.psql import conn, local_engine
-from esridump.dumper import EsriDumper
 from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
 from shapely import wkb
-from sqlalchemy.sql import text
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 
+from new_etl.loaders import load_esri_data, load_carto_data
+from new_etl.database import to_postgis_with_schema
 
 log.basicConfig(level=log_level)
 
@@ -122,48 +122,24 @@ class FeatureLayer:
             return  # Skip processing for gdf type
 
         try:
+            # Load data based on the source type
             if self.type == "esri":
-                if not self.esri_rest_urls:
-                    raise ValueError("Must provide a URL to load data from Esri")
-                gdfs = []
-                for url in self.esri_rest_urls:
-                    print(f"Processing URL: {url}")
-
-                    # Use EsriDumper to get features
-                    dumper = EsriDumper(url)
-                    features = [feature for feature in dumper]
-                    if not features:
-                        log.error(f"No features returned for URL: {url}")
-                        continue
-
-                    geojson_features = {
-                        "type": "FeatureCollection",
-                        "features": features,
-                    }
-                    gdf = gpd.GeoDataFrame.from_features(
-                        geojson_features, crs=self.input_crs
-                    )
-                    gdf = gdf.to_crs(self.crs)
-
-                    # Add parcel_type based on the URL
-                    if "Vacant_Indicators_Land" in url:
-                        gdf["parcel_type"] = "Land"
-                    elif "Vacant_Indicators_Bldg" in url:
-                        gdf["parcel_type"] = "Building"
-
-                    gdfs.append(gdf)
-
-                # Concatenate all dataframes
-                self.gdf = pd.concat(gdfs, ignore_index=True)
-
+                self.gdf = load_esri_data(self.esri_rest_urls, self.input_crs, self.crs)
             elif self.type == "carto":
-                self._load_carto_data()
+                self.gdf = load_carto_data(
+                    self.carto_sql_queries,
+                    self.max_workers,
+                    self.chunk_size,
+                    self.use_wkb_geom_field,
+                    self.input_crs,
+                    self.crs,
+                )
 
-            # Convert all column names to lowercase
+            # Standardize column names
             if not self.gdf.empty:
                 self.gdf.columns = [col.lower() for col in self.gdf.columns]
 
-                # Drop columns not in self.cols, if specified
+                # Filter columns if specified
                 if self.cols:
                     self.cols = [col.lower() for col in self.cols]
                     self.cols.append("geometry")
@@ -171,98 +147,13 @@ class FeatureLayer:
                         [col for col in self.cols if col in self.gdf.columns]
                     ]
 
-                # Save GeoDataFrame to PostgreSQL
-                self.gdf.to_postgis(
-                    name=self.psql_table,
-                    con=conn,
-                    if_exists="replace",  # Replace the table if it already exists
-                    chunksize=1000,
-                )
-
-                # Ensure the `create_date` column exists
-                conn.execute(
-                    text(f"""
-                    DO $$
-                    BEGIN
-                    IF NOT EXISTS (
-                        SELECT 1
-                        FROM information_schema.columns
-                        WHERE table_name = '{self.psql_table}' AND column_name = 'create_date'
-                    ) THEN
-                    ALTER TABLE {self.psql_table}
-                    ADD COLUMN create_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
-                    END IF;
-                    END $$;
-                    """)
-                )
-
-                # Convert the table to a hypertable
-                try:
-                    conn.execute(
-                        text(f"""
-                        SELECT create_hypertable('{self.psql_table}', 'create_date', migrate_data => true);
-                        """)
-                    )
-                    print(
-                        f"Table {self.psql_table} successfully converted to a hypertable."
-                    )
-                except Exception as e:
-                    if "already a hypertable" in str(e):
-                        print(f"Table {self.psql_table} is already a hypertable.")
-                    else:
-                        raise
-
-                # Set chunk interval to 1 month
-                try:
-                    conn.execute(
-                        text(f"""
-                        SELECT set_chunk_time_interval('{self.psql_table}', INTERVAL '1 month');
-                        """)
-                    )
-                    print(
-                        f"Chunk time interval set to 1 month for table {self.psql_table}."
-                    )
-                except Exception as e:
-                    print(
-                        f"Error setting chunk interval for table {self.psql_table}: {e}"
-                    )
-
-                # Enable compression on the hypertable
-                try:
-                    conn.execute(
-                        text(f"""
-                        ALTER TABLE {self.psql_table} SET (
-                            timescaledb.compress
-                        );
-                        """)
-                    )
-                    print(f"Compression enabled on table {self.psql_table}.")
-                except Exception as e:
-                    print(f"Error enabling compression on table {self.psql_table}: {e}")
-
-                # Add compression policy for chunks older than 3 months
-                try:
-                    conn.execute(
-                        text(f"""
-                        SELECT add_compression_policy('{self.psql_table}', INTERVAL '3 months');
-                        """)
-                    )
-                    print(
-                        f"Compression policy added for chunks older than 3 months on table {self.psql_table}."
-                    )
-                except Exception as e:
-                    print(
-                        f"Error adding compression policy for table {self.psql_table}: {e}"
-                    )
-
-                # Commit the transaction
-                conn.commit()
+                # Save GeoDataFrame to PostgreSQL and configure it as a hypertable
+                to_postgis_with_schema(self.gdf, self.psql_table, conn)
 
         except Exception as e:
             log.error(f"Error loading data for {self.name}: {e}")
             traceback.print_exc()
-            conn.rollback()  # Rollback the transaction in case of failure
-            self.gdf = gpd.GeoDataFrame()
+            self.gdf = gpd.GeoDataFrame()  # Reset to an empty GeoDataFrame
 
     def _load_carto_data(self):
         if not self.carto_sql_queries:

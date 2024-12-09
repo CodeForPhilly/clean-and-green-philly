@@ -28,16 +28,7 @@ def community_gardens(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     geom_types = community_gardens.gdf.geometry.geom_type.value_counts()
 
     if len(geom_types) > 1:
-        print("\nGardens with non-Point geometries:")
-        non_point_gardens = community_gardens.gdf[
-            community_gardens.gdf.geometry.geom_type != "Point"
-        ]
-        print(f"Total non-Point geometries: {len(non_point_gardens)}")
-        print("\nSample of problematic records:")
-        print(non_point_gardens[["site_name", "geometry"]].head())
-
         # Convert any non-point geometries to points using centroid
-        print("\nConverting non-Point geometries to points using centroids...")
         community_gardens.gdf.loc[
             community_gardens.gdf.geometry.geom_type != "Point", "geometry"
         ] = community_gardens.gdf[
@@ -57,34 +48,6 @@ def community_gardens(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     joined_gdf = primary_featurelayer.gdf.sjoin(
         community_gardens.gdf, predicate="contains", how="inner"
     )
-
-    # Count matches per garden
-    matches_per_garden = joined_gdf.groupby("site_name").size()
-
-    # Print details for gardens with unusually high matches
-    # Gardens with high number of matches
-    if matches_per_garden.max() > 1:  # arbitrary threshold
-        print("\nGardens with high number of matches:")
-        high_matches = matches_per_garden[matches_per_garden > 1]
-        print(high_matches)
-
-        # Print concise details about properties matching these gardens
-        print("\nSummary of matched properties for high-match gardens:")
-        for garden_name in high_matches.index:
-            matched_properties = joined_gdf[joined_gdf["site_name"] == garden_name]
-            print(f"\nGarden: {garden_name}")
-            print("Matched parcels:")
-            print(
-                matched_properties[["opa_id"]]
-                .drop_duplicates()
-                .head(5)
-                .to_string(index=False)
-            )
-            print(
-                f"...and {len(matched_properties) - 5} more matches."
-                if len(matched_properties) > 5
-                else ""
-            )
 
     # Get unique parcels that contain garden points
     garden_parcels = set(joined_gdf["opa_id"])
