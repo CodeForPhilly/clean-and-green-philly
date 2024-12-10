@@ -2,12 +2,11 @@ from sqlalchemy import text
 import os
 from slack_sdk import WebClient
 
-
 import pandas as pd
 
 
 def send_dataframe_profile_to_slack(
-    df: pd.DataFrame, df_name: str, channel="clean-and-green-philly-back-end"
+    df: pd.DataFrame, df_name: str, channel="clean-and-green-philly-pipeline"
 ):
     """
     Profiles a DataFrame and sends the QC profile summary to a Slack channel.
@@ -120,9 +119,45 @@ def send_pg_stats_to_slack(conn):
     if token:
         client = WebClient(token=token)
         client.chat_postMessage(
-            channel="clean-and-green-philly-back-end",
+            channel="clean-and-green-philly-pipeline",
             text=message,
             username="PG Stats Reporter",
         )
+    else:
+        raise ValueError("Slack API token not found in environment variables.")
+
+
+def send_diff_report_to_slack(
+    diff_summary: str, report_url: str, channel="clean-and-green-philly-pipeline"
+):
+    """
+    Sends a difference report summary to a Slack channel.
+
+    Args:
+        diff_summary (str): The summary of differences to post.
+        report_url (str): The URL to the detailed difference report.
+        channel (str): The Slack channel to post the message to.
+    """
+    print(
+        f"send_diff_report_to_slack called with:\ndiff_summary:\n{diff_summary}\nreport_url: {report_url}"
+    )
+
+    # Step 1: Format the message
+    message = f"*Data Difference Report*\n\n{diff_summary}\n\nDetailed report: <{report_url}|View Report>"
+    print(f"Formatted Slack message:\n{message}")
+
+    # Step 2: Send the message to Slack
+    token = os.getenv("CAGP_SLACK_API_TOKEN")
+    if token:
+        client = WebClient(token=token)
+        try:
+            client.chat_postMessage(
+                channel=channel,
+                text=message,
+                username="Diff Reporter",
+            )
+            print("Diff report sent to Slack successfully.")
+        except Exception as e:
+            print(f"Failed to send diff report to Slack: {e}")
     else:
         raise ValueError("Slack API token not found in environment variables.")

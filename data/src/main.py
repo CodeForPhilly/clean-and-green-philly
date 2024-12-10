@@ -1,5 +1,7 @@
 import sys
 import pandas as pd
+import geopandas as gpd
+import numpy as np
 from config.psql import conn
 from sqlalchemy import text
 import traceback
@@ -35,9 +37,9 @@ from new_etl.data_utils.community_gardens import community_gardens
 from new_etl.data_utils.park_priority import park_priority
 from new_etl.data_utils.ppr_properties import ppr_properties
 from new_etl.database import to_postgis_with_schema
+from new_etl.data_diff import generate_data_diff, log_diff_report
 
 from config.config import FORCE_RELOAD, tiles_file_id_prefix
-
 
 # Ensure the directory containing awkde is in the Python path
 awkde_path = "/usr/src/app"
@@ -110,11 +112,14 @@ dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].asty
 # Quick dataset profiling
 send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
 
-diff_report = DiffReport(conn, table_name="vacant_properties_end")
+diff_report = DiffReport(conn, table_name="all_properties_end")
 diff_report.run()
 
 to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
 send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
+
+diff_report = generate_data_diff(table_name='all_properties_end') # create and log diff report
+log_diff_report(diff_report)
 
 # write local parquet file
 parquet_path = "tmp/test_output.parquet"

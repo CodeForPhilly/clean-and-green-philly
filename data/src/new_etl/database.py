@@ -38,7 +38,7 @@ def execute_optional_sql(conn, query, description):
         print(f"Warning: {description} failed. Error: {e}")
 
 
-def to_postgis_with_schema(gdf, table_name, conn, if_exists="replace", chunksize=1000):
+def to_postgis_with_schema(gdf, table_name, conn, if_exists="append", chunksize=1000):
     """
     Save a GeoDataFrame to PostGIS, ensure the `create_date` column exists, and configure the table as a hypertable.
 

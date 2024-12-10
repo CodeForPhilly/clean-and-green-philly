@@ -1,31 +1,22 @@
 import logging as log
 import os
+import re
+import subprocess
 from sqlalchemy.sql import text
+from slack_sdk import WebClient
+
+from config.psql import conn, url
+from new_etl.data_utils.utils import mask_password
 
 from .featurelayer import google_cloud_bucket
-from config.config import (
-    log_level,
-    report_to_slack_channel,
-)
-from config.psql import conn
-from slack_sdk import WebClient
-import pandas as pd
 
-
-log.basicConfig(level=log_level)
+log.basicConfig(level=log.DEBUG)
 
 
 class DiffTable:
-    """Metadata about a table to be run through data-diff"""
+    """Metadata about a table to be run through data-diff."""
 
     def __init__(self, table: str, pk_cols: list[str], where: str = None):
-        """constructor
-
-        Args:
-            table (str): the name of the table in postgres
-            pk_cols (list[str]): the list of columns in the primary key
-            where (str, optional): any additional where clause to limit the rows being compared
-        """
         self.table = table
         self.pk_cols = pk_cols
         self.where = where
@@ -33,258 +24,185 @@ class DiffTable:
 
 class DiffReport:
     """
-    Class to manage computing data differences for all tables between the newly imported schema and the last schema.
-    Build a report of summary differences for all tables.
-    Post difference summary to Slack.
+    Class to compute and report data differences for TimescaleDB hypertables.
+    Compares current data with the most recent historical chunk.
     """
 
-    def __init__(self, conn, table_name: str, timestamp_string: str = None):
-        """
-        Constructor for DiffReport.
-
-        Args:
-            conn: SQLAlchemy connection to the database.
-            table_name (str): The name of the table to generate the diff report for.
-            timestamp_string (str, optional): Specific timestamp to compare against. If None, fetch the latest timestamp.
-        """
-        self.conn = conn
-        self.table_name = table_name
-        self.timestamp_string = timestamp_string or self._get_latest_timestamp()
-        self.report: str = f"The back-end data has been fully refreshed. Here is the difference report for `{table_name}`.\n\n"
+    def __init__(self, timestamp_string: str = None):
         self.diff_tables = self._list_diff_tables()
+        self.timestamp_string = timestamp_string or self._get_current_timestamp()
+        self.report: str = "The back-end data has been refreshed. Here is the difference report on key tables:\n\n"
 
-    def _get_latest_timestamp(self) -> str:
+    def _get_current_timestamp(self) -> str:
         """
-        Fetch the most recent timestamp from the hypertable.
-
-        Returns:
-            str: The latest timestamp as a string.
-
-        Raises:
-            ValueError: If no data is found in the table.
+        Retrieve the current timestamp for the report.
+        Uses the most recent create_date across all diff tables.
         """
-        timestamp_query = f"""
-        SELECT MAX(create_date) FROM {self.table_name};
-        """
-        latest_timestamp = self.conn.execute(text(timestamp_query)).scalar()
-        if not latest_timestamp:
-            raise ValueError(f"No prior data found in {self.table_name}.")
-        return str(latest_timestamp)
-
-    def _table_exists(self, table: str) -> bool:
-        """
-        Check if a table exists in the database.
-
-        Args:
-            table (str): Name of the table to check
-
-        Returns:
-            bool: True if table exists, False otherwise
-        """
-        check_table_query = text("""
-            SELECT EXISTS (
-                SELECT FROM information_schema.tables 
-                WHERE table_name = :table_name
-            )
-        """)
-
         try:
-            result = self.conn.execute(
-                check_table_query, {"table_name": table}
-            ).scalar()
-            return result
+            # Collect all tables' timestamps
+            table_queries = [
+                f"SELECT MAX(create_date) as latest_timestamp FROM public.{diff_table.table}"
+                for diff_table in self.diff_tables
+            ]
+            union_query = " UNION ALL ".join(table_queries)
+            query = f"SELECT to_char(MAX(latest_timestamp), 'YYYY-MM-DD_HH24-MI-SS') FROM ({union_query}) as combined"
+
+            result = conn.execute(text(query))
+            timestamp = result.scalar()
+            return timestamp or "unknown_timestamp"
         except Exception as e:
-            log.error(f"Error checking table existence for {table}: {e}")
-            return False
+            log.warning(f"Could not retrieve timestamp: {e}")
+            return "unknown_timestamp"
 
     def run(self):
+        """
+        Run the report and send it to Slack.
+        """
         for diff_table in self.diff_tables:
             log.debug(
-                "Processing table %s with pks %s", diff_table.table, diff_table.pk_cols
+                f"Processing table {diff_table.table} with pks {diff_table.pk_cols}"
             )
-
-            # Check if table exists
-            if not self._table_exists(diff_table.table):
-                self.report += (
-                    f"{diff_table.table}: Table does not yet exist in the database.\n\n"
-                )
-                continue
-
             try:
-                summary = self.compare_table(diff_table)
-                if "No prior data" in summary:
-                    self.report += f"{diff_table.table}:\n{summary}\n"
-                    continue
-
-                self.report += f"{diff_table.table}:\n{summary}\n"
-
-                try:
-                    self.report += (
-                        "Details: " + self.detail_report(diff_table.table) + "\n"
-                    )
-                except Exception as detail_error:
-                    log.error(
-                        f"Error generating detail report for {diff_table.table}: {detail_error}"
-                    )
-                    self.report += (
-                        f"Could not generate detailed report for {diff_table.table}.\n"
-                    )
-
-                self.report += "\n"
-
-            except Exception as e:
-                log.error(f"Error processing table {diff_table.table}: {e}")
-                self.report += (
-                    f"{diff_table.table}: Error processing table - {str(e)}\n\n"
-                )
+                summary = diff_table.table + "\n" + self.compare_table(diff_table)
+                if self._summary_shows_differences(summary):
+                    report_url = self.detail_report(diff_table.table)
+                    self.report += f"{summary}\nDetails: {report_url}\n\n"
+                else:
+                    self.report += f"{diff_table.table}\nNo differences found.\n\n"
+            except RuntimeError as e:
+                self.report += f"{diff_table.table}\n{str(e)}\n\n"
+                log.warning(f"Error processing {diff_table.table}: {e}")
 
         log.debug(self.report)
         self.send_report_to_slack()
 
-    def detail_report(self, table: str) -> str:
-        """Generate the html from the detail diff report and upload to Google cloud as an html file
-        Args:
-            table (str): the name of the core table being compared
-
-        Returns:
-            str: the full url of the report
+    def _summary_shows_differences(self, summary: str) -> bool:
         """
-        return self._save_detail_report_to_cloud(
-            self.generate_table_detail_report(table), table
+        Check if the data-diff summary shows any differences.
+        """
+        return not (
+            "0 rows exclusive to table A" in summary
+            and "0 rows exclusive to table B" in summary
+            and "0 rows updated" in summary
         )
 
-    def _save_detail_report_to_cloud(self, html: str, table: str) -> str:
-        """Save this html to a public cloud folder in Google named with the timestamp of the backup
-
-        Args:
-            html (str): the html content
-            table (str): the name of the core table being compared
-
-        Returns:
-            str: the full url of the report
+    def detail_report(self, table: str) -> str:
         """
-        path: str = "diff/" + self.timestamp_string + "/" + table + ".html"
+        Generate and upload a detailed difference report to Google Cloud.
+        """
+        html = self.generate_table_detail_report(table)
+        return self._save_detail_report_to_cloud(html, table)
+
+    def _save_detail_report_to_cloud(self, html: str, table: str) -> str:
+        """
+        Save the HTML report to Google Cloud Storage.
+        """
+        path = f"diff/{self.timestamp_string}/{table}.html"
         bucket = google_cloud_bucket()
         blob = bucket.blob(path)
         blob.upload_from_string(html, content_type="text/html")
-        return "https://storage.googleapis.com/" + bucket.name + "/" + path
+        return f"https://storage.googleapis.com/{bucket.name}/{path}"
 
     def generate_table_detail_report(self, table: str) -> str:
         """
-        generate an html table of the details of differences in this table
+        Generate an HTML table of differences, pulling from a specific
+        diff tracking table or view if available.
         """
-        # Directly query the table with differences
-        sql: str = f"""
-        SELECT * FROM {table}_diff 
-        WHERE create_date = '{self.timestamp_string}'
-        """
-        cur = conn.connection.cursor()
-        cur.execute(sql)
-        html: str = "<table border=1><tr>"
+        try:
+            # Check for a dedicated diff tracking table or view
+            diff_table_name = f"{table}_diff"
+            sql = f"SELECT * FROM {diff_table_name}"
+            result = conn.execute(text(sql))
+            rows = result.fetchall()
+            columns = result.keys()
 
-        column_names = [desc[0] for desc in cur.description]
-        for column in column_names:
-            html += "<th>" + column + "</th>"
-        html += "</tr>"
-        for row in cur.fetchall():
-            html += "<tr>"
-            for value in row:
-                html += "<td>" + str(value) + "</td>"
+            html = "<table border=1><tr>"
+            html += "".join(f"<th>{col}</th>" for col in columns)
             html += "</tr>"
-        html += "</table>"
-        return html
+            for row in rows:
+                html += "<tr>" + "".join(f"<td>{value}</td>" for value in row) + "</tr>"
+            html += "</table>"
+            return html
+        except Exception as e:
+            log.warning(f"Could not generate detailed diff report: {e}")
+            return f"<p>Could not generate detailed report: {e}</p>"
 
     def _list_diff_tables(self) -> list[DiffTable]:
         """
-        list table metadata to do the diff on
-        Returns:
-            list[DiffTable]: the list of metadata
+        List the tables to compare using data-diff.
         """
         return [
             DiffTable(
                 table="vacant_properties",
                 pk_cols=["opa_id", "parcel_type"],
-                where="opa_id is not null",
-            ),
-            DiffTable(table="li_complaints", pk_cols=["service_request_id"]),
-            DiffTable(
-                table="li_violations",
-                pk_cols=["violationnumber", "opa_account_num"],
-                where="opa_account_num is not null",
+                where="opa_id IS NOT NULL",
             ),
             DiffTable(table="opa_properties", pk_cols=["parcel_number"]),
-            DiffTable(
-                table="property_tax_delinquencies",
-                pk_cols=["opa_number"],
-                where="opa_number <> 0",
-            ),
         ]
 
-    def compare_table(self, diff_table: DiffTable):
-        # Step 1: Retrieve timestamps
-        timestamps = self._get_timestamps(diff_table.table)
-        if len(timestamps) < 2:
-            return f"No prior data available for comparison in {diff_table.table}.\n"
-
-        latest, second_latest = timestamps
-
-        # Step 2: Fetch data for comparison
-        current_query = f"""
-        SELECT * FROM {diff_table.table} WHERE create_date = '{latest}';
+    def compare_table(self, diff_table: DiffTable) -> str:
         """
-        past_query = f"""
-        SELECT * FROM {diff_table.table} WHERE create_date = '{second_latest}';
+        Compare the current hypertable data with the most recent historical chunk using data-diff CLI.
         """
-        current_data = pd.read_sql(current_query, conn)
-        past_data = pd.read_sql(past_query, conn)
+        table = diff_table.table
+        pks = diff_table.pk_cols
+        where_clause = f" -w '{diff_table.where}'" if diff_table.where else ""
 
-        # Step 3: Use DataFrames for comparison
-        diffs = current_data.merge(past_data, how="outer", indicator=True)
+        try:
+            # Get the most recent historical chunk for comparison
+            get_last_chunk_query = f"""
+            SELECT create_date as last_chunk_date 
+            FROM public.{table} 
+            ORDER BY create_date DESC 
+            LIMIT 2
+            """
+            result = conn.execute(text(get_last_chunk_query))
+            chunks = [row[0] for row in result]
 
-        summary = {
-            "added": diffs[diffs["_merge"] == "left_only"].shape[0],
-            "removed": diffs[diffs["_merge"] == "right_only"].shape[0],
-            "updated": diffs[diffs["_merge"] == "both"].shape[0],
-        }
+            if len(chunks) < 2:
+                log.warning(
+                    f"Not enough historical data for {table} to perform comparison."
+                )
+                return f"No differences found for {table} (insufficient historical data).\n"
 
-        # Format as a string for reporting
-        summary_str = (
-            f"{summary['added']} rows exclusive to the latest data.\n"
-            f"{summary['removed']} rows exclusive to the past data.\n"
-            f"{summary['updated']} rows present in both datasets.\n"
-        )
-        return summary_str
+            last_chunk = chunks[1]
 
-    def _get_timestamps(self, table: str) -> list:
-        """
-        Retrieve timestamps for the given table in descending order.
+            # Construct the data-diff command to compare
+            data_diff_command = (
+                f"data-diff {url} "
+                f"'public.{table} WHERE create_date > {last_chunk}' "
+                f"'public.{table} WHERE create_date <= {last_chunk}' "
+                f"-k {' -k '.join(pks)} {where_clause} --stats"
+            )
 
-        Args:
-            table (str): Name of the table to retrieve timestamps for
+            log.debug(mask_password(data_diff_command))
+            result = subprocess.run(
+                data_diff_command, shell=True, capture_output=True, text=True
+            )
 
-        Returns:
-            list: List of timestamps in descending order
-        """
-        timestamp_query = f"""
-        SELECT DISTINCT create_date 
-        FROM {table} 
-        ORDER BY create_date DESC 
-        LIMIT 2;
-        """
-        timestamps = self.conn.execute(text(timestamp_query)).scalars().all()
-        return list(timestamps)
+            if result.returncode != 0:
+                error_msg = result.stderr.strip()
+                log.warning(f"data-diff failed for {table}: {error_msg}")
+                return f"data-diff failed for {table}: {error_msg}\n"
+
+            # Remove extra info from output if present
+            return re.sub(r"\nExtra-Info:.*", "", result.stdout, flags=re.DOTALL)
+
+        except Exception as e:
+            log.warning(f"Error comparing {table}: {str(e)}")
+            return f"Error comparing {table}: {str(e)}\n"
 
     def send_report_to_slack(self):
         """
-        post the summary report to the slack channel if configured.
+        Send the full report to Slack.
         """
-        if report_to_slack_channel:
-            token = os.environ["CAGP_SLACK_API_TOKEN"]
+        token = os.getenv("CAGP_SLACK_API_TOKEN")
+        if token:
             client = WebClient(token=token)
-
-            # Send a message
             client.chat_postMessage(
-                channel=report_to_slack_channel,
+                channel="clean-and-green-philly-pipeline",
                 text=self.report,
-                username="CAGP Diff Bot",
+                username="Diff Reporter",
             )
+        else:
+            raise ValueError("Slack API token not found in environment variables.")
