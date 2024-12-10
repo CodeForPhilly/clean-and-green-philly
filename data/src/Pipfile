@@ -21,7 +21,6 @@ geoalchemy2 = "*"
 mapbox = "*"
 google-cloud-storage = "*"
 pydantic = "==2.8.2"
-data-diff = {extras = ["postgresql"], version = "*"}
 future = "*"
 slack-sdk = "*"
 networkx = "*"
@@ -29,6 +28,7 @@ libpysal = "*"
 jenkspy = "*"
 pyarrow = "*"
 tqdm = "*"
+data-diff = "*"
 
 [dev-packages]
 black = "*"
