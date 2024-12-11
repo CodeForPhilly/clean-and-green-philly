@@ -33,14 +33,6 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     if not all(pwd_parcels.gdf.geometry.type.isin(["Polygon", "MultiPolygon"])):
         raise ValueError("Some geometries are not polygons or multipolygons.")
 
-    # Log initial feature counts
-    print("Size of primary feature layer:", len(primary_featurelayer.gdf))
-    print("Size of PWD parcels:", len(pwd_parcels.gdf))
-    print(
-        "Number of valid geometries in PWD parcels:",
-        pwd_parcels.gdf.geometry.notnull().sum(),
-    )
-
     # Temporarily drop geometry from the primary feature layer
     primary_df = primary_featurelayer.gdf.drop(columns=["geometry"])
 
@@ -60,22 +52,12 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     # Log observations with no polygon geometry
     no_geometry_count = merged_gdf["geometry"].isnull().sum()
-    print("Number of observations with no polygon geometry:", no_geometry_count)
 
     # Retain point geometry for rows with no polygon geometry
     merged_gdf["geometry"] = merged_gdf["geometry"].combine_first(
         primary_featurelayer.gdf["geometry"]
     )
     print("Number of observations retaining point geometry:", no_geometry_count)
-
-    # Count observations with point geometry grouped by 'vacant'
-    point_geometry_counts = (
-        merged_gdf[merged_gdf["geometry"].geom_type == "Point"].groupby("vacant").size()
-    )
-
-    # Log the results
-    print("Counts of point geometry grouped by 'vacant':")
-    print(point_geometry_counts)
 
     # Wrap the GeoDataFrame back into a FeatureLayer
     return FeatureLayer(name=primary_featurelayer.name, gdf=merged_gdf)

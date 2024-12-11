@@ -37,15 +37,12 @@ def contig_neighbors(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         )
 
         # Create a spatial weights matrix for vacant parcels
-        print("Creating spatial weights matrix for vacant parcels...")
         w = Queen.from_dataframe(vacant_parcels)
 
     # Convert the spatial weights matrix to a NetworkX graph
-    print("Converting spatial weights matrix to NetworkX graph...")
     g = w.to_networkx()
 
     # Calculate the number of contiguous vacant properties for each vacant parcel
-    print("Calculating number of contiguous vacant neighbors for each property...")
     n_contiguous = {
         node: len(nx.node_connected_component(g, node)) - 1 for node in g.nodes
     }
@@ -63,5 +60,4 @@ def contig_neighbors(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         ~primary_featurelayer.gdf["vacant"], "n_contiguous"
     ] = np.nan
 
-    print("Process completed. Returning updated primary feature layer.")
     return primary_featurelayer

@@ -71,8 +71,6 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         cols=["OPA_ID", "parcel_type"],  # Only need opa_id and parcel_type
     )
 
-    print("Columns in vacant properties dataset:", vacant_properties.gdf.columns)
-
     # Rename columns for consistency
     vacant_properties.gdf = vacant_properties.gdf.rename(columns={"OPA_ID": "opa_id"})
 
@@ -116,8 +114,6 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     primary_featurelayer.gdf["vacant"] = primary_featurelayer.gdf["opa_id"].isin(
         df["opa_id"]
     )
-
-    print("Vacant column added based on opa_id match.")
 
     # Drop parcel_type column after processing
     df.drop(columns=["parcel_type"], inplace=True)

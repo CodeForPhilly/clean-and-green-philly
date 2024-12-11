@@ -135,10 +135,5 @@ def opa_properties() -> FeatureLayer:
 
     # Drop empty geometries
     opa.gdf = opa.gdf[~opa.gdf.is_empty]
-    final_row_count = len(opa.gdf)
-    print(f"Final row count after cleaning geometries: {final_row_count}")
-
-    # Exclude the geometry column when checking NA counts
-    print("NA Counts:\n", opa.gdf.drop(columns="geometry").isna().sum())
 
     return opa
