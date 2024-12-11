@@ -2,11 +2,21 @@ from ..classes.featurelayer import FeatureLayer
 from ..constants.services import COUNCIL_DISTRICTS_TO_LOAD
 import pandas as pd
 
-
 pd.set_option("future.no_silent_downcasting", True)
 
 
-def council_dists(primary_featurelayer):
+def council_dists(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Associates properties in the primary feature layer with council districts
+    using a spatial join.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with properties spatially joined
+        to council districts, ensuring no duplicate entries.
+    """
     # Load council districts
     council_dists = FeatureLayer(
         name="Council Districts", esri_rest_urls=COUNCIL_DISTRICTS_TO_LOAD
