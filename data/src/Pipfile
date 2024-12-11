@@ -27,6 +27,7 @@ libpysal = "*"
 jenkspy = "*"
 pyarrow = "*"
 tqdm = "*"
+geoalchemy2 ="*"
 
 [dev-packages]
 black = "*"

@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "aa142fecd2bf4a9c5ecb60404dadac75b15a127b676895e9dff92864fe94e51f"
+            "sha256": "b0cc0a48b0d260c226c0a714f60c880ea2b05027dcaba59b3eff007abe2ac1c9"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -606,6 +606,15 @@
             "index": "pypi",
             "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.0.0"
+        },
+        "geoalchemy2": {
+            "hashes": [
+                "sha256:b0f27d5500ee757af4654c6262e0f834b7a843504d193653ec747ef1128d2ab5",
+                "sha256:df64bb72af70daafaac3f359492c96501c37ab85ed20f9510c99cc6d02881100"
+            ],
+            "index": "pypi",
+            "markers": "python_version >= '3.7'",
+            "version": "==0.16.0"
         },
         "geopandas": {
             "hashes": [
@@ -1505,7 +1514,7 @@
                 "sha256:f0dd071b95bbca244f4cb7f70b77d2ff3aaaba7fa16dc41f58d14854a6204e6c",
                 "sha256:f8c8b141ef9699ae777c6278b52c706b653bf15d135d302754f6b2e90eb30367"
             ],
-            "markers": "python_version == '3.11'",
+            "markers": "python_version >= '3.10'",
             "version": "==2.2.0"
         },
         "overrides": {
