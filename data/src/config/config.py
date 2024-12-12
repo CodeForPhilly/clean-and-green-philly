@@ -8,6 +8,9 @@ FORCE_RELOAD = False
 USE_CRS = "EPSG:2272"
 """ the standard geospatial code for Pennsylvania South (ftUS) """
 
+MAPBOX_TOKEN = os.environ.get("CFP_MAPBOX_TOKEN_UPLOADER")
+""" The location of the token for your mapbox account in your environment """
+
 log_level: int = logging.WARN
 """ overall log level for the project """
 

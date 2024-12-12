@@ -6,6 +6,7 @@ services:
     image: vacant-lots-proj:latest
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
+      - CFP_MAPBOX_TOKEN_UPLOADER
       - VACANT_LOTS_DB
       - CLEAN_GREEN_GOOGLE_KEY
       - PYTHONUNBUFFERED=1
