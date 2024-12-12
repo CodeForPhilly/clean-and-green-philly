@@ -1,3 +1,4 @@
+import { ExpressionName } from 'mapbox-gl';
 import React, { ReactElement, Dispatch, SetStateAction } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { FillLayerSpecification } from 'maplibre-gl';
@@ -24,7 +25,7 @@ function parseBlocks(
       if (value && Array.isArray(value) && value.length > 0) {
         const [name, ...args] = value;
 
-        switch (name as string) {
+        switch (name as ExpressionName) {
           case 'match': {
             const [getter, ...paneLabels] = args;
             const elements: ReactElement[] = [];
