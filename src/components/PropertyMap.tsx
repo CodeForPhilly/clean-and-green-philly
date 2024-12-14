@@ -44,7 +44,7 @@ import '@maptiler/geocoding-control/style.css';
 import { MapLegendControl } from './MapLegendControl';
 import { createPortal } from 'react-dom';
 import { Tooltip } from '@nextui-org/react';
-import { Info, X } from '@phosphor-icons/react';
+import { Info, MapPinArea, X } from '@phosphor-icons/react';
 import { centroid } from '@turf/centroid';
 import { Position } from 'geojson';
 import { toTitleCase } from '../utilities/toTitleCase';
@@ -416,6 +416,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
   };
 
   map?.on('load', () => {
+    console.log('Map loaded, checking layers...');
+
     if (!map.getLayer('vacant_properties_tiles_points')) {
       map.addLayer(layerStylePoints);
     }
