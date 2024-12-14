@@ -1,5 +1,5 @@
 'use client';
-
+import '../components/components-css/PropertyMap.css';
 import {
   FC,
   useEffect,
@@ -44,7 +44,7 @@ import '@maptiler/geocoding-control/style.css';
 import { MapLegendControl } from './MapLegendControl';
 import { createPortal } from 'react-dom';
 import { Tooltip } from '@nextui-org/react';
-import { Info, X } from '@phosphor-icons/react';
+import { Info, MapPinArea, X } from '@phosphor-icons/react';
 import { centroid } from '@turf/centroid';
 import { Position } from 'geojson';
 import { toTitleCase } from '../utilities/toTitleCase';
@@ -104,6 +104,21 @@ const layerStylePoints: CircleLayerSpecification = {
   },
 };
 
+const mapStyles = [
+  {
+    name: 'Data Visualization View',
+    url: `https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`,
+  },
+  {
+    name: 'Sattelite View',
+    url: `https://api.maptiler.com/maps/hybrid/style.json?key=${maptilerApiKey}`,
+  },
+  {
+    name: 'Street View',
+    url: `https://api.maptiler.com/maps/streets/style.json?key=${maptilerApiKey}`,
+  },
+];
+
 // info icon in legend summary
 let summaryInfo: ReactElement | null = null;
 
@@ -162,6 +177,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
   const [mapController, setMapController] = useState();
+  const [currentStyle, setCurrentStyle] = useState<number>(0);
   const [searchedProperty, setSearchedProperty] = useState<SearchedProperty>({
     coordinates: [-75.1628565788269, 39.97008211622267],
     address: '',
@@ -178,6 +194,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   const onMapClick = (e: MapMouseEvent) => {
     handleMapClick(e.lngLat);
+  };
+
+  const handleStyleChange = () => {
+    setCurrentStyle((prevStyle) => (prevStyle + 1) % mapStyles.length);
   };
 
   const moveMap = (targetPoint: LngLatLike) => {
@@ -373,11 +393,56 @@ const PropertyMap: FC<PropertyMapProps> = ({
     if (map) {
       updateFilter();
     }
-  }, [map, appFilter]);
+  }, [map, appFilter, currentStyle]);
 
   const changeCursor = (e: any, cursorType: 'pointer' | 'default') => {
     e.target.getCanvas().style.cursor = cursorType;
   };
+
+  map?.on('load', () => {
+    console.log('Map loaded, checking layers...');
+
+    if (!map.getLayer('vacant_properties_tiles_points')) {
+      map.addLayer(layerStylePoints);
+    }
+    if (!map.getLayer('vacant_properties_tiles_polygons')) {
+      map.addLayer(layerStylePolygon);
+    }
+
+    if (
+      map.getLayer('vacant_properties_tiles_points') &&
+      map.getLayer('vacant_properties_tiles_polygons')
+    ) {
+      console.log('Both layers found, applying filters...');
+
+      const mapFilter = Object.entries(appFilter).reduce(
+        (acc, [property, filterItem]) => {
+          if (filterItem.values.length) {
+            const thisFilterGroup: any = ['any'];
+            filterItem.values.forEach((item) => {
+              if (filterItem.useIndexOfFilter) {
+                thisFilterGroup.push([
+                  '>=',
+                  ['index-of', item, ['get', property]],
+                  0,
+                ]);
+              } else {
+                thisFilterGroup.push(['in', ['get', property], item]);
+              }
+            });
+            acc.push(thisFilterGroup);
+          }
+          return acc;
+        },
+        [] as any[]
+      );
+
+      map.setFilter('vacant_properties_tiles_points', ['all', ...mapFilter]);
+      map.setFilter('vacant_properties_tiles_polygons', ['all', ...mapFilter]);
+    } else {
+      console.warn('Layers not found, skipping filter application.');
+    }
+  });
 
   // map load
   return (
@@ -385,7 +450,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
       <Map
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
-        mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
+        mapStyle={mapStyles[currentStyle].url}
         onMouseEnter={(e) => changeCursor(e, 'pointer')}
         onMouseLeave={(e) => changeCursor(e, 'default')}
         onClick={onMapClick}
@@ -454,6 +519,13 @@ const PropertyMap: FC<PropertyMapProps> = ({
           />
         </div>
         <MapControls />
+        <button
+          className={'map-style-button'}
+          title={'Change Map Style'}
+          onClick={() => handleStyleChange()}
+        >
+          <MapPinArea />
+        </button>
         {popupInfo && (
           <Popup
             className="customized-map-popup"
