@@ -1,0 +1,16 @@
+.map-style-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  padding: 10px 15px;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.map-style-button:hover {
+  background: #e0e0e0;
+}
