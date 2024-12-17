@@ -13,29 +13,29 @@ matplotlib = "*"
 rasterio = "*"
 scikit-learn = "*"
 mapclassify = "*"
-black = "*"
 fiona = "*"
 esridump = "*"
 sqlalchemy = "*"
 psycopg2-binary = "*"
-geoalchemy2 = "*"
 mapbox = "*"
 google-cloud-storage = "*"
 pydantic = "==2.8.2"
-data-diff = {extras = ["postgresql"], version = "*"}
 future = "*"
 slack-sdk = "*"
-pytest = "*"
 networkx = "*"
 libpysal = "*"
 jenkspy = "*"
 pyarrow = "*"
 tqdm = "*"
+geoalchemy2 ="*"
+
+[dev-packages]
+black = "*"
+pytest = "*"
 vulture = "*"
 pylint = "*"
 radon = "*"
-
-[dev-packages]
+ruff = "*"
 
 [requires]
 python_version = "3.11"

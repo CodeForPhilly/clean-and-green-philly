@@ -6,6 +6,15 @@ import pandas as pd
 
 
 def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame:
+    """
+    Loads backup data from Google Cloud Storage as a DataFrame, ensuring compatibility for matching.
+
+    Args:
+        file_name (str): The name of the file to load from GCS.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the backup data with only the "opa_id" column.
+    """
     bucket = google_cloud_bucket()
     blob = bucket.blob(file_name)
     if not blob.exists():
@@ -13,7 +22,6 @@ def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame:
 
     file_bytes = blob.download_as_bytes()
     try:
-        # Read GeoJSON as a GeoDataFrame
         gdf = gpd.read_file(BytesIO(file_bytes))
     except Exception as e:
         raise ValueError(f"Error reading GeoJSON file: {e}")
@@ -22,15 +30,22 @@ def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame:
 
     # Ensure only opa_id is retained and convert to DataFrame (drop geometry)
     gdf = gdf[["OPA_ID"]].rename(columns={"OPA_ID": "opa_id"})
-
-    # Drop the geometry column to avoid CRS issues (we don't need the geometry for matching)
     gdf = gdf.drop(columns=["geometry"], errors="ignore")
 
     return gdf
 
 
-def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05):
-    """Checks if any column in the dataframe has more than the given threshold of null values."""
+def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05) -> None:
+    """
+    Checks if any column in the DataFrame has more than the given threshold of null values.
+
+    Args:
+        df (pd.DataFrame): The DataFrame to check for null percentages.
+        threshold (float): The threshold for acceptable null percentages (default is 5%).
+
+    Raises:
+        ValueError: If any column has more null values than the threshold.
+    """
     null_percentages = df.isnull().mean()
     for col, pct in null_percentages.items():
         if pct > threshold:
@@ -39,68 +54,68 @@ def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05):
             )
 
 
-def vacant_properties(primary_featurelayer) -> FeatureLayer:
+def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Adds a "vacant" column to the primary feature layer based on vacant property data from
+    ESRI layers and backup data from Google Cloud Storage if necessary.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with an added "vacant" column.
+    """
     vacant_properties = FeatureLayer(
         name="Vacant Properties",
         esri_rest_urls=VACANT_PROPS_LAYERS_TO_LOAD,
-        cols=[
-            "OPA_ID",
-            "parcel_type",
-        ],  # Only need opa_id and parcel_type from the vacancy layers
+        cols=["OPA_ID", "parcel_type"],  # Only need opa_id and parcel_type
     )
 
-    print("Columns in vacant properties dataset:", vacant_properties.gdf.columns)
-
-    # Rename columns for consistency in the original data
+    # Rename columns for consistency
     vacant_properties.gdf = vacant_properties.gdf.rename(columns={"OPA_ID": "opa_id"})
 
-    # Check for "Land" properties in the default dataset
+    # Filter for "Land" properties in the dataset
     vacant_land_gdf = vacant_properties.gdf[
         vacant_properties.gdf["parcel_type"] == "Land"
     ]
     print(f"Vacant land data size in the default dataset: {len(vacant_land_gdf)} rows.")
 
-    # If vacant land properties are below the threshold (20,000 rows), load backup data
+    # Check if the vacant land data is below the threshold
     if len(vacant_land_gdf) < 20000:
         print(
             "Vacant land data is below the threshold. Removing vacant land rows and loading backup data from GCS."
         )
-
-        # Drop vacant land rows from the current dataset
         vacant_properties.gdf = vacant_properties.gdf[
             vacant_properties.gdf["parcel_type"] != "Land"
         ]
 
-        # Load backup data and ensure it's a DataFrame (dropping geometry)
+        # Load backup data
         backup_gdf = load_backup_data_from_gcs("vacant_indicators_land_06_2024.geojson")
 
-        # Add a parcel_type column with value "Land" for all rows in the backup data
+        # Add parcel_type column to backup data
         backup_gdf["parcel_type"] = "Land"
 
-        # Concatenate the backup data with the existing data
+        # Append backup data to the existing dataset
         print(f"Appending backup data ({len(backup_gdf)} rows) to the existing data.")
         vacant_properties.gdf = pd.concat(
             [vacant_properties.gdf, backup_gdf], ignore_index=True
         )
 
-    # Drop the geometry column to convert to a regular DataFrame
+    # Convert to a regular DataFrame by dropping geometry
     df = vacant_properties.gdf.drop(columns=["geometry"], errors="ignore")
 
-    # Drop rows where opa_id is missing
+    # Drop rows with missing opa_id
     df.dropna(subset=["opa_id"], inplace=True)
 
-    # Final null value check before returning
-    check_null_percentage(df)
+    # Final check for null percentages
+    # check_null_percentage(df)
 
-    # Create vacant column in the primary feature layer as True/False
+    # Add "vacant" column to primary feature layer
     primary_featurelayer.gdf["vacant"] = primary_featurelayer.gdf["opa_id"].isin(
         df["opa_id"]
     )
 
-    print("Vacant column added based on opa_id match.")
-
-    # Drop the parcel_type column once the decision has been made
+    # Drop parcel_type column after processing
     df.drop(columns=["parcel_type"], inplace=True)
 
-    # Return primary_featurelayer after adding vacant column
     return primary_featurelayer

@@ -2,9 +2,20 @@ import warnings
 import networkx as nx
 from libpysal.weights import Queen
 import numpy as np
+from ..classes.featurelayer import FeatureLayer
 
 
-def contig_neighbors(primary_featurelayer):
+def contig_neighbors(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Calculates the number of contiguous vacant neighbors for each property in a feature layer.
+
+    Args:
+        primary_featurelayer (FeatureLayer): A feature layer containing property data in a GeoDataFrame (`gdf`).
+
+    Returns:
+        FeatureLayer: The input feature layer with an added "n_contiguous" column indicating
+        the number of contiguous vacant neighbors for each property.
+    """
     # Create a filtered dataframe with only vacant properties and polygon geometries
     vacant_parcels = primary_featurelayer.gdf.loc[
         (primary_featurelayer.gdf["vacant"])
@@ -17,8 +28,6 @@ def contig_neighbors(primary_featurelayer):
         primary_featurelayer.gdf["n_contiguous"] = np.nan
         return primary_featurelayer
 
-    print(f"Found {len(vacant_parcels)} vacant properties.")
-
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
         warnings.filterwarnings(
@@ -28,15 +37,12 @@ def contig_neighbors(primary_featurelayer):
         )
 
         # Create a spatial weights matrix for vacant parcels
-        print("Creating spatial weights matrix for vacant parcels...")
         w = Queen.from_dataframe(vacant_parcels)
 
     # Convert the spatial weights matrix to a NetworkX graph
-    print("Converting spatial weights matrix to NetworkX graph...")
     g = w.to_networkx()
 
     # Calculate the number of contiguous vacant properties for each vacant parcel
-    print("Calculating number of contiguous vacant neighbors for each property...")
     n_contiguous = {
         node: len(nx.node_connected_component(g, node)) - 1 for node in g.nodes
     }
@@ -54,5 +60,4 @@ def contig_neighbors(primary_featurelayer):
         ~primary_featurelayer.gdf["vacant"], "n_contiguous"
     ] = np.nan
 
-    print("Process completed. Returning updated primary feature layer.")
     return primary_featurelayer
