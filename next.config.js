@@ -6,7 +6,7 @@ module.exports = {
     PROJECT_ROOT: __dirname,
   },
   images: {
-    domains: ['storage.googleapis.com'],
+    domains: ['storage.googleapis.com', 'cloud.maptiler.com'],
   },
   async redirects() {
     return [

@@ -46,11 +46,12 @@ import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import { MapLegendControl } from './MapLegendControl';
 import { createPortal } from 'react-dom';
 import { Tooltip } from '@nextui-org/react';
-import { Info, MapPinArea, X } from '@phosphor-icons/react';
+import { Info, X } from '@phosphor-icons/react';
 import { centroid } from '@turf/centroid';
 import { Position } from 'geojson';
 import { toTitleCase } from '../utilities/toTitleCase';
 import { ThemeButton } from '../components/ThemeButton';
+import MapStyleSwitcher from './MapStyleSwitcher';
 
 type SearchedProperty = {
   coordinates: [number, number];
@@ -106,31 +107,31 @@ const layerStylePoints: CircleLayerSpecification = {
   },
 };
 
-const mapStyles = [
-  {
-    name: 'Data Visualization View',
+const mapStyles = {
+  DataVisualization: {
     url: `https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`,
   },
-  {
-    name: 'Sattelite View',
+  Hybrid: {
     url: `https://api.maptiler.com/maps/hybrid/style.json?key=${maptilerApiKey}`,
   },
-  {
-    name: 'Street View',
+  Street: {
     url: `https://api.maptiler.com/maps/streets/style.json?key=${maptilerApiKey}`,
   },
-];
+};
 
 // info icon in legend summary
 let summaryInfo: ReactElement | null = null;
 
-const MapControls = () => {
+const MapControls: React.FC<{
+  handleStyleChange: (styleName: string) => void;
+}> = ({ handleStyleChange }) => {
   const [smallScreenToggle, setSmallScreenToggle] = useState<boolean>(false);
   return (
     <>
       <NavigationControl showCompass={false} position="bottom-right" />
       <GeolocateControl position="bottom-right" />
       <ScaleControl />
+      <MapStyleSwitcher handleStyleChange={handleStyleChange} />
       {smallScreenToggle || window.innerWidth > 640 ? (
         <MapLegendControl
           position="bottom-left"
@@ -179,7 +180,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
-  const [currentStyle, setCurrentStyle] = useState<number>(0);
+  const [currentStyle, setCurrentStyle] = useState<string>(
+    'Data Visualization View'
+  );
   const geocoderRef = useRef<MapboxGeocoder | null>(null);
   const [searchedProperty, setSearchedProperty] = useState<SearchedProperty>({
     coordinates: [-75.1628565788269, 39.97008211622267],
@@ -199,8 +202,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
     handleMapClick(e.lngLat);
   };
 
-  const handleStyleChange = () => {
-    setCurrentStyle((prevStyle) => (prevStyle + 1) % mapStyles.length);
+  const handleStyleChange = (styleName: string) => {
+    setCurrentStyle(styleName);
   };
 
   const moveMap = (targetPoint: LngLatLike) => {
@@ -491,14 +494,13 @@ const PropertyMap: FC<PropertyMapProps> = ({
       console.warn('Layers not found, skipping filter application.');
     }
   });
-
   // map load
   return (
     <div className="customized-map relative max-sm:min-h-[calc(100svh-100px)] max-sm:max-h-[calc(100svh-100px) h-full overflow-auto w-full">
       <Map
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
-        mapStyle={mapStyles[currentStyle].url}
+        mapStyle={mapStyles[currentStyle]?.url}
         onMouseEnter={(e) => changeCursor(e, 'pointer')}
         onMouseLeave={(e) => changeCursor(e, 'default')}
         onClick={onMapClick}
@@ -506,7 +508,12 @@ const PropertyMap: FC<PropertyMapProps> = ({
         maxZoom={MAX_MAP_ZOOM}
         interactiveLayerIds={layers}
         onError={(e) => {
-          setHasLoadingError(true);
+          console.log(e);
+          if (
+            e.message ===
+            "The layer 'vacant_properties_tiles_polygons' does not exist in the map's style and cannot be queried for features."
+          )
+            setHasLoadingError(true);
         }}
         onLoad={(e) => {
           setMap(e.target);
@@ -516,14 +523,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }}
         onMoveEnd={handleSetFeatures}
       >
-        <MapControls />
-        <button
-          className={'map-style-button'}
-          title={'Change Map Style'}
-          onClick={() => handleStyleChange()}
-        >
-          <MapPinArea />
-        </button>
+        <MapControls handleStyleChange={handleStyleChange} />
         {popupInfo && (
           <Popup
             className="customized-map-popup"
