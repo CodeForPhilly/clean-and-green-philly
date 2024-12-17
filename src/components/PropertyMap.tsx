@@ -44,7 +44,7 @@ import '@maptiler/geocoding-control/style.css';
 import { MapLegendControl } from './MapLegendControl';
 import { createPortal } from 'react-dom';
 import { Tooltip } from '@nextui-org/react';
-import { Info, MapPinArea, X } from '@phosphor-icons/react';
+import { Info, X } from '@phosphor-icons/react';
 import { centroid } from '@turf/centroid';
 import { Position } from 'geojson';
 import { toTitleCase } from '../utilities/toTitleCase';
@@ -471,7 +471,12 @@ const PropertyMap: FC<PropertyMapProps> = ({
         maxZoom={MAX_MAP_ZOOM}
         interactiveLayerIds={layers}
         onError={(e) => {
-          setHasLoadingError(true);
+          console.log(e);
+          if (
+            e.message ===
+            "The layer 'vacant_properties_tiles_polygons' does not exist in the map's style and cannot be queried for features."
+          )
+            setHasLoadingError(true);
         }}
         onLoad={(e) => {
           setMap(e.target);

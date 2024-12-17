@@ -294,6 +294,7 @@ const MapPage = ({ params }: MapPageProps) => {
                 featuresInView={featuresInView}
                 display={currentView as 'detail' | 'list'}
                 loading={loading}
+                hasLoadingError={hasLoadingError}
                 selectedProperty={selectedProperty}
                 setSelectedProperty={setSelectedProperty}
                 setIsStreetViewModalOpen={setIsStreetViewModalOpen}
