@@ -42,7 +42,6 @@ def google_cloud_bucket() -> Bucket:
     return storage_client.bucket(bucket_name)
 
 
-bucket = google_cloud_bucket()
 
 
 class FeatureLayer:
@@ -61,6 +60,7 @@ class FeatureLayer:
         from_xy=False,
         use_wkb_geom_field=None,
         cols: list[str] = None,
+        bucket: Bucket = None
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -77,6 +77,7 @@ class FeatureLayer:
         self.psql_table = name.lower().replace(" ", "_")
         self.input_crs = "EPSG:4326" if not from_xy else USE_CRS
         self.use_wkb_geom_field = use_wkb_geom_field
+        self.bucket = bucket or google_cloud_bucket()
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
@@ -331,7 +332,7 @@ class FeatureLayer:
         df_no_geom.to_parquet(temp_parquet)
 
         # Upload Parquet to Google Cloud Storage
-        blob_parquet = bucket.blob(f"{tiles_file_id_prefix}.parquet")
+        blob_parquet = self.bucket.blob(f"{tiles_file_id_prefix}.parquet")
         try:
             blob_parquet.upload_from_filename(temp_parquet)
             parquet_size = os.stat(temp_parquet).st_size
@@ -400,7 +401,7 @@ class FeatureLayer:
 
         # Upload PMTiles to Google Cloud Storage
         for file in write_files:
-            blob = bucket.blob(file)
+            blob = self.bucket.blob(file)
             try:
                 blob.upload_from_filename(temp_merged_pmtiles)
                 print(f"PMTiles upload successful for {file}!")
