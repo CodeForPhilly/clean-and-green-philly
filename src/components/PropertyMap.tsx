@@ -8,6 +8,7 @@ import {
   Dispatch,
   SetStateAction,
   ReactElement,
+  ElementRef,
 } from 'react';
 import {
   maptilerApiKey,
@@ -444,7 +445,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }}
         onLoad={(e) => {
           setMap(e.target);
-          const attributionButton = document.querySelector(
+          const attributionButton: HTMLElement | null = document.querySelector(
             '.maplibregl-ctrl-attrib-button'
           );
           if (attributionButton) {
