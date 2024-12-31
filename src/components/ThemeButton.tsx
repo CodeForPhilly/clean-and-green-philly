@@ -97,6 +97,8 @@ const ThemeButton = forwardRef<Ref, ButtonProps>(function ThemeButton(
   return (
     <NextUIButton
       disableRipple={isDisabled}
+      aria-disabled={isDisabled}
+      aria-current
       onPress={isDisabled ? undefined : onPress}
       isIconOnly={iconOnly}
       size="md"
