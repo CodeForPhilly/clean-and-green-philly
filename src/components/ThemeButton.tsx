@@ -7,7 +7,6 @@ type ButtonProps = Omit<NextUIButtonProps, 'color'> & {
   label?: string | React.ReactNode;
   color?: 'primary' | 'secondary' | 'tertiary';
   isSelected?: boolean;
-  ariaCurrent?: boolean;
 };
 
 type Ref = HTMLButtonElement;
@@ -94,18 +93,17 @@ const ThemeButton = forwardRef<Ref, ButtonProps>(function ThemeButton(
     ? `cursor-not-allowed ${removedTransitionStyles}`
     : '';
   const iconStyles = 'w-5 h-5 text-xl';
-  const ariaCurrent = isSelected ? { 'aria-current': 'true' } : {};
 
   return (
     <NextUIButton
       disableRipple={isDisabled}
+      aria-disabled={isDisabled}
+      aria-current
       onPress={isDisabled ? undefined : onPress}
       isIconOnly={iconOnly}
       size="md"
       className={`${basedStyles}  ${colorStyles} ${padding} ${disabledStyles} ${className}`}
       ref={ref}
-      aria-disabled={isDisabled}
-      ariaCurrent
       startContent={
         startContent ? (
           <span className={iconStyles}>{startContent}</span>
