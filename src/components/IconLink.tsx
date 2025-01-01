@@ -17,7 +17,11 @@ function IconLink({ icon, text, href }: IconLinkProps) {
       isActive={pathname === href}
       aria-current={pathname === href ? 'page' : undefined}
       key={text}
-      className={pathname === href ? 'active-state-nav' : ''}
+      className={
+        pathname === href
+          ? 'active-state-nav flex items-center justify-center'
+          : ''
+      }
     >
       <Button
         as={Link}
@@ -27,7 +31,9 @@ function IconLink({ icon, text, href }: IconLinkProps) {
         // *only include if there will be no text link present* aria-label={text}
         startContent={<div className="linkIcon">{icon}</div>}
         className={
-          pathname === href ? 'active-state-nav' : 'iconLink bg-color-none'
+          pathname === href
+            ? 'active-state-nav gap-0'
+            : 'iconLink bg-color-none gap-0'
         }
         // className="flex text-gray-900 items-center active:bg-[#E9FFE5] active:text-green-700 focus:text-green-700 focus:bg-[#E9FFE5] hover:gray-100 bg-color-none hover:bg-gray-10"
       >

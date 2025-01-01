@@ -44,7 +44,7 @@ const Header = () => (
         as="nav"
         aria-label="primary"
       >
-        <ul className="flex flex-row">
+        <ul className="flex flex-row items-center justify-center">
           <IconLink
             icon={<PiBinoculars className="h-6 w-6" />}
             text="Find Properties"

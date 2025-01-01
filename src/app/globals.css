@@ -153,7 +153,7 @@
   }
 
   .linkIcon {
-    @apply w-5 h-5 mr-2;
+    @apply mr-2;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
@@ -198,7 +198,8 @@
 }
 
 #main .maplibregl-ctrl-bottom-left {
-  left: 20px;
+  left: 10px;
+  padding-bottom: 10px;
   pointer-events: bounding-box;
 }
 
