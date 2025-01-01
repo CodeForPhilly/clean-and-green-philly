@@ -8,6 +8,7 @@ import {
   Dispatch,
   SetStateAction,
   ReactElement,
+  ElementRef,
 } from 'react';
 import {
   maptilerApiKey,
@@ -115,7 +116,6 @@ const MapControls = () => {
     <>
       <NavigationControl showCompass={false} position="bottom-right" />
       <GeolocateControl position="bottom-right" />
-      <ScaleControl />
       {smallScreenToggle || window.innerWidth > 640 ? (
         <MapLegendControl
           position="bottom-left"
@@ -445,6 +445,14 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }}
         onLoad={(e) => {
           setMap(e.target);
+          const attributionButton: HTMLElement | null = document.querySelector(
+            '.maplibregl-ctrl-attrib-button'
+          );
+          if (attributionButton) {
+            attributionButton.click();
+          } else {
+            console.warn('Attribution button not found.');
+          }
         }}
         onSourceData={(e) => {
           handleSetFeatures(e);

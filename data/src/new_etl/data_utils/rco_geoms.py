@@ -5,7 +5,18 @@ import pandas as pd
 pd.set_option("future.no_silent_downcasting", True)
 
 
-def rco_geoms(primary_featurelayer):
+def rco_geoms(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Adds Registered Community Organization (RCO) information to the primary feature layer
+    by performing a spatial join and aggregating RCO data.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with added RCO-related columns,
+        including aggregated RCO information and names.
+    """
     rco_geoms = FeatureLayer(name="RCOs", esri_rest_urls=RCOS_LAYERS_TO_LOAD)
 
     rco_aggregate_cols = [
@@ -17,6 +28,7 @@ def rco_geoms(primary_featurelayer):
 
     rco_use_cols = ["rco_info", "rco_names", "geometry"]
 
+    # Aggregate RCO information into a single column
     rco_geoms.gdf["rco_info"] = rco_geoms.gdf[rco_aggregate_cols].apply(
         lambda x: "; ".join(map(str, x)), axis=1
     )
@@ -26,17 +38,20 @@ def rco_geoms(primary_featurelayer):
     rco_geoms.gdf = rco_geoms.gdf[rco_use_cols].copy()
     rco_geoms.rebuild_gdf()
 
+    # Perform spatial join
     primary_featurelayer.spatial_join(rco_geoms)
 
     group_columns = [
         col for col in primary_featurelayer.gdf.columns if col not in rco_use_cols
     ]
 
+    # Ensure columns are appropriately filled and cast
     for col in group_columns:
         primary_featurelayer.gdf[col] = (
             primary_featurelayer.gdf[col].fillna("").infer_objects(copy=False)
         )
 
+    # Group by non-RCO columns and aggregate RCO data
     primary_featurelayer.gdf = (
         primary_featurelayer.gdf.groupby(group_columns)
         .agg(

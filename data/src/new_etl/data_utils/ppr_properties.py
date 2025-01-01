@@ -64,7 +64,7 @@ def ppr_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     # Count rows where the garden is identified and 'vacant' is currently True
     count_updated = primary_featurelayer.gdf.loc[
-        mask & (primary_featurelayer.gdf["vacant"] == True)
+        mask & primary_featurelayer.gdf["vacant"]
     ].shape[0]
 
     # Update the 'vacant' column to False for identified PPR properties
