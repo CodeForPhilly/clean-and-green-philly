@@ -33,6 +33,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
       <SelectFilter
         aria-describedby={aria_describedby_label}
         items={options}
+        searchable
         variant="flat"
         size="md"
         radius="md"
