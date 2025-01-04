@@ -427,9 +427,11 @@ const PropertyMap: FC<PropertyMapProps> = ({
             bbox={[-75.288283, 39.864114, -74.945063, 40.140129]} // Bounding box for Philadelphia
             markerOnSelected={false}
             filter={(feature: any) => {
-              return feature.context.some((i: any) => {
-                return i.text.includes('Philadelphia');
-              });
+              if (feature.place_type.includes('address')) {
+                return feature.context.some((i: any) => {
+                  return i.text.includes('Philadelphia');
+                });
+              }
             }}
             proximity={[
               {
