@@ -397,6 +397,14 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }}
         onLoad={(e) => {
           setMap(e.target);
+          const attributionButton: HTMLElement | null = document.querySelector(
+            '.maplibregl-ctrl-attrib-button'
+          );
+          if (attributionButton) {
+            attributionButton.click();
+          } else {
+            console.warn('Attribution button not found.');
+          }
         }}
         onSourceData={(e) => {
           handleSetFeatures(e);
