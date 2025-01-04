@@ -4,7 +4,7 @@ import {
   FC,
   useEffect,
   useState,
-  useRef,
+  // useRef,
   Dispatch,
   SetStateAction,
   ReactElement,
@@ -20,7 +20,6 @@ import Map, {
   Layer,
   Popup,
   NavigationControl,
-  ScaleControl,
   GeolocateControl,
   ViewState,
 } from 'react-map-gl/maplibre';
@@ -32,7 +31,7 @@ import maplibregl, {
   FillLayerSpecification,
   CircleLayerSpecification,
   DataDrivenPropertyValueSpecification,
-  IControl,
+  // IControl,
   LngLatLike,
   MapMouseEvent,
   LngLat,
@@ -305,14 +304,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
       setMapController(createMapLibreGlMapController(map, maplibregl) as any);
     }
-
-    return () => {
-      // Remove Geocoder
-      // if (map && geocoderRef.current) {
-      //   map.removeControl(geocoderRef.current as unknown as IControl);
-      //   geocoderRef.current = null;
-      // }
-    };
   }, [map, setSelectedProperty]);
 
   useEffect(() => {
@@ -435,7 +426,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
             }}
             proximity={[
               {
-                // type: 'map-center', // THIS CAUSED SOME SEARCHES FOR PHILLY ADDRESSES TO FAIL
                 type: 'fixed',
                 coordinates: [-75.1652, 39.9526], // Approxiate center of Philadelphia
               },
