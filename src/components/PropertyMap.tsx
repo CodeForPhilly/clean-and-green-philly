@@ -332,6 +332,14 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
       setMapController(createMapLibreGlMapController(map, maplibregl) as any);
     }
+
+    return () => {
+      // Remove Geocoder
+      // if (map && geocoderRef.current) {
+      //   map.removeControl(geocoderRef.current as unknown as IControl);
+      //   geocoderRef.current = null;
+      // }
+    };
   }, [map, setSelectedProperty]);
 
   useEffect(() => {
@@ -464,13 +472,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
           setHasLoadingError(true);
         }}
         onLoad={(e) => {
-          const map = e.target;
-          setMap(map);
-          map.on('sourcedata', () => {
-            if (map.getLayer('vacant_properties_tiles_polygons')) {
-              setHasLoadingError(false);
-            }
-          });
+          setMap(e.target);
         }}
         onSourceData={(e) => {
           handleSetFeatures(e);
@@ -478,6 +480,45 @@ const PropertyMap: FC<PropertyMapProps> = ({
         onMoveEnd={handleSetFeatures}
       >
         <MapControls handleStyleChange={handleStyleChange} />
+        <div
+          className="geocoding"
+          style={{
+            position: 'absolute',
+            top: '16px',
+            right: '16px',
+          }}
+        >
+          <GeocodingControl
+            apiKey={maptilerApiKey}
+            // COMMENT OUT LINE BELOW; OTHERWISE IT WILL CAUSE THE NEXTJS WEB APPLICATION TO CRASH
+            // mapController={mapController}
+            bbox={[-75.288283, 39.864114, -74.945063, 40.140129]} // Bounding box for Philadelphia
+            markerOnSelected={false}
+            filter={(feature: any) => {
+              return feature.context.some((i: any) => {
+                return i.text.includes('Philadelphia');
+              });
+            }}
+            proximity={[
+              {
+                type: 'map-center',
+              },
+            ]}
+            onPick={(feature) => {
+              if (feature) {
+                const address = feature.place_name.split(',')[0];
+                setSelectedProperty(null);
+                setSearchedProperty({
+                  coordinates: feature.center,
+                  address: address,
+                });
+                map?.easeTo({
+                  center: feature.center,
+                });
+              }
+            }}
+          />
+        </div>
         {popupInfo && (
           <Popup
             className="customized-map-popup"
