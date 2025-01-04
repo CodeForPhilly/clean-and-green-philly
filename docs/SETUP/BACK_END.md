@@ -123,10 +123,12 @@ docker compose down postgres
 We use Postgres extensions for GIS and time series functionality not included in base Postgres.
 
 #### PostGIS
+
 [PostGIS](https://postgis.net/) is an open-source extension for PostgreSQL that adds support for spatial and geographic data types and functions. It enables the storage, querying, and analysis of location-based data directly within the database, replacing the need for many external tools and libraries.
 
 #### Timescale DB
-[TimescaleDB](https://docs.timescale.com/) is an open-source relational database built on PostgreSQL, optimized for handling time-series data efficiently. 
+
+[TimescaleDB](https://docs.timescale.com/) is an open-source relational database built on PostgreSQL, optimized for handling time-series data efficiently.
 
 At the core of TimescaleDB are hypertables, which partition data across time for efficient querying. Hypertables behave like normal Postgres tables, but are optimized for querying data based on timestamps. For our use case, hypertables simplify data management by automatically creating monthly partitions, replacing our previous method of manually creating a separate schema for each month.
 
