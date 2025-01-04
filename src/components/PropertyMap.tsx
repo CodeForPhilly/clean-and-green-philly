@@ -433,7 +433,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
             }}
             proximity={[
               {
-                type: 'map-center',
+                // type: 'map-center', // THIS CAUSED SOME SEARCHES FOR PHILLY ADDRESSES TO FAIL
+                type: 'fixed',
+                coordinates: [-75.1652, 39.9526], // Approxiate center of Philadelphia
               },
             ]}
             onPick={(feature) => {
