@@ -105,7 +105,13 @@ const layerStylePoints: CircleLayerSpecification = {
   },
 };
 
-const mapStyles = {
+type MapStyle = {
+  url: string;
+};
+
+type MapStyles = Record<string, MapStyle>;
+
+const mapStyles: MapStyles = {
   DataVisualization: {
     url: `https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`,
   },
@@ -461,21 +467,13 @@ const PropertyMap: FC<PropertyMapProps> = ({
         onError={(e) => {
           console.log(e);
           if (
-            e.message ===
+            e.error.cause ===
             "The layer 'vacant_properties_tiles_polygons' does not exist in the map's style and cannot be queried for features."
           )
             setHasLoadingError(true);
         }}
         onLoad={(e) => {
           setMap(e.target);
-          const attributionButton: HTMLElement | null = document.querySelector(
-            '.maplibregl-ctrl-attrib-button'
-          );
-          if (attributionButton) {
-            attributionButton.click();
-          } else {
-            console.warn('Attribution button not found.');
-          }
         }}
         onSourceData={(e) => {
           handleSetFeatures(e);

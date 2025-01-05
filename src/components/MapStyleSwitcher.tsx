@@ -14,7 +14,14 @@ const MapStyleSwitcher: React.FC<MapStyleSwitcherProps> = ({
   useEffect(() => {
     console.log('MapStyleSwitcher rendered', handleStyleChange);
   });
-  const baseMaps = {
+  type BaseMap = {
+    name: string;
+    img: string;
+  };
+
+  type BaseMaps = Record<string, BaseMap>;
+
+  const baseMaps: BaseMaps = {
     STREETS: {
       name: 'Street',
       img: 'https://cloud.maptiler.com/static/img/maps/streets.png',
@@ -37,7 +44,7 @@ const MapStyleSwitcher: React.FC<MapStyleSwitcherProps> = ({
 
   return (
     <div
-      className="relative maplibregl-ctrl maplibregl-ctrl-basemaps"
+      className="relative maplibregl-ctrl maplibregl-ctrl-basemaps p-2"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
@@ -51,7 +58,7 @@ const MapStyleSwitcher: React.FC<MapStyleSwitcherProps> = ({
       />
 
       <div
-        className={`absolute flex flex-row items-center transition-transform duration-300 ${
+        className={`absolute flex flex-row items-center pl-2 transition-transform duration-300 ${
           isHovered
             ? 'translate-x-20 opacity-100'
             : 'translate-x-0 opacity-0 pointer-events-none'
