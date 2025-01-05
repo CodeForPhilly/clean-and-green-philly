@@ -11,7 +11,6 @@ const MapStyleSwitcher: React.FC<MapStyleSwitcherProps> = ({
 }) => {
   const [activeStyle, setActiveStyle] = useState('DATAVIZ');
   const [isHovered, setIsHovered] = useState(false);
-
   type BaseMap = {
     name: string;
     img: string;

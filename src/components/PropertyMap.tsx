@@ -473,7 +473,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         onError={(e) => {
           console.log(e);
           if (
-            e.message ===
+            e.error.cause ===
             "The layer 'vacant_properties_tiles_polygons' does not exist in the map's style and cannot be queried for features."
           )
             setHasLoadingError(true);
