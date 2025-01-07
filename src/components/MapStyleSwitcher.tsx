@@ -11,9 +11,7 @@ const MapStyleSwitcher: React.FC<MapStyleSwitcherProps> = ({
 }) => {
   const [activeStyle, setActiveStyle] = useState('DATAVIZ');
   const [isHovered, setIsHovered] = useState(false);
-  useEffect(() => {
-    console.log('MapStyleSwitcher rendered', handleStyleChange);
-  });
+
   type BaseMap = {
     name: string;
     img: string;
@@ -38,7 +36,6 @@ const MapStyleSwitcher: React.FC<MapStyleSwitcherProps> = ({
 
   const onClick = (key: string) => {
     setActiveStyle(key);
-    console.log(handleStyleChange);
     handleStyleChange(baseMaps[key].name);
   };
 

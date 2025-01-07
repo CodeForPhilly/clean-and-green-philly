@@ -408,8 +408,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
   };
 
   map?.on('load', () => {
-    console.log('Map loaded, checking layers...');
-
     if (!map.getLayer('vacant_properties_tiles_points')) {
       map.addLayer(layerStylePoints);
     }
@@ -421,8 +419,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
       map.getLayer('vacant_properties_tiles_points') &&
       map.getLayer('vacant_properties_tiles_polygons')
     ) {
-      console.log('Both layers found, applying filters...');
-
       const mapFilter = Object.entries(appFilter).reduce(
         (acc, [property, filterItem]) => {
           if (filterItem.values.length) {
@@ -465,7 +461,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
         maxZoom={MAX_MAP_ZOOM}
         interactiveLayerIds={layers}
         onError={(e) => {
-          console.log(e);
           if (
             e.error.cause ===
             "The layer 'vacant_properties_tiles_polygons' does not exist in the map's style and cannot be queried for features."
