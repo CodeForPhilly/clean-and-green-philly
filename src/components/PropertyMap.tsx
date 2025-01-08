@@ -461,14 +461,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
         maxZoom={MAX_MAP_ZOOM}
         interactiveLayerIds={layers}
         onError={(e) => {
-          if (
-            e.error.cause ===
-            "The layer 'vacant_properties_tiles_polygons' does not exist in the map's style and cannot be queried for features."
-          )
-            setHasLoadingError(true);
+          setHasLoadingError(true);
         }}
         onLoad={(e) => {
-          setMap(e.target);
+          const map = e.target;
+          setMap(map);
+          map.on('sourcedata', () => {
+            if (map.getLayer('vacant_properties_tiles_polygons')) {
+              setHasLoadingError(false);
+            }
+          });
         }}
         onSourceData={(e) => {
           handleSetFeatures(e);
