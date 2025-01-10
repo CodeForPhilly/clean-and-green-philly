@@ -418,8 +418,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
   };
 
   map?.on('load', () => {
-    console.log('Map loaded, checking layers...');
-
     if (!map.getLayer('vacant_properties_tiles_points')) {
       map.addLayer(layerStylePoints);
     }
@@ -455,8 +453,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
       map.setFilter('vacant_properties_tiles_points', ['all', ...mapFilter]);
       map.setFilter('vacant_properties_tiles_polygons', ['all', ...mapFilter]);
-    } else {
-      console.warn('Layers not found, skipping filter application.');
     }
   });
   // map load
@@ -473,18 +469,25 @@ const PropertyMap: FC<PropertyMapProps> = ({
         maxZoom={MAX_MAP_ZOOM}
         interactiveLayerIds={layers}
         onError={(e) => {
-          console.log(e);
-          if (
-            e.error.cause ===
-            "The layer 'vacant_properties_tiles_polygons' does not exist in the map's style and cannot be queried for features."
-          )
-            setHasLoadingError(true);
+          setHasLoadingError(true);
         }}
         onLoad={(e) => {
           setMap(e.target);
         }}
         onSourceData={(e) => {
           handleSetFeatures(e);
+        }}
+        onStyleData={(e) => {
+          const layerIds = e.target
+            .getStyle()
+            .layers.map((layer: any) => layer.id);
+          const layersApplied = layers.every((layer) =>
+            layerIds.includes(layer)
+          );
+          if (layersApplied) {
+            setHasLoadingError(false); // Reset loading error after style change
+            console.log('Layers successfully applied after style change.');
+          }
         }}
         onMoveEnd={handleSetFeatures}
       >
