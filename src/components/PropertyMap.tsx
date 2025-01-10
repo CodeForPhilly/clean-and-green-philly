@@ -14,7 +14,6 @@ import {
   useStagingTiles,
   googleCloudBucketName,
 } from '../config/config';
-import { subZoning } from './Filters/filterOptions';
 import { useFilter } from '@/context/FilterContext';
 import Map, {
   Source,
@@ -349,18 +348,14 @@ const PropertyMap: FC<PropertyMapProps> = ({
           if (filterItem.values.length) {
             const thisFilterGroup: any = ['any'];
             filterItem.values.forEach((item) => {
-              if (Object.keys(subZoning).includes(item)) {
-                subZoning[item].forEach((subZone: string) => {
-                  if (filterItem) {
-                    thisFilterGroup.push([
-                      '>=',
-                      ['index-of', subZone, ['get', property]],
-                      0,
-                    ]);
-                  } else {
-                    thisFilterGroup.push(['in', ['get', property], subZone]);
-                  }
-                });
+              if (filterItem.useIndexOfFilter) {
+                thisFilterGroup.push([
+                  '>=',
+                  ['index-of', item, ['get', property]],
+                  0,
+                ]);
+              } else {
+                thisFilterGroup.push(['in', ['get', property], item]);
               }
             });
 
