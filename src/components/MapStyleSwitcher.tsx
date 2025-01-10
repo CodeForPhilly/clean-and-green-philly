@@ -40,7 +40,7 @@ const MapStyleSwitcher: React.FC<MapStyleSwitcherProps> = ({
 
   return (
     <div
-      className="relative maplibregl-ctrl maplibregl-ctrl-basemaps p-2"
+      className="relative maplibregl-ctrl maplibregl-ctrl-basemaps p-2 w-1/5"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
