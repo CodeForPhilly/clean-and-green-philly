@@ -485,8 +485,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
             layerIds.includes(layer)
           );
           if (layersApplied) {
-            setHasLoadingError(false); // Reset loading error after style change
-            console.log('Layers successfully applied after style change.');
+            setHasLoadingError(false);
           }
         }}
         onMoveEnd={handleSetFeatures}
