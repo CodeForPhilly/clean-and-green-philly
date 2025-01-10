@@ -25,6 +25,7 @@ import Map, {
 } from 'react-map-gl/maplibre';
 import maplibregl, {
   Map as MaplibreMap,
+  IControl,
   PointLike,
   MapGeoJSONFeature,
   ColorSpecification,
@@ -183,6 +184,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
+  const [mapController, setMapController] = useState<IControl>();
   const [currentStyle, setCurrentStyle] = useState<string>(
     'Data Visualization View'
   );
