@@ -429,7 +429,6 @@ export const zoning: string[] = [
 
 export const subZoning: Record<string, string[]> = {
   CA: ['CA-1', 'CA-2'],
-  CAX: ['CAX'],
   CMX: ['CMX-1', 'CMX-2', 'CMX-2.5', 'CMX-3', 'CMX-4', 'CMX-5'],
   I: ['I-1', 'I-2', 'I-3', 'I-P'],
   ICMX: ['ICMX'],
