@@ -436,7 +436,7 @@ export const subZoning: Record<string, string[]> = {
   IRMX: ['IRMX'],
   RM: ['RM-1', 'RM-2', 'RM-3', 'RM-4'],
   RMX: ['RMX-1', 'RMX-2', 'RMX-3'],
-  RSA: ['RSA-1', 'RSA-2', 'RSA-3', 'RSA-4', 'RSA-5'],
+  RSA: ['RSA-1', 'RSA-2', 'RSA-3', 'RSA-4', 'RSA-5', 'RSA-6'],
   RSD: ['RSD-1', 'RSD-2', 'RSD-3'],
   RTA: ['RTA-1'],
   SP: ['SP-AIR', 'SP-INS', 'SP-PO-A', 'SP-STA'],
