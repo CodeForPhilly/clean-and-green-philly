@@ -334,14 +334,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
       setMapController(createMapLibreGlMapController(map, maplibregl) as any);
     }
-
-    return () => {
-      // Remove Geocoder
-      // if (map && geocoderRef.current) {
-      //   map.removeControl(geocoderRef.current as unknown as IControl);
-      //   geocoderRef.current = null;
-      // }
-    };
   }, [map, setSelectedProperty]);
 
   useEffect(() => {
@@ -417,44 +409,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
     e.target.getCanvas().style.cursor = cursorType;
   };
 
-  map?.on('load', () => {
-    if (!map.getLayer('vacant_properties_tiles_points')) {
-      map.addLayer(layerStylePoints);
-    }
-    if (!map.getLayer('vacant_properties_tiles_polygons')) {
-      map.addLayer(layerStylePolygon);
-    }
-
-    if (
-      map.getLayer('vacant_properties_tiles_points') &&
-      map.getLayer('vacant_properties_tiles_polygons')
-    ) {
-      const mapFilter = Object.entries(appFilter).reduce(
-        (acc, [property, filterItem]) => {
-          if (filterItem.values.length) {
-            const thisFilterGroup: any = ['any'];
-            filterItem.values.forEach((item) => {
-              if (filterItem.useIndexOfFilter) {
-                thisFilterGroup.push([
-                  '>=',
-                  ['index-of', item, ['get', property]],
-                  0,
-                ]);
-              } else {
-                thisFilterGroup.push(['in', ['get', property], item]);
-              }
-            });
-            acc.push(thisFilterGroup);
-          }
-          return acc;
-        },
-        [] as any[]
-      );
-
-      map.setFilter('vacant_properties_tiles_points', ['all', ...mapFilter]);
-      map.setFilter('vacant_properties_tiles_polygons', ['all', ...mapFilter]);
-    }
-  });
   // map load
   return (
     <div className="customized-map relative max-sm:min-h-[calc(100svh-100px)] max-sm:max-h-[calc(100svh-100px) h-full overflow-auto w-full">
@@ -473,6 +427,14 @@ const PropertyMap: FC<PropertyMapProps> = ({
         }}
         onLoad={(e) => {
           setMap(e.target);
+          const attributionButton: HTMLElement | null = document.querySelector(
+            '.maplibregl-ctrl-attrib-button'
+          );
+          if (attributionButton) {
+            attributionButton.click();
+          } else {
+            console.warn('Attribution button not found.');
+          }
         }}
         onSourceData={(e) => {
           handleSetFeatures(e);
@@ -506,13 +468,16 @@ const PropertyMap: FC<PropertyMapProps> = ({
             bbox={[-75.288283, 39.864114, -74.945063, 40.140129]} // Bounding box for Philadelphia
             markerOnSelected={false}
             filter={(feature: any) => {
-              return feature.context.some((i: any) => {
-                return i.text.includes('Philadelphia');
-              });
+              if (feature.place_type.includes('address')) {
+                return feature.context.some((i: any) => {
+                  return i.text.includes('Philadelphia');
+                });
+              }
             }}
             proximity={[
               {
-                type: 'map-center',
+                type: 'fixed',
+                coordinates: [-75.1652, 39.9526], // Approxiate center of Philadelphia
               },
             ]}
             onPick={(feature) => {
