@@ -52,6 +52,12 @@ import { toTitleCase } from '../utilities/toTitleCase';
 import { ThemeButton } from '../components/ThemeButton';
 import MapStyleSwitcher from './MapStyleSwitcher';
 
+type MapStyle = {
+  url: string;
+};
+
+type MapStyles = Record<string, MapStyle>;
+
 type SearchedProperty = {
   coordinates: [number, number];
   address: string;
@@ -105,12 +111,6 @@ const layerStylePoints: CircleLayerSpecification = {
     name: 'Priority',
   },
 };
-
-type MapStyle = {
-  url: string;
-};
-
-type MapStyles = Record<string, MapStyle>;
 
 const mapStyles: MapStyles = {
   DataVisualization: {
