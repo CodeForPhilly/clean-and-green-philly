@@ -19,10 +19,6 @@ const MapStyleSwitcher: React.FC<MapStyleSwitcherProps> = ({
   type BaseMaps = Record<string, BaseMap>;
 
   const baseMaps: BaseMaps = {
-    STREETS: {
-      name: 'Street',
-      img: 'https://cloud.maptiler.com/static/img/maps/streets.png',
-    },
     DATAVIZ: {
       name: 'DataVisualization',
       img: 'https://cloud.maptiler.com/static/img/maps/dataviz.png',
@@ -30,6 +26,10 @@ const MapStyleSwitcher: React.FC<MapStyleSwitcherProps> = ({
     HYBRID: {
       name: 'Hybrid',
       img: 'https://cloud.maptiler.com/static/img/maps/hybrid.png',
+    },
+    STREETS: {
+      name: 'Street',
+      img: 'https://cloud.maptiler.com/static/img/maps/streets.png',
     },
   };
 
