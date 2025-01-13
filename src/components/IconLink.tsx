@@ -32,8 +32,8 @@ function IconLink({ icon, text, href }: IconLinkProps) {
         startContent={<div className="linkIcon">{icon}</div>}
         className={
           pathname === href
-            ? 'active-state-nav gap-0'
-            : 'iconLink bg-color-none gap-0'
+            ? 'active-state-nav gap-0 w-full justify-start'
+            : 'iconLink bg-color-none gap-0 w-full justify-start'
         }
         // className="flex text-gray-900 items-center active:bg-[#E9FFE5] active:text-green-700 focus:text-green-700 focus:bg-[#E9FFE5] hover:gray-100 bg-color-none hover:bg-gray-10"
       >
