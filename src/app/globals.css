@@ -4,8 +4,7 @@
 
 @font-face {
   font-family: 'HK Grotesk';
-  src:
-    url('/fonts/hkgrotesk-bold-webfont.woff2') format('woff2'),
+  src: url('/fonts/hkgrotesk-bold-webfont.woff2') format('woff2'),
     url('/fonts/hkgrotesk-bold-webfont.woff') format('woff');
   font-weight: bold;
   font-style: normal;
@@ -13,8 +12,7 @@
 
 @font-face {
   font-family: 'HK Grotesk';
-  src:
-    url('/fonts/hkgrotesk-extrabold-webfont.woff2') format('woff2'),
+  src: url('/fonts/hkgrotesk-extrabold-webfont.woff2') format('woff2'),
     url('/fonts/hkgrotesk-extrabold-webfont.woff') format('woff');
   font-weight: 800;
   font-style: normal;
@@ -22,8 +20,7 @@
 
 @font-face {
   font-family: 'HK Grotesk';
-  src:
-    url('/fonts/hkgrotesk-regular-webfont.woff2') format('woff2'),
+  src: url('/fonts/hkgrotesk-regular-webfont.woff2') format('woff2'),
     url('/fonts/hkgrotesk-regular-webfont.woff') format('woff');
   font-weight: normal;
   font-style: normal;
@@ -147,7 +144,7 @@
   /* added webkit transform to remove icon movement in safari */
 
   .iconLink {
-    @apply text-gray-900 items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
+    @apply text-gray-900 items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
