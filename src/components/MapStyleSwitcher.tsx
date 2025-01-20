@@ -33,6 +33,10 @@ const MapStyleSwitcher: React.FC<MapStyleSwitcherProps> = ({
     },
   };
 
+  useEffect(() => {
+    handleStyleChange(baseMaps[activeStyle].name);
+  }, [activeStyle]);
+
   const onClick = (key: string) => {
     setActiveStyle(key);
     handleStyleChange(baseMaps[key].name);
