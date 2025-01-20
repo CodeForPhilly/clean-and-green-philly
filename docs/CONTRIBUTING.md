@@ -22,11 +22,12 @@ To ensure smooth contributions to the Clean & Green Philly project, please follo
   - Clone your fork of the repository to your local machine using `git clone`
   - Keep your fork up to date with the original repository by following the instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo#keep-your-fork-synced)
 - [ ] **Set up your local environment**: Follow instructions in the [SETUP](/docs/SETUP) folder
+- [ ] **Make sure you're up-to-date with the `staging` branch** To maintain repo organization and protection, merges to main are not allowed. All changes must be made through pull requests to the `staging` branch.
 - [ ] **Create a new branch**:
   - Name it `<github-username>/<issue-number>-<kebab-case-description>`
   - Example: `vimusds/1069-fix-territory-on-mobile`
 - [ ] **Work on the issue**: Make your changes, commit them, and push to your branch
-- [ ] **Open a Pull Request (PR)**: Use the provided template, tag relevant issues, and provide testing instructions
+- [ ] **Open a Pull Request (PR)**: Use the provided template, tag relevant issues, and provide testing instructions. Make sure the base branch of the PR is set to `base: staging`.
 - [ ] **Ensure all checks pass**: Fix any errors and re-check
 - [ ] **Tag reviewers**: Find appropriate reviewers from the [CODEOWNERS](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/.github/CODEOWNERS) file
 - [ ] **Close the issue**: Once your PR is merged, comment on the issue to close it, tagging the relevant reviewer(s)
