@@ -4,7 +4,12 @@ import { FC } from 'react';
 import { PiX } from 'react-icons/pi';
 import { ThemeButton } from './ThemeButton';
 import { BarClickOptions } from '@/app/find-properties/[[...opa_id]]/page';
-import { rcos, neighborhoods, zoning } from './Filters/filterOptions';
+import {
+  rcos,
+  neighborhoods,
+  zoning,
+  marketValues,
+} from './Filters/filterOptions';
 import DimensionFilter from './Filters/DimensionFilter';
 
 const filters = [
@@ -13,6 +18,12 @@ const filters = [
     display: 'Suggested Priority',
     options: ['Low', 'Medium', 'High'],
     type: 'buttonGroup',
+  },
+  {
+    property: 'market_value',
+    display: 'Market Value',
+    options: marketValues,
+    type: 'range',
   },
   {
     property: 'get_access',
