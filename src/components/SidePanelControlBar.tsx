@@ -39,8 +39,8 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
   const filterCount: number = useMemo(() => {
     let count = 0;
     for (const property of Object.keys(appFilter)) {
-      if (property === 'access_process') {
-        count += appFilter[property].values.length;
+      if (appFilter[property]?.values && property === 'access_process') {
+        count += appFilter[property]?.values.length;
       } else {
         count++;
       }
