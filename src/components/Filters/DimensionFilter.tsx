@@ -5,6 +5,7 @@ import { useFilter } from '@/context/FilterContext';
 import ButtonGroup from './ButtonGroup';
 import MultiSelect from './MultiSelect';
 import Panels from './Panels';
+import RangedInputs from './RangedInputs';
 
 type DimensionFilterProps = {
   property: string;
@@ -36,10 +37,17 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   const [selectedKeys, setSelectedKeys] = useState<string[]>(
     appFilter[property]?.values || []
   );
+  const [selectedRanges, setSelectedRanges] = useState<{
+    min: string | React.ChangeEvent<HTMLSelectElement>;
+    max: string | React.ChangeEvent<HTMLSelectElement>;
+  }>({
+    min: appFilter[property]?.rangedValues?.min as string,
+    max: appFilter[property]?.rangedValues?.max as string,
+  });
   const initialSelectedPanelKeys = () => {
     const panelKeyObj: { [key: string]: string[] } = {};
     for (const key in appFilter) {
-      panelKeyObj[key] = appFilter[key].values;
+      panelKeyObj[key] = appFilter[key].values || [];
     }
     return panelKeyObj;
   };
@@ -87,9 +95,20 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   };
 
   const handleSelectionChange = (
-    selection: React.ChangeEvent<HTMLSelectElement> | string
+    selection: React.ChangeEvent<HTMLSelectElement> | string,
+    limitType?: string
   ) => {
     let newMultiSelect: string[] = [];
+    const newRangeValues = { ...selectedRanges };
+
+    if (limitType) {
+      if (limitType === 'min') {
+        newRangeValues.min = selection;
+      } else if (limitType === 'max') {
+        newRangeValues.max = selection;
+      }
+    }
+
     if (typeof selection === 'string') {
       newMultiSelect = selectedKeys.includes(selection)
         ? selectedKeys.filter((key) => key !== selection)
@@ -99,13 +118,23 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
         newMultiSelect = selection.target.value.split(',');
       }
     }
-    setSelectedKeys(newMultiSelect);
-    dispatch({
-      type: 'SET_DIMENSIONS',
-      property,
-      dimensions: newMultiSelect,
-      useIndexOfFilter,
-    });
+    if (limitType) {
+      dispatch({
+        type: 'SET_DIMENSIONS',
+        property,
+        limitType,
+        dimensions: newRangeValues,
+        useIndexOfFilter,
+      });
+    } else {
+      setSelectedKeys(newMultiSelect);
+      dispatch({
+        type: 'SET_DIMENSIONS',
+        property,
+        dimensions: newMultiSelect,
+        useIndexOfFilter,
+      });
+    }
   };
 
   const filter = useMemo(() => {
@@ -130,6 +159,17 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           aria_describedby_label={filterLabelID}
         />
       );
+    } else if (type === 'range') {
+      return (
+        <RangedInputs
+          display={display}
+          options={options}
+          selectedRanges={appFilter[property]?.rangedValues}
+          setSelectedRanges={setSelectedRanges}
+          handleSelectionChange={handleSelectionChange}
+          aria_describedby_label={filterLabelID}
+        />
+      );
     } else {
       return (
         <MultiSelect
@@ -137,7 +177,7 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           options={options}
           selectedKeys={selectedKeys}
           toggleDimension={toggleDimension}
-          handleSelectionChange={handleSelectionChange}
+          handleSelectionChange={handleSelectionChange as any}
           aria_describedby_label={filterLabelID}
         />
       );
@@ -150,10 +190,15 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
           desc: 'Find properties based on how much they can reduce gun violence considering the gun violence, cleanliness, and tree canopy nearby. ',
           linkFragment: 'priority-method',
         }
-      : {
-          desc: 'Find properties based on what we think is the easiest method to get legal access to them, based on the data available to us. ',
-          linkFragment: 'access-method',
-        };
+      : property === 'market_value'
+        ? {
+            desc: 'Find properties based on their market value (USD). ',
+            linkFragment: 'access-method',
+          }
+        : {
+            desc: 'Find properties based on what we think is the easiest method to get legal access to them, based on the data available to us. ',
+            linkFragment: 'access-method',
+          };
 
   // text-gray-500, 600 ? or #586266 (figma)?
   return (
@@ -162,20 +207,24 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
         <h2 className="heading-lg" id={filterLabelID}>
           {display}
         </h2>
-        {(property === 'get_access' || property === 'priority_level') && (
+        {(property === 'get_access' ||
+          property === 'priority_level' ||
+          property === 'market_value') && (
           <p className="body-sm text-gray-500 w-[90%] my-1">
             {filterDescription.desc}
-            <a
-              href={`/methodology/#${filterDescription.linkFragment}`}
-              className="link"
-              aria-label={`Learn more about ${
-                property === 'priority_level'
-                  ? 'priority level'
-                  : 'access process'
-              } from our Methodology Page`}
-            >
-              Learn more{' '}
-            </a>
+            {(property === 'get_access' || property === 'priority_level') && (
+              <a
+                href={`/methodology/#${filterDescription.linkFragment}`}
+                className="link"
+                aria-label={`Learn more about ${
+                  property === 'priority_level'
+                    ? 'priority level'
+                    : 'access process'
+                } from our Methodology Page`}
+              >
+                Learn more{' '}
+              </a>
+            )}
           </p>
         )}
       </div>

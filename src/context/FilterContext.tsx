@@ -8,8 +8,13 @@ import React, {
 
 export interface DimensionFilter {
   type: 'dimension';
-  values: string[];
+  values?: string[];
+  rangedValues?: {
+    max: string | React.ChangeEvent<HTMLSelectElement>;
+    min: string | React.ChangeEvent<HTMLSelectElement>;
+  };
   useIndexOfFilter?: boolean;
+  limitType?: string | boolean;
 }
 
 interface FilterState {
@@ -24,8 +29,14 @@ interface FilterContextProps {
 type FilterAction = {
   type: 'SET_DIMENSIONS' | 'CLEAR_DIMENSIONS';
   property: string;
-  dimensions: string[];
+  dimensions:
+    | string[]
+    | {
+        max: string | React.ChangeEvent<HTMLSelectElement>;
+        min: string | React.ChangeEvent<HTMLSelectElement>;
+      };
   useIndexOfFilter?: boolean;
+  limitType?: string | boolean;
 };
 
 const filterReducer = (
@@ -34,18 +45,31 @@ const filterReducer = (
 ): FilterState => {
   switch (action.type) {
     case 'SET_DIMENSIONS':
-      if (action.dimensions.length === 0) {
-        const { [action.property]: _, ...rest } = state;
-        return rest;
+      if (Array.isArray(action.dimensions)) {
+        if (action.dimensions.length === 0) {
+          const { [action.property]: _, ...rest } = state;
+          return rest;
+        }
+        return {
+          ...state,
+          [action.property]: {
+            type: 'dimension',
+            values: action.dimensions,
+            useIndexOfFilter: action.useIndexOfFilter || false,
+          },
+        };
+      } else {
+        return {
+          ...state,
+          [action.property]: {
+            type: 'dimension',
+            rangedValues: action.dimensions,
+            useIndexOfFilter: action.useIndexOfFilter || false,
+            limitType: action.limitType,
+          },
+        };
       }
-      return {
-        ...state,
-        [action.property]: {
-          type: 'dimension',
-          values: action.dimensions,
-          useIndexOfFilter: action.useIndexOfFilter || false,
-        },
-      };
+
     case 'CLEAR_DIMENSIONS':
       return {};
     default:

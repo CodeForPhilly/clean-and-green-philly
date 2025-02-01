@@ -180,6 +180,12 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const onMapClick = (e: MapMouseEvent) => {
     handleMapClick(e.lngLat);
   };
+  const formatRangeValue = (value: string) => {
+    if (value === '') {
+      return null;
+    }
+    return parseFloat(value.replace('$', '').replace(',', ''));
+  };
 
   const moveMap = (targetPoint: LngLatLike) => {
     if (map) {
@@ -332,9 +338,8 @@ const PropertyMap: FC<PropertyMapProps> = ({
     // update filters on both layers for ease of switching between layers
     const updateFilter = () => {
       if (!map) return;
-
       const isAnyFilterEmpty = Object.values(appFilter).some((filterItem) => {
-        return filterItem.values.length === 0;
+        return filterItem.values?.length === 0;
       });
 
       if (isAnyFilterEmpty) {
@@ -346,8 +351,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
       const mapFilter = Object.entries(appFilter).reduce(
         (acc, [property, filterItem]) => {
-          if (filterItem.values.length) {
-            const thisFilterGroup: any = ['any'];
+          const thisFilterGroup: any = ['any'];
+          const { limitType } = filterItem;
+
+          if (filterItem.values?.length) {
             filterItem.values.forEach((item) => {
               if (filterItem.useIndexOfFilter) {
                 thisFilterGroup.push([
@@ -372,9 +379,22 @@ const PropertyMap: FC<PropertyMapProps> = ({
                 });
               }
             });
-
-            acc.push(thisFilterGroup);
+          } else if (filterItem.rangedValues) {
+            if (limitType === 'min' || limitType === 'max') {
+              if (filterItem.rangedValues[limitType] === null) {
+                thisFilterGroup.push(['>=', ['get', property]]);
+              } else {
+                thisFilterGroup.push([
+                  '>=',
+                  ['get', property],
+                  formatRangeValue(
+                    filterItem?.rangedValues[limitType] as string
+                  ),
+                ]);
+              }
+            }
           }
+          acc.push(thisFilterGroup);
           return acc;
         },
         [] as any[]
