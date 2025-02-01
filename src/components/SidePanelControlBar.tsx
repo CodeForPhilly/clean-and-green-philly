@@ -80,7 +80,7 @@ const SearchBarComponent: FC<SidePanelControlBarProps> = ({
         closeButton.focus();
       }
     }
-  });
+  }, [currentView]);
 
   return loading ? (
     <div>{/* Keep empty while loading */}</div>
