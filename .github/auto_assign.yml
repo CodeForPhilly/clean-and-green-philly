@@ -14,7 +14,7 @@ useReviewGroups: true
 # A list of reviewers, split into different groups, to be added to pull requests (GitHub user name)
 reviewGroups:
   backend:
-    - zigouras
+    - null
   frontend:
     - CodeWritingCow
 
