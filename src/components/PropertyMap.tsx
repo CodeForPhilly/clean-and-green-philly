@@ -1,5 +1,5 @@
 'use client';
-
+import '../components/components-css/PropertyMap.css';
 import {
   FC,
   useEffect,
@@ -26,6 +26,7 @@ import Map, {
 } from 'react-map-gl/maplibre';
 import maplibregl, {
   Map as MaplibreMap,
+  IControl,
   PointLike,
   MapGeoJSONFeature,
   ColorSpecification,
@@ -50,6 +51,13 @@ import { centroid } from '@turf/centroid';
 import { Position } from 'geojson';
 import { toTitleCase } from '../utilities/toTitleCase';
 import { ThemeButton } from '../components/ThemeButton';
+import MapStyleSwitcher from './MapStyleSwitcher';
+
+type MapStyle = {
+  url: string;
+};
+
+type MapStyles = Record<string, MapStyle>;
 
 type SearchedProperty = {
   coordinates: [number, number];
@@ -105,15 +113,30 @@ const layerStylePoints: CircleLayerSpecification = {
   },
 };
 
+const mapStyles: MapStyles = {
+  DataVisualization: {
+    url: `https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`,
+  },
+  Hybrid: {
+    url: `https://api.maptiler.com/maps/hybrid/style.json?key=${maptilerApiKey}`,
+  },
+  Street: {
+    url: `https://api.maptiler.com/maps/streets/style.json?key=${maptilerApiKey}`,
+  },
+};
+
 // info icon in legend summary
 let summaryInfo: ReactElement | null = null;
 
-const MapControls = () => {
+const MapControls: React.FC<{
+  handleStyleChange: (styleName: string) => void;
+}> = ({ handleStyleChange }) => {
   const [smallScreenToggle, setSmallScreenToggle] = useState<boolean>(false);
   return (
     <>
       <NavigationControl showCompass={false} position="bottom-right" />
       <GeolocateControl position="bottom-right" />
+      <MapStyleSwitcher handleStyleChange={handleStyleChange} />
       {smallScreenToggle || window.innerWidth > 640 ? (
         <MapLegendControl
           position="bottom-left"
@@ -162,7 +185,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const { appFilter } = useFilter();
   const [popupInfo, setPopupInfo] = useState<any | null>(null);
   const [map, setMap] = useState<MaplibreMap | null>(null);
-  const [mapController, setMapController] = useState();
+  const [mapController, setMapController] = useState<IControl>();
+  const [currentStyle, setCurrentStyle] = useState<string>(
+    'Data Visualization View'
+  );
   const [searchedProperty, setSearchedProperty] = useState<SearchedProperty>({
     coordinates: [-75.1628565788269, 39.97008211622267],
     address: '',
@@ -179,6 +205,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   const onMapClick = (e: MapMouseEvent) => {
     handleMapClick(e.lngLat);
+  };
+
+  const handleStyleChange = (styleName: string) => {
+    setCurrentStyle(styleName);
   };
 
   const moveMap = (targetPoint: LngLatLike) => {
@@ -387,7 +417,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
     if (map) {
       updateFilter();
     }
-  }, [map, appFilter]);
+  }, [map, appFilter, currentStyle]);
 
   const changeCursor = (e: any, cursorType: 'pointer' | 'default') => {
     e.target.getCanvas().style.cursor = cursorType;
@@ -399,7 +429,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
       <Map
         mapLib={maplibregl as any}
         initialViewState={initialViewState}
-        mapStyle={`https://api.maptiler.com/maps/dataviz/style.json?key=${maptilerApiKey}`}
+        mapStyle={mapStyles[currentStyle]?.url}
         onMouseEnter={(e) => changeCursor(e, 'pointer')}
         onMouseLeave={(e) => changeCursor(e, 'default')}
         onClick={onMapClick}
@@ -423,8 +453,20 @@ const PropertyMap: FC<PropertyMapProps> = ({
         onSourceData={(e) => {
           handleSetFeatures(e);
         }}
+        onStyleData={(e) => {
+          const layerIds = e.target
+            .getStyle()
+            .layers.map((layer: any) => layer.id);
+          const layersApplied = layers.every((layer) =>
+            layerIds.includes(layer)
+          );
+          if (layersApplied) {
+            setHasLoadingError(false);
+          }
+        }}
         onMoveEnd={handleSetFeatures}
       >
+        <MapControls handleStyleChange={handleStyleChange} />
         <div
           className="geocoding"
           style={{
@@ -467,7 +509,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
             }}
           />
         </div>
-        <MapControls />
         {popupInfo && (
           <Popup
             className="customized-map-popup"

@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
+    "@maptiler/sdk": "^2.5.1",
     "@maptiler/geocoding-control": "^1.4.1",
     "@nextui-org/react": "^2.4.6",
     "@phosphor-icons/react": "^2.1.7",
