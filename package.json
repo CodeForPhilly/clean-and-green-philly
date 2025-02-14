@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.1.5",
-    "@maptiler/sdk": "^2.5.1",
     "@maptiler/geocoding-control": "^1.4.1",
+    "@maptiler/sdk": "^2.5.1",
     "@nextui-org/react": "^2.4.6",
     "@phosphor-icons/react": "^2.1.7",
     "@turf/centroid": "^7.0.0",
@@ -39,10 +39,8 @@
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.0",
+    "@semantic-release/exec": "^7.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^10.1.1",
-    "@semantic-release/npm": "^12.0.1",
-    "@semantic-release/release-notes-generator": "^14.0.1",
     "@types/node": "^20.14.11",
     "@types/pbf": "^3.0.5",
     "@types/pg": "^8.11.6",
@@ -58,6 +56,6 @@
     "eslint-plugin-react": "^7.34.4",
     "postcss-nesting": "^12.1.5",
     "postcss-preset-env": "^9.6.0",
-    "semantic-release": "^24.0.0"
+    "semantic-release": "^24.2.2"
   }
 }
