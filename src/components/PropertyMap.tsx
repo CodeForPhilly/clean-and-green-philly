@@ -504,7 +504,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
                 });
                 map?.easeTo({
                   center: feature.center,
-                  zoom: 15,
+                  zoom: MAX_MAP_ZOOM,
                 });
               }
             }}
