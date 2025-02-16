@@ -66,7 +66,6 @@ type SearchedProperty = {
 
 const MIN_MAP_ZOOM = 10;
 const MAX_MAP_ZOOM = 20;
-const MAX_TILE_ZOOM = 16;
 
 const layers = [
   'vacant_properties_tiles_polygons',
@@ -193,7 +192,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
     coordinates: [-75.1628565788269, 39.97008211622267],
     address: '',
   });
-  const [smallScreenToggle, setSmallScreenToggle] = useState<boolean>(false);
 
   useEffect(() => {
     const protocol = new Protocol();
@@ -491,7 +489,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
             proximity={[
               {
                 type: 'fixed',
-                coordinates: [-75.1652, 39.9526], // Approxiate center of Philadelphia
+                coordinates: [-75.1652, 39.9526], // Approximate center of Philadelphia
               },
             ]}
             onPick={(feature) => {
