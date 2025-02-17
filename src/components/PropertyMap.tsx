@@ -426,6 +426,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   const handlePopupClose = () => {
     setSelectedProperty(null);
     setPopupInfo(null);
+    history.replaceState(null, '', `/find-properties`);
   };
 
   // map load
