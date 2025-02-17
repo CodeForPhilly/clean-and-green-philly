@@ -340,7 +340,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   useEffect(() => {
     if (!map) return;
     if (!selectedProperty) {
-      // setPopupInfo(null);
+      setPopupInfo(null);
       if (window.innerWidth < 640 && prevCoordinate) {
         map.setCenter(prevCoordinate as LngLatLike);
         setPrevCoordinate();
@@ -421,6 +421,11 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
   const changeCursor = (e: any, cursorType: 'pointer' | 'default') => {
     e.target.getCanvas().style.cursor = cursorType;
+  };
+
+  const handlePopupClose = () => {
+    setSelectedProperty(null);
+    setPopupInfo(null);
   };
 
   // map load
@@ -515,7 +520,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
             longitude={popupInfo.longitude}
             latitude={popupInfo.latitude}
             closeOnClick={false}
-            onClose={() => setPopupInfo(null)}
+            onClose={handlePopupClose}
           >
             <div className="flex flex-row items-center nowrap space-x-1">
               <span>{toTitleCase(popupInfo.feature.address)}</span>
