@@ -1,16 +1,21 @@
-import { extendVariants, Chip, Select, SelectItem } from '@nextui-org/react';
+import {
+  extendVariants,
+  Chip,
+  Autocomplete,
+  AutocompleteItem,
+} from '@nextui-org/react';
 
-export const SelectFilter = extendVariants(Select, {
+export const SelectFilter = extendVariants(Autocomplete, {
   variants: {
     color: {
       gray: {
-        trigger: ['multiSelect', 'data-[hover=true]:bg-gray-100'],
-        value: ['text-gray-900'],
+        listboxWrapper: ['multiSelect', 'data-[hover=true]:bg-gray-100'],
+        listbox: ['text-gray-900'],
       },
     },
     size: {
       md: {
-        value: 'py-2',
+        listbox: ['py-2'],
       },
     },
   },
@@ -19,7 +24,7 @@ export const SelectFilter = extendVariants(Select, {
   },
 });
 
-export const SelectFilterItem = extendVariants(SelectItem, {
+export const SelectFilterItem = extendVariants(AutocompleteItem, {
   variants: {
     color: {
       gray: {
