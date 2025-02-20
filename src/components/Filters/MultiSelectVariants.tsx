@@ -5,24 +5,7 @@ import {
   AutocompleteItem,
 } from '@nextui-org/react';
 
-export const SelectFilter = extendVariants(Autocomplete, {
-  variants: {
-    color: {
-      gray: {
-        listboxWrapper: ['multiSelect', 'data-[hover=true]:bg-gray-100'],
-        listbox: ['text-gray-900'],
-      },
-    },
-    size: {
-      md: {
-        listbox: ['py-2'],
-      },
-    },
-  },
-  defaultVariants: {
-    color: 'gray',
-  },
-});
+export const SelectFilter = Autocomplete;
 
 export const SelectFilterItem = extendVariants(AutocompleteItem, {
   variants: {

@@ -1,7 +1,7 @@
 'use client';
 
-import React, { FC } from 'react';
-import { X } from '@phosphor-icons/react';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { Check, X } from '@phosphor-icons/react';
 import {
   SelectFilter,
   SelectFilterItem,
@@ -28,6 +28,15 @@ const MultiSelect: FC<MultiSelectProps> = ({
   toggleDimension,
   handleSelectionChange,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Override Autocomplete design to continue focus on the input after closing the popover menu
+  useEffect(() => {
+    console.log('Effect to unfocus input');
+    !isOpen && inputRef.current?.blur();
+  }, [isOpen]);
+
   return (
     <div className="space-x-2 min-h-[33.5px] flex flex-col">
       <SelectFilter
@@ -37,6 +46,21 @@ const MultiSelect: FC<MultiSelectProps> = ({
         radius="md"
         placeholder="Select options..."
         selectedKey={null}
+        classNames={{
+          selectorButton: 'hidden',
+        }}
+        inputProps={{
+          ref: inputRef,
+          classNames: {
+            inputWrapper: [
+              'multiSelect',
+              'data-[hover=true]:bg-gray-100',
+              'group-data-[focus=true]:bg-gray-100',
+            ],
+            input: ['text-gray-900', 'placeholder:text-gray-900'],
+          },
+        }}
+        onOpenChange={() => setIsOpen((prev) => !prev)}
       >
         {options.map((option) => (
           <SelectFilterItem
@@ -46,13 +70,15 @@ const MultiSelect: FC<MultiSelectProps> = ({
               const target = e.target as HTMLSpanElement;
               handleSelectionChange(target.innerText);
             }}
-            endContent={selectedKeys.includes(option) && <div>Poop</div>}
+            endContent={
+              selectedKeys.includes(option) && <Check weight="bold" />
+            }
           >
             {option}
           </SelectFilterItem>
         ))}
       </SelectFilter>
-      <div className="flex min-h-14 mt-2 gap-y-2 flex-wrap">
+      <div className="flex min-h-14 mt-2 gap-y-2 flex-wrap overflow-hidden">
         {selectedKeys.map((option) => (
           <SelectFilterChip
             key={option}
