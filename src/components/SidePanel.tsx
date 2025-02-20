@@ -28,7 +28,7 @@ const SidePanel: FC<SidePanelProps> = ({
     <div
       role="region"
       aria-label="results sidepanel"
-      className={`min-h-[calc(100svh-101px)] max-h-[calc(100svh-101px)] h-full transition-all duration-300 overflow-y-scroll side-panel-container bg-white flex flex-col ${
+      className={`min-h-[calc(100svh-101px)] max-h-[calc(100svh-101px)] h-full transition-all duration-300 overflow-y-scroll side-panel-container bg-white flex flex-col pl-2 pr-2 ${
         expanded ? 'w-5/12' : 'w-0'
       } bg-white max-sm:w-full ${isVisible}`}
       ref={panelRef}
