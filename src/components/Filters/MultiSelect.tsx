@@ -46,19 +46,8 @@ const MultiSelect: FC<MultiSelectProps> = ({
         radius="md"
         placeholder="Select options..."
         selectedKey={null}
-        classNames={{
-          selectorButton: 'hidden',
-        }}
         inputProps={{
           ref: inputRef,
-          classNames: {
-            inputWrapper: [
-              'multiSelect',
-              'data-[hover=true]:bg-gray-100',
-              'group-data-[focus=true]:bg-gray-100',
-            ],
-            input: ['text-gray-900', 'placeholder:text-gray-900'],
-          },
         }}
         onOpenChange={() => setIsOpen((prev) => !prev)}
       >

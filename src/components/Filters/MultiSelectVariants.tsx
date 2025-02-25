@@ -3,9 +3,39 @@ import {
   Chip,
   Autocomplete,
   AutocompleteItem,
+  AutocompleteProps,
 } from '@nextui-org/react';
 
-export const SelectFilter = Autocomplete;
+export const SelectFilter = ({
+  children,
+  classNames,
+  inputProps,
+  ...props
+}: AutocompleteProps) => {
+  return (
+    <Autocomplete
+      classNames={{
+        clearButton: 'hidden',
+        selectorButton: 'hidden',
+        ...classNames,
+      }}
+      inputProps={{
+        classNames: {
+          inputWrapper: [
+            'multiSelect',
+            'data-[hover=true]:bg-gray-100',
+            'group-data-[focus=true]:bg-gray-100',
+          ],
+          input: ['text-gray-900', 'placeholder:text-gray-900'],
+        },
+        ...inputProps,
+      }}
+      {...props}
+    >
+      {children}
+    </Autocomplete>
+  );
+};
 
 export const SelectFilterItem = extendVariants(AutocompleteItem, {
   variants: {
