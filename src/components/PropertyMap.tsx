@@ -66,7 +66,6 @@ type SearchedProperty = {
 
 const MIN_MAP_ZOOM = 10;
 const MAX_MAP_ZOOM = 20;
-const MAX_TILE_ZOOM = 16;
 
 const layers = [
   'vacant_properties_tiles_polygons',
@@ -193,7 +192,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
     coordinates: [-75.1628565788269, 39.97008211622267],
     address: '',
   });
-  const [smallScreenToggle, setSmallScreenToggle] = useState<boolean>(false);
 
   useEffect(() => {
     const protocol = new Protocol();
@@ -340,7 +338,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
   useEffect(() => {
     if (!map) return;
     if (!selectedProperty) {
-      // setPopupInfo(null);
+      setPopupInfo(null);
       if (window.innerWidth < 640 && prevCoordinate) {
         map.setCenter(prevCoordinate as LngLatLike);
         setPrevCoordinate();
@@ -423,6 +421,12 @@ const PropertyMap: FC<PropertyMapProps> = ({
     e.target.getCanvas().style.cursor = cursorType;
   };
 
+  const handlePopupClose = () => {
+    setSelectedProperty(null);
+    setPopupInfo(null);
+    history.replaceState(null, '', `/find-properties`);
+  };
+
   // map load
   return (
     <div className="customized-map relative max-sm:min-h-[calc(100svh-100px)] max-sm:max-h-[calc(100svh-100px) h-full overflow-auto w-full">
@@ -491,7 +495,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
             proximity={[
               {
                 type: 'fixed',
-                coordinates: [-75.1652, 39.9526], // Approxiate center of Philadelphia
+                coordinates: [-75.1652, 39.9526], // Approximate center of Philadelphia
               },
             ]}
             onPick={(feature) => {
@@ -504,6 +508,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
                 });
                 map?.easeTo({
                   center: feature.center,
+                  zoom: 16,
                 });
               }
             }}
@@ -515,7 +520,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
             longitude={popupInfo.longitude}
             latitude={popupInfo.latitude}
             closeOnClick={false}
-            onClose={() => setPopupInfo(null)}
+            onClose={handlePopupClose}
           >
             <div className="flex flex-row items-center nowrap space-x-1">
               <span>{toTitleCase(popupInfo.feature.address)}</span>

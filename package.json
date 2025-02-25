@@ -57,5 +57,10 @@
     "postcss-nesting": "^12.1.5",
     "postcss-preset-env": "^9.6.0",
     "semantic-release": "^24.2.2"
+  },
+  "overrides": {
+    "npm": {
+      "cross-spawn": "^7.0.5"
+    }
   }
 }
