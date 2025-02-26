@@ -6,7 +6,6 @@ import {
   SelectFilter,
   SelectFilterItem,
   SelectFilterChip,
-  BlankSelectorIcon,
 } from './MultiSelectVariants';
 
 type MultiSelectProps = {
@@ -33,7 +32,6 @@ const MultiSelect: FC<MultiSelectProps> = ({
 
   // Override Autocomplete design to continue focus on the input after closing the popover menu
   useEffect(() => {
-    console.log('Effect to unfocus input');
     !isOpen && inputRef.current?.blur();
   }, [isOpen]);
 
