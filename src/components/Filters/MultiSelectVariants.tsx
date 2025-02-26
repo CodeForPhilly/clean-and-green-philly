@@ -1,25 +1,43 @@
-import { extendVariants, Chip, Select, SelectItem } from '@nextui-org/react';
+import {
+  extendVariants,
+  Chip,
+  Autocomplete,
+  AutocompleteItem,
+  AutocompleteProps,
+} from '@nextui-org/react';
 
-export const SelectFilter = extendVariants(Select, {
-  variants: {
-    color: {
-      gray: {
-        trigger: ['multiSelect', 'data-[hover=true]:bg-gray-100'],
-        value: ['text-gray-900'],
-      },
-    },
-    size: {
-      md: {
-        value: 'py-2',
-      },
-    },
-  },
-  defaultVariants: {
-    color: 'gray',
-  },
-});
+export const SelectFilter = ({
+  children,
+  classNames,
+  inputProps,
+  ...props
+}: AutocompleteProps) => {
+  return (
+    <Autocomplete
+      classNames={{
+        clearButton: 'hidden',
+        selectorButton: 'hidden',
+        ...classNames,
+      }}
+      inputProps={{
+        classNames: {
+          inputWrapper: [
+            'multiSelect',
+            'data-[hover=true]:bg-gray-100',
+            'group-data-[focus=true]:bg-gray-100',
+          ],
+          input: ['text-gray-900', 'placeholder:text-gray-900'],
+        },
+        ...inputProps,
+      }}
+      {...props}
+    >
+      {children}
+    </Autocomplete>
+  );
+};
 
-export const SelectFilterItem = extendVariants(SelectItem, {
+export const SelectFilterItem = extendVariants(AutocompleteItem, {
   variants: {
     color: {
       gray: {
