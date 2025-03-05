@@ -3,8 +3,8 @@ import { Handshake, Money, Gavel, Tag, XCircle } from '@phosphor-icons/react';
 export default function GetAccessPage() {
   return (
     <>
-      <h1 className="heading-3xl font-bold mb-6">Get Access to a Property</h1>
-      <h2 className="body-lg font-normal mb-6">
+      <h1 className="heading-3xl font-bold">Get Access to a Property</h1>
+      <h2 className="body-lg font-normal">
         In order to intervene in a property, you need to have some kind of legal
         access to do so.
       </h2>
@@ -17,7 +17,7 @@ export default function GetAccessPage() {
         can get help with each.
       </p>
 
-      <h2 className="heading-2xl font-bold mb-6">Methods</h2>
+      <h2 className="heading-2xl font-bold">Methods</h2>
       <p className="body-md mb-6">
         Although there are other possible ways to get access to a property (see
         below), these four routes are the most common and the only ones that we
@@ -187,7 +187,7 @@ export default function GetAccessPage() {
         </div>
       </div>
 
-      <h2 id="other-methods" className="heading-2xl font-bold mt-8 mb-6">
+      <h2 id="other-methods" className="heading-2xl font-bold mt-8">
         Other Methods
       </h2>
       <p className="body-md mb-6">
