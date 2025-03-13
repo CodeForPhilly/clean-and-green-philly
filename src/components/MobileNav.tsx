@@ -45,6 +45,7 @@ const MobileNav: FC = () => {
           as="nav"
           aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
           className="min-[850px]:hidden flex-end w-fit"
+          tabIndex={0}
           icon={
             <>
               <PiList className="h-6 w-6 linkIcon" /> Menu

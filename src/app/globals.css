@@ -147,13 +147,13 @@
   /* added webkit transform to remove icon movement in safari */
 
   .iconLink {
-    @apply text-gray-900 items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium max-sm:hover:bg-gray-0;
+    @apply text-gray-900 items-center active:bg-gray-100 active:text-green-700 focus:text-green-700 focus:bg-green-100 bg-color-none hover:bg-gray-10 rounded-medium;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
 
   .linkIcon {
-    @apply w-5 h-5 mr-2;
+    @apply mr-2;
     transform: translateZ(0);
     -webkit-transform: translateZ(0);
   }
@@ -198,7 +198,8 @@
 }
 
 #main .maplibregl-ctrl-bottom-left {
-  left: 20px;
+  left: 10px;
+  padding-bottom: 10px;
   pointer-events: bounding-box;
 }
 
