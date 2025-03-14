@@ -12,5 +12,6 @@ def mock_gcp_bucket(monkeypatch):
 
     return mock_bucket
 
+
 # Tell vulture this is used:
-_ = mock_gcp_bucket # Used indirectly by pytest
+_ = mock_gcp_bucket  # Used indirectly by pytest

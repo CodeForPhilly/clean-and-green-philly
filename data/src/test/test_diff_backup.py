@@ -1,5 +1,4 @@
 import os
-import unittest
 from datetime import datetime
 
 import pytest
@@ -13,12 +12,12 @@ from classes.featurelayer import google_cloud_bucket
 from config.psql import conn, local_engine
 from sqlalchemy import inspect
 
-pytestmark = pytest.mark.skip(  # noqa: Used by pytest
+pytestmark = pytest.mark.skip(
     reason="Skipping tests. The tests in test_diff_backup are designed for stateful, manual testing."
 )
 
 
-class TestDiffBackup(unittest.TestCase):
+class TestDiffBackup:
     """
     test methods for data diffing and backing up
     """
