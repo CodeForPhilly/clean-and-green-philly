@@ -65,7 +65,7 @@ const MultiSelect: FC<MultiSelectProps> = ({
           </SelectFilterItem>
         ))}
       </SelectFilter>
-      <div className="flex min-h-14 mt-2 gap-y-2 flex-wrap overflow-hidden">
+      <div className="flex mt-2 gap-y-2 flex-wrap">
         {selectedKeys.map((option) => (
           <SelectFilterChip
             key={option}
