@@ -92,26 +92,31 @@
     font-size: var(--font-size-3xl);
     font-family: var(--font-family);
     font-weight: 800;
+    line-height: 1.2;
   }
   .heading-2xl {
     font-size: var(--font-size-2xl);
     font-family: var(--font-family);
     font-weight: 800;
+    line-height: 1.2;
   }
   .heading-xl {
     font-size: var(--font-size-xl);
     font-family: var(--font-family);
     font-weight: bold;
+    line-height: 1.2;
   }
   .heading-lg {
     font-size: var(--font-size-lg);
     font-family: var(--font-family);
     font-weight: bold;
+    line-height: 1.2;
   }
   .heading-md {
     font-size: var(--font-size-md);
     font-family: var(--font-family);
     font-weight: bold;
+    line-height: 1.2;
   }
   .body-lg {
     font-size: var(--font-size-lg);
@@ -127,6 +132,12 @@
     font-size: var(--font-size-sm);
     font-family: var(--font-family);
     font-weight: regular;
+  }
+  h1 + h2 {
+    margin-top: 0.5rem;
+  }
+  h2 + p {
+    margin-top: 3rem;
   }
 
   ol.methodology {
