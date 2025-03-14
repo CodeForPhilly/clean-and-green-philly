@@ -1,7 +1,6 @@
 import os
 import unittest
 from datetime import datetime
-from unittest.mock import Mock, patch
 
 import pytest
 from classes.backup_archive_database import (
@@ -14,32 +13,15 @@ from classes.featurelayer import google_cloud_bucket
 from config.psql import conn, local_engine
 from sqlalchemy import inspect
 
+pytestmark = pytest.mark.skip(  # noqa: Used by pytest
+    reason="Skipping tests. The tests in test_diff_backup are designed for stateful, manual testing."
+)
+
 
 class TestDiffBackup(unittest.TestCase):
     """
     test methods for data diffing and backing up
     """
-
-    def setUp(self):
-        # Set up the mocks that will be used in each test
-        self.patcher1 = patch("classes.backup_archive_database.google_cloud_bucket")
-
-        self.mock_gcs = self.patcher1.start()
-
-        # Set up the mock chain
-        mock_blob = Mock()
-        mock_blob.exists.return_value = True
-        mock_blob.download_as_bytes.return_value = b"dummy bytes"
-        mock_blob.name = "tiles/example_tile.json"
-
-        mock_bucket = Mock()
-        mock_bucket.list_blobs.return_value = [mock_blob]
-        mock_bucket.blob.return_value = mock_blob
-
-        self.mock_gcs.return_value = mock_bucket
-
-    def tearDown(self):
-        self.patcher1.stop()
 
     backup = BackupArchiveDatabase()
 

@@ -11,3 +11,6 @@ def mock_gcp_bucket(monkeypatch):
     monkeypatch.setattr("classes.featurelayer.google_cloud_bucket", lambda: mock_bucket)
 
     return mock_bucket
+
+# Tell vulture this is used:
+_ = mock_gcp_bucket # Used indirectly by pytest
