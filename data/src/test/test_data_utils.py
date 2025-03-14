@@ -1,28 +1,15 @@
 import unittest
 import zipfile
 from io import BytesIO
-from unittest.mock import MagicMock, patch, Mock
-
-import pytest
+from unittest.mock import MagicMock, Mock, patch
 
 import geopandas as gpd
-from config.config import USE_CRS
 from data_utils.park_priority import get_latest_shapefile_url, park_priority
 from data_utils.ppr_properties import ppr_properties
 from data_utils.vacant_properties import vacant_properties
 from shapely.geometry import Point
 
-from google.cloud.storage import Bucket
-
-from data_utils.vacant_properties import google_cloud_bucket
-
-@pytest.fixture(autouse=True)
-def mock_gcp_bucket(monkeypatch):
-    mock_bucket = MagicMock(spec=Bucket)
-
-    monkeypatch.setattr('classes.featurelayer.google_cloud_bucket', lambda: mock_bucket)
-
-    return mock_bucket
+from config.config import USE_CRS
 
 
 class TestDataUtils(unittest.TestCase):
@@ -33,22 +20,25 @@ class TestDataUtils(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # Create the mock GeoDataFrame that will be reused
-        cls.mock_gdf = gpd.GeoDataFrame({
-            'ADDRESS': ['123 Main St'],
-            'OWNER1': ['John Doe'],
-            'OWNER2': ['Jane Doe'],
-            'BLDG_DESC': ['House'],
-            'CouncilDistrict': [1],
-            'ZoningBaseDistrict': ['R1'],
-            'ZipCode': ['19107'],
-            'OPA_ID': ['12345'],
-            'geometry': [Point(-75.1652, 39.9526)]
-        }, crs='EPSG:4326')
+        cls.mock_gdf = gpd.GeoDataFrame(
+            {
+                "ADDRESS": ["123 Main St"],
+                "OWNER1": ["John Doe"],
+                "OWNER2": ["Jane Doe"],
+                "BLDG_DESC": ["House"],
+                "CouncilDistrict": [1],
+                "ZoningBaseDistrict": ["R1"],
+                "ZipCode": ["19107"],
+                "OPA_ID": ["12345"],
+                "geometry": [Point(-75.1652, 39.9526)],
+            },
+            crs="EPSG:4326",
+        )
 
     def setUp(self):
         # Set up the mocks that will be used in each test
-        self.patcher1 = patch('data_utils.vacant_properties.google_cloud_bucket')
-        self.patcher2 = patch('geopandas.read_file')
+        self.patcher1 = patch("data_utils.vacant_properties.google_cloud_bucket")
+        self.patcher2 = patch("geopandas.read_file")
 
         self.mock_gcs = self.patcher1.start()
         self.mock_gpd = self.patcher2.start()
@@ -56,7 +46,7 @@ class TestDataUtils(unittest.TestCase):
         # Set up the mock chain
         mock_blob = Mock()
         mock_blob.exists.return_value = True
-        mock_blob.download_as_bytes.return_value = b'dummy bytes'
+        mock_blob.download_as_bytes.return_value = b"dummy bytes"
 
         mock_bucket = Mock()
         mock_bucket.blob.return_value = mock_blob
@@ -101,7 +91,7 @@ class TestDataUtils(unittest.TestCase):
     def test_park_priority(
         self,
         mock_extract,
-        mock_makedirs,
+        _mock_makedirs,
         mock_exists,
         mock_to_file,
         mock_read_file,

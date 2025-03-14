@@ -1,8 +1,7 @@
+import os
+import sys
 import unittest
 from unittest.mock import patch
-
-import sys
-import os
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
 
@@ -18,7 +17,7 @@ class TestSlackNotifier(unittest.TestCase):
     @patch(
         "classes.slack_error_reporter.os.getenv", return_value="mock_slack_token"
     )  # Correct patching
-    def test_send_error_to_slack(self, mock_getenv, mock_slack_post):
+    def test_send_error_to_slack(self, _mock_getenv, mock_slack_post):
         """Test that Slack error reporting is triggered correctly."""
 
         error_message = "Test error message"
@@ -39,7 +38,7 @@ class TestSlackNotifier(unittest.TestCase):
     @patch(
         "classes.slack_error_reporter.os.getenv", return_value=None
     )  # Simulate missing Slack token
-    def test_no_error_no_slack_message(self, mock_getenv, mock_slack_post):
+    def test_no_error_no_slack_message(self, _mock_getenv, mock_slack_post):
         """Test that Slack notification is not triggered if there's no error."""
 
         # Call the Slack notification function (with no valid token)
