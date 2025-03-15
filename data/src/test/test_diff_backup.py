@@ -1,5 +1,7 @@
+import os
 from datetime import datetime
 
+import pytest
 from classes.backup_archive_database import (
     BackupArchiveDatabase,
     backup_schema_name,
@@ -9,6 +11,10 @@ from classes.diff_report import DiffReport
 from classes.featurelayer import google_cloud_bucket
 from config.psql import conn, local_engine
 from sqlalchemy import inspect
+
+pytestmark = pytest.mark.skip(
+    reason="Skipping tests. The tests in test_diff_backup are designed for stateful, manual testing."
+)
 
 
 class TestDiffBackup:
@@ -60,18 +66,30 @@ class TestDiffBackup:
         url = diff.detail_report("vacant_properties")
         print(url)
 
+    @pytest.mark.skipif(
+        not os.getenv("INTEGRATION_TESTING"),
+        reason="For manual integration testing only. Export INTEGRATION_TESTING=True to run",
+    )
     def test_upload_to_gcp(self):
         """test a simple upload to Google cloud"""
         bucket = google_cloud_bucket()
         blob = bucket.blob("test.txt")
         blob.upload_from_string("test")
 
+    @pytest.mark.skipif(
+        not os.getenv("INTEGRATION_TESTING"),
+        reason="For manual integration testing only. Export INTEGRATION_TESTING=True to run",
+    )
     def test_send_report_to_slack(self):
         """CAREFUL: if configured, this will send a message to Slack, potentially our prod channel"""
         diff = DiffReport()
         diff.report = "This is the report"
         diff.send_report_to_slack()
 
+    @pytest.mark.skipif(
+        not os.getenv("INTEGRATION_TESTING"),
+        reason="For manual integration testing only. Export INTEGRATION_TESTING=True to run",
+    )
     def test_email_report(self):
         """CAREFUL: if configured, this will send email if configured"""
         diff = DiffReport()
@@ -79,7 +97,7 @@ class TestDiffBackup:
         diff.email_report()
 
     def test_is_backup_schema_exists(self):
-        """test method for whether the backup schema exists """    
+        """test method for whether the backup schema exists"""
         if TestDiffBackup.backup.is_backup_schema_exists():
             TestDiffBackup.backup.archive_backup_schema()
             conn.commit()
@@ -91,8 +109,6 @@ class TestDiffBackup:
             conn.commit()
             assert not TestDiffBackup.backup.is_backup_schema_exists()
 
-    
     def test_backup_tiles_file(self):
-        """ test backing up the tiles file """
+        """test backing up the tiles file"""
         TestDiffBackup.backup.backup_tiles_file()
-
