@@ -60,17 +60,23 @@ class BackupArchiveDatabase:
             + backup_schema_name
             + ".spatial_ref_sys/public.spatial_ref_sys/' | psql -v ON_ERROR_STOP=1 "
             + url
-            + " > /dev/null "
         )
         log.debug(mask_password(pgdump_command))
-        complete_process = subprocess.run(pgdump_command, check=False, shell=True)
+        complete_process = subprocess.run(
+            pgdump_command,
+            check=False,
+            shell=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
 
         if complete_process.returncode != 0 or complete_process.stderr:
             raise RuntimeError(
                 "pg_dump command "
                 + mask_password(pgdump_command)
                 + " did not exit with success. "
-                + complete_process.stderr.decode()
+                + complete_process.stderr
             )
 
     def archive_backup_schema(self):
