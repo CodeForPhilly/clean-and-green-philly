@@ -1,7 +1,9 @@
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import PHS_LAYERS_TO_LOAD
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def phs_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Perform a spatial join between the primary feature layer and the PHS properties layer,
@@ -13,6 +15,15 @@ def phs_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     Returns:
         FeatureLayer: The updated primary feature layer with the 'phs_care_program' column.
+
+    Tagline:
+        Identifies PHS Care properties
+
+    Columns added:
+        phs_care_program (str): The PHS care program associated with the property.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
     """
 
     phs_properties = FeatureLayer(

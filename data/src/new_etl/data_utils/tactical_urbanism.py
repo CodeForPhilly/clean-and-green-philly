@@ -1,6 +1,8 @@
 from ..classes.featurelayer import FeatureLayer
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def tactical_urbanism(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Assigns a 'tactical_urbanism' value to each row in the primary feature layer based on specific conditions.
@@ -10,6 +12,15 @@ def tactical_urbanism(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     Args:
         primary_featurelayer: A FeatureLayer object containing a GeoDataFrame (`gdf`) as an attribute.
+
+    Columns Added:
+        tactical_urbanism (str): Indicates whether each property qualifies for tactical urbanism ("Yes" or "No").
+
+    Primary Feature Layer Columns Referenced:
+        parcel_type, unsafe_building, imm_dang_building
+
+    Tagline:
+        Identify tactical urbanism-eligible properties
 
     Returns:
         The input FeatureLayer with a new column 'tactical_urbanism' added to its GeoDataFrame.

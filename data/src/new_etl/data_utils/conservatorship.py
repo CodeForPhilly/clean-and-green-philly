@@ -1,7 +1,10 @@
-from ..classes.featurelayer import FeatureLayer
 import datetime
-from dateutil.parser import parse
+
 import pytz
+from dateutil.parser import parse
+
+from ..classes.featurelayer import FeatureLayer
+from ..metadata.metadata_utils import provide_metadata
 
 est = pytz.timezone("US/Eastern")
 six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astimezone(
@@ -9,12 +12,22 @@ six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astime
 )
 
 
+@provide_metadata()
 def conservatorship(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Determines conservatorship eligibility for properties in a feature layer.
 
     Args:
         primary_featurelayer (FeatureLayer): A feature layer containing property data in a GeoDataFrame (`gdf`).
+
+    Columns Added:
+        conservatorship (str): Indicates whether each property qualifies for conservatorship ("Yes" or "No").
+
+    Primary Feature Layer Columns Referenced:
+        city_owner_agency, sheriff_sale, market_value, all_violations_past_year, sale_date
+
+    Tagline:
+        Identify conservatorship-eligible properties
 
     Returns:
         FeatureLayer: The input feature layer with an added "conservatorship" column indicating

@@ -1,10 +1,13 @@
+import pandas as pd
+
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import RCOS_LAYERS_TO_LOAD
-import pandas as pd
+from ..metadata.metadata_utils import provide_metadata
 
 pd.set_option("future.no_silent_downcasting", True)
 
 
+@provide_metadata()
 def rco_geoms(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Adds Registered Community Organization (RCO) information to the primary feature layer
@@ -16,6 +19,22 @@ def rco_geoms(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Returns:
         FeatureLayer: The input feature layer with added RCO-related columns,
         including aggregated RCO information and names.
+
+    Tagline:
+        Assigns Community Org Info
+
+    Columns added:
+        rco_names (str): Names of RCOs associated with the property.
+        rco_info (str): Additional RCO-related information.
+
+    Source:
+        "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Zoning_RCO/FeatureServer/0/"
+
+    Notes:
+        Modifies various columns. Fillna and infer_objects is applied to most columns.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
     """
     rco_geoms = FeatureLayer(name="RCOs", esri_rest_urls=RCOS_LAYERS_TO_LOAD)
 
