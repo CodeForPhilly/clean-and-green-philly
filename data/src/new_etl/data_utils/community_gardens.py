@@ -1,13 +1,35 @@
-from ..classes.featurelayer import FeatureLayer
-from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
 from config.config import USE_CRS
 
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
+from ..metadata.metadata_utils import provide_metadata
 
+
+@provide_metadata()
 def community_gardens(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Updates the 'vacant' column in the primary feature layer to ensure community gardens
     are marked as not vacant. This protects known community gardens from being categorized
     as vacant, preventing potential predatory development.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with the 'vacant' column updated to False
+        for parcels containing community gardens.
+
+    Tagline:
+        Mark Community Gardens as Not Vacant
+
+    Columns updated:
+        vacant: Updated to False for parcels containing community gardens.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, vacant
+
+    Source:
+        https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/rest/services/PHS_NGT_Supported_Current_view/FeatureServer/0/
     """
     if "vacant" not in primary_featurelayer.gdf.columns:
         raise ValueError("The 'vacant' column is missing in the primary feature layer.")

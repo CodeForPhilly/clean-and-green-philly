@@ -1,10 +1,13 @@
+import pandas as pd
+
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import COUNCIL_DISTRICTS_TO_LOAD
-import pandas as pd
+from ..metadata.metadata_utils import provide_metadata
 
 pd.set_option("future.no_silent_downcasting", True)
 
 
+@provide_metadata()
 def council_dists(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Associates properties in the primary feature layer with council districts
@@ -16,6 +19,15 @@ def council_dists(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Returns:
         FeatureLayer: The input feature layer with properties spatially joined
         to council districts, ensuring no duplicate entries.
+
+    Tagline:
+        Assigns council districts
+
+    Columns added:
+        district (str): The council district associated with the property.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
     """
     # Load council districts
     council_dists = FeatureLayer(

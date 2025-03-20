@@ -1,10 +1,14 @@
-import pandas as pd
-import geopandas as gpd
 from typing import List
+
+import geopandas as gpd
+import pandas as pd
+
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import VIOLATIONS_SQL_QUERY
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def li_violations(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Process L&I (Licenses and Inspections) data for violations.
@@ -18,6 +22,19 @@ def li_violations(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     Returns:
         FeatureLayer: The primary feature layer updated with L&I data.
+
+    Tagline:
+        Counts L&I violations
+
+    Columns added:
+        all_violations_past_year (int): Total violations in the past year.
+        open_violations_past_year (int): Open violations in the past year.
+
+    Source:
+        https://phl.carto.com/api/v2/sql
+
+    Primary Feature Layer Columns Referenced:
+        opa_id
     """
     keywords: List[str] = [
         "dumping",

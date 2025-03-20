@@ -1,5 +1,8 @@
-import pandas as pd
 import re
+
+import pandas as pd
+from new_etl.metadata.metadata_utils import provide_metadata
+
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import OPA_PROPERTIES_QUERY
 
@@ -75,12 +78,33 @@ def create_standardized_address(row: pd.Series) -> str:
     return standardized_address.lower()
 
 
+@provide_metadata()
 def opa_properties() -> FeatureLayer:
     """
     Loads and processes OPA property data, standardizing addresses and cleaning geometries.
 
     Returns:
         FeatureLayer: A feature layer containing processed OPA property data.
+
+    Columns Added:
+        opa_id (int): the OPA ID of the property
+        market_value (float): the market value from the OPA data
+        sale_date (str): the date of the last sale
+        sale_price (float): the price of the last sale
+        parcel_type (str): "Land" or "Building"
+        zip_code (str): The zip code of the property
+        zoning (str): The zoning of the property
+        owner_1 (str): The first owner of the property
+        owner_2 (str): The second owner of the property
+        building_code_description (str): The building code description
+        standardized_address (str): A standardized mailing address
+        geometry (geometry): The geometry of the property
+
+    Source:
+        https://phl.carto.com/api/v2/sql
+
+    Tagline:
+        Load OPA data
     """
     opa = FeatureLayer(
         name="OPA Properties",
@@ -104,7 +128,6 @@ def opa_properties() -> FeatureLayer:
             "zoning",
         ],
     )
-
     # Rename columns
     opa.gdf = opa.gdf.rename(columns={"parcel_number": "opa_id"})
 
