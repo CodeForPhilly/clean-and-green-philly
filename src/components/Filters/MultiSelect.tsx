@@ -32,7 +32,9 @@ const MultiSelect: FC<MultiSelectProps> = ({
 
   // Override Autocomplete design to continue focus on the input after closing the popover menu
   useEffect(() => {
-    !isOpen && inputRef.current?.blur();
+    if (!isOpen) {
+      inputRef.current?.blur();
+    }
   }, [isOpen]);
 
   return (

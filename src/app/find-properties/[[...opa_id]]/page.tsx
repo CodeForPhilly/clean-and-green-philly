@@ -16,7 +16,7 @@ import { centroid } from '@turf/centroid';
 import { Position } from 'geojson';
 import { ThemeButton } from '../../../components/ThemeButton';
 import { useRouter } from 'next/navigation';
-import { ViewState } from 'react-map-gl';
+import { ViewState } from 'react-map-gl/maplibre';
 import { PiX } from 'react-icons/pi';
 import DataDisclaimerModal from '@/components/DataDisclaimerModal';
 

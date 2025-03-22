@@ -24,6 +24,7 @@ import Map, {
   GeolocateControl,
   ViewState,
 } from 'react-map-gl/maplibre';
+import { Feature } from 'maplibre-gl';
 import maplibregl, {
   Map as MaplibreMap,
   IControl,
@@ -498,7 +499,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
                 coordinates: [-75.1652, 39.9526], // Approximate center of Philadelphia
               },
             ]}
-            onPick={(feature) => {
+            onPick={({ feature }) => {
               if (feature) {
                 const address = feature.place_name.split(',')[0];
                 setSelectedProperty(null);
