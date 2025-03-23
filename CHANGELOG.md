@@ -46,3 +46,52 @@
 * Pass selected property to map view ([663f142](https://github.com/jinks145/clean-and-green-philly/commit/663f14236ccb9246efa8882c0dfa44e8cbcba0f7))
 * underline links ([5f23d09](https://github.com/jinks145/clean-and-green-philly/commit/5f23d09da9a7258b284ccfef54b1be0ee2a8e1f8))
 * Update aria label and role ([765e5a4](https://github.com/jinks145/clean-and-green-philly/commit/765e5a4fef1941e93815ae4789093e047183101c))
+
+# 1.0.0 (2025-03-23)
+
+
+### Bug Fixes
+
+* **572:** fix webpack warnings + fix linting issues ([#574](https://github.com/jinks145/clean-and-green-philly/issues/574)) ([fbfd459](https://github.com/jinks145/clean-and-green-philly/commit/fbfd459ba147e51a2fd54bee61d5ca63fb74eb98))
+* Add focus styling to header links ([a99065c](https://github.com/jinks145/clean-and-green-philly/commit/a99065cba1607b981702e7aa7e654f24c108ad6e))
+* Add href to dropdown items to increase link size ([2eb4667](https://github.com/jinks145/clean-and-green-philly/commit/2eb4667e7b68f45489c51ea10aa7d15afd2a3c77))
+* closing tooltip popup on map closes property details ([432e8c0](https://github.com/jinks145/clean-and-green-philly/commit/432e8c0a14e1e9cfa199b030019c0730a24741c6))
+* correct the scrolling on the map page ([a850237](https://github.com/jinks145/clean-and-green-philly/commit/a8502372e243057e2b06559cb042d94ea894415a))
+* Remove nested link and button ([d93e8bd](https://github.com/jinks145/clean-and-green-philly/commit/d93e8bd52d80cd8d5b1a30910aaa4b168a11b57a))
+* Update footer markup structure for accessibility ([d5c2a33](https://github.com/jinks145/clean-and-green-philly/commit/d5c2a334f0e5c297f117dca5dc2972b56d7b3542))
+
+
+### Features
+
+* **247:** make the mapbox legend more legible ([bcf6915](https://github.com/jinks145/clean-and-green-philly/commit/bcf691566fc26e834547a43efd863de58abdf3d4))
+* **293:** sort features by priority of high, medium, low ([8cd1058](https://github.com/jinks145/clean-and-green-philly/commit/8cd105872feb0065aa3d207d42dc5df76ef63dbc))
+* **305:** expand the header width of single property table ([b25261e](https://github.com/jinks145/clean-and-green-philly/commit/b25261e5d9e26bdbd9694aa03b4964771528dd3b))
+* **395:** add white background to backbutton bar ([a65f052](https://github.com/jinks145/clean-and-green-philly/commit/a65f052ca2e5c0eac2737f85b4997af6e993f750))
+* **395:** make property selection back button sticky ([6601201](https://github.com/jinks145/clean-and-green-philly/commit/6601201fcf943f8e64a1341327095e9b7edc6b08))
+* **457:** add filter count to button ([b35145a](https://github.com/jinks145/clean-and-green-philly/commit/b35145a1df5f2995294f829e0b7cde20ba0e0f29))
+* **535:** add close download view button ([#579](https://github.com/jinks145/clean-and-green-philly/issues/579)) ([9bd2c53](https://github.com/jinks145/clean-and-green-philly/commit/9bd2c53aa3b49da8136fa6e7e850c4dc4d5e2d74))
+* **544:** adjust remove property section ([#580](https://github.com/jinks145/clean-and-green-philly/issues/580)) ([900af8e](https://github.com/jinks145/clean-and-green-philly/commit/900af8e6fbfc89bd4ed83b17c9eed0a1d5a3de3b))
+* **568:** restyle the property table ([#577](https://github.com/jinks145/clean-and-green-philly/issues/577)) ([2c8cc92](https://github.com/jinks145/clean-and-green-philly/commit/2c8cc92b7f28aecdbe65412476691baa50254292))
+* Add arrow icon to link ([6bce3fa](https://github.com/jinks145/clean-and-green-philly/commit/6bce3fa84ad9827f2117a2d51ed2f2665e83481b))
+* Add content to sidebar ([23d5c52](https://github.com/jinks145/clean-and-green-philly/commit/23d5c52c3fcd1eb1eff902e7d1fd37ab2fe41b6d))
+* Add council district ([e576218](https://github.com/jinks145/clean-and-green-philly/commit/e5762185840f0bbc2289fede8481f5b39a16087d))
+* Add extra data to single detail page ([48e34fe](https://github.com/jinks145/clean-and-green-philly/commit/48e34fe0a6317fc8fc0f1f5e745dd165000d437f))
+* Add font ([c1a8b93](https://github.com/jinks145/clean-and-green-philly/commit/c1a8b93561dfc67c8eed31b3c8befa2b8ae984ec))
+* Add font to map ([1491518](https://github.com/jinks145/clean-and-green-philly/commit/14915180857a482a25d96f9f45f7c838082e2d71))
+* Add font to search field ([3b08069](https://github.com/jinks145/clean-and-green-philly/commit/3b080690ba92007545467bc2ce4bf3bcad26c899))
+* Add info cards ([8170944](https://github.com/jinks145/clean-and-green-philly/commit/8170944fdb8d8be36af062012967323047bda748))
+* Add missing data and atlas link; style table ([8c260d4](https://github.com/jinks145/clean-and-green-philly/commit/8c260d48e015ed6c8c29cc10b8936753cc013ff0))
+* Add percentage, update column widths ([41caf77](https://github.com/jinks145/clean-and-green-philly/commit/41caf77c55eb0a6336abc80047ed83584d250a64))
+* Add priority color square ([ad5a9fa](https://github.com/jinks145/clean-and-green-philly/commit/ad5a9faff3b9596256e680b3d6d95c54caefc7a7))
+* add redirect from map to find-properties ([439ed6c](https://github.com/jinks145/clean-and-green-philly/commit/439ed6c7291251aed9751431cd5bdc2fa6883a15))
+* Add row scope ([f945979](https://github.com/jinks145/clean-and-green-philly/commit/f945979edaee2ad5a003a5b5560a89cc25717f3b))
+* Add spacing below Back button ([7de48c5](https://github.com/jinks145/clean-and-green-philly/commit/7de48c50f177c0275cebac0a4a7d9dfce8d2cd2c))
+* Address a few more links ([b3b6733](https://github.com/jinks145/clean-and-green-philly/commit/b3b673375f1472f15d80bffeff378c973d6cb49d))
+* Adjust table per requirements ([36e6cfa](https://github.com/jinks145/clean-and-green-philly/commit/36e6cfa5934defadcf1a8b8ad1c09ffe609d0ec5))
+* Change Find Properties and Learn More to links ([1de0b47](https://github.com/jinks145/clean-and-green-philly/commit/1de0b474811ab2d4281d94c6a9d5882a8ebb0c13))
+* Close sidebar if clicking on empty map ([612117d](https://github.com/jinks145/clean-and-green-philly/commit/612117d6c54bc62baaae4f773013e196232c2dba))
+* Navigate to map on click; show popups ([183b6a2](https://github.com/jinks145/clean-and-green-philly/commit/183b6a224d651726a6e465d7c9549ef437626f9e))
+* Open sidebar from map ([5474367](https://github.com/jinks145/clean-and-green-philly/commit/54743673e99ffd6b939009ad54e4d0a4252ba044))
+* Pass selected property to map view ([663f142](https://github.com/jinks145/clean-and-green-philly/commit/663f14236ccb9246efa8882c0dfa44e8cbcba0f7))
+* underline links ([5f23d09](https://github.com/jinks145/clean-and-green-philly/commit/5f23d09da9a7258b284ccfef54b1be0ee2a8e1f8))
+* Update aria label and role ([765e5a4](https://github.com/jinks145/clean-and-green-philly/commit/765e5a4fef1941e93815ae4789093e047183101c))
