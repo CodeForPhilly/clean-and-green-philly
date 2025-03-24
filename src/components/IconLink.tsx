@@ -3,14 +3,16 @@
 import { Button, NavbarItem } from '@nextui-org/react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import { RefCallback } from 'react';
 
 interface IconLinkProps {
   icon: React.ReactElement;
   text: string;
   href: string;
+  refFunction?: RefCallback<HTMLButtonElement>;
 }
 
-function IconLink({ icon, text, href }: IconLinkProps) {
+function IconLink({ icon, text, href, refFunction }: IconLinkProps) {
   const pathname = usePathname();
   return (
     <NavbarItem
@@ -35,6 +37,7 @@ function IconLink({ icon, text, href }: IconLinkProps) {
             ? 'active-state-nav gap-0 w-full justify-start'
             : 'iconLink bg-color-none gap-0 w-full justify-start'
         }
+        ref={refFunction ?? null}
         // className="flex text-gray-900 items-center active:bg-[#E9FFE5] active:text-green-700 focus:text-green-700 focus:bg-[#E9FFE5] hover:gray-100 bg-color-none hover:bg-gray-10"
       >
         <span className="body-md">{text}</span>
