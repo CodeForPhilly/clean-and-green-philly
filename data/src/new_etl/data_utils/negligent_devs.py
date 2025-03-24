@@ -1,6 +1,8 @@
 from ..classes.featurelayer import FeatureLayer
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def negligent_devs(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Identifies negligent developers based on the number of vacant properties owned
@@ -8,6 +10,17 @@ def negligent_devs(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     Args:
         primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Columns Added:
+        negligent_dev (bool): non-city owned entities owning 5+ vacant properties
+        n_total_properties_owned (int): Total number of properties owned by the developer
+        n_vacant_properties_owned (int): Number of vacant properties owned by the developer
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, vacant, city_owner_agency, standardized_address
+
+    Tagline:
+        Identify negligent developers
 
     Returns:
         FeatureLayer: The input feature layer with additional columns for total properties

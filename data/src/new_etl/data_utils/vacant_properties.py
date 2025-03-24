@@ -1,8 +1,11 @@
+from io import BytesIO
+
+import geopandas as gpd
+import pandas as pd
+
 from ..classes.featurelayer import FeatureLayer, google_cloud_bucket
 from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
-import geopandas as gpd
-from io import BytesIO
-import pandas as pd
+from ..metadata.metadata_utils import provide_metadata
 
 
 def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame:
@@ -54,6 +57,7 @@ def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05) -> None:
             )
 
 
+@provide_metadata()
 def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Adds a "vacant" column to the primary feature layer based on vacant property data from
@@ -64,6 +68,18 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     Returns:
         FeatureLayer: The input feature layer with an added "vacant" column.
+
+    Tagline:
+        Identify vacant properties.
+
+    Columns Added:
+        vacant (bool): Indicates whether the property is vacant.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id
+
+    Known Issues:
+        - The vacant land data is below the threshold, so backup data is loaded from GCS.
     """
     vacant_properties = FeatureLayer(
         name="Vacant Properties",

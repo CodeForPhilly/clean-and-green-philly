@@ -1,11 +1,16 @@
-import requests
 import io
 import zipfile
+
 import geopandas as gpd
-from ..classes.featurelayer import FeatureLayer
+import requests
+
 from config.config import USE_CRS
 
+from ..classes.featurelayer import FeatureLayer
+from ..metadata.metadata_utils import provide_metadata
 
+
+@provide_metadata()
 def tree_canopy(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Adds tree canopy gap information to the primary feature layer by downloading,
@@ -17,6 +22,18 @@ def tree_canopy(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Returns:
         FeatureLayer: The input feature layer with an added "tree_canopy_gap" column
         indicating the tree canopy gap for each property.
+
+    Tagline:
+        Measures tree canopy gaps.
+
+    Columns added:
+        tree_canopy_gap (float): The amount of tree canopy lacking.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
+
+    Source:
+        https://national-tes-data-share.s3.amazonaws.com/national_tes_share/pa.zip.zip
     """
     tree_url = (
         "https://national-tes-data-share.s3.amazonaws.com/national_tes_share/pa.zip.zip"

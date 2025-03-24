@@ -1,8 +1,11 @@
-from ..classes.featurelayer import FeatureLayer
-from ..constants.services import PWD_PARCELS_QUERY
 import geopandas as gpd
 
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import PWD_PARCELS_QUERY
+from ..metadata.metadata_utils import provide_metadata
 
+
+@provide_metadata()
 def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Updates the primary feature layer by replacing its geometry column with validated
@@ -15,6 +18,18 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Returns:
         FeatureLayer: The updated primary feature layer with geometries replaced
                       by those from PWD parcels or retained from the original layer if no match.
+
+    Columns Updated:
+        geometry: The geometry column is updated with validated geometries from PWD parcels.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
+
+    Tagline:
+        Improve geometry with PWD parcels data.
+
+    Source:
+        https://phl.carto.com/api/v2/sql
     """
     # Load PWD parcels
     pwd_parcels = FeatureLayer(

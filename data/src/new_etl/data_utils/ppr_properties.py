@@ -1,11 +1,16 @@
 import io
+
 import geopandas as gpd
 import requests
-from ..classes.featurelayer import FeatureLayer
-from ..constants.services import PPR_PROPERTIES_TO_LOAD
+
 from config.config import USE_CRS
 
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import PPR_PROPERTIES_TO_LOAD
+from ..metadata.metadata_utils import provide_metadata
 
+
+@provide_metadata()
 def ppr_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Updates the 'vacant' column in the primary feature layer to ensure PPR properties
@@ -17,6 +22,23 @@ def ppr_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     Returns:
         FeatureLayer: The updated primary feature layer.
+
+    Columns Updated:
+        vacant: Updated to False for PPR properties.
+
+    Tagline:
+        Mark Parks as Not Vacant
+
+    Source:
+        https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PPR_Properties/FeatureServer/0
+
+    Known Issues:
+        If the Ersi REST URL is not available the function
+        will fall back to loading the data from a GeoJSON URL
+        https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry, vacant, public_name
     """
     fallback_url = "https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson"
 

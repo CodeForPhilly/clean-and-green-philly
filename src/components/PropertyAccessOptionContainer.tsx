@@ -27,21 +27,29 @@ const determineCardEnums = (property: any) => {
     unavailable.add(PropertyAccess.PRIVATE_LAND_USE);
   }
 
-  property.access_process === 'Go through Land Bank'
-    ? (best = PropertyAccess.LAND_BANK)
-    : unavailable.add(PropertyAccess.LAND_BANK);
+  if (property.access_process === 'Go through Land Bank') {
+    best = PropertyAccess.LAND_BANK;
+  } else {
+    unavailable.add(PropertyAccess.LAND_BANK);
+  }
 
-  property.side_yard_eligible === 'Yes'
-    ? (neighbor = PropertyAccess.SIDE_YARD)
-    : unavailable.add(PropertyAccess.SIDE_YARD);
+  if (property.side_yard_eligible === 'Yes') {
+    neighbor = PropertyAccess.SIDE_YARD;
+  } else {
+    unavailable.add(PropertyAccess.SIDE_YARD);
+  }
 
-  property.tactical_urbanism === 'Yes'
-    ? available.add(PropertyAccess.TACTICAL_URBANISM)
-    : unavailable.add(PropertyAccess.TACTICAL_URBANISM);
+  if (property.tactical_urbanism === 'Yes') {
+    available.add(PropertyAccess.TACTICAL_URBANISM);
+  } else {
+    unavailable.add(PropertyAccess.TACTICAL_URBANISM);
+  }
 
-  property.conservatorship === 'Yes'
-    ? available.add(PropertyAccess.CONSERVATORSHIP)
-    : unavailable.add(PropertyAccess.CONSERVATORSHIP);
+  if (property.conservatorship === 'Yes') {
+    available.add(PropertyAccess.CONSERVATORSHIP);
+  } else {
+    unavailable.add(PropertyAccess.CONSERVATORSHIP);
+  }
 
   return {
     best,

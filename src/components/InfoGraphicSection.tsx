@@ -2,6 +2,7 @@ import Image, { StaticImageData } from 'next/image';
 import type { IconType } from 'react-icons';
 import { ThemeButtonLink } from './ThemeButton';
 import './components-css/InfoGraphicSection.css';
+import { JSX } from 'react';
 
 interface InfoGraphicBase {
   id?: string;

@@ -1,7 +1,9 @@
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import UNSAFE_BUILDINGS_QUERY
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def unsafe_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Adds unsafe building information to the primary feature layer by joining with a dataset
@@ -13,6 +15,18 @@ def unsafe_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Returns:
         FeatureLayer: The input feature layer with an added "unsafe_building" column,
         indicating whether each property is categorized as an unsafe building ("Y" or "N").
+
+    Tagline:
+        Identify unsafe buildings
+
+    Columns Added:
+        unsafe_building (str): Indicates whether each property is categorized as an unsafe building ("Y" or "N").
+
+    Primary Feature Layer Columns Referenced:
+        opa_id
+
+    Source:
+        https://phl.carto.com/api/v2/sql
     """
     unsafe_buildings = FeatureLayer(
         name="Unsafe Buildings",

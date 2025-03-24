@@ -2,11 +2,20 @@ import logging as log
 import os
 import subprocess
 import traceback
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import geopandas as gpd
 import pandas as pd
 import requests
 import sqlalchemy as sa
+from config.psql import conn, local_engine
+from google.cloud import storage
+from google.cloud.storage.bucket import Bucket
+from new_etl.database import to_postgis_with_schema
+from new_etl.loaders import load_carto_data, load_esri_data
+from shapely import wkb
+from tqdm import tqdm
+
 from config.config import (
     FORCE_RELOAD,
     USE_CRS,
@@ -14,15 +23,6 @@ from config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
-from config.psql import conn, local_engine
-from google.cloud import storage
-from google.cloud.storage.bucket import Bucket
-from shapely import wkb
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from tqdm import tqdm
-
-from new_etl.loaders import load_esri_data, load_carto_data
-from new_etl.database import to_postgis_with_schema
 
 log.basicConfig(level=log_level)
 
@@ -33,8 +33,8 @@ def google_cloud_bucket() -> Bucket:
     Returns:
         Bucket: the gcp bucket
     """
-    credentials_path = os.path.expanduser("/app/service-account-key.json")
 
+    credentials_path = os.path.expanduser("/app/service-account-key.json")
     if not os.path.exists(credentials_path):
         raise FileNotFoundError(f"Credentials file not found at {credentials_path}")
 
@@ -63,7 +63,12 @@ class FeatureLayer:
         cols: list[str] = None,
         max_workers=os.cpu_count(),
         chunk_size=100000,
+        collected_metadata=None,
     ):
+        if collected_metadata is None:
+            self.collected_metadata = []
+        else:
+            self.collected_metadata = collected_metadata
         self.name = name
         self.esri_rest_urls = (
             [esri_rest_urls] if isinstance(esri_rest_urls, str) else esri_rest_urls
@@ -84,7 +89,6 @@ class FeatureLayer:
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
-
         if len(non_none_inputs) > 0:
             self.type = (
                 "esri"

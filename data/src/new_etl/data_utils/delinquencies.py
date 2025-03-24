@@ -1,7 +1,9 @@
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import DELINQUENCIES_QUERY
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Adds property tax delinquency information to the primary feature layer by
@@ -13,6 +15,24 @@ def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Returns:
         FeatureLayer: The input feature layer with added columns for tax delinquency
         information, including total due, actionable status, payment agreements, and more.
+
+    Tagline:
+        Summarize tax delinquencies
+
+    Source:
+        https://phl.carto.com/api/v2/sql
+
+    Columns Added:
+        total_due (float): Total amount owed.
+        most_recent_year_owed (str): Most recent year owed.
+        num_years_owed (int): Number of years owed.
+        payment_agreement (str): Indicates if there is a payment agreement.
+        is_actionable (str): Flag for actionable tax delinquency.
+        sheriff_sale (str): Indicates if the property is at risk of sheriff sale.
+        total_assessment (float): Total property assessment.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id
     """
     tax_delinquencies = FeatureLayer(
         name="Property Tax Delinquencies",

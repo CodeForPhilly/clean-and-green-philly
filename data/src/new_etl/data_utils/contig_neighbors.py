@@ -1,10 +1,14 @@
 import warnings
+
 import networkx as nx
-from libpysal.weights import Queen
 import numpy as np
+from libpysal.weights import Queen
+
 from ..classes.featurelayer import FeatureLayer
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def contig_neighbors(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Calculates the number of contiguous vacant neighbors for each property in a feature layer.
@@ -15,6 +19,15 @@ def contig_neighbors(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Returns:
         FeatureLayer: The input feature layer with an added "n_contiguous" column indicating
         the number of contiguous vacant neighbors for each property.
+
+    Tagline:
+        Count vacant neighbors
+
+    Columns Added:
+        n_contiguous (int): The number of contiguous vacant neighbors for each property.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, vacant
     """
     # Create a filtered dataframe with only vacant properties and polygon geometries
     vacant_parcels = primary_featurelayer.gdf.loc[
