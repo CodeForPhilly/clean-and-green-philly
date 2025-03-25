@@ -2,6 +2,8 @@ import sys
 import traceback
 
 import pandas as pd
+
+from config.config import tiles_file_id_prefix
 from config.psql import conn
 from new_etl.classes.data_diff import DiffReport
 from new_etl.classes.slack_reporters import (
@@ -10,6 +12,7 @@ from new_etl.classes.slack_reporters import (
     send_pg_stats_to_slack,
 )
 from new_etl.data_utils import (
+    access_process,
     city_owned_properties,
     community_gardens,
     conservatorship,
@@ -24,10 +27,12 @@ from new_etl.data_utils import (
     li_violations,
     nbhoods,
     negligent_devs,
+    opa_properties,
     owner_type,
     park_priority,
     phs_properties,
     ppr_properties,
+    priority_level,
     pwd_parcels,
     rco_geoms,
     tactical_urbanism,
@@ -35,8 +40,7 @@ from new_etl.data_utils import (
     unsafe_buildings,
     vacant_properties,
 )
-
-from config.config import tiles_file_id_prefix
+from new_etl.database import to_postgis_with_schema
 
 # Ensure the directory containing awkde is in the Python path
 awkde_path = "/usr/src/app"
