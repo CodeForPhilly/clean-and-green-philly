@@ -1,7 +1,10 @@
 import pandas as pd
+
 from ..classes.featurelayer import FeatureLayer
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def owner_type(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Determines the ownership type for each property in the primary feature layer based on
@@ -15,6 +18,15 @@ def owner_type(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     Returns:
         FeatureLayer: The updated feature layer with the 'owner_type' column added.
+
+    Tagline:
+        Assigns ownership types
+
+    Columns added:
+        owner_type (str): The ownership type of the property: Public, Business (LLC) or Individual.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, owner_1, owner_2, city_owner_agency
     """
     owner_types = []
 

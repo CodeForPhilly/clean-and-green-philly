@@ -1,14 +1,42 @@
 import sys
-import pandas as pd
 import traceback
 
+import pandas as pd
 from config.psql import conn
-from config.config import tiles_file_id_prefix
-
-from new_etl.classes.slack_reporters import send_dataframe_profile_to_slack, send_pg_stats_to_slack, send_error_to_slack
 from new_etl.classes.data_diff import DiffReport
-from new_etl.data_utils import *
-from new_etl.database import to_postgis_with_schema
+from new_etl.classes.slack_reporters import (
+    send_dataframe_profile_to_slack,
+    send_error_to_slack,
+    send_pg_stats_to_slack,
+)
+from new_etl.data_utils import (
+    city_owned_properties,
+    community_gardens,
+    conservatorship,
+    contig_neighbors,
+    council_dists,
+    delinquencies,
+    dev_probability,
+    drug_crimes,
+    gun_crimes,
+    imm_dang_buildings,
+    li_complaints,
+    li_violations,
+    nbhoods,
+    negligent_devs,
+    owner_type,
+    park_priority,
+    phs_properties,
+    ppr_properties,
+    pwd_parcels,
+    rco_geoms,
+    tactical_urbanism,
+    tree_canopy,
+    unsafe_buildings,
+    vacant_properties,
+)
+
+from config.config import tiles_file_id_prefix
 
 # Ensure the directory containing awkde is in the Python path
 awkde_path = "/usr/src/app"
@@ -17,7 +45,6 @@ if awkde_path not in sys.path:
 
 
 try:
-
     print("Starting ETL process.")
 
     services = [
@@ -58,6 +85,12 @@ try:
     dataset = priority_level(dataset)
     dataset = access_process(dataset)
 
+    # Save metadata
+    try:
+        metadata_df = pd.DataFrame(dataset.collected_metadata)
+        metadata_df.to_csv("tmp/metadata.csv", index=False)
+    except Exception as e:
+        print(f"Error saving metadata: {str(e)}")
     # Drop duplicates
     before_drop = dataset.gdf.shape[0]
     dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
@@ -72,8 +105,12 @@ try:
         "num_years_owed",
         "permit_count",
     ]
-    dataset.gdf[numeric_columns] = dataset.gdf[numeric_columns].apply(pd.to_numeric, errors="coerce")
-    dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].astype(str)
+    dataset.gdf[numeric_columns] = dataset.gdf[numeric_columns].apply(
+        pd.to_numeric, errors="coerce"
+    )
+    dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].astype(
+        str
+    )
 
     # Dataset profiling
     send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")

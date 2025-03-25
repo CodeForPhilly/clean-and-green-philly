@@ -1,7 +1,8 @@
 import React, { ReactElement, Dispatch, SetStateAction } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { FillLayerSpecification } from 'maplibre-gl';
-import { IControl, MapboxMap } from 'react-map-gl';
+import { Map as MaplibreMap } from 'maplibre-gl';
+import { IControl } from 'react-map-gl/maplibre';
 
 import '../../app/mapLegend.css';
 
@@ -99,7 +100,7 @@ function MapLegend(layerStyle: FillLayerSpecification) {
 }
 
 export class MapLegendControlClass implements IControl {
-  private _map: MapboxMap | undefined;
+  private _map: MaplibreMap | undefined;
   private _container: HTMLElement;
   private handler: () => void;
 
@@ -117,7 +118,7 @@ export class MapLegendControlClass implements IControl {
   }
 
   // able to add event listeners here for interactivity with layer
-  onAdd = (map: MapboxMap) => {
+  onAdd = (map: MaplibreMap) => {
     this._map = map;
     this._container.addEventListener('click', this.handler);
     return this._container;

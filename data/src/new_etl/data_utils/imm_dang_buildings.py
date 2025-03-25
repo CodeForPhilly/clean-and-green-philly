@@ -1,7 +1,9 @@
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import IMMINENT_DANGER_BUILDINGS_QUERY
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def imm_dang_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Adds information about imminently dangerous buildings to the primary feature layer
@@ -13,6 +15,18 @@ def imm_dang_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Returns:
         FeatureLayer: The input feature layer with an added "imm_dang_building" column,
         indicating whether each property is categorized as imminently dangerous ("Y" or "N").
+
+    Tagline:
+        Identify imminently dangerous buildings
+
+    Columns Added:
+        imm_dang_building (str): Indicates whether each property is categorized as imminently dangerous ("Y" or "N").
+
+    Primary Feature Layer Columns Referenced:
+        opa_id
+
+    Source:
+        https://phl.carto.com/api/v2/sql
     """
     imm_dang_buildings = FeatureLayer(
         name="Imminently Dangerous Buildings",

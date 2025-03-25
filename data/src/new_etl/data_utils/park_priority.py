@@ -4,12 +4,15 @@ from io import BytesIO
 from typing import List, Union
 
 import geopandas as gpd
+import pyogrio
 import requests
 from bs4 import BeautifulSoup
-from ..classes.featurelayer import FeatureLayer
-from config.config import USE_CRS
 from tqdm import tqdm
-import pyogrio
+
+from config.config import USE_CRS
+
+from ..classes.featurelayer import FeatureLayer
+from ..metadata.metadata_utils import provide_metadata
 
 
 def get_latest_shapefile_url() -> str:
@@ -84,6 +87,7 @@ def download_and_process_shapefile(
     return phl_parks
 
 
+@provide_metadata()
 def park_priority(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Downloads and processes park priority data, then joins it with the primary feature layer.
@@ -93,6 +97,18 @@ def park_priority(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     Returns:
         FeatureLayer: The primary feature layer with park priority data joined.
+
+    Tagline:
+        Labels high-priority park areas.
+
+    Columns Added:
+        park_priority (int): The park priority score.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
+
+    Source:
+        https://www.tpl.org/park-data-downloads
     """
     park_url: str = get_latest_shapefile_url()
     print(f"Downloading park priority data from: {park_url}")

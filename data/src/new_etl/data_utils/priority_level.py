@@ -1,7 +1,10 @@
 import pandas as pd
+from new_etl.metadata.metadata_utils import provide_metadata
+
 from ..classes.featurelayer import FeatureLayer
 
 
+@provide_metadata()
 def priority_level(dataset: FeatureLayer) -> FeatureLayer:
     """
     Determines priority levels for properties based on gun crime density,
@@ -13,6 +16,17 @@ def priority_level(dataset: FeatureLayer) -> FeatureLayer:
     Returns:
         FeatureLayer: The input feature layer with an added "priority_level" column,
         indicating the priority for each property as "Low", "Medium", or "High".
+
+    Columns Added:
+        priority_level (str): The priority level ( "Low", "Medium", or "High") of the property
+            based on gun crime density, violations, tree canopy gaps, and PHS Landcare status.
+
+    Tagline:
+        Add priority levels
+
+    Source:
+        gun_crimes_density_zscore, all_violations_past_year, l_and_i_complaints_density_zscore,
+        tree_canopy_gap, phs_care_program columns in the primary feature layer.
     """
     priority_levels = []
     for idx, row in dataset.gdf.iterrows():

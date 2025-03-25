@@ -1,6 +1,9 @@
 from typing import Any
 
+from new_etl.metadata.metadata_utils import provide_metadata
 
+
+@provide_metadata()
 def access_process(dataset: Any) -> Any:
     """
     Process a dataset to determine the access process for each property based on
@@ -12,6 +15,15 @@ def access_process(dataset: Any) -> Any:
 
     Returns:
         Any: The updated dataset with an additional "access_process" column.
+
+    Tagline:
+        Assigns access processes
+
+    Columns added:
+        access_process (str): The access process for each property based on city ownership and market value.
+
+    Primary Feature Layer Columns Referenced:
+        city_owner_agency, market_value
 
     Side Effects:
         Prints the distribution of the "access_process" column.

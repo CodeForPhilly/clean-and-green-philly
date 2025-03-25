@@ -76,9 +76,11 @@ const SinglePropertyDetail = ({
       : {};
 
     const propertyId = parsedLocalStorageData.opa_ids[opa_id];
-    propertyId
-      ? setIsPropertySavedToLocalStorage(true)
-      : setIsPropertySavedToLocalStorage(false);
+    if (propertyId) {
+      setIsPropertySavedToLocalStorage(true);
+    } else {
+      setIsPropertySavedToLocalStorage(false);
+    }
   }, []);
 
   if (!property) return null;

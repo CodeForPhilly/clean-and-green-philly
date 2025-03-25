@@ -1,12 +1,11 @@
 'use client';
 
-import React, { FC } from 'react';
-import { X } from '@phosphor-icons/react';
+import React, { FC, useEffect, useRef, useState } from 'react';
+import { Check, X } from '@phosphor-icons/react';
 import {
   SelectFilter,
   SelectFilterItem,
   SelectFilterChip,
-  BlankSelectorIcon,
 } from './MultiSelectVariants';
 
 type MultiSelectProps = {
@@ -28,48 +27,58 @@ const MultiSelect: FC<MultiSelectProps> = ({
   toggleDimension,
   handleSelectionChange,
 }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Override Autocomplete design to continue focus on the input after closing the popover menu
+  useEffect(() => {
+    if (!isOpen) {
+      inputRef.current?.blur();
+    }
+  }, [isOpen]);
+
   return (
-    <div className="space-x-2 min-h-[33.5px]">
+    <div className="space-x-2 min-h-[33.5px] flex flex-col">
       <SelectFilter
         aria-describedby={aria_describedby_label}
-        items={options}
         variant="flat"
         size="md"
         radius="md"
-        isMultiline={true}
-        selectionMode="multiple"
         placeholder="Select options..."
-        selectorIcon={<BlankSelectorIcon />}
-        selectedKeys={selectedKeys}
-        renderValue={() => {
-          return (
-            <div className="flex flex-wrap gap-y-2">
-              {selectedKeys.map((option, index) => (
-                <SelectFilterChip
-                  key={index}
-                  classNames={{ base: 'multiSelectChip' }}
-                  endContent={<X aria-label={`close ${option}`} />}
-                  onClose={() => handleSelectionChange(option)}
-                >
-                  {option}
-                </SelectFilterChip>
-              ))}
-            </div>
-          );
+        selectedKey={null}
+        inputProps={{
+          ref: inputRef,
         }}
-        onChange={handleSelectionChange}
+        onOpenChange={() => setIsOpen((prev) => !prev)}
       >
         {options.map((option) => (
           <SelectFilterItem
             key={option}
             value={option}
-            classNames={{ base: 'multiSelectItem' }}
-            shouldHighlightOnFocus={false}
+            onClick={(e) => {
+              const target = e.target as HTMLSpanElement;
+              handleSelectionChange(target.innerText);
+            }}
+            endContent={
+              selectedKeys.includes(option) && <Check weight="bold" />
+            }
           >
             {option}
           </SelectFilterItem>
         ))}
       </SelectFilter>
+      <div className="flex mt-2 gap-y-2 flex-wrap">
+        {selectedKeys.map((option) => (
+          <SelectFilterChip
+            key={option}
+            classNames={{ base: 'multiSelectChip' }}
+            endContent={<X aria-label={`close ${option}`} />}
+            onClose={() => handleSelectionChange(option)}
+          >
+            {option}
+          </SelectFilterChip>
+        ))}
+      </div>
     </div>
   );
 };
