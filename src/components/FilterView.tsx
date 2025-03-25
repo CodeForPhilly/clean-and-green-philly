@@ -6,6 +6,8 @@ import { ThemeButton } from './ThemeButton';
 import { BarClickOptions } from '@/app/find-properties/[[...opa_id]]/page';
 import { rcos, neighborhoods, zoning } from './Filters/filterOptions';
 import DimensionFilter from './Filters/DimensionFilter';
+import FilterDescription from './Filters/FilterDescription';
+import { title } from 'process';
 
 const filters = [
   {
@@ -14,6 +16,11 @@ const filters = [
     options: ['Low', 'Medium', 'High'],
     type: 'buttonGroup',
   },
+  {
+    property: 'market_value',
+    display: 'Market Value',
+    type: ''
+  }
   {
     property: 'get_access',
     display: 'Get Access',
@@ -54,6 +61,35 @@ const filters = [
   },
 ];
 
+const filterDescriptions: FilterDescriptionProps[] = [
+  {
+    title: 'Suggested Priority',
+    description: 'Find properties based on how much they can reduce gun violence considering the gun violence, cleanliness, and tree canopy nearby.',
+    link: 'priority-method',
+  },
+  {
+    title: 'Market Value',
+    description: 'Find properties based on their market value (USD).',
+  },
+  {
+    title: 'Get Access',
+    description: 'Find properties based on what we think the easiest method to get legal access to them is, based on the data available to us.',
+    link: 'access-method',
+  },
+  {
+    title: 'Neighborhoods',
+  },
+  {
+    title: 'Community Organizations',
+  },
+  {
+    title: 'Zoning',
+  },
+  {
+    title: 'Property Type',
+  },
+]
+
 interface FilterViewProps {
   updateCurrentView: (view: BarClickOptions) => void;
 }
@@ -72,6 +108,7 @@ const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
           updateCurrentView('filter');
         }}
       />
+      <FilterDescription title="Suggested Priority" />
       {filters.map((attr) => (
         <DimensionFilter key={attr.property} {...attr} />
       ))}
