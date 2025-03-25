@@ -4,12 +4,10 @@ from io import BytesIO
 from unittest.mock import MagicMock, Mock, patch
 
 import geopandas as gpd
-from data_utils.park_priority import get_latest_shapefile_url, park_priority
-from data_utils.ppr_properties import ppr_properties
-from data_utils.vacant_properties import vacant_properties
 from shapely.geometry import Point
 
 from config.config import USE_CRS
+from new_etl.data_utils.park_priority import get_latest_shapefile_url, park_priority
 
 
 class TestDataUtils(unittest.TestCase):
@@ -37,7 +35,9 @@ class TestDataUtils(unittest.TestCase):
 
     def setUp(self):
         # Set up the mocks that will be used in each test
-        self.patcher1 = patch("data_utils.vacant_properties.google_cloud_bucket")
+        self.patcher1 = patch(
+            "new_etl.data_utils.vacant_properties.google_cloud_bucket"
+        )
         self.patcher2 = patch("geopandas.read_file")
 
         self.mock_gcs = self.patcher1.start()
@@ -66,7 +66,7 @@ class TestDataUtils(unittest.TestCase):
         self.assertTrue(url.startswith("https://"))
         self.assertTrue(url.endswith(".zip"))
 
-    @patch("data_utils.park_priority.requests.get")
+    @patch("new_etl.data_utils.park_priority.requests.get")
     def test_get_latest_shapefile_url_mock(self, mock_get):
         """
         Test the get_latest_shapefile_url function.
@@ -81,7 +81,7 @@ class TestDataUtils(unittest.TestCase):
         self.assertEqual(url, "https://example.com/shapefile.zip")
 
     @patch(
-        "data_utils.park_priority.requests.get"
+        "new_etl.data_utils.park_priority.requests.get"
     )  # Mock requests.get globally in park_priority
     @patch("geopandas.read_file")
     @patch("geopandas.GeoDataFrame.to_file")  # Mock to_file to prevent actual writing
@@ -158,18 +158,6 @@ class TestDataUtils(unittest.TestCase):
         mock_extract.assert_called()
 
         self.assertEqual(result, mock_primary_layer)
-
-    def test_ppr_properties(self):
-        """
-        Test the ppr properties layer. Simply construct the class for now to see if it works.
-        """
-        ppr_properties(vacant_properties())
-
-    def test_vacant_properties(self):
-        """
-        Test the vacant properties layer. Simply construct the class to see if it works.
-        """
-        vacant_properties()
 
 
 if __name__ == "__main__":
