@@ -1,6 +1,6 @@
 import re
 
-from data_utils import utils
+from new_etl.data_utils import utils
 
 
 class TestUtils:
