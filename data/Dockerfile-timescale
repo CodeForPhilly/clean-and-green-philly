@@ -1,9 +1,9 @@
 FROM postgres:16-bullseye
 
 ENV POSTGIS_MAJOR=3
-ENV POSTGIS_VERSION=3.5.0+dfsg-1.pgdg110+1
+ENV POSTGIS_VERSION=3.5.2+dfsg-1.pgdg110+1
 ENV TIMESCALE_MAJOR=2
-ENV TIMESCALE_MINOR=17
+ENV TIMESCALE_MINOR=19
 
 RUN apt-get update \
       && apt-get install -y --no-install-recommends lsb-release curl gnupg apt-transport-https wget \
