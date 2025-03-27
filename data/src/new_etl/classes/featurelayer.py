@@ -9,7 +9,6 @@ import pandas as pd
 import requests
 import sqlalchemy as sa
 from google.cloud import storage
-from google.cloud.storage.bucket import Bucket
 from shapely import wkb
 from tqdm import tqdm
 
@@ -21,29 +20,26 @@ from config.config import (
     write_production_tiles_file,
 )
 from config.psql import conn, local_engine
+from new_etl.classes.bucket_manager import GCSBucketManager
 from new_etl.database import to_postgis_with_schema
 from new_etl.loaders import load_carto_data, load_esri_data
 
 log.basicConfig(level=log_level)
 
 
-def google_cloud_bucket() -> Bucket:
-    """Build the google cloud bucket with name configured in your environ or default of cleanandgreenphl
+def google_cloud_bucket(require_write_access: bool = False) -> storage.Bucket | None:
+    """
+    Initialize a Google Cloud Storage bucket client using Application Default Credentials.
+    If a writable bucket is requested and the user does not have write access None is returned.
 
-    Returns:
-        Bucket: the gcp bucket
+    Args:
+        require_write_access (bool): Whether it is required that the bucket should be writable. Defaults to False.
     """
 
-    credentials_path = os.path.expanduser("/app/service-account-key.json")
-    if not os.path.exists(credentials_path):
-        raise FileNotFoundError(f"Credentials file not found at {credentials_path}")
-
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-    bucket_name = os.getenv("GOOGLE_CLOUD_BUCKET_NAME", "cleanandgreenphl")
-    project_name = os.getenv("GOOGLE_CLOUD_PROJECT", "clean-and-green-philly")
-
-    storage_client = storage.Client(project=project_name)
-    return storage_client.bucket(bucket_name)
+    bucket_manager = GCSBucketManager()
+    if require_write_access and bucket_manager.read_only:
+        return None
+    return bucket_manager.bucket
 
 
 class FeatureLayer:
@@ -149,6 +145,7 @@ class FeatureLayer:
                     ]
 
                 # Save GeoDataFrame to PostgreSQL and configure it as a hypertable
+                print("Saving GeoDataFrame to PostgreSQL...")
                 to_postgis_with_schema(self.gdf, self.psql_table, conn)
 
         except Exception as e:
@@ -357,6 +354,11 @@ class FeatureLayer:
             raise ValueError(
                 f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}. Therefore, we are not uploading any files to the GCP bucket. The file may be corrupt or incomplete."
             )
+
+        bucket = google_cloud_bucket(require_write_access=True)
+        if bucket is None:
+            print("Skipping PMTiles upload due to read-only bucket access.")
+            return
 
         # Upload PMTiles to Google Cloud Storage
         bucket = google_cloud_bucket()

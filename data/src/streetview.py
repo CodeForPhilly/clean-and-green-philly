@@ -9,6 +9,10 @@ from config.psql import conn
 
 # Configure Google
 bucket = google_cloud_bucket()
+# when switching over to new_etl, this will need to be updated to use the new bucket manager
+# bucket = google_cloud_bucket(require_write_access=True)
+# if bucket is None:
+#   do a dry run or exit
 key = os.environ["CLEAN_GREEN_GOOGLE_KEY"]
 bucket_name = bucket.name
 
