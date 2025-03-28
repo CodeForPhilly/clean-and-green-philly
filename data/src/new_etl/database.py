@@ -80,7 +80,7 @@ def to_postgis_with_schema(gdf, table_name, conn, if_exists="append", chunksize=
     """
     try:
         # Begin a transaction
-        with conn.begin() as transaction:
+        with conn.begin():
             # Synchronize schema with database table
             if if_exists == "append":
                 sync_table_schema(gdf, table_name, conn)
