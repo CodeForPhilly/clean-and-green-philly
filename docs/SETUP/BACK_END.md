@@ -18,6 +18,33 @@ If you plan to contribute to the data wrangling and database management on this 
 
 We use a precommit hook to help with formatting and linting in our CI/CD pipeline. When setting up the repo, please first [make sure you have `pre-commit` installed](https://pre-commit.com/) using `pip` or another package manager. Once that's done, run `pre-commit install` in the root directory to set up the precommit hooks (configured in `.pre-commit-config.yaml`).
 
+**Important:** After the above step manually copy the commit message hook file to ensure conventional commit format validation:
+
+**Windows Command Prompt:**
+
+```cmd
+copy .github\hooks\commit-msg .git\hooks\
+```
+
+**Mac/Linux/Git Bash:**
+
+```bash
+cp .github/hooks/commit-msg .git/hooks/
+chmod +x .git/hooks/commit-msg
+```
+
+This will install both code quality checks and commit message format validation.
+
+> **Note:** All commits must follow the Conventional Commits format: `<type>[optional scope]: <description>`
+>
+> Valid types: feat, fix, docs, style, refactor, test, chore, ci, perf, build
+>
+> Examples:
+>
+> - `fix: resolve data fetching issue`
+> - `feat(FilterView): add new method for conditional filtering`
+> - `docs: update the pull request template`
+
 ### Set Environment Variables
 
 The project requires specific and sensitive information to run, which should be stored in the user's development environment rather than in source control. Here are instructions for setting environment variables locally on your machine or using a `.env` file.

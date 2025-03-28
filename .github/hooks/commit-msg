@@ -1,0 +1,27 @@
+#!/bin/sh
+
+# Read commit message from the commit-msg hook argument ($1)
+commit_msg=$(cat "$1")
+
+# Regular expression for Conventional Commits
+pattern="^(feat|fix|docs|style|refactor|test|chore|ci|perf|build)(\(.+\))?!?: .+"
+
+
+if ! echo "$commit_msg" | grep -Eq "$pattern"; then
+    echo ""
+    echo "╔══════════════════════════════════════════════════════════════════╗"
+    echo "║      ❌ ERROR: Your commit message format is invalid! ❌         ║"
+    echo "╚══════════════════════════════════════════════════════════════════╝"
+    echo ""
+    echo "The format should be:"
+    echo "    <type>[optional scope]: <description>"
+    echo ""
+    echo "Examples:"
+    echo "    • fix: resolve data fetching issue"
+    echo "    • feat(FilterView): add new method for conditional filtering"
+    echo "    • docs: update the pull request template"
+    echo ""
+    echo "✅ Valid types: feat, fix, docs, style, refactor, test, chore, ci, perf, build"
+    echo ""
+    exit 1
+fi
