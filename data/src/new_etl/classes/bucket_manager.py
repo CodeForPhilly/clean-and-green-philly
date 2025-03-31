@@ -48,12 +48,17 @@ class GCSBucketManager:
         """
         project_name = os.getenv("GOOGLE_CLOUD_PROJECT", "clean-and-green-philly")
         credentials_path = credential_path or "/app/service-account-key.json"
+        is_credentials_file = os.path.exists(credentials_path)
 
-        if os.path.exists(credentials_path):
+        if is_credentials_file:
             os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
 
         try:
             # This will use application default credentials if GOOGLE_APPLICATION_CREDENTIALS is not set
+            if is_credentials_file:
+                print(f"Using service account key at {credentials_path}")
+            else:
+                print("Using application default credentials")
             return storage.Client(project=project_name)
 
         except Exception as e:
