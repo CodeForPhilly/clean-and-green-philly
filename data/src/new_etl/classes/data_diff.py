@@ -1,7 +1,8 @@
-from slack_sdk import WebClient
-import pandas as pd
-from sqlalchemy import text
 import os
+
+import pandas as pd
+from slack_sdk import WebClient
+from sqlalchemy import text
 
 from config.psql import conn
 
@@ -115,27 +116,31 @@ class DiffReport:
 
         self.summary_text = "\n".join(summary_lines)
 
-    def send_to_slack(self, channel="clean-and-green-philly-pipeline"):
+    def send_to_slack(
+        self, channel="clean-and-green-philly-pipeline", slack_token=None
+    ):
         """
         Sends the diff summary to a Slack channel.
 
         Args:
             channel (str): The Slack channel to post the message to.
         """
-        token = os.getenv("CAGP_SLACK_API_TOKEN")
-        if token:
-            client = WebClient(token=token)
-            try:
-                client.chat_postMessage(
-                    channel=channel,
-                    text=f"*Data Difference Report*\n\n{self.summary_text}",
-                    username="Diff Reporter",
-                )
-                print("Diff report sent to Slack successfully.")
-            except Exception as e:
-                print(f"Failed to send diff report to Slack: {e}")
-        else:
-            raise ValueError("Slack API token not found in environment variables.")
+        token = slack_token or os.getenv("CAGP_SLACK_API_TOKEN")
+        if not token:
+            print("Slack API token not found in environment variables.")
+            print("Skipping sending diff report to Slack.")
+            return
+
+        client = WebClient(token=token)
+        try:
+            client.chat_postMessage(
+                channel=channel,
+                text=f"*Data Difference Report*\n\n{self.summary_text}",
+                username="Diff Reporter",
+            )
+            print("Diff report sent to Slack successfully.")
+        except Exception as e:
+            print(f"Failed to send diff report to Slack: {e}")
 
     def run(self, send_to_slack=True, slack_channel="clean-and-green-philly-pipeline"):
         """
