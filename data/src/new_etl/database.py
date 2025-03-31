@@ -1,5 +1,7 @@
 from sqlalchemy import text
 
+from config.psql import local_engine
+
 
 def is_hypertable(conn, table_name):
     """
@@ -38,7 +40,22 @@ def execute_optional_sql(conn, query, description):
         print(f"Warning: {description} failed. Error: {e}")
 
 
-def sync_table_schema(gdf, table_name, conn):
+def table_exists(conn, table_name, schema="public"):
+    result = conn.execute(
+        text("""
+        SELECT EXISTS (
+            SELECT 1
+            FROM information_schema.tables 
+            WHERE table_schema = :schema
+              AND table_name = :table_name
+        );
+        """),
+        {"schema": schema, "table_name": table_name},
+    )
+    return result.scalar()
+
+
+def sync_table_schema(gdf, table_name, conn, if_exists="append"):
     """
     Synchronize the schema of a GeoDataFrame with the database table.
 
@@ -47,6 +64,11 @@ def sync_table_schema(gdf, table_name, conn):
         table_name (str): The name of the table in the database.
         conn: SQLAlchemy connection to the database.
     """
+
+    # Drop and recreate the table if it doesn't exist or we are replacing it
+    if not table_exists(conn, table_name) or if_exists == "replace":
+        gdf.head(0).to_postgis(table_name, conn, if_exists="replace")
+
     result = conn.execute(
         text(f"""
         SELECT column_name
@@ -80,13 +102,16 @@ def to_postgis_with_schema(gdf, table_name, conn, if_exists="append", chunksize=
     """
     try:
         # Begin a transaction
-        with conn.begin() as transaction:
+        with local_engine.begin() as conn:
             # Synchronize schema with database table
-            if if_exists == "append":
-                sync_table_schema(gdf, table_name, conn)
+            if if_exists in ("append", "replace"):
+                sync_table_schema(gdf, table_name, conn, if_exists=if_exists)
 
             # Save GeoDataFrame to PostGIS
-            gdf.to_postgis(table_name, conn, if_exists=if_exists, chunksize=chunksize)
+            # We have already replaced the table if required
+            # so we use append to prevent our schema modifications
+            # from being dropped
+            gdf.to_postgis(table_name, conn, if_exists="append", chunksize=chunksize)
 
             # Add the `create_date` column via SQL
             conn.execute(

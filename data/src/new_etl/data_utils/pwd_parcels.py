@@ -73,6 +73,6 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         primary_featurelayer.gdf["geometry"]
     )
     print("Number of observations retaining point geometry:", no_geometry_count)
-
+    primary_featurelayer.gdf = merged_gdf
     # Wrap the GeoDataFrame back into a FeatureLayer
-    return FeatureLayer(name=primary_featurelayer.name, gdf=merged_gdf)
+    return primary_featurelayer
