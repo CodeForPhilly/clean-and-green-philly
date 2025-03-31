@@ -113,6 +113,10 @@ class FeatureLayer:
             if len(psql_table) == 0:
                 return False
             log.info(f"Loading data for {self.name} from psql...")
+            # Remove the postgis create_date column if it exists (it is only for the db
+            # and isn't part of what was cached for the gdf)
+            if "create_date" in psql_table.columns:
+                psql_table = psql_table.drop(columns=["create_date"])
             self.gdf = psql_table
             return True
         except Exception as e:
@@ -152,7 +156,9 @@ class FeatureLayer:
                     ]
 
                 # Save GeoDataFrame to PostgreSQL and configure it as a hypertable
-                to_postgis_with_schema(self.gdf, self.psql_table, conn)
+                to_postgis_with_schema(
+                    self.gdf, self.psql_table, conn, if_exists="replace"
+                )
 
         except Exception as e:
             log.error(f"Error loading data for {self.name}: {e}")
