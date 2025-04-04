@@ -1,4 +1,4 @@
-FROM postgres:16-bullseye
+FROM postgis/postgis:16-3.5
 
 ENV POSTGIS_MAJOR=3
 ENV POSTGIS_VERSION=3.5.2+dfsg-1.pgdg110+1
@@ -7,11 +7,6 @@ ENV TIMESCALE_MINOR=19
 
 RUN apt-get update \
       && apt-get install -y --no-install-recommends lsb-release curl gnupg apt-transport-https wget \
-           # ca-certificates: for accessing remote raster files;
-           #   fix: https://github.com/postgis/docker-postgis/issues/307
-           ca-certificates \
-           postgresql-$PG_MAJOR-postgis-$POSTGIS_MAJOR=$POSTGIS_VERSION \
-           postgresql-$PG_MAJOR-postgis-$POSTGIS_MAJOR-scripts \
       # Add timescale repository and key
       && echo "deb https://packagecloud.io/timescale/timescaledb/debian/ $(lsb_release -c -s) main" \
            | tee /etc/apt/sources.list.d/timescaledb.list \
