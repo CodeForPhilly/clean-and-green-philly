@@ -36,13 +36,13 @@ jobs:
       run:
         working-directory: data/src
     env:
-      VACANT_LOTS_DB: 'postgresql://postgres:${{ secrets.POSTGRES_PASSWORD }}@localhost:5433/vacantlotdb'
+      VACANT_LOTS_DB: 'postgresql://postgres:temp-CI-only@localhost:5433/vacantlotdb'
     services:
       postgres:
         image: postgis/postgis:16-3.4
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_PASSWORD: temp-CI-only # CI-only, safe to hardcode for temporary container
           POSTGRES_DB: vacantlotdb
         ports:
           - 5433:5432

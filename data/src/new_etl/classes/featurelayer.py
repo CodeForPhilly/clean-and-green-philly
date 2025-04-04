@@ -8,11 +8,8 @@ import geopandas as gpd
 import pandas as pd
 import requests
 import sqlalchemy as sa
-from config.psql import conn, local_engine
 from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
-from new_etl.database import to_postgis_with_schema
-from new_etl.loaders import load_carto_data, load_esri_data
 from shapely import wkb
 from tqdm import tqdm
 
@@ -23,6 +20,9 @@ from config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
+from config.psql import conn, local_engine
+from new_etl.database import to_postgis_with_schema
+from new_etl.loaders import load_carto_data, load_esri_data
 
 log.basicConfig(level=log_level)
 
@@ -44,9 +44,6 @@ def google_cloud_bucket() -> Bucket:
 
     storage_client = storage.Client(project=project_name)
     return storage_client.bucket(bucket_name)
-
-
-bucket = google_cloud_bucket()
 
 
 class FeatureLayer:
@@ -362,6 +359,7 @@ class FeatureLayer:
             )
 
         # Upload PMTiles to Google Cloud Storage
+        bucket = google_cloud_bucket()
         for file in write_files:
             blob = bucket.blob(file)
             try:
