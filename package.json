@@ -39,10 +39,8 @@
   "devDependencies": {
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/exec": "^7.0.3",
     "@semantic-release/git": "^10.0.1",
-    "@semantic-release/github": "^11.0.1",
-    "@semantic-release/npm": "^12.0.1",
-    "@semantic-release/release-notes-generator": "^14.0.3",
     "@types/node": "^22.13.11",
     "@types/pbf": "^3.0.5",
     "@types/pg": "^8.11.11",
@@ -58,7 +56,7 @@
     "eslint-plugin-react": "^7.34.4",
     "postcss-nesting": "^13.0.1",
     "postcss-preset-env": "^10.1.5",
-    "semantic-release": "^24.0.0"
+    "semantic-release": "^24.2.2"
   },
   "overrides": {
     "npm": {
