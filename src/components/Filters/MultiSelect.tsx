@@ -7,28 +7,26 @@ import {
   SelectFilterItem,
   SelectFilterChip,
 } from './MultiSelectVariants';
+import { useFilter } from '@/context/FilterContext';
 
 type MultiSelectProps = {
-  display: string;
+  property: string;
   options: any[];
-  selectedKeys: string[];
   aria_describedby_label?: string;
-  toggleDimension: (dimension: string) => void;
-  handleSelectionChange: (
-    selection: React.ChangeEvent<HTMLSelectElement> | string
-  ) => void;
+  useIndexOfFilter?: boolean;
 };
 
-const MultiSelect: FC<MultiSelectProps> = ({
-  display,
+const MultiSelect = ({
+  property,
   options,
-  selectedKeys,
   aria_describedby_label,
-  toggleDimension,
-  handleSelectionChange,
-}) => {
+  useIndexOfFilter,
+}: MultiSelectProps): JSX.Element => {
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { dispatch, appFilter } = useFilter();
+
+  const currentFilterKeys = appFilter[property]?.values || [];
 
   // Override Autocomplete design to continue focus on the input after closing the popover menu
   useEffect(() => {
@@ -36,6 +34,19 @@ const MultiSelect: FC<MultiSelectProps> = ({
       inputRef.current?.blur();
     }
   }, [isOpen]);
+
+  const handleSelectFilterKeys = (selection: string) => {
+    const updatedKeys = currentFilterKeys.includes(selection)
+      ? currentFilterKeys.filter((option) => option !== selection)
+      : [...currentFilterKeys, selection];
+
+    dispatch({
+      type: 'SET_DIMENSIONS',
+      property,
+      dimensions: updatedKeys,
+      useIndexOfFilter,
+    });
+  };
 
   return (
     <div className="space-x-2 min-h-[33.5px] flex flex-col">
@@ -57,10 +68,10 @@ const MultiSelect: FC<MultiSelectProps> = ({
             value={option}
             onClick={(e) => {
               const target = e.target as HTMLSpanElement;
-              handleSelectionChange(target.innerText);
+              handleSelectFilterKeys(target.innerText);
             }}
             endContent={
-              selectedKeys.includes(option) && <Check weight="bold" />
+              currentFilterKeys.includes(option) && <Check weight="bold" />
             }
           >
             {option}
@@ -68,12 +79,12 @@ const MultiSelect: FC<MultiSelectProps> = ({
         ))}
       </SelectFilter>
       <div className="flex mt-2 gap-y-2 flex-wrap">
-        {selectedKeys.map((option) => (
+        {currentFilterKeys.map((option) => (
           <SelectFilterChip
             key={option}
             classNames={{ base: 'multiSelectChip' }}
             endContent={<X aria-label={`close ${option}`} />}
-            onClose={() => handleSelectionChange(option)}
+            onClose={() => handleSelectFilterKeys(option)}
           >
             {option}
           </SelectFilterChip>

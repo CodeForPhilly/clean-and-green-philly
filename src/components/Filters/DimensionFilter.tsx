@@ -109,17 +109,18 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
   };
 
   const filter = useMemo(() => {
-    if (type === 'buttonGroup') {
-      return (
-        <ButtonGroup
-          options={options}
-          selectedKeys={selectedKeys}
-          toggleDimension={toggleDimension}
-          displayOptions={optionsDisplayMapping[property]}
-          aria_describedby_label={filterLabelID}
-        />
-      );
-    } else if (type === 'panels') {
+    // if (type === 'buttonGroup') {
+    //   return (
+    //     <ButtonGroup
+    //       options={options}
+    //       selectedKeys={selectedKeys}
+    //       toggleDimension={toggleDimension}
+    //       displayOptions={optionsDisplayMapping[property]}
+    //       aria_describedby_label={filterLabelID}
+    //     />
+    //   );
+    // }
+    if (type === 'panels') {
       return (
         /* the filterLabelID is pulled from the form field header text and uses aria-describedby to tie each component to the form header label using a unique ID applied to the form area header
          */
@@ -131,16 +132,6 @@ const DimensionFilter: FC<DimensionFilterProps> = ({
         />
       );
     } else {
-      return (
-        <MultiSelect
-          display={display}
-          options={options}
-          selectedKeys={selectedKeys}
-          toggleDimension={toggleDimension}
-          handleSelectionChange={handleSelectionChange}
-          aria_describedby_label={filterLabelID}
-        />
-      );
     }
   }, [selectedKeys, selectedPanelKeys]);
 

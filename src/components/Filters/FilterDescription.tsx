@@ -10,7 +10,7 @@ export default function FilterDescription({
   link,
 }: FilterDescriptionProps): JSX.Element {
   return (
-    <>
+    <div className="flex flex-col mb-2">
       <h2 className="heading-lg">{title}</h2>
       {description && (
         <p className="body-sm text-gray-500 w-[90%] my-1">
@@ -26,6 +26,6 @@ export default function FilterDescription({
           )}
         </p>
       )}
-    </>
+    </div>
   );
 }

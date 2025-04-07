@@ -8,6 +8,7 @@ import {
   PropertyAccess,
   PropertyAccessOption,
 } from '@/config/propertyAccessOptions';
+import { useFilter } from '@/context/FilterContext';
 
 type PanelFilterOptions = PropertyAccessOption & {
   alt_description: string;
@@ -68,12 +69,14 @@ const panel_access_options: Record<
   },
 };
 
-const Panels: FC<PanelsProps> = ({
+const Panels = ({
   options,
   selectedPanelKeys,
   toggleDimensionForPanel,
   aria_describedby_label,
-}) => {
+}: PanelsProps) => {
+  const { dispatch, appFilter } = useFilter();
+
   const optionPanels = options.map((option, index) => {
     const panel = panel_access_options[option];
     const Icon = panel.icon;
