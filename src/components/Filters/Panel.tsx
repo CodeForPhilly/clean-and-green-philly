@@ -4,7 +4,7 @@ import { Card, CardBody } from '@nextui-org/react';
 import { Check } from '@phosphor-icons/react';
 import { IconType } from 'react-icons';
 
-type PanelProps = Required<
+export type PanelProps = Required<
   Omit<PropertyAccessOption, 'primary_description' | 'slug'>
 >;
 
@@ -62,3 +62,5 @@ const Panel = ({
     </Card>
   );
 };
+
+export default Panel;

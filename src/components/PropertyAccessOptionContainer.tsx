@@ -1,4 +1,4 @@
-import { access_options, PropertyAccess } from '@/config/propertyAccessOptions';
+import { accessOptions, PropertyAccess } from '@/config/propertyAccessOptions';
 import PropertyAccessOptionCard from './PropertyAccessOptionCard';
 
 const determineCardEnums = (property: any) => {
@@ -63,20 +63,20 @@ const PropertyAccessOptionContainer = ({ property }: any) => {
   return (
     <div className="flex flex-col space-y-2">
       {best && (
-        <PropertyAccessOptionCard type={'best'} option={access_options[best]} />
+        <PropertyAccessOptionCard type={'best'} option={accessOptions[best]} />
       )}
       {available.length > 0 &&
         available.map((opt: PropertyAccess) => (
           <PropertyAccessOptionCard
             key={opt}
             type={'available'}
-            option={access_options[opt]}
+            option={accessOptions[opt]}
           />
         ))}
       {neighbor && (
         <PropertyAccessOptionCard
           type={'neighbors'}
-          option={access_options[neighbor]}
+          option={accessOptions[neighbor]}
         />
       )}
       {unavailable.length > 0 &&
@@ -84,7 +84,7 @@ const PropertyAccessOptionContainer = ({ property }: any) => {
           <PropertyAccessOptionCard
             key={opt}
             type={'unavailable'}
-            option={access_options[opt]}
+            option={accessOptions[opt]}
           />
         ))}
     </div>

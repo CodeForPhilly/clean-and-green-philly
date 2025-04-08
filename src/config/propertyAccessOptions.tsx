@@ -40,7 +40,7 @@ export interface PropertyAccessOption {
   slug?: string;
 }
 
-export const access_options: Record<PropertyAccess, PropertyAccessOption> = {
+export const accessOptions: Record<PropertyAccess, PropertyAccessOption> = {
   PRIVATE_LAND_USE: {
     icon: PiHandshake,
     header: 'Get permission from Owner',
