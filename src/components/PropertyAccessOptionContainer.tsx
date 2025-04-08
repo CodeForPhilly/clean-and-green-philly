@@ -8,47 +8,44 @@ const determineCardEnums = (property: any) => {
   const unavailable = new Set<PropertyAccess>();
 
   if (property.access_process === 'Private Land Use Agreement') {
-    best = PropertyAccess.PRIVATE_LAND_USE;
+    best = 'PRIVATE_LAND_USE';
   }
 
   if (property.access_process === 'Buy Property') {
-    best = PropertyAccess.BUY_FROM_OWNER;
-    available.add(PropertyAccess.PRIVATE_LAND_USE);
+    best = 'BUY_FROM_OWNER';
+    available.add('PRIVATE_LAND_USE');
   } else if (property.market_value <= 1000) {
-    available.add(PropertyAccess.BUY_FROM_OWNER);
+    available.add('BUY_FROM_OWNER');
   } else {
-    unavailable.add(PropertyAccess.BUY_FROM_OWNER);
+    unavailable.add('BUY_FROM_OWNER');
   }
 
-  if (
-    !available.has(PropertyAccess.PRIVATE_LAND_USE) &&
-    best !== PropertyAccess.PRIVATE_LAND_USE
-  ) {
-    unavailable.add(PropertyAccess.PRIVATE_LAND_USE);
+  if (!available.has('PRIVATE_LAND_USE') && best !== 'PRIVATE_LAND_USE') {
+    unavailable.add('PRIVATE_LAND_USE');
   }
 
   if (property.access_process === 'Go through Land Bank') {
-    best = PropertyAccess.LAND_BANK;
+    best = 'LAND_BANK';
   } else {
-    unavailable.add(PropertyAccess.LAND_BANK);
+    unavailable.add('LAND_BANK');
   }
 
   if (property.side_yard_eligible === 'Yes') {
-    neighbor = PropertyAccess.SIDE_YARD;
+    neighbor = 'SIDE_YARD';
   } else {
-    unavailable.add(PropertyAccess.SIDE_YARD);
+    unavailable.add('SIDE_YARD');
   }
 
   if (property.tactical_urbanism === 'Yes') {
-    available.add(PropertyAccess.TACTICAL_URBANISM);
+    available.add('TACTICAL_URBANISM');
   } else {
-    unavailable.add(PropertyAccess.TACTICAL_URBANISM);
+    unavailable.add('TACTICAL_URBANISM');
   }
 
   if (property.conservatorship === 'Yes') {
-    available.add(PropertyAccess.CONSERVATORSHIP);
+    available.add('CONSERVATORSHIP');
   } else {
-    unavailable.add(PropertyAccess.CONSERVATORSHIP);
+    unavailable.add('CONSERVATORSHIP');
   }
 
   return {

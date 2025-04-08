@@ -1,36 +1,42 @@
+import { PropertyAccessOption } from '@/config/propertyAccessOptions';
 import { useFilter } from '@/context/FilterContext';
 import { Card, CardBody } from '@nextui-org/react';
 import { Check } from '@phosphor-icons/react';
 import { IconType } from 'react-icons';
 
+type PanelProps = Required<
+  Omit<PropertyAccessOption, 'primary_description' | 'slug'>
+>;
 
-interface PanelProps {
-  property: string;
-  header: string;
-  description: string;
-  icon: IconType | React.ComponentType<any>;
-  aria_describedby_label: string;
-}
-
-const Panel({property, header, description, icon, aria_describedby_label}: PanelProps): JSX.Element => {
-  const {dispatch, appFilter} = useFilter();
+const Panel = ({
+  property,
+  dimension,
+  header,
+  secondary_description,
+  icon,
+}: PanelProps): JSX.Element => {
+  const { dispatch, appFilter } = useFilter();
   const currentFilterKeys = appFilter[property]?.values || [];
 
-  const isSelected = currentFilterKeys.includes(); //Fix getting the included property
+  const isSelected = currentFilterKeys.includes(dimension); //Fix getting the included property
+  const ariaLabel = header.replace(/\s/g, '');
+  const Icon = icon;
 
   const handleTogglePanel = () => {
-    const updatedFilterKeys = isSelected ? currentFilterKeys.filter(option => option !==  ): [...currentFilterKeys, ];
+    const updatedFilterKeys = isSelected
+      ? currentFilterKeys.filter((option) => option !== dimension)
+      : [...currentFilterKeys, dimension];
     dispatch({
       type: 'SET_DIMENSIONS',
       property,
       dimensions: updatedFilterKeys,
     });
-  }
+  };
 
   return (
     <Card
       role="checkbox"
-      aria-describedby={aria_describedby_label}
+      aria-describedby={ariaLabel}
       aria-checked={isSelected}
       className={isSelected ? 'panelSelected ' : 'panelDefault'}
       isPressable
@@ -40,12 +46,12 @@ const Panel({property, header, description, icon, aria_describedby_label}: Panel
       <CardBody className="flex flex-row justify-between p-[0px]">
         <div className="flex flex-row">
           <div className="mr-3">
-            <icon aria-hidden={true} className="size-8" />
+            <Icon aria-hidden={true} className="size-8" />
           </div>
           <div className="flex flex-row items-center sm:items-start sm:flex-col lg:flex-row lg:items-center">
             <div className="flex flex-col flex-0">
               <div className="heading-md">{header}</div>
-              <div className="body-sm">{description}</div>
+              <div className="body-sm">{secondary_description}</div>
             </div>
           </div>
         </div>
@@ -54,5 +60,5 @@ const Panel({property, header, description, icon, aria_describedby_label}: Panel
         </div>
       </CardBody>
     </Card>
-  )
-}
+  );
+};

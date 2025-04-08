@@ -5,6 +5,7 @@ import { Card, CardBody } from '@nextui-org/react';
 import { Check } from '@phosphor-icons/react';
 import {
   access_options,
+  ALL_PROPERTY_ACCESS,
   PropertyAccess,
   PropertyAccessOption,
 } from '@/config/propertyAccessOptions';
@@ -23,51 +24,9 @@ type PanelsProps = {
   toggleDimensionForPanel: (dimension: string, property: string) => void;
 };
 
-const panel_access_options: Record<
-  PropertyAccess | string,
-  PanelFilterOptions
-> = {
-  [PropertyAccess.PRIVATE_LAND_USE]: {
-    ...access_options[PropertyAccess.PRIVATE_LAND_USE],
-    alt_description:
-      'Properties where you could get a "private land use agreement"',
-    dimension: 'Private Land Use Agreement',
-    property: 'access_process',
-  },
-  [PropertyAccess.TACTICAL_URBANISM]: {
-    ...access_options[PropertyAccess.TACTICAL_URBANISM],
-    alt_description:
-      'Properties likely safe to quickly clean without express permission',
-    dimension: 'Yes',
-    property: 'tactical_urbanism',
-  },
-  [PropertyAccess.BUY_FROM_OWNER]: {
-    ...access_options[PropertyAccess.BUY_FROM_OWNER],
-    alt_description: 'Properties with a market value under $1,000',
-    dimension: 'Buy Property',
-    property: 'access_process',
-  },
-  [PropertyAccess.SIDE_YARD]: {
-    ...access_options[PropertyAccess.SIDE_YARD],
-    alt_description: 'Properties eligible for the "Side Yard Program"',
-    dimension: 'Yes',
-    property: 'side_yard_eligible',
-  },
-  [PropertyAccess.LAND_BANK]: {
-    ...access_options[PropertyAccess.LAND_BANK],
-    alt_description:
-      'Properties available for discount prices from the Land Bank',
-    dimension: 'Go through Land Bank',
-    property: 'access_process',
-  },
-  [PropertyAccess.CONSERVATORSHIP]: {
-    ...access_options[PropertyAccess.CONSERVATORSHIP],
-    alt_description:
-      'Abandoned and unsafe properties you can gain through a legal process',
-    dimension: 'Yes',
-    property: 'conservatorship',
-  },
-};
+const types = [p in keyof PropertyAccessOption];
+
+const panelAccessOptions = access_options.map((option) => Object.fromEntries(ALL_PROPERTY_ACCESS.map(access => [access, option[access]])));
 
 const Panels = ({
   options,
