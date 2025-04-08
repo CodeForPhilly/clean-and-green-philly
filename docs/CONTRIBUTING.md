@@ -27,6 +27,24 @@ To ensure smooth contributions to the Clean & Green Philly project, please follo
   - Name it `<github-username>/<issue-number>-<kebab-case-description>`
   - Example: `vimusds/1069-fix-territory-on-mobile`
 - [ ] **Work on the issue**: Make your changes, commit them, and push to your branch
+- [ ] **Commit Message Format**: Follow the Conventional Commits format to maintain a clean and meaningful git history.
+
+  ```
+  <type>[optional scope]: <description>
+  ```
+
+  Where:
+
+  - `<type>` is one of: feat, fix, docs, style, refactor, test, chore, ci, perf, build
+  - `[optional scope]` is the area of the codebase affected (e.g., component name)
+  - `<description>` is a concise description of the change
+
+  **Examples:**
+
+  - `fix: resolve data fetching issue`
+  - `feat(FilterView): add new method for conditional filtering`
+  - `docs: update the pull request template`
+
 - [ ] **Open a Pull Request (PR)**: Use the provided template, tag relevant issues, and provide testing instructions. Make sure the base branch of the PR is set to `base: staging`.
 - [ ] **Ensure all checks pass**: Fix any errors and re-check
 - [ ] **Tag reviewers**: Find appropriate reviewers from the [CODEOWNERS](https://github.com/CodeForPhilly/vacant-lots-proj/blob/main/.github/CODEOWNERS) file
