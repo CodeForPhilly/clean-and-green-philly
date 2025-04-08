@@ -19,15 +19,6 @@ type PropertyAccessArray = [
   'DO_NOTHING',
 ];
 
-export const ALL_PROPERTY_ACCESS = [
-  'PRIVATE_LAND_USE',
-  'TACTICAL_URBANISM',
-  'BUY_FROM_OWNER',
-  'SIDE_YARD',
-  'LAND_BANK',
-  'CONSERVATORSHIP',
-];
-
 export type PropertyAccess = PropertyAccessArray[number];
 
 export interface PropertyAccessOption {
