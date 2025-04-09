@@ -1,6 +1,7 @@
 ## Env files
 .env
 data.env
+.envrc
 
 ## Data
 /notebooks/.ipynb_checkpoints/
@@ -32,6 +33,7 @@ data/src/tmp
 .DS_Store
 *.pem
 .vscode
+.python-version
 
 # debug
 npm-debug.log*
