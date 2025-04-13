@@ -13,7 +13,6 @@ def recent_activity(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     # Access the GeoDataFrame from the FeatureLayer
     result_gdf = primary_featurelayer.gdf.copy()
-    result_gdf["opa_id"] = pd.to_numeric(result_gdf["opa_id"], errors="coerce")
 
     # Define our queries
     queries = {
@@ -65,9 +64,6 @@ def recent_activity(primary_featurelayer: FeatureLayer) -> FeatureLayer:
             print(df.head(3))
 
             # Clean and merge
-            df["opa_account_num"] = pd.to_numeric(
-                df["opa_account_num"], errors="coerce"
-            )
             result_gdf = result_gdf.merge(
                 df, how="left", left_on="opa_id", right_on="opa_account_num"
             )
@@ -134,3 +130,4 @@ def recent_activity(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     print(result_gdf[relevant_columns].head(10))
 
     return primary_featurelayer
+
