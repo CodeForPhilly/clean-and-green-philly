@@ -42,6 +42,7 @@ vulture = "*"
 pylint = "*"
 radon = "*"
 ruff = "*"
+freezegun = "*"
 
 [requires]
 python_version = "3.11"
