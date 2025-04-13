@@ -25,6 +25,7 @@ from .community_gardens import community_gardens  # Add missing import
 from .park_priority import park_priority  # Add missing import
 from .ppr_properties import ppr_properties  # Add missing import
 from .council_dists import council_dists
+from .ndvi import ndvi
 
 __all__ = [
     "city_owned_properties",
@@ -54,4 +55,5 @@ __all__ = [
     "park_priority",
     "ppr_properties",
     "council_dists",
+    "ndvi"
 ]
