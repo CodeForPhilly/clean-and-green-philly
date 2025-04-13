@@ -1,5 +1,4 @@
 import os
-import tempfile
 import datetime
 from typing import Tuple
 
@@ -322,8 +321,10 @@ def ndvi(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         - ndvi_mean: Mean NDVI value for the parcel (current summer)
         - ndvi_one_year_change_mean: Mean year-over-year NDVI change
     """
-    # Create a temporary directory for cache files
-    temp_dir = tempfile.gettempdir()
+    # dir for cache files
+    temp_dir = os.path.join(os.getcwd(), "tmp")
+    os.makedirs(temp_dir, exist_ok=True)
+
     current_summer_year = get_current_summer_year()
     ndvi_cache_path = os.path.join(
         temp_dir, f"ndvi_data_summer_{current_summer_year}.tif"
