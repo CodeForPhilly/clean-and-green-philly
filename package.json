@@ -24,7 +24,7 @@
     "lodash": "^4.17.21",
     "maplibre-gl": "^5.2.0",
     "multi-range-slider-react": "^2.0.7",
-    "next": "^14.2.5",
+    "next": "^14.2.26",
     "pmtiles": "^4.3.0",
     "postcss": "8.5.3",
     "protobufjs": "^7.3.2",
@@ -37,6 +37,8 @@
     "typescript": "5.8.2"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.24.0",
     "@semantic-release/changelog": "^6.0.3",
     "@semantic-release/commit-analyzer": "^13.0.1",
     "@semantic-release/exec": "^7.0.3",
