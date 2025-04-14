@@ -39,6 +39,7 @@ from new_etl.data_utils import (
     tree_canopy,
     unsafe_buildings,
     vacant_properties,
+    recent_activity,
 )
 from new_etl.database import to_postgis_with_schema
 
@@ -76,6 +77,7 @@ try:
         tactical_urbanism,
         conservatorship,
         park_priority,
+        recent_activity,
     ]
 
     print("Loading OPA properties dataset.")
@@ -108,7 +110,11 @@ try:
         "total_due",
         "num_years_owed",
         "permit_count",
+        "days_since_permit",
+        "days_since_business_license",
+        "days_since_appeal",
     ]
+
     dataset.gdf[numeric_columns] = dataset.gdf[numeric_columns].apply(
         pd.to_numeric, errors="coerce"
     )
