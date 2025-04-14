@@ -1,6 +1,6 @@
 import os
 import datetime
-from typing import Tuple
+from typing import Optional, Tuple
 
 import rioxarray as rxr
 import xarray as xr
@@ -17,38 +17,46 @@ from config.config import USE_CRS
 from ..constants.services import CENSUS_BGS_URL
 
 
-def get_current_summer_year() -> int:
+def get_current_summer_year(today: Optional[datetime.datetime] = None) -> int:
     """
-    Determine the most recent summer year based on current date.
+    Determine the most recent usable summer year based on the current date.
 
-    Summer is defined as June-August. If current month is before June,
-    the most recent summer was last year.
+    NDVI for summer (June–August) is only considered available after the summer ends.
+    Therefore:
+    - If the current month is before September, we return last year.
+    - If it's September or later, we return the current year.
+
+    Args:
+        today (Optional[datetime.datetime]): Optional date to override current date
 
     Returns:
-        int: The year of the most recent summer
+        int: The most recent completed summer year
     """
-    today = datetime.datetime.now()
-    if today.month < 6:  # Before June
+    if today is None:
+        today = datetime.datetime.now()
+    if today.month < 9:  # Before September
         return today.year - 1
-    else:
-        return today.year
+    return today.year
 
 
-def get_bbox_from_census_data() -> Tuple[Polygon, Tuple[float, float, float, float]]:
+def get_bbox_from_census_data(
+    census_gdf: Optional[gpd.GeoDataFrame] = None,
+) -> Tuple[Polygon, Tuple[float, float, float, float]]:
     """
     Get bounding box from census block groups data.
+
+    Args:
+        census_gdf (Optional[gpd.GeoDataFrame]): Optionally provide your own GDF for testing.
 
     Returns:
         Tuple[Polygon, Tuple[float, float, float, float]]:
             A tuple containing the boundary as a Polygon and the bounding box coordinates
     """
+    if census_gdf is None:
+        census_gdf = gpd.read_file(CENSUS_BGS_URL)
 
-    census_gdf = gpd.read_file(CENSUS_BGS_URL)
-    census_gdf = census_gdf.to_crs(
-        "EPSG:4326"
-    )  # needs 4326 for planetary computer query
+    census_gdf = census_gdf.to_crs("EPSG:4326")  # needed for Planetary Computer queries
 
-    # Get bounds
     minx, miny, maxx, maxy = census_gdf.total_bounds
     bbox_coords = (minx, miny, maxx, maxy)
 
@@ -226,6 +234,32 @@ def generate_ndvi_data(
     return combined
 
 
+def merge_ndvi_results(
+    original_gdf: gpd.GeoDataFrame,
+    results_df: gpd.GeoDataFrame,
+    id_col: str = "opa_id",
+) -> gpd.GeoDataFrame:
+    """
+    Merge NDVI results back into the original GeoDataFrame using a join on id_col.
+
+    Args:
+        original_gdf: The full, unfiltered GeoDataFrame
+        results_df: The NDVI results GeoDataFrame (filtered and with extracted columns)
+        id_col: Column to merge on (must exist in both)
+
+    Returns:
+        Merged GeoDataFrame
+    """
+    # Only bring in the new columns (e.g. ndvi_mean, ndvi_one_year_change_mean)
+    new_cols = [
+        col
+        for col in results_df.columns
+        if col not in original_gdf.columns and col != id_col
+    ]
+    merged = original_gdf.merge(results_df[[id_col] + new_cols], on=id_col, how="left")
+    return merged
+
+
 def extract_ndvi_to_parcels(
     raster_path: str, parcel_gdf: gpd.GeoDataFrame
 ) -> gpd.GeoDataFrame:
@@ -348,8 +382,6 @@ def ndvi(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     # Update the primary feature layer with the new columns from results
     # (instead of creating a new one)
-    for column in results.columns:
-        if column not in primary_featurelayer.gdf.columns:
-            primary_featurelayer.gdf[column] = results[column]
+    primary_featurelayer.gdf = merge_ndvi_results(primary_featurelayer.gdf, results)
 
     return primary_featurelayer

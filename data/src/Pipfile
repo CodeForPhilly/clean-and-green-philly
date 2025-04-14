@@ -34,6 +34,7 @@ pystac-client = "*"
 planetary-computer = "*"
 odc-stac = "*"
 dask = "==2025.2.0"
+xarray = "*"
 
 [dev-packages]
 black = "*"
