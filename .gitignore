@@ -59,7 +59,3 @@ data/src/app/service-account-key.json
 
 # compiled python files
 *.pyc
-
-# awkde build files
-data/src/awkde/build/
-tmp/
