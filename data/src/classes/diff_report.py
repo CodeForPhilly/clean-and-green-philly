@@ -20,9 +20,10 @@ from slack_sdk import WebClient
 
 log.basicConfig(level=log_level)
 
+
 class DiffTable:
-    """Metadata about a table to be run through data-diff
-    """    
+    """Metadata about a table to be run through data-diff"""
+
     def __init__(self, table: str, pk_cols: list[str], where: str = None):
         """constructor
 
@@ -34,6 +35,7 @@ class DiffTable:
         self.table = table
         self.pk_cols = pk_cols
         self.where = where
+
 
 class DiffReport:
     """
@@ -48,7 +50,11 @@ class DiffReport:
         """
         self.diff_tables = self._list_diff_tables()
         self.timestamp_string = timestamp_string
-        self.report: str = "The back-end data has been fully refreshed.  Here is the difference report on " + str(len(self.diff_tables)) + " key tables.\nLegend: table A = new data, table B = old data.\n\n"
+        self.report: str = (
+            "The back-end data has been fully refreshed.  Here is the difference report on "
+            + str(len(self.diff_tables))
+            + " key tables.\nLegend: table A = new data, table B = old data.\n\n"
+        )
 
     def run(self):
         """
@@ -56,7 +62,11 @@ class DiffReport:
         """
 
         for diff_table in self.diff_tables:
-            log.debug("Process table %s with pks %s", diff_table.table, str(diff_table.pk_cols))
+            log.debug(
+                "Process table %s with pks %s",
+                diff_table.table,
+                str(diff_table.pk_cols),
+            )
             summary = diff_table.table + "\n" + self.compare_table(diff_table)
             # if no differences, do not report.
             if self._summary_shows_differences(summary):
@@ -141,11 +151,23 @@ class DiffReport:
             list[DiffTable]: the list of metadata
         """
         return [
-            DiffTable(table="vacant_properties",pk_cols=["opa_id", "parcel_type"],where="opa_id is not null"),
-            DiffTable(table="li_complaints",pk_cols=["service_request_id"]),
-            DiffTable(table="li_violations",pk_cols=["violationnumber", "opa_account_num"],where="opa_account_num is not null"),
-            DiffTable(table="opa_properties",pk_cols=["parcel_number"]),
-            DiffTable(table="property_tax_delinquencies",pk_cols=["opa_number"],where="opa_number <> 0")
+            DiffTable(
+                table="vacant_properties",
+                pk_cols=["opa_id", "parcel_type"],
+                where="opa_id is not null",
+            ),
+            DiffTable(table="li_complaints", pk_cols=["service_request_id"]),
+            DiffTable(
+                table="li_violations",
+                pk_cols=["violationnumber", "opa_account_num"],
+                where="opa_account_num is not null",
+            ),
+            DiffTable(table="opa_properties", pk_cols=["parcel_number"]),
+            DiffTable(
+                table="property_tax_delinquencies",
+                pk_cols=["opa_number"],
+                where="opa_number <> 0",
+            ),
         ]
 
     def compare_table(self, diff_table: DiffTable) -> str:
@@ -221,5 +243,3 @@ class DiffReport:
             s = smtplib.SMTP(smtp_server)
             s.sendmail(from_email, [report_to_email], msg.as_string())
             s.quit()
-
-

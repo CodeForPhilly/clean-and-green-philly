@@ -42,8 +42,6 @@ def google_cloud_bucket() -> Bucket:
     return storage_client.bucket(bucket_name)
 
 
-
-
 class FeatureLayer:
     """
     FeatureLayer is a class to represent a GIS dataset. It can be initialized with a URL to an Esri Feature Service, a SQL query to Carto, or a GeoDataFrame.
@@ -60,7 +58,7 @@ class FeatureLayer:
         from_xy=False,
         use_wkb_geom_field=None,
         cols: list[str] = None,
-        bucket: Bucket = None
+        bucket: Bucket = None,
     ):
         self.name = name
         self.esri_rest_urls = (

@@ -4,7 +4,12 @@ import subprocess
 from datetime import datetime, timedelta
 
 import sqlalchemy as sa
-from config.config import log_level, max_backup_schema_days, tiles_file_id_prefix, tile_file_backup_directory
+from config.config import (
+    log_level,
+    max_backup_schema_days,
+    tiles_file_id_prefix,
+    tile_file_backup_directory,
+)
 from config.psql import conn, local_engine, url
 from data_utils.utils import mask_password
 from sqlalchemy import inspect
@@ -39,13 +44,15 @@ class BackupArchiveDatabase:
             "pg_dump "
             + url
             + " -s --schema public | "
-            + " sed 's/public/" + backup_schema_name + "/g'"
+            + " sed 's/public/"
+            + backup_schema_name
+            + "/g'"
             + " | sed 's/"
             + backup_schema_name
             + ".geometry/public.geometry/' | sed 's/"
             + backup_schema_name
             + ".spatial_ref_sys/public.spatial_ref_sys/'"
-            + " | sed 's/backup__/public_/g'" # ppr_properties.public_name column needs to be restored.
+            + " | sed 's/backup__/public_/g'"  # ppr_properties.public_name column needs to be restored.
             + " | psql -v ON_ERROR_STOP=1 "
             + url
             + " > /dev/null "
@@ -109,24 +116,25 @@ class BackupArchiveDatabase:
                     conn.execute(sa.DDL(sql))
 
     def is_backup_schema_exists(self) -> bool:
-        """ whether the backup schema exists
+        """whether the backup schema exists
 
         Returns:
             bool: whether true
-        """        
-        return backup_schema_name in inspect(local_engine).get_schema_names()
-    
-    def backup_tiles_file(self):
-        """backup the main tiles file to a timestamped copy in the backup/ folder in GCP
         """
+        return backup_schema_name in inspect(local_engine).get_schema_names()
+
+    def backup_tiles_file(self):
+        """backup the main tiles file to a timestamped copy in the backup/ folder in GCP"""
         bucket = google_cloud_bucket()
         count: int = 0
         for blob in bucket.list_blobs(prefix=tiles_file_id_prefix):
-            suffix: str = '_' + self.timestamp_string
+            suffix: str = "_" + self.timestamp_string
             name, ext = os.path.splitext(blob.name)
-            backup_file_name: str = tile_file_backup_directory + "/" + name + suffix + ext
+            backup_file_name: str = (
+                tile_file_backup_directory + "/" + name + suffix + ext
+            )
             log.debug(backup_file_name)
-            bucket.copy_blob(blob,destination_bucket=bucket,new_name=backup_file_name)
+            bucket.copy_blob(blob, destination_bucket=bucket, new_name=backup_file_name)
             count += 1
         if count == 0:
             log.warning("No files were found to back up.")
