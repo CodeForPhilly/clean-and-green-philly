@@ -48,11 +48,7 @@ jobs:
 
       - name: Publish release notes
         if: steps.get_version.outputs.version != ''
-<<<<<<< HEAD
-        uses: actions/github-script@v6
-=======
         uses: actions/github-script@v7
->>>>>>> staging
         env:
           NEW_VERSION: ${{ steps.get_version.outputs.version }}
         with:
