@@ -4,6 +4,7 @@ from typing import List
 from classes.featurelayer import FeatureLayer
 from constants.services import COMPLAINTS_SQL_QUERY, VIOLATIONS_SQL_QUERY
 
+
 def l_and_i(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Process L&I (Licenses and Inspections) data for complaints and violations.
@@ -19,20 +20,27 @@ def l_and_i(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         FeatureLayer: The primary feature layer updated with L&I data.
     """
     keywords: List[str] = [
-        'dumping', 'blight', 'rubbish', 'weeds', 'graffiti',
-        'abandoned', 'sanitation', 'litter', 'vacant', 'trash',
-        'unsafe'
+        "dumping",
+        "blight",
+        "rubbish",
+        "weeds",
+        "graffiti",
+        "abandoned",
+        "sanitation",
+        "litter",
+        "vacant",
+        "trash",
+        "unsafe",
     ]
 
     # Load complaints data from L&I
     l_and_i_complaints: FeatureLayer = FeatureLayer(
-        name="LI Complaints",
-        carto_sql_queries=COMPLAINTS_SQL_QUERY
+        name="LI Complaints", carto_sql_queries=COMPLAINTS_SQL_QUERY
     )
 
     # Filter for rows where 'subject' contains any of the keywords
     l_and_i_complaints.gdf = l_and_i_complaints.gdf[
-        l_and_i_complaints.gdf["subject"].str.lower().str.contains('|'.join(keywords))
+        l_and_i_complaints.gdf["subject"].str.lower().str.contains("|".join(keywords))
     ]
 
     # Filter for only Status = 'Open'
@@ -56,14 +64,15 @@ def l_and_i(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     # Load data for violations from L&I
     l_and_i_violations: FeatureLayer = FeatureLayer(
-        name="LI Violations",
-        carto_sql_queries=VIOLATIONS_SQL_QUERY,
-        from_xy=True
+        name="LI Violations", carto_sql_queries=VIOLATIONS_SQL_QUERY, from_xy=True
     )
 
     # Filter for rows where 'casetype' contains any of the keywords, handling NaN values
     l_and_i_violations.gdf = l_and_i_violations.gdf[
-        l_and_i_violations.gdf["violationcodetitle"].fillna('').str.lower().str.contains('|'.join(keywords))
+        l_and_i_violations.gdf["violationcodetitle"]
+        .fillna("")
+        .str.lower()
+        .str.contains("|".join(keywords))
     ]
 
     all_violations_count_df: pd.DataFrame = (

@@ -129,7 +129,7 @@ export default function GetAccessPage() {
           <p className="mb-4">
             The{' '}
             <a
-              href="https://phdcphila.org/"
+              href="https://phillylandbank.org/"
               target="_blank"
               rel="noopener noreferrer"
               className="link"

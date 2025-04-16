@@ -12,6 +12,7 @@ bucket = google_cloud_bucket()
 key = os.environ["CLEAN_GREEN_GOOGLE_KEY"]
 bucket_name = bucket.name
 
+
 # Helper Functions
 def get_streetview_metadata(address):
     """Fetches metadata from the Street View API."""
