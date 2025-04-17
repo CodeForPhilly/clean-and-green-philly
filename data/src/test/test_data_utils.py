@@ -7,10 +7,18 @@ import geopandas as gpd
 import numpy as np
 from shapely.geometry import LineString, MultiPolygon, Point, Polygon
 
+from classes.featurelayer import FeatureLayer
 from config.config import USE_CRS
 from data_utils.park_priority import get_latest_shapefile_url, park_priority
 from data_utils.ppr_properties import ppr_properties
 from data_utils.vacant_properties import vacant_properties
+from new_etl.data_utils import (
+    access_process,
+    conservatorship,
+    negligent_devs,
+    owner_type,
+    tactical_urbanism,
+)
 from new_etl.data_utils.pwd_parcels import (
     merge_pwd_parcels_gdf,
     transform_pwd_parcels_gdf,
@@ -292,6 +300,141 @@ class TestDataUtils(unittest.TestCase):
         self.assertListEqual(sorted(result["opa_id"].tolist()), ["1234", "5678"])
         self.assertTrue(all(result.geometry.is_valid))
         self.assertTrue(all(result.geometry.type.isin(["Polygon", "MultiPolygon"])))
+
+    def test_owner_type(self):
+        """
+        Test the functionality of the owner_type service that generates a new column for the dataset
+        on the basis of existing ownership and opa_id data in the corresponding row.
+        """
+        data = {
+            "owner_1": ["John Smith", None, "Costco llc", "Jeff Roe"],
+            "owner_2": ["Jane Doe", "Tom Hink", "Sixers", "Jefferson llc"],
+            "city_owner_agency": [None, "City of Philadelphia", "PRA", None],
+        }
+        gdf = gpd.GeoDataFrame(data)
+        feature_layer = FeatureLayer(name="test", gdf=gdf)
+
+        owner_type_feature_layer = owner_type(feature_layer)
+        expected_gdf = gdf.copy()
+        expected_gdf["owner_type"] = [
+            "Individual",
+            "Public",
+            "Public",
+            "Business (LLC)",
+        ]
+
+        assert expected_gdf.equals(owner_type_feature_layer.gdf)
+
+    def test_contiguous_neighbors(self):
+        pass
+
+    def test_negligent_devs(self):
+        """
+        Test the functionality of the negligent_devs service that generates new columns on the dataset relating to the number of properties owned
+        and vacant properties owned under one standardized address as well as a classification of the owner type as negligent based on the vacant number.
+        """
+        data = {
+            "opa_id": ["0011", "0011", "0011", "0011", "0011", "0000", "0000", "0032"],
+            "vacant": [True, True, True, True, True, False, True, True],
+            "city_owner_agency": [
+                None,
+                None,
+                None,
+                None,
+                None,
+                "City of Philadelphia",
+                "City of Philadelphia",
+                "PRA",
+            ],
+            "standardized_address": ["1", "2", "3", "4", "5", "6", "7", "8"],
+        }
+        gdf = gpd.GeoDataFrame(data)
+        feature_layer = FeatureLayer(name="test", gdf=gdf)
+        # need to add primary merge data
+        negligent_devs_feature_layer = negligent_devs(feature_layer)
+        expected_gdf = gdf.copy()
+        expected_gdf["n_total_properties_owned"] = [1, 2, 3, 4]
+        expected_gdf["n_vacant_properties_owned"] = [1, 2, 3, 4]
+        expected_gdf["negligent_dev"] = [False, False, False, False]
+
+        assert expected_gdf.equals(negligent_devs_feature_layer.gdf)
+
+    def test_tactical_urbanism(self):
+        data = {
+            "parcel_type": ["Land", "Building", "Land", None],
+            "unsafe_building": ["N", "Y", "N", "N"],
+            "imm_dang_building": ["Y", "N", "N", "Y"],
+        }
+        gdf = gpd.GeoDataFrame(data)
+        feature_layer = FeatureLayer(name="test", gdf=gdf)
+
+        negligent_devs_feature_layer = tactical_urbanism(feature_layer)
+        expected_gdf = gdf.copy()
+        expected_gdf["tactical_urbanism"] = ["No", "Yes", "Yes", "Yes"]
+
+        assert expected_gdf.equals(negligent_devs_feature_layer.gdf)
+
+    def test_conservatorship(self):
+        data = {
+            "city_owner_agency": [
+                "Land Bank (PHDC)",
+                "PRA",
+                None,
+                "City of Philadelphia",
+                "PRA",
+            ],
+            "sheriff_sale": ["Y", "N", "N", "N", "Y"],
+            "market_value": [2000, 500, 800, 5000, 1000],
+            "all_violations_past_year": [5, 0, 2, 0, None, 1],
+            "sale_date": ["2020-01-01", "2021-03-10", "2024-12-30", "2004-09-10", None],
+        }
+        gdf = gpd.GeoDataFrame(data)
+        feature_layer = FeatureLayer(name="test", gdf=gdf)
+
+        negligent_devs_feature_layer = conservatorship(feature_layer)
+        expected_gdf = gdf.copy()
+        expected_gdf["conservatorship"] = ["No", "No", "Yes", "Yes", "No"]
+
+        assert expected_gdf.equals(negligent_devs_feature_layer.gdf)
+
+    def test_priority_level(self):
+        pass
+        """
+        Test the functionality of the priority_level service that generates a new column for the 
+        dataset on the basis of some branching logic in existing column values in the corresponding row 
+        (see priority_level function for more details).
+        """
+
+    def test_access_process(self):
+        """
+        Test the functionality of the access_process service that generates a new column for the dataset
+        on the basis of existing values in the corresponding row for city_owner_agency and market_value.
+        """
+        # Create test data
+        data = {
+            "city_owner_agency": [
+                "Land Bank (PHDC)",
+                "PRA",
+                None,
+                "City of Philadelphia",
+                None,
+            ],
+            "market_value": [1500, 500, 2000, None, None],
+        }
+        gdf = gpd.GeoDataFrame(data)
+        feature_layer = FeatureLayer(name="test", gdf=gdf)
+
+        access_process_feature_layer = access_process(feature_layer)
+        expected_gdf = gdf.copy()
+        expected_gdf["access_process"] = [
+            "Go through Land Bank",
+            "Do Nothing",
+            "Private Land Use Agreement",
+            "Buy Property",
+            "Buy Property",
+        ]
+
+        assert expected_gdf.equals(access_process_feature_layer.gdf)
 
 
 if __name__ == "__main__":
