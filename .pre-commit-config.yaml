@@ -9,7 +9,6 @@ repos:
         language: python
         types_or: [python, pyi, jupyter]
         files: \.py$
-        exclude: ^data/src/awkde/
 
       # Ruff for Python formatting
       - id: ruff-format
@@ -18,7 +17,6 @@ repos:
         language: python
         types_or: [python, pyi, jupyter]
         files: \.py$
-        exclude: ^data/src/awkde/
 
       # Dependency checks for Python
       - id: check-python-dependencies
@@ -35,14 +33,13 @@ repos:
           radon hal {} -s | awk "/effort/ { if (\$3 > 2000) print FILENAME \": High Halstead effort:\" \$3 }"'
         language: system
         files: \.py$
-        exclude: ^data/src/awkde/
 
   - repo: https://github.com/jendrikseipp/vulture
     rev: 'v2.3' # or any later Vulture version
     hooks:
       - id: vulture
         name: vulture (Dead code detection)
-        entry: vulture data/ --exclude=data/src/awkde
+        entry: vulture data/
         language: python
         types: [python]
         files: ^data/
