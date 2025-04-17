@@ -91,7 +91,7 @@ const PropertyAccessOptionCard = ({ type, option }: Props) => {
       <div className="flex flex-row items-center sm:items-start sm:flex-col lg:flex-row lg:items-center">
         <div className="flex flex-col flex-0">
           <div className="heading-md">{option.header}</div>
-          <div className="body-sm">{option.description}</div>
+          <div className="body-sm">{option.primary_description}</div>
         </div>
         <div className="ml-2 sm:ml-0 sm:mt-2 lg:ml-2">{Chip}</div>
       </div>
