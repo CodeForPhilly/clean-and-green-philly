@@ -39,6 +39,7 @@ from new_etl.data_utils import (
     tree_canopy,
     unsafe_buildings,
     vacant_properties,
+    ndvi,
 )
 from new_etl.database import to_postgis_with_schema
 
@@ -76,6 +77,7 @@ try:
         tactical_urbanism,
         conservatorship,
         park_priority,
+        ndvi,
     ]
 
     print("Loading OPA properties dataset.")
