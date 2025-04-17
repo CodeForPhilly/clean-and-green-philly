@@ -1,9 +1,10 @@
 import pandas as pd
 from classes.featurelayer import FeatureLayer
 
+
 def owner_type(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
-    Determines the ownership type for each property in the primary feature layer based on 
+    Determines the ownership type for each property in the primary feature layer based on
     the 'owner_1', 'owner_2', and 'city_owner_agency' columns. The ownership type is set as:
     - "Public" if 'city_owner_agency' is not NA.
     - "Business (LLC)" if 'city_owner_agency' is NA and "LLC" is found in 'owner_1' or 'owner_2'.
