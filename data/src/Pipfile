@@ -30,12 +30,10 @@ tqdm = "*"
 geoalchemy2 ="*"
 
 [dev-packages]
-black = "*"
-pytest = "*"
-vulture = "*"
-pylint = "*"
-radon = "*"
-ruff = "*"
+pytest = "~=8.3.4"
+vulture = "~=2.14"
+radon = "~=6.0.1"
+ruff = "~=0.8.2"
 
 [requires]
 python_version = "3.11"
