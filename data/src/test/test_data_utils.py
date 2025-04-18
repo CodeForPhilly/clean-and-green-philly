@@ -7,16 +7,17 @@ import geopandas as gpd
 import numpy as np
 from shapely.geometry import LineString, MultiPolygon, Point, Polygon
 
-from classes.featurelayer import FeatureLayer
 from config.config import USE_CRS
 from data_utils.park_priority import get_latest_shapefile_url, park_priority
 from data_utils.ppr_properties import ppr_properties
 from data_utils.vacant_properties import vacant_properties
+from new_etl.classes.featurelayer import FeatureLayer
 from new_etl.data_utils import (
     access_process,
     conservatorship,
     negligent_devs,
     owner_type,
+    priority_level,
     tactical_urbanism,
 )
 from new_etl.data_utils.pwd_parcels import (
@@ -278,6 +279,7 @@ class TestDataUtils(unittest.TestCase):
                 LineString([(0, 0), (1, 1)]),  # Invalid type (not a polygon)
             ],
         }
+        gdf = gpd.GeoDataFrame()
         gdf = gpd.GeoDataFrame(data, geometry="geometry")
 
         # Expect a ValueError because LineString is not allowed
@@ -368,11 +370,11 @@ class TestDataUtils(unittest.TestCase):
         gdf = gpd.GeoDataFrame(data)
         feature_layer = FeatureLayer(name="test", gdf=gdf)
 
-        negligent_devs_feature_layer = tactical_urbanism(feature_layer)
+        tactical_urbanism_feature_layer = tactical_urbanism(feature_layer)
         expected_gdf = gdf.copy()
         expected_gdf["tactical_urbanism"] = ["No", "Yes", "Yes", "Yes"]
 
-        assert expected_gdf.equals(negligent_devs_feature_layer.gdf)
+        assert expected_gdf.equals(tactical_urbanism_feature_layer.gdf)
 
     def test_conservatorship(self):
         data = {
@@ -391,11 +393,11 @@ class TestDataUtils(unittest.TestCase):
         gdf = gpd.GeoDataFrame(data)
         feature_layer = FeatureLayer(name="test", gdf=gdf)
 
-        negligent_devs_feature_layer = conservatorship(feature_layer)
+        conservatorship_feature_layer = conservatorship(feature_layer)
         expected_gdf = gdf.copy()
         expected_gdf["conservatorship"] = ["No", "No", "Yes", "Yes", "No"]
 
-        assert expected_gdf.equals(negligent_devs_feature_layer.gdf)
+        assert expected_gdf.equals(conservatorship_feature_layer.gdf)
 
     def test_priority_level(self):
         pass
@@ -404,6 +406,34 @@ class TestDataUtils(unittest.TestCase):
         dataset on the basis of some branching logic in existing column values in the corresponding row 
         (see priority_level function for more details).
         """
+        data = {
+            "gun_crimes_density_zscore": [-0.5, 1.1, 0.5, 2.1, 0.4],
+            "all_violations_past_year": [3, 2, 0, 0, 5],
+            "l_and_i_complaints_density_zscore": [0, 0.1, 2.1, -1, 0.3],
+            "tree_canopy_gap": [0.1, 0, 0.4, 0.5, 0.2],
+            "phs_care_program": [
+                None,
+                "Trees for Watersheds",
+                "Rain Check",
+                "Trees for Watersheds",
+                None,
+            ],
+        }
+
+        gdf = gpd.GeoDataFrame(data)
+        feature_layer = FeatureLayer(name="test", gdf=gdf)
+
+        priority_level_feature_layer = priority_level(feature_layer)
+        expected_gdf = gdf.copy()
+        expected_gdf["priority_level"] = [
+            "Low",
+            "High",
+            "Medium",
+            "High",
+            "Medium",
+        ]
+
+        assert expected_gdf.equals(priority_level_feature_layer.gdf)
 
     def test_access_process(self):
         """
