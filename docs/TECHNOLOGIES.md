@@ -94,3 +94,9 @@ Google Cloud is a broad platform and subject with a lot of details, but those in
 For our CI/CD, we use Github Action for a number of workflows to manage incoming pull requests, labelling issues and assigning reviews, and generating automated releases. Some of those workflows need additional correction and revision in their current form, which we are getting to, but they can be found in the `.github` directory of the repo.
 
 Documentation for possible tasks accomplished by Github actions and writing them is [here](https://docs.github.com/en/actions).
+
+### Other Useful Links
+
+https://advena.hashnode.dev/heavy-map-visualizations-fundamentals-for-web-developers
+
+Useful blog discussing approaches to architectural approaches and serving geospatial data to frontend applications.
