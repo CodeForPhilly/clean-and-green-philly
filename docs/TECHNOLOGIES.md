@@ -59,7 +59,7 @@ We use a variety of file types for storage of the end dataset constructed by the
 
 The first are PMtiles, which is a single-file vector tile format for geospatial data. It's main benefit is that it, as a single file, encompasses all vector tiles are each zoom level for our data, and so it can be hosted in our Google Cloud Bucket and simply fetched from by Maplibre rather than needing a more complex backend or querying solution as an intermediary. More information can be found [here](https://docs.protomaps.com/pmtiles/).
 
-The second are GeoParquet files, which are a geospatial addition to Apache Parquet files. Their benefit is they are a highly performant way to compress and store columnar data, and they have useful mechanisms for self-describing and partitioning the data within the file itself for faster retrieval and querying in the future. We are in the process of shifting the majority of our storage into this format and phasing out the Postgres-based service we have previously been using, which is mentioned below. You can find out more.
+The second are GeoParquet files, which are a geospatial addition to Apache Parquet files. Their benefit is they are a highly performant way to compress and store columnar data, and they have useful mechanisms for self-describing and partitioning the data within the file itself for faster retrieval and querying in the future. We are in the process of shifting the majority of our storage into this format and phasing out the Postgres-based service we have previously been using, which is mentioned below. You can find out more [here](https://geoparquet.org/releases/v0.2.0/).
 
 ### Python version and dependency management - Pipenv - Pyenv
 
@@ -69,9 +69,9 @@ We manage our Python dependencies using `pipenv` which mantains them through the
 
 `pyenv` - https://github.com/pyenv/pyenv
 
-### Postgres - Postgis - Timescale (SOON DEPRECATED)
-
 ### Vulture
+
+Vulture is a code checking utility used for identifying dead and unused Python code within our repo. It is included as a check in our precommit hook for PRs. The Github repo for the tool can be found [here](https://github.com/jendrikseipp/vulture).
 
 ###
 
