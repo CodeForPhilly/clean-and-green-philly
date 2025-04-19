@@ -63,6 +63,12 @@ The second are GeoParquet files, which are a geospatial addition to Apache Parqu
 
 ### Python version and dependency management - Pipenv - Pyenv
 
+We manage our Python dependencies using `pipenv` which mantains them through the `Pipfile` and `Pipfile.lock`. Our Python versioning is managed through Docker when running the main script, but if you were interested in doing local development, you can also pin your python version to 3.11.4 using `pyenv`.
+
+`pipenv` - https://pipenv.pypa.io/en/latest/
+
+`pyenv` - https://github.com/pyenv/pyenv
+
 ### Postgres - Postgis - Timescale (SOON DEPRECATED)
 
 ### Vulture
@@ -73,6 +79,18 @@ The second are GeoParquet files, which are a geospatial addition to Apache Parqu
 
 ### Docker - Docker Compose
 
+Docker is a container tool that is used for creating an isolated and controllable environment to run our code that is replicable across different machines. Our ETL pipeline runs inside what is referred to as a **container** in Docker, which manages the versioning and dependencies of everything we use in our repo as well as ensuring it interfaces with a standardized operating system within the container's virtualized environment.
+
+You can read more about in the Docker docs [here](https://docs.docker.com/), and the easiest way to get setup with using Docker is Docker Desktop with installation instructions [here](https://docs.docker.com/desktop/).
+
 ### Google Cloud
 
+All of the data produced by our pipeline needs to be stored somewhere for access from our web application, and we do so with a Google Cloud bucket that holds the geospatial data as well as street view images to be served up request from the site. In addition, we have a Google Cloud Compute Engine (VM) setup to run our pipeline on a regularly scheduled interval to update our data.
+
+Google Cloud is a broad platform and subject with a lot of details, but those interested in learning more or taking on any infrastructure tasks that crop up in the future can learn more on their [docs](https://cloud.google.com/docs).
+
 ### Github Actions
+
+For our CI/CD, we use Github Action for a number of workflows to manage incoming pull requests, labelling issues and assigning reviews, and generating automated releases. Some of those workflows need additional correction and revision in their current form, which we are getting to, but they can be found in the `.github` directory of the repo.
+
+Documentation for possible tasks accomplished by Github actions and writing them is [here](https://docs.github.com/en/actions).
