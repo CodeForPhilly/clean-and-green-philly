@@ -28,6 +28,13 @@ jenkspy = "*"
 pyarrow = "*"
 tqdm = "*"
 geoalchemy2 ="*"
+rioxarray = "*"
+exactextract = "*"
+pystac-client = "*"
+planetary-computer = "*"
+odc-stac = "*"
+dask = "==2025.2.0"
+xarray = "*"
 
 [dev-packages]
 black = "*"
@@ -36,6 +43,7 @@ vulture = "*"
 pylint = "*"
 radon = "*"
 ruff = "*"
+freezegun = "*"
 
 [requires]
 python_version = "3.11"
