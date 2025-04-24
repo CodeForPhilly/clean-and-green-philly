@@ -1,10 +1,3 @@
-[tool.pylint]
-output-format = "colorized,parseable"
-
-[tool.pylint.'MESSAGES CONTROL']
-disable = ["all"]
-enable = ["duplicate-code"]
-
 [tool.vulture]
 make_whitelist = true
 # min_confidence = 80
