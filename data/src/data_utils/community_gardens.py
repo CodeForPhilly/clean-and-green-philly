@@ -9,7 +9,7 @@ def community_gardens(primary_featurelayer):
     )
 
     community_gardens.gdf = community_gardens.gdf[["Site_Name", "geometry"]]
-    
+
     primary_featurelayer.spatial_join(community_gardens)
 
     # Create a boolean mask where 'site_Name' is not null

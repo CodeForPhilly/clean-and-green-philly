@@ -1,116 +1,35 @@
 'use client';
 
-import React, { FC } from 'react';
-import { Card, CardBody } from '@nextui-org/react';
-import { Check } from '@phosphor-icons/react';
-import {
-  access_options,
-  PropertyAccess,
-  PropertyAccessOption,
-} from '@/config/propertyAccessOptions';
+import React from 'react';
+import { accessOptions } from '@/config/propertyAccessOptions';
+import Panel, { PanelProps } from './Panel';
 
-type PanelFilterOptions = PropertyAccessOption & {
-  alt_description: string;
-  dimension: string;
-  property: string;
-};
+const { DO_NOTHING, ...activeOptions } = accessOptions;
 
-type PanelsProps = {
-  options: string[] | PropertyAccess[];
-  selectedPanelKeys: { [property: string]: string[] };
-  aria_describedby_label?: string;
-  toggleDimensionForPanel: (dimension: string, property: string) => void;
-};
+const panelAccessOptions = Object.entries(activeOptions).map(([_, option]) => {
+  const { property, dimension, header, secondary_description, icon } = option;
 
-const panel_access_options: Record<
-  PropertyAccess | string,
-  PanelFilterOptions
-> = {
-  [PropertyAccess.PRIVATE_LAND_USE]: {
-    ...access_options[PropertyAccess.PRIVATE_LAND_USE],
-    alt_description:
-      'Properties where you could get a "private land use agreement"',
-    dimension: 'Private Land Use Agreement',
-    property: 'access_process',
-  },
-  [PropertyAccess.TACTICAL_URBANISM]: {
-    ...access_options[PropertyAccess.TACTICAL_URBANISM],
-    alt_description:
-      'Properties likely safe to quickly clean without express permission',
-    dimension: 'Yes',
-    property: 'tactical_urbanism',
-  },
-  [PropertyAccess.BUY_FROM_OWNER]: {
-    ...access_options[PropertyAccess.BUY_FROM_OWNER],
-    alt_description: 'Properties with a market value under $1,000',
-    dimension: 'Buy Property',
-    property: 'access_process',
-  },
-  [PropertyAccess.SIDE_YARD]: {
-    ...access_options[PropertyAccess.SIDE_YARD],
-    alt_description: 'Properties eligible for the "Side Yard Program"',
-    dimension: 'Yes',
-    property: 'side_yard_eligible',
-  },
-  [PropertyAccess.LAND_BANK]: {
-    ...access_options[PropertyAccess.LAND_BANK],
-    alt_description:
-      'Properties available for discount prices from the Land Bank',
-    dimension: 'Go through Land Bank',
-    property: 'access_process',
-  },
-  [PropertyAccess.CONSERVATORSHIP]: {
-    ...access_options[PropertyAccess.CONSERVATORSHIP],
-    alt_description:
-      'Abandoned and unsafe properties you can gain through a legal process',
-    dimension: 'Yes',
-    property: 'conservatorship',
-  },
-};
+  return {
+    property,
+    dimension,
+    header,
+    secondary_description,
+    icon,
+  } as PanelProps;
+});
 
-const Panels: FC<PanelsProps> = ({
-  options,
-  selectedPanelKeys,
-  toggleDimensionForPanel,
-  aria_describedby_label,
-}) => {
-  const optionPanels = options.map((option, index) => {
-    const panel = panel_access_options[option];
-    const Icon = panel.icon;
-    const isSelected =
-      selectedPanelKeys[panel.property] &&
-      selectedPanelKeys[panel.property].includes(panel.dimension)
-        ? true
-        : false;
+const Panels = () => {
+  const optionPanels = panelAccessOptions.map((option, index) => {
+    const { property, dimension, header, secondary_description, icon } = option;
 
     return (
-      <Card
-        key={index}
-        role="checkbox"
-        aria-describedby={aria_describedby_label}
-        aria-checked={isSelected}
-        className={isSelected ? 'panelSelected ' : 'panelDefault'}
-        isPressable
-        onPress={() => toggleDimensionForPanel(panel.dimension, panel.property)}
-        shadow="none"
-      >
-        <CardBody className="flex flex-row justify-between p-[0px]">
-          <div className="flex flex-row">
-            <div className="mr-3">
-              <Icon aria-hidden={true} className="size-8" />
-            </div>
-            <div className="flex flex-row items-center sm:items-start sm:flex-col lg:flex-row lg:items-center">
-              <div className="flex flex-col flex-0">
-                <div className="heading-md">{panel.header}</div>
-                <div className="body-sm">{panel.alt_description}</div>
-              </div>
-            </div>
-          </div>
-          <div>
-            {isSelected ? <Check className="self-end size-5" /> : undefined}
-          </div>
-        </CardBody>
-      </Card>
+      <Panel
+        property={property}
+        dimension={dimension}
+        header={header}
+        secondary_description={secondary_description}
+        icon={icon}
+      />
     );
   });
 

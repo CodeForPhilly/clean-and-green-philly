@@ -18,6 +18,11 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
+    ignore:
+      -depedency-name: 'next'
+      -dependency-name: 'react'
+      -dependency-name: 'react-dom'
+      -dependency-name: 'tailwindcss'
     target-branch: 'staging'
     commit-message:
       prefix: 'deps'

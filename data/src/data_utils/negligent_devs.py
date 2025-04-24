@@ -62,23 +62,29 @@ def negligent_devs(primary_featurelayer):
     print("Columns in 'devs' DataFrame:", devs.columns)
 
     print("Initial properties data:")
-    print(devs[['opa_id', 'city_owner_agency', 'mailing_street']].head(10))
+    print(devs[["opa_id", "city_owner_agency", "mailing_street"]].head(10))
 
-    city_owners = devs.loc[~devs["city_owner_agency"].isna() & (devs["city_owner_agency"] != "")].copy()
-    non_city_owners = devs.loc[devs["city_owner_agency"].isna() | (devs["city_owner_agency"] == "")].copy()
+    city_owners = devs.loc[
+        ~devs["city_owner_agency"].isna() & (devs["city_owner_agency"] != "")
+    ].copy()
+    non_city_owners = devs.loc[
+        devs["city_owner_agency"].isna() | (devs["city_owner_agency"] == "")
+    ].copy()
 
-    print(f"City owners shape: {city_owners.shape}, Non-city owners shape: {non_city_owners.shape}")
+    print(
+        f"City owners shape: {city_owners.shape}, Non-city owners shape: {non_city_owners.shape}"
+    )
 
     # Log before standardizing addresses
     print("Non-city owners mailing streets before standardization:")
-    print(non_city_owners[['opa_id', 'mailing_street']].head(10))
+    print(non_city_owners[["opa_id", "mailing_street"]].head(10))
 
     non_city_owners.loc[:, "mailing_street"] = (
         non_city_owners["mailing_street"].astype(str).apply(standardize_street)
     )
 
     print("Non-city owners mailing streets after standardization:")
-    print(non_city_owners[['opa_id', 'mailing_street']].head(10))
+    print(non_city_owners[["opa_id", "mailing_street"]].head(10))
 
     for term in ["ST", "AVE", "RD", "BLVD"]:
         non_city_owners.loc[:, "mailing_street"] = non_city_owners[
@@ -87,7 +93,7 @@ def negligent_devs(primary_featurelayer):
 
     # Log after applying term replacement
     print("Non-city owners mailing streets after term replacement:")
-    print(non_city_owners[['opa_id', 'mailing_street']].head(10))
+    print(non_city_owners[["opa_id", "mailing_street"]].head(10))
 
     # Fill missing address components
     non_city_owners.loc[:, "mailing_address_1"] = non_city_owners[
@@ -106,7 +112,11 @@ def negligent_devs(primary_featurelayer):
 
     # Log addresses before creating standardized address
     print("Non-city owners mailing details before creating standardized address:")
-    print(non_city_owners[['opa_id', 'mailing_street', 'mailing_city_state', 'mailing_zip']].head(10))
+    print(
+        non_city_owners[
+            ["opa_id", "mailing_street", "mailing_city_state", "mailing_zip"]
+        ].head(10)
+    )
 
     non_city_owners.loc[:, "standardized_address"] = non_city_owners.apply(
         create_standardized_address, axis=1
@@ -145,10 +155,10 @@ def negligent_devs(primary_featurelayer):
     )
 
     devs_combined = pd.concat([city_owners, non_city_owners], axis=0)
-    
+
     # Final check on the merged data before updating primary_featurelayer
     print("Combined data with property counts:")
-    print(devs_combined[['opa_id', 'property_count']].head(10))
+    print(devs_combined[["opa_id", "property_count"]].head(10))
 
     primary_featurelayer.gdf = primary_featurelayer.gdf.merge(
         devs_combined[["opa_id", "property_count"]], on="opa_id", how="left"
@@ -158,9 +168,16 @@ def negligent_devs(primary_featurelayer):
     )
     primary_featurelayer.gdf.loc[:, "negligent_dev"] = (
         primary_featurelayer.gdf["n_properties_owned"] > 5
-    ) & (primary_featurelayer.gdf["city_owner_agency"].isna() | (primary_featurelayer.gdf["city_owner_agency"] == ""))
+    ) & (
+        primary_featurelayer.gdf["city_owner_agency"].isna()
+        | (primary_featurelayer.gdf["city_owner_agency"] == "")
+    )
 
     print("Final feature layer data with negligent_dev flag:")
-    print(primary_featurelayer.gdf[['opa_id', 'n_properties_owned', 'negligent_dev']].head(10))
+    print(
+        primary_featurelayer.gdf[
+            ["opa_id", "n_properties_owned", "negligent_dev"]
+        ].head(10)
+    )
 
     return primary_featurelayer
