@@ -63,3 +63,6 @@ data/src/app/service-account-key.json
 # awkde build files
 data/src/awkde/build/
 tmp/
+
+# Local python development files
+.python-version
