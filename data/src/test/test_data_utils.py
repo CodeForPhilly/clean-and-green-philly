@@ -72,14 +72,6 @@ class TestDataUtils(unittest.TestCase):
         self.patcher1.stop()
         self.patcher2.stop()
 
-    def test_get_latest_shapefile_url(self):
-        """
-        Test the get_latest_shapefile_url function.
-        """
-        url = get_latest_shapefile_url()
-        self.assertTrue(url.startswith("https://"))
-        self.assertTrue(url.endswith(".zip"))
-
     @patch("data_utils.park_priority.requests.get")
     def test_get_latest_shapefile_url_mock(self, mock_get):
         """
