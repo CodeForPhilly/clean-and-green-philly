@@ -1,8 +1,8 @@
 import unittest
 
 import geopandas as gpd
+from shapely import Polygon
 
-from new_etl.classes.featurelayer import FeatureLayer
 from new_etl.data_utils.rco_geoms import (
     transform_rco_geoms_gdf,
     transform_merged_rco_geoms_gdf,
@@ -35,10 +35,28 @@ class TestRcoGeoms(unittest.TestCase):
     def test_transform_merged_rco_geom_gdf(self):
         rco_use_cols = ["rco_info", "rco_names", "geometry"]
 
-        data = {}
+        data = {
+            "opa_id": ["001123", "004435", "04531", None, "001123"],
+            "rco_info": ["Info 1", "Info 2", "Info 3", "Info 4", "Info 5"],
+            "rco_names": ["Name 1", "Name 2", "Name 3", "Name 4", "Name 5"],
+            "geometry": [
+                Polygon([(0, 0), (2, 0), (2, 2), (0, 2)]),
+                Polygon([(1, 0), (2, 0), (2, 2), (0, 2)]),
+                Polygon([(0, 0), (2, 0), (1, 1)]),
+                Polygon([(3, 4), (3, 2), (5, 4)]),
+                Polygon([(0, 1), (1, 0), (1, 1)]),
+            ],
+        }
         gdf = gpd.GeoDataFrame(data, geometry="geometry")
 
         transformed_gdf = transform_merged_rco_geoms_gdf(gdf, rco_use_cols)
+
+        self.assertEqual(len(transformed_gdf), 3)
+        self.assertIn("opa_id", transformed_gdf.columns)
+        self.assertListEqual(
+            sorted(transformed_gdf["opa_id"].tolist()), ["001123", "004435", "04531"]
+        )
+        # Add check that geometry of repeated opa_id is the first one
 
 
 if __name__ == "__main__":
