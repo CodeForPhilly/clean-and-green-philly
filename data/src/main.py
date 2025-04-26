@@ -1,4 +1,3 @@
-import sys
 import traceback
 
 import pandas as pd
@@ -41,11 +40,6 @@ from new_etl.data_utils import (
     vacant_properties,
 )
 from new_etl.database import to_postgis_with_schema
-
-# Ensure the directory containing awkde is in the Python path
-awkde_path = "/usr/src/app"
-if awkde_path not in sys.path:
-    sys.path.append(awkde_path)
 
 
 try:
