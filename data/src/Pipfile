@@ -31,11 +31,11 @@ geoalchemy2 ="*"
 
 [dev-packages]
 black = "*"
-pytest = "*"
 vulture = "*"
 pylint = "*"
 radon = "*"
 ruff = "*"
+pytest = "*"
 
 [requires]
 python_version = "3.11"
