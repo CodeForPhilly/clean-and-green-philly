@@ -34,7 +34,6 @@ black = "*"
 vulture = "*"
 pylint = "*"
 radon = "*"
-ruff = "*"
 pytest = "*"
 
 [requires]
