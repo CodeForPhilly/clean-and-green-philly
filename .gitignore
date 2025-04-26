@@ -59,3 +59,8 @@ data/src/app/service-account-key.json
 
 # compiled python files
 *.pyc
+
+tmp/
+
+# Local python development files
+.python-version
