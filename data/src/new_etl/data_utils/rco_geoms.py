@@ -1,10 +1,59 @@
+from typing import List
 import pandas as pd
+import geopandas as gpd
 
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import RCOS_LAYERS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
 
 pd.set_option("future.no_silent_downcasting", True)
+
+
+def transform_rco_geoms_gdf(
+    rco_geoms_gdf: gpd.GeoDataFrame,
+    aggregate_columns: List[str],
+    output_columns: List[str],
+) -> gpd.GeoDataFrame:
+    # Aggregate RCO information into a single column
+    rco_geoms_gdf["rco_info"] = rco_geoms_gdf[aggregate_columns].apply(
+        lambda x: "; ".join(map(str, x)), axis=1
+    )
+
+    rco_geoms_gdf.rename({"organization_name": "rco_names"}, inplace=True)
+    rco_geoms_gdf = rco_geoms_gdf[output_columns].copy()
+
+    return rco_geoms_gdf
+
+
+def transform_merged_rco_geoms_gdf(
+    primary_featurelayer_gdf: gpd.GeoDataFrame, rco_columns: List[str]
+) -> gpd.GeoDataFrame:
+    group_columns = [
+        col for col in primary_featurelayer_gdf.columns if col not in rco_columns
+    ]
+
+    # Ensure columns are appropriately filled and cast
+    for col in group_columns:
+        primary_featurelayer_gdf[col] = (
+            primary_featurelayer_gdf[col].fillna("").infer_objects(copy=False)
+        )
+
+    # Group by non-RCO columns and aggregate RCO data
+    transformed_gdf = (
+        primary_featurelayer_gdf.groupby(group_columns)
+        .agg(
+            {
+                "rco_info": lambda x: "|".join(map(str, x)),
+                "rco_names": lambda x: "|".join(map(str, x)),
+                "geometry": "first",
+            }
+        )
+        .reset_index()
+    )
+
+    transformed_gdf.drop_duplicates(inplace=True)
+
+    return transformed_gdf
 
 
 @provide_metadata()
@@ -47,43 +96,19 @@ def rco_geoms(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     rco_use_cols = ["rco_info", "rco_names", "geometry"]
 
-    # Aggregate RCO information into a single column
-    rco_geoms.gdf["rco_info"] = rco_geoms.gdf[rco_aggregate_cols].apply(
-        lambda x: "; ".join(map(str, x)), axis=1
+    rco_geoms_gdf = transform_rco_geoms_gdf(
+        rco_geoms.gdf, rco_aggregate_cols, rco_use_cols
     )
-
-    rco_geoms.gdf["rco_names"] = rco_geoms.gdf["organization_name"]
-
-    rco_geoms.gdf = rco_geoms.gdf[rco_use_cols].copy()
+    rco_geoms.gdf = rco_geoms_gdf
     rco_geoms.rebuild_gdf()
 
     # Perform spatial join
     primary_featurelayer.spatial_join(rco_geoms)
 
-    group_columns = [
-        col for col in primary_featurelayer.gdf.columns if col not in rco_use_cols
-    ]
-
-    # Ensure columns are appropriately filled and cast
-    for col in group_columns:
-        primary_featurelayer.gdf[col] = (
-            primary_featurelayer.gdf[col].fillna("").infer_objects(copy=False)
-        )
-
-    # Group by non-RCO columns and aggregate RCO data
-    primary_featurelayer.gdf = (
-        primary_featurelayer.gdf.groupby(group_columns)
-        .agg(
-            {
-                "rco_info": lambda x: "|".join(map(str, x)),
-                "rco_names": lambda x: "|".join(map(str, x)),
-                "geometry": "first",
-            }
-        )
-        .reset_index()
+    transformed_gdf = transform_merged_rco_geoms_gdf(
+        primary_featurelayer.gdf, rco_use_cols
     )
-
-    primary_featurelayer.gdf.drop_duplicates(inplace=True)
+    primary_featurelayer.gdf = transformed_gdf
     primary_featurelayer.rebuild_gdf()
 
     return primary_featurelayer
