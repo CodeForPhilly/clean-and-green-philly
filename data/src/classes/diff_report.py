@@ -5,6 +5,8 @@ import smtplib
 import subprocess
 from email.mime.text import MIMEText
 
+from slack_sdk import WebClient
+
 from classes.backup_archive_database import backup_schema_name
 from classes.featurelayer import google_cloud_bucket
 from config.config import (
@@ -16,7 +18,6 @@ from config.config import (
 )
 from config.psql import conn, url
 from data_utils.utils import mask_password
-from slack_sdk import WebClient
 
 log.basicConfig(level=log_level)
 
@@ -213,20 +214,30 @@ class DiffReport:
         output = complete_process.stdout.decode()
         return re.sub(r"\nExtra-Info:.*", "", output, flags=re.DOTALL)
 
-    def send_report_to_slack(self):
+    def send_report_to_slack(self, slack_token=None):
         """
         post the summary report to the slack channel if configured.
         """
-        if report_to_slack_channel:
-            token = os.environ["CAGP_SLACK_API_TOKEN"]
-            client = WebClient(token=token)
-
-            # Send a message
-            client.chat_postMessage(
-                channel=report_to_slack_channel,
-                text=self.report,
-                username="CAGP Diff Bot",
+        token = slack_token or os.getenv("CAGP_SLACK_API_TOKEN")
+        if not report_to_slack_channel:
+            log.warning(
+                "Skipping Slack reporting. Configure report_to_slack_channel in config.py to enable."
             )
+            return
+        if not token:
+            log.warning(
+                "Skipping Slack reporting. Configure CAGP_SLACK_API_TOKEN in environment to enable."
+            )
+            return
+
+        client = WebClient(token=token)
+
+        # Send a message
+        client.chat_postMessage(
+            channel=report_to_slack_channel,
+            text=self.report,
+            username="CAGP Diff Bot",
+        )
 
     def email_report(self):
         """

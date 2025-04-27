@@ -9,9 +9,9 @@ import requests
 import sqlalchemy as sa
 from esridump.dumper import EsriDumper
 from google.cloud import storage
-from google.cloud.storage.bucket import Bucket
 from shapely import Point, wkb
 
+from classes.bucket_manager import GCSBucketManager
 from config.config import (
     FORCE_RELOAD,
     USE_CRS,
@@ -20,30 +20,22 @@ from config.config import (
     write_production_tiles_file,
 )
 from config.psql import conn, local_engine
-from new_etl.classes.file_manager import FileManager, FileType, LoadType
 
 log.basicConfig(level=log_level)
 
-file_manager = FileManager()
 
-
-def google_cloud_bucket() -> Bucket:
-    """Build the google cloud bucket with name configured in your environ or default of cleanandgreenphl
-
-    Returns:
-        Bucket: the gcp bucket
+def google_cloud_bucket(require_write_access: bool = False) -> storage.Bucket | None:
     """
-    credentials_path = os.path.expanduser("/app/service-account-key.json")
+    Initialize a Google Cloud Storage bucket client using Application Default Credentials.
+    If a writable bucket is requested and the user does not have write access None is returned.
+    Args:
+        require_write_access (bool): Whether it is required that the bucket should be writable. Defaults to False.
+    """
 
-    if not os.path.exists(credentials_path):
-        raise FileNotFoundError(f"Credentials file not found at {credentials_path}")
-
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-    bucket_name = os.getenv("GOOGLE_CLOUD_BUCKET_NAME", "cleanandgreenphl")
-    project_name = os.getenv("GOOGLE_CLOUD_PROJECT", "clean-and-green-philly")
-
-    storage_client = storage.Client(project=project_name)
-    return storage_client.bucket(bucket_name)
+    bucket_manager = GCSBucketManager()
+    if require_write_access and bucket_manager.read_only:
+        return None
+    return bucket_manager.bucket
 
 
 class FeatureLayer:
@@ -62,7 +54,6 @@ class FeatureLayer:
         from_xy=False,
         use_wkb_geom_field=None,
         cols: list[str] = None,
-        bucket: Bucket = None,
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -79,7 +70,6 @@ class FeatureLayer:
         self.psql_table = name.lower().replace(" ", "_")
         self.input_crs = "EPSG:4326" if not from_xy else USE_CRS
         self.use_wkb_geom_field = use_wkb_geom_field
-        self.bucket = bucket or google_cloud_bucket()
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
@@ -300,29 +290,27 @@ class FeatureLayer:
         """
         zoom_threshold: int = 13
 
-        # Export the GeoDataFrames to a temporary GeoJSON files
-        temp_geojson_points_file_name: str = f"temp_{tiles_file_id_prefix}_points"
-        temp_geojson_polygons_file_name: str = f"temp_{tiles_file_id_prefix}_polygons"
-        temp_parquet_file_name: str = f"{tiles_file_id_prefix}"
+        # Export the GeoDataFrame to a temporary GeoJSON file
+        temp_geojson_points: str = f"tmp/temp_{tiles_file_id_prefix}_points.geojson"
+        temp_geojson_polygons: str = f"tmp/temp_{tiles_file_id_prefix}_polygons.geojson"
+        temp_pmtiles_points: str = f"tmp/temp_{tiles_file_id_prefix}_points.pmtiles"
+        temp_pmtiles_polygons: str = f"tmp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
+        temp_merged_pmtiles: str = f"tmp/temp_{tiles_file_id_prefix}_merged.pmtiles"
+        temp_parquet: str = f"tmp/{tiles_file_id_prefix}.parquet"
 
         # Reproject
         gdf_wm = self.gdf.to_crs(epsg=4326)
-        file_manager.save_gdf(
-            gdf_wm, temp_geojson_polygons_file_name, LoadType.TEMP, FileType.GEOJSON
-        )
-        gdf_wm.to_file(temp_geojson_polygons_file_name, driver="GeoJSON")
+        gdf_wm.to_file(temp_geojson_polygons, driver="GeoJSON")
 
         # Create points dataset
-        centroid_gdf = self.gdf.copy()
-        centroid_gdf["geometry"] = centroid_gdf["geometry"].centroid
-        centroid_gdf = centroid_gdf.to_crs(epsg=4326)
-        centroid_gdf.to_file(temp_geojson_points_file_name, driver="GeoJSON")
-        file_manager.save_gdf(
-            centroid_gdf, temp_geojson_points_file_name, LoadType.TEMP, FileType.GEOJSON
-        )
+        self.centroid_gdf = self.gdf.copy()
+        self.centroid_gdf["geometry"] = self.centroid_gdf["geometry"].centroid
+        self.centroid_gdf = self.centroid_gdf.to_crs(epsg=4326)
+        self.centroid_gdf.to_file(temp_geojson_points, driver="GeoJSON")
 
-        # Drop geometry, and save as Parquet
-        df_no_geom = gdf_wm.drop(columns=["geometry"])
+        # Load the GeoJSON from the polygons, drop geometry, and save as Parquet
+        gdf_polygons = gpd.read_file(temp_geojson_polygons)
+        df_no_geom = gdf_polygons.drop(columns=["geometry"])
 
         # Check if the DataFrame has fewer than 25,000 rows
         num_rows, num_cols = df_no_geom.shape
@@ -333,18 +321,19 @@ class FeatureLayer:
             return
 
         # Save the DataFrame as Parquet
-        file_manager.save_gdf(
-            df_no_geom, temp_parquet_file_name, LoadType.TEMP, FileType.PARQUET
-        )
+        df_no_geom.to_parquet(temp_parquet)
 
         # Upload Parquet to Google Cloud Storage
-        blob_parquet = self.bucket.blob(f"{tiles_file_id_prefix}.parquet")
-        temp_parquet_file_path = file_manager.get_file_path(
-            temp_parquet_file_name, LoadType.TEMP, FileType.PARQUET
-        )
+        bucket = google_cloud_bucket(require_write_access=True)
+        if bucket is None:
+            print(
+                "Skipping Parquest and PMTiles upload due to read-only bucket access."
+            )
+            return
+        blob_parquet = bucket.blob(f"{tiles_file_id_prefix}.parquet")
         try:
-            blob_parquet.upload_from_filename(temp_parquet_file_path)
-            parquet_size = os.stat(temp_parquet_file_path).st_size
+            blob_parquet.upload_from_filename(temp_parquet)
+            parquet_size = os.stat(temp_parquet).st_size
             parquet_size_mb = parquet_size / (1024 * 1024)
             print(
                 f"Parquet upload successful! Size: {parquet_size} bytes ({parquet_size_mb:.2f} MB), Dimensions: {num_rows} rows, {num_cols} columns."
@@ -353,37 +342,16 @@ class FeatureLayer:
             print(f"Parquet upload failed: {e}")
             return
 
-        temp_pmtiles_points_file_name: str = f"temp_{tiles_file_id_prefix}_points"
-        temp_pmtiles_polygons_file_name: str = f"temp_{tiles_file_id_prefix}_polygons"
-        temp_merged_pmtiles_file_name: str = f"temp_{tiles_file_id_prefix}_merged"
-
-        temp_pmtiles_points_file_path = file_manager.get_file_path(
-            temp_pmtiles_points_file_name, LoadType.TEMP, FileType.PMTILES
-        )
-        temp_pmtiles_polygons_file_path = file_manager.get_file_path(
-            temp_pmtiles_points_file_name, LoadType.TEMP, FileType.PMTILES
-        )
-        temp_merged_pmtiles_file_path = file_manager.get_file_path(
-            temp_pmtiles_points_file_name, LoadType.TEMP, FileType.PMTILES
-        )
-
-        temp_geojson_points_file_path = file_manager.get_file_path(
-            temp_geojson_points_file_name, LoadType.TEMP, FileType.GEOJSON
-        )
-        temp_geojson_polygons_file_path = file_manager.get_file_path(
-            temp_geojson_points_file_name, LoadType.TEMP, FileType.GEOJSON
-        )
-
         # Command for generating PMTiles for points up to zoom level zoom_threshold
         points_command: list[str] = [
             "tippecanoe",
-            f"--output={temp_pmtiles_points_file_path}",
+            f"--output={temp_pmtiles_points}",
             f"--maximum-zoom={zoom_threshold}",
             "--minimum-zoom=10",
             "-zg",
             "-aC",
             "-r0",
-            temp_geojson_points_file_path,
+            temp_geojson_points,
             "-l",
             "vacant_properties_tiles_points",
             "--force",
@@ -392,12 +360,12 @@ class FeatureLayer:
         # Command for generating PMTiles for polygons from zoom level zoom_threshold
         polygons_command: list[str] = [
             "tippecanoe",
-            f"--output={temp_pmtiles_polygons_file_path}",
+            f"--output={temp_pmtiles_polygons}",
             f"--minimum-zoom={zoom_threshold}",
             "--maximum-zoom=16",
             "-zg",
             "--no-tile-size-limit",
-            temp_geojson_polygons_file_path,
+            temp_geojson_polygons,
             "-l",
             "vacant_properties_tiles_polygons",
             "--force",
@@ -406,10 +374,10 @@ class FeatureLayer:
         # Command for merging the two PMTiles files into a single output file
         merge_command: list[str] = [
             "tile-join",
-            f"--output={temp_merged_pmtiles_file_path}",
+            f"--output={temp_merged_pmtiles}",
             "--no-tile-size-limit",
-            temp_pmtiles_polygons_file_path,
-            temp_pmtiles_points_file_path,
+            temp_pmtiles_polygons,
+            temp_pmtiles_points,
             "--force",
         ]
 
@@ -423,17 +391,17 @@ class FeatureLayer:
             write_files.append(f"{tiles_file_id_prefix}.pmtiles")
 
         # Check whether the temp saved tiles files is big enough.
-        file_size: int = os.stat(temp_merged_pmtiles_file_path).st_size
+        file_size: int = os.stat(temp_merged_pmtiles).st_size
         if file_size < min_tiles_file_size_in_bytes:
             raise ValueError(
-                f"{temp_merged_pmtiles_file_path} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}. Therefore, we are not uploading any files to the GCP bucket. The file may be corrupt or incomplete."
+                f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}. Therefore, we are not uploading any files to the GCP bucket. The file may be corrupt or incomplete."
             )
 
         # Upload PMTiles to Google Cloud Storage
         for file in write_files:
-            blob = self.bucket.blob(file)
+            blob = bucket.blob(file)
             try:
-                blob.upload_from_filename(temp_merged_pmtiles_file_path)
+                blob.upload_from_filename(temp_merged_pmtiles)
                 print(f"PMTiles upload successful for {file}!")
             except Exception as e:
                 print(f"PMTiles upload failed for {file}: {e}")

@@ -4,16 +4,17 @@ import subprocess
 from datetime import datetime, timedelta
 
 import sqlalchemy as sa
+from sqlalchemy import inspect
+
+from classes.featurelayer import google_cloud_bucket
 from config.config import (
     log_level,
     max_backup_schema_days,
-    tiles_file_id_prefix,
     tile_file_backup_directory,
+    tiles_file_id_prefix,
 )
 from config.psql import conn, local_engine, url
 from data_utils.utils import mask_password
-from sqlalchemy import inspect
-from classes.featurelayer import google_cloud_bucket
 
 log.basicConfig(level=log_level)
 
@@ -125,7 +126,10 @@ class BackupArchiveDatabase:
 
     def backup_tiles_file(self):
         """backup the main tiles file to a timestamped copy in the backup/ folder in GCP"""
-        bucket = google_cloud_bucket()
+        bucket = google_cloud_bucket(require_write_access=True)
+        if not bucket:
+            log.warning("No GCP bucket found. Skipping tiles file backup.")
+            return
         count: int = 0
         for blob in bucket.list_blobs(prefix=tiles_file_id_prefix):
             suffix: str = "_" + self.timestamp_string
