@@ -1,8 +1,10 @@
 import time
+import traceback
 
 from classes.backup_archive_database import BackupArchiveDatabase
 from classes.diff_report import DiffReport
-from config.config import FORCE_RELOAD, tiles_file_id_prefix
+from classes.slack_error_reporter import send_error_to_slack
+from config.config import BACKUP_SCHEMA, FORCE_RELOAD, tiles_file_id_prefix
 from config.psql import conn
 from data_utils.access_process import access_process
 from data_utils.city_owned_properties import city_owned_properties
@@ -15,10 +17,10 @@ from data_utils.drug_crimes import drug_crimes
 from data_utils.gun_crimes import gun_crimes
 from data_utils.imm_dang_buildings import imm_dang_buildings
 from data_utils.l_and_i import l_and_i
-from data_utils.owner_type import owner_type
 from data_utils.nbhoods import nbhoods
 from data_utils.negligent_devs import negligent_devs
 from data_utils.opa_properties import opa_properties
+from data_utils.owner_type import owner_type
 from data_utils.park_priority import park_priority
 from data_utils.phs_properties import phs_properties
 from data_utils.ppr_properties import ppr_properties
@@ -29,9 +31,11 @@ from data_utils.tree_canopy import tree_canopy
 from data_utils.unsafe_buildings import unsafe_buildings
 from data_utils.vacant_properties import vacant_properties
 
+
 import traceback
 
 from classes.slack_error_reporter import send_error_to_slack
+
 
 try:
     services = [
@@ -60,7 +64,7 @@ try:
 
     # backup sql schema if we are reloading data
     backup: BackupArchiveDatabase = None
-    if FORCE_RELOAD:
+    if FORCE_RELOAD and BACKUP_SCHEMA:
         # first archive any remaining backup that may exist from a previous run that errored
         backup = BackupArchiveDatabase()
         if backup.is_backup_schema_exists():
