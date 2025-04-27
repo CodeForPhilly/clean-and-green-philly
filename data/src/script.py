@@ -1,4 +1,3 @@
-import sys
 import time
 import traceback
 
@@ -32,10 +31,11 @@ from data_utils.tree_canopy import tree_canopy
 from data_utils.unsafe_buildings import unsafe_buildings
 from data_utils.vacant_properties import vacant_properties
 
-# Ensure the directory containing awkde is in the Python path
-awkde_path = "/usr/src/app"
-if awkde_path not in sys.path:
-    sys.path.append(awkde_path)
+
+import traceback
+
+from classes.slack_error_reporter import send_error_to_slack
+
 
 try:
     services = [

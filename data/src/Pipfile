@@ -4,6 +4,7 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
+awkde = { git = 'https://github.com/mennthor/awkde.git', ref = '5b601fe4d92229d5deb8737fd121dce193bac552' }
 esridump = "~=1.13.0"
 fiona = "~=1.10.1"
 future = "~=1.0.0"

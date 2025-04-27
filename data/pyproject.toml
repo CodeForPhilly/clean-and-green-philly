@@ -1,17 +1,14 @@
 [tool.vulture]
-exclude = ["awkde/"]
 make_whitelist = true
 # min_confidence = 80
 sort_by_size = true
 
 [tool.mypy]
 ignore_missing_imports = true
-exclude = 'awkde/'
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories, plus our own
 exclude = [
-    "awkde/",
     ".bzr",
     ".direnv",
     ".eggs",
