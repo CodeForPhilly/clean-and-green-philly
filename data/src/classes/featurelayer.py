@@ -7,6 +7,11 @@ import geopandas as gpd
 import pandas as pd
 import requests
 import sqlalchemy as sa
+from esridump.dumper import EsriDumper
+from google.cloud import storage
+from shapely import Point, wkb
+
+from classes.bucket_manager import GCSBucketManager
 from config.config import (
     FORCE_RELOAD,
     USE_CRS,
@@ -15,31 +20,22 @@ from config.config import (
     write_production_tiles_file,
 )
 from config.psql import conn, local_engine
-from esridump.dumper import EsriDumper
-from google.cloud import storage
-from google.cloud.storage.bucket import Bucket
-from shapely import Point, wkb
 
 log.basicConfig(level=log_level)
 
 
-def google_cloud_bucket() -> Bucket:
-    """Build the google cloud bucket with name configured in your environ or default of cleanandgreenphl
-
-    Returns:
-        Bucket: the gcp bucket
+def google_cloud_bucket(require_write_access: bool = False) -> storage.Bucket | None:
     """
-    credentials_path = os.path.expanduser("/app/service-account-key.json")
+    Initialize a Google Cloud Storage bucket client using Application Default Credentials.
+    If a writable bucket is requested and the user does not have write access None is returned.
+    Args:
+        require_write_access (bool): Whether it is required that the bucket should be writable. Defaults to False.
+    """
 
-    if not os.path.exists(credentials_path):
-        raise FileNotFoundError(f"Credentials file not found at {credentials_path}")
-
-    os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = credentials_path
-    bucket_name = os.getenv("GOOGLE_CLOUD_BUCKET_NAME", "cleanandgreenphl")
-    project_name = os.getenv("GOOGLE_CLOUD_PROJECT", "clean-and-green-philly")
-
-    storage_client = storage.Client(project=project_name)
-    return storage_client.bucket(bucket_name)
+    bucket_manager = GCSBucketManager()
+    if require_write_access and bucket_manager.read_only:
+        return None
+    return bucket_manager.bucket
 
 
 class FeatureLayer:
@@ -58,7 +54,6 @@ class FeatureLayer:
         from_xy=False,
         use_wkb_geom_field=None,
         cols: list[str] = None,
-        bucket: Bucket = None,
     ):
         self.name = name
         self.esri_rest_urls = (
@@ -75,7 +70,6 @@ class FeatureLayer:
         self.psql_table = name.lower().replace(" ", "_")
         self.input_crs = "EPSG:4326" if not from_xy else USE_CRS
         self.use_wkb_geom_field = use_wkb_geom_field
-        self.bucket = bucket or google_cloud_bucket()
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
@@ -330,7 +324,13 @@ class FeatureLayer:
         df_no_geom.to_parquet(temp_parquet)
 
         # Upload Parquet to Google Cloud Storage
-        blob_parquet = self.bucket.blob(f"{tiles_file_id_prefix}.parquet")
+        bucket = google_cloud_bucket(require_write_access=True)
+        if bucket is None:
+            print(
+                "Skipping Parquest and PMTiles upload due to read-only bucket access."
+            )
+            return
+        blob_parquet = bucket.blob(f"{tiles_file_id_prefix}.parquet")
         try:
             blob_parquet.upload_from_filename(temp_parquet)
             parquet_size = os.stat(temp_parquet).st_size
@@ -399,7 +399,7 @@ class FeatureLayer:
 
         # Upload PMTiles to Google Cloud Storage
         for file in write_files:
-            blob = self.bucket.blob(file)
+            blob = bucket.blob(file)
             try:
                 blob.upload_from_filename(temp_merged_pmtiles)
                 print(f"PMTiles upload successful for {file}!")
