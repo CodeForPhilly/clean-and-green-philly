@@ -7,11 +7,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import geopandas as gpd
 import pandas as pd
 import requests
-import sqlalchemy as sa
 from google.cloud import storage
-from new_etl.classes.bucket_manager import GCSBucketManager
-from new_etl.database import to_postgis_with_schema
-from new_etl.loaders import load_carto_data, load_esri_data
 from shapely import wkb
 from tqdm import tqdm
 
@@ -22,7 +18,9 @@ from config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
-from config.psql import conn, local_engine
+from new_etl.classes.bucket_manager import GCSBucketManager
+from new_etl.classes.file_manager import FileManager, LoadType
+from new_etl.loaders import load_carto_data, load_esri_data
 
 log.basicConfig(level=log_level)
 
@@ -40,6 +38,13 @@ def google_cloud_bucket(require_write_access: bool = False) -> storage.Bucket | 
     if require_write_access and bucket_manager.read_only:
         return None
     return bucket_manager.bucket
+
+
+def get_file_manager() -> FileManager:
+    """
+    Initialize a FileManager instance for managing temporary and cache files.
+    """
+    return FileManager()
 
 
 class FeatureLayer:
@@ -74,7 +79,7 @@ class FeatureLayer:
         self.gdf = gdf
         self.crs = crs
         self.cols = cols
-        self.psql_table = name.lower().replace(" ", "_")
+        self.table_name = name.lower().replace(" ", "_")
         self.input_crs = "EPSG:4326" if not from_xy else USE_CRS
         self.use_wkb_geom_field = use_wkb_geom_field
         self.max_workers = max_workers
@@ -90,31 +95,27 @@ class FeatureLayer:
                 if self.carto_sql_queries
                 else "gdf"
             )
-            if force_reload or not self.check_psql():
+            if not force_reload and self.check_cache():
+                log.info(f"Loading data for {self.name} from cache...")
+                file_manager = get_file_manager()
+                cached_file_name = file_manager.get_most_recent_cache(self.table_name)
+                self.gdf = gpd.read_parquet(cached_file_name)
+            else:
+                # Loading in the data
                 self.load_data()
+                # Caching the fetched data
+                self.cache_data()
         else:
             log.info(f"Initialized FeatureLayer {self.name} with no data.")
 
-    def check_psql(self):
-        try:
-            if not sa.inspect(local_engine).has_table(self.psql_table):
-                log.debug(f"Table {self.psql_table} does not exist")
-                return False
-            psql_table = gpd.read_postgis(
-                f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
-            )
-            if len(psql_table) == 0:
-                return False
-            log.info(f"Loading data for {self.name} from psql...")
-            # Remove the postgis create_date column if it exists (it is only for the db
-            # and isn't part of what was cached for the gdf)
-            if "create_date" in psql_table.columns:
-                psql_table = psql_table.drop(columns=["create_date"])
-            self.gdf = psql_table
-            return True
-        except Exception as e:
-            log.error(f"Error loading data for {self.name}: {e}")
-            return False
+    def check_cache(self):
+        """
+        Check if the data already exists in in a cached parquet file to load.
+        """
+        file_manager = get_file_manager()
+        cached_file_name = file_manager.get_most_recent_cache(self.table_name)
+
+        return cached_file_name
 
     def load_data(self):
         log.info(f"Loading data for {self.name} from {self.type}...")
@@ -149,14 +150,28 @@ class FeatureLayer:
                     ]
 
                 # Save GeoDataFrame to PostgreSQL and configure it as a hypertable
-                to_postgis_with_schema(
-                    self.gdf, self.psql_table, conn, if_exists="replace"
-                )
+                # to_postgis_with_schema(
+                #     self.gdf, self.table_name, conn, if_exists="replace"
+                # )
 
         except Exception as e:
             log.error(f"Error loading data for {self.name}: {e}")
             traceback.print_exc()
             self.gdf = gpd.GeoDataFrame()  # Reset to an empty GeoDataFrame
+
+    def cache_data(self):
+        log.info(f"Caching data for {self.name} to local file system...")
+
+        if self.gdf is None and self.gdf.empty:
+            log.info("No data to cache.")
+            return
+
+        file_manager = get_file_manager()
+        file_label = file_manager.get_file_label(self.table_name)
+        file_name = file_manager.get_file_path(file_label, LoadType.CACHE)
+
+        # Save the GeoDataFrame to a Parquet file
+        self.gdf.to_parquet(file_name)
 
     def _load_carto_data(self):
         if not self.carto_sql_queries:

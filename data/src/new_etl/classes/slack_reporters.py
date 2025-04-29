@@ -2,7 +2,6 @@ import os
 
 import pandas as pd
 from slack_sdk import WebClient
-from sqlalchemy import text
 
 
 def send_dataframe_profile_to_slack(
@@ -79,63 +78,63 @@ def send_dataframe_profile_to_slack(
         print(f"Failed to send QC profile for `{df_name}` to Slack: {e}")
 
 
-def send_pg_stats_to_slack(conn, slack_token: str | None = None):
-    """
-    Report total sizes for all hypertables using hypertable_detailed_size
-    and send the result to a Slack channel.
+# def send_pg_stats_to_slack(conn, slack_token: str | None = None):
+#     """
+#     Report total sizes for all hypertables using hypertable_detailed_size
+#     and send the result to a Slack channel.
 
-    Args:
-        conn: SQLAlchemy connection to the PostgreSQL database.
-        slack_token (str): The Slack API token. If not provided, it will be read from the environment.
-    """
-    token = slack_token or os.getenv("CAGP_SLACK_API_TOKEN")
-    if not token:
-        print("Slack API token not found in environment variables.")
-        print("Skipping PostgreSQL stats report to Slack.")
-        return
+#     Args:
+#         conn: SQLAlchemy connection to the PostgreSQL database.
+#         slack_token (str): The Slack API token. If not provided, it will be read from the environment.
+#     """
+#     token = slack_token or os.getenv("CAGP_SLACK_API_TOKEN")
+#     if not token:
+#         print("Slack API token not found in environment variables.")
+#         print("Skipping PostgreSQL stats report to Slack.")
+#         return
 
-    # Step 1: Get all hypertable names
-    hypertable_query = """
-    SELECT hypertable_name
-    FROM timescaledb_information.hypertables;
-    """
-    result = conn.execute(text(hypertable_query))
-    hypertables = [row[0] for row in result]  # Extract first column of each tuple
+#     # Step 1: Get all hypertable names
+#     hypertable_query = """
+#     SELECT hypertable_name
+#     FROM timescaledb_information.hypertables;
+#     """
+#     result = conn.execute(text(hypertable_query))
+#     hypertables = [row[0] for row in result]  # Extract first column of each tuple
 
-    # Step 2: Query detailed size for each hypertable
-    detailed_sizes = []
-    for hypertable in hypertables:
-        size_query = f"SELECT * FROM hypertable_detailed_size('{hypertable}');"
-        size_result = conn.execute(text(size_query))
-        for row in size_result:
-            # Append the total size (row[3] = total_bytes)
-            detailed_sizes.append(
-                {
-                    "hypertable": hypertable,
-                    "total_bytes": row[3],
-                }
-            )
+#     # Step 2: Query detailed size for each hypertable
+#     detailed_sizes = []
+#     for hypertable in hypertables:
+#         size_query = f"SELECT * FROM hypertable_detailed_size('{hypertable}');"
+#         size_result = conn.execute(text(size_query))
+#         for row in size_result:
+#             # Append the total size (row[3] = total_bytes)
+#             detailed_sizes.append(
+#                 {
+#                     "hypertable": hypertable,
+#                     "total_bytes": row[3],
+#                 }
+#             )
 
-    # Step 3: Format the message for Slack
-    message = "*Hypertable Total Sizes:*\n"
-    for size in detailed_sizes:
-        total_bytes = size["total_bytes"]
-        total_size = (
-            f"{total_bytes / 1073741824:.2f} GB"
-            if total_bytes >= 1073741824
-            else f"{total_bytes / 1048576:.2f} MB"
-            if total_bytes >= 1048576
-            else f"{total_bytes / 1024:.2f} KB"
-        )
-        message += f"- {size['hypertable']}: {total_size}\n"
+#     # Step 3: Format the message for Slack
+#     message = "*Hypertable Total Sizes:*\n"
+#     for size in detailed_sizes:
+#         total_bytes = size["total_bytes"]
+#         total_size = (
+#             f"{total_bytes / 1073741824:.2f} GB"
+#             if total_bytes >= 1073741824
+#             else f"{total_bytes / 1048576:.2f} MB"
+#             if total_bytes >= 1048576
+#             else f"{total_bytes / 1024:.2f} KB"
+#         )
+#         message += f"- {size['hypertable']}: {total_size}\n"
 
-    # Step 4: Send to Slack
-    client = WebClient(token=token)
-    client.chat_postMessage(
-        channel="clean-and-green-philly-pipeline",
-        text=message,
-        username="PG Stats Reporter",
-    )
+#     # Step 4: Send to Slack
+#     client = WebClient(token=token)
+#     client.chat_postMessage(
+#         channel="clean-and-green-philly-pipeline",
+#         text=message,
+#         username="PG Stats Reporter",
+#     )
 
 
 def send_diff_report_to_slack(

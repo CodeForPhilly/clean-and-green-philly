@@ -1,8 +1,9 @@
 import os
+import zipfile
+from datetime import datetime
 from enum import Enum
 from io import BytesIO
 from typing import List
-import zipfile
 
 import geopandas as gpd
 from tqdm import tqdm
@@ -32,6 +33,18 @@ class FileManager:
         if not os.path.exists(self.cache_directory):
             os.makedirs(self.cache_directory)
 
+    def generate_file_label(self, table_name: str) -> str:
+        """
+        Generates a file label for a given table name to cache parquet files according to format
+        <table_name>_<date>_<(old | new)>.parquet according whether it was generated from the new or old pipeline (use just new for now).
+        Args:
+            table_name (str): The name of the table.
+        Returns:
+            str: The generated file label.
+        """
+        date = datetime.now().strftime("%Y_%m_%d")
+        return f"{table_name}_{date}_new.parquet"
+
     def get_file_path(self, file_name: str, load_type: LoadType) -> str:
         """
         Get the full file path for a given file depending on whether it belongs in the temporary or cache directory.
@@ -44,6 +57,41 @@ class FileManager:
             self.temp_directory if load_type == LoadType.TEMP else self.cache_directory
         )
         return os.path.join(parent_directory, file_name)
+
+    def check_file_exists(self, file_name: str, load_type: LoadType) -> bool:
+        """
+        Checks if a file exists in the temporary or cache directory.
+        Args:
+            file_name (str): The name of the file.
+            load_type (LoadType): The destination type of the file (TEMP or CACHE).
+        Returns:
+            bool: True if the file exists, False otherwise.
+        """
+        file_path = self.get_file_path(file_name, load_type)
+        return os.path.exists(file_path)
+
+    def get_most_recent_cache(self, table_name: str) -> str | None:
+        """
+        Returns the most recetnly generated file in the cache directory for a given table name.
+        Args:
+            table_name (str): The name of the table.
+        Returns:
+            str: The name of the most recent file for the given table name.
+            None: If no files exist for the given table name.
+        """
+        cached_files = [
+            file for file in os.listdir(self.cache_directory) if table_name in file
+        ]
+
+        if not cached_files:
+            return None
+
+        cached_files.sort(
+            key=lambda x: os.path.getmtime(os.path.join(self.cache_directory, x)),
+            reverse=True,
+        )
+        most_recent_file = cached_files[0]
+        return most_recent_file
 
     def load_gdf(self, file_name: str, load_type: LoadType) -> gpd.GeoDataFrame:
         """

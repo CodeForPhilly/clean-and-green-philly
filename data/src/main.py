@@ -2,13 +2,9 @@ import traceback
 
 import pandas as pd
 
-from config.config import tiles_file_id_prefix
-from config.psql import conn
-from new_etl.classes.data_diff import DiffReport
 from new_etl.classes.slack_reporters import (
     send_dataframe_profile_to_slack,
     send_error_to_slack,
-    send_pg_stats_to_slack,
 )
 from new_etl.data_utils import (
     access_process,
@@ -39,8 +35,6 @@ from new_etl.data_utils import (
     unsafe_buildings,
     vacant_properties,
 )
-from new_etl.database import to_postgis_with_schema
-
 
 try:
     print("Starting ETL process.")
@@ -114,13 +108,13 @@ try:
     send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
 
     # Save dataset to PostgreSQL
-    to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
+    # to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
 
     # Generate and send diff report
-    diff_report = DiffReport()
-    diff_report.run()
+    # diff_report = DiffReport()
+    # diff_report.run()
 
-    send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
+    # send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
 
     # Save local Parquet file
     parquet_path = "tmp/test_output.parquet"
@@ -129,11 +123,9 @@ try:
 
     # Publish only vacant properties
     dataset.gdf = dataset.gdf[dataset.gdf["vacant"]]
-    dataset.build_and_publish(tiles_file_id_prefix)
+    # dataset.build_and_publish(tiles_file_id_prefix)
 
     # Finalize
-    conn.commit()
-    conn.close()
     print("ETL process completed successfully.")
 
 except Exception as e:
