@@ -64,7 +64,7 @@ class TestPwcParcels(unittest.TestCase):
         assert merged_gdf.crs == test_crs
 
         # Verify each row of the merged GeoDataFrame.
-        for idx, row in merged_gdf.iterrows():
+        for _, row in merged_gdf.iterrows():
             opa_id = row["opa_id"]
             actual_geom = row["geometry"]
             expected_geom = expected_geometries[opa_id]

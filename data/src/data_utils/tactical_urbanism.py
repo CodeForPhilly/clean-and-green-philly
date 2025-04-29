@@ -5,7 +5,7 @@ def tactical_urbanism(dataset):
 
     tactical_urbanism_values = []
 
-    for idx, row in dataset.gdf.iterrows():
+    for _, row in dataset.gdf.iterrows():
         li_complaints_lower = str(row["li_complaints"]).lower().split(" ")
         contains_unsafe_word = any(word in li_complaints_lower for word in unsafe_words)
 

@@ -35,6 +35,7 @@ vulture = "*"
 pylint = "*"
 radon = "*"
 pytest = "*"
+ruff = "*"
 
 [requires]
 python_version = "3.11"

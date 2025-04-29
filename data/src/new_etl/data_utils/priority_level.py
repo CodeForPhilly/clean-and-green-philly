@@ -29,7 +29,7 @@ def priority_level(dataset: FeatureLayer) -> FeatureLayer:
         tree_canopy_gap, phs_care_program columns in the primary feature layer.
     """
     priority_levels = []
-    for idx, row in dataset.gdf.iterrows():
+    for _, row in dataset.gdf.iterrows():
         priority_level = ""
 
         # Decision Points

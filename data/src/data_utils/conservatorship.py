@@ -28,7 +28,7 @@ blight_words = [
 def conservatorship(primary_featurelayer):
     conservatorships = []
 
-    for idx, row in primary_featurelayer.gdf.iterrows():
+    for _, row in primary_featurelayer.gdf.iterrows():
         city_owner_agency = row["city_owner_agency"]
         sheriff_sale = row["sheriff_sale"] == "Y"
         market_value_over_1000 = (

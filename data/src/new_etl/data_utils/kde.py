@@ -128,7 +128,7 @@ def apply_kde_to_primary(
     Returns:
         FeatureLayer: The input feature layer with added KDE-related columns.
     """
-    raster_filename, crime_coords = generic_kde(name, query, resolution)
+    raster_filename, _ = generic_kde(name, query, resolution)
 
     primary_featurelayer.gdf["centroid"] = primary_featurelayer.gdf.geometry.centroid
 
