@@ -11,7 +11,17 @@ from new_etl.data_utils.rco_geoms import (
 
 class TestRcoGeoms(unittest.TestCase):
     def test_transform_rco_geoms_gdf(self):
-        data = {}
+        data = {
+            "organization_name": ["Org 1", "Org 2", "Org 3"],
+            "organization_address": ["31", "34", "56"],
+            "primary_email": ["org1@gmail.com", "org2@yahoo.com", "org3@gmail.com"],
+            "primary_phone": ["2136758831", "3546754431", "3045678812"],
+            "geometry": [
+                Polygon([(0, 0), (1, 0), (0, 1)]),
+                Polygon([(1, 0), (1, 1), (2, 1)]),
+                Polygon([(2, 2), (1, 2), (1, 3)]),
+            ],
+        }
         rco_geoms_gdf = gpd.GeoDataFrame(data, geometry="geometry")
 
         rco_aggregate_cols = [
