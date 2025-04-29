@@ -44,6 +44,7 @@ def merge_pwd_parcels_gdf(
     pwd_parcels_gdf_indexed = pwd_parcels_gdf_unique_opa_id.set_index("opa_id")
     merged_gdf_indexed = primary_featurelayer_gdf_unique_opa_id.set_index("opa_id")
 
+    # ISSUE: This update and the other transformations might be incorrect
     merged_gdf_indexed.update(
         pwd_parcels_gdf_indexed[["geometry"]],
     )
