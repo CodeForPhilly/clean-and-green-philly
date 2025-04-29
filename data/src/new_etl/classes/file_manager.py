@@ -10,6 +10,8 @@ from tqdm import tqdm
 
 from config.config import ROOT_DIRECTORY
 
+print(f"Root directory is {ROOT_DIRECTORY}")
+
 
 class LoadType(Enum):
     TEMP = "temp"

@@ -167,11 +167,11 @@ class FeatureLayer:
             return
 
         file_manager = get_file_manager()
-        file_label = file_manager.get_file_label(self.table_name)
-        file_name = file_manager.get_file_path(file_label, LoadType.CACHE)
+        file_label = file_manager.generate_file_label(self.table_name)
+        file_path = file_manager.get_file_path(file_label, LoadType.CACHE)
 
         # Save the GeoDataFrame to a Parquet file
-        self.gdf.to_parquet(file_name)
+        self.gdf.to_parquet(file_path)
 
     def _load_carto_data(self):
         if not self.carto_sql_queries:

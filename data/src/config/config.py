@@ -7,6 +7,8 @@ FORCE_RELOAD = False
 USE_CRS = "EPSG:2272"
 """ the standard geospatial code for Pennsylvania South (ftUS) """
 
+ROOT_DIRECTORY = Path(__file__).resolve().parent.parent
+
 log_level: int = logging.WARN
 """ overall log level for the project """
 
