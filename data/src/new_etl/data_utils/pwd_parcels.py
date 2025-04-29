@@ -5,55 +5,6 @@ from ..constants.services import PWD_PARCELS_QUERY
 from ..metadata.metadata_utils import provide_metadata
 
 
-def transform_pwd_parcels_gdf(pwd_parcels_gdf: gpd.GeoDataFrame):
-    """
-    Transforms the PWD parcels GeoDataFrame in place by dropping rows with null 'brt_id' and
-    renaming 'brt_id' to 'opa_id'.
-
-    Args:
-        gdf (gpd.GeoDataFrame): The input GeoDataFrame containing PWD parcels data.
-
-    """
-    # Drop rows with null brt_id, rename to opa_id, and validate geometries
-    pwd_parcels_gdf.dropna(subset=["brt_id"], inplace=True)
-    pwd_parcels_gdf.rename(columns={"brt_id": "opa_id"}, inplace=True)
-    pwd_parcels_gdf["geometry"] = pwd_parcels_gdf["geometry"].make_valid()
-
-    # Ensure geometries are polygons or multipolygons
-    if not all(pwd_parcels_gdf.geometry.type.isin(["Polygon", "MultiPolygon"])):
-        raise ValueError("Some geometries are not polygons or multipolygons.")
-
-
-def merge_pwd_parcels_gdf(
-    primary_featurelayer_gdf: gpd.GeoDataFrame, pwd_parcels_gdf: gpd.GeoDataFrame
-) -> gpd.GeoDataFrame:
-    # Join geometries from PWD parcels
-    # Temporarily drop geometry from the primary feature layer
-
-    # Filter PWD parcels to just the opa_ids in primary
-    opa_ids_in_primary = primary_featurelayer_gdf["opa_id"].unique()
-    pwd_subset = pwd_parcels_gdf[pwd_parcels_gdf["opa_id"].isin(opa_ids_in_primary)]
-
-    # Count how many of those are missing geometry
-    no_geometry_count = pwd_subset["geometry"].isnull().sum()
-    pwd_parcels_gdf_unique_opa_id = pwd_parcels_gdf.drop_duplicates(subset="opa_id")
-    primary_featurelayer_gdf_unique_opa_id = primary_featurelayer_gdf.drop_duplicates(
-        subset="opa_id"
-    )
-
-    pwd_parcels_gdf_indexed = pwd_parcels_gdf_unique_opa_id.set_index("opa_id")
-    merged_gdf_indexed = primary_featurelayer_gdf_unique_opa_id.set_index("opa_id")
-
-    # ISSUE: This update and the other transformations might be incorrect
-    merged_gdf_indexed.update(
-        pwd_parcels_gdf_indexed[["geometry"]],
-    )
-    merged_gdf = merged_gdf_indexed.reset_index()
-
-    print("Number of observations retaining point geometry:", no_geometry_count)
-    return merged_gdf
-
-
 @provide_metadata()
 def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
@@ -88,12 +39,40 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         cols=["brt_id"],
     )
 
-    pwd_parcels_gdf = pwd_parcels.gdf
+    # Drop rows with null brt_id, rename to opa_id, and validate geometries
+    pwd_parcels.gdf.dropna(subset=["brt_id"], inplace=True)
+    pwd_parcels.gdf.rename(columns={"brt_id": "opa_id"}, inplace=True)
+    pwd_parcels.gdf["geometry"] = pwd_parcels.gdf["geometry"].make_valid()
 
-    transform_pwd_parcels_gdf(pwd_parcels_gdf)
+    # Ensure geometries are polygons or multipolygons
+    if not all(pwd_parcels.gdf.geometry.type.isin(["Polygon", "MultiPolygon"])):
+        raise ValueError("Some geometries are not polygons or multipolygons.")
 
-    primary_featurelayer.gdf = merge_pwd_parcels_gdf(
-        primary_featurelayer.gdf, pwd_parcels_gdf
+    # Temporarily drop geometry from the primary feature layer
+    primary_df = primary_featurelayer.gdf.drop(columns=["geometry"])
+
+    # Join geometries from PWD parcels
+    merged_gdf = primary_df.merge(
+        pwd_parcels.gdf[["opa_id", "geometry"]],
+        on="opa_id",
+        how="left",
     )
 
+    # Coerce merged_gdf into a GeoDataFrame
+    merged_gdf = gpd.GeoDataFrame(
+        merged_gdf,
+        geometry="geometry",
+        crs=primary_featurelayer.gdf.crs,  # Ensure the CRS matches the original
+    )
+
+    # Log observations with no polygon geometry
+    no_geometry_count = merged_gdf["geometry"].isnull().sum()
+
+    # Retain point geometry for rows with no polygon geometry
+    merged_gdf["geometry"] = merged_gdf["geometry"].combine_first(
+        primary_featurelayer.gdf["geometry"]
+    )
+    print("Number of observations retaining point geometry:", no_geometry_count)
+    primary_featurelayer.gdf = merged_gdf
+    # Wrap the GeoDataFrame back into a FeatureLayer
     return primary_featurelayer
