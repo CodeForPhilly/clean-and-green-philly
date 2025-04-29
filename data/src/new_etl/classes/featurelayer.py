@@ -7,7 +7,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import geopandas as gpd
 import pandas as pd
 import requests
-import sqlalchemy as sa
 from google.cloud import storage
 from google.cloud.storage.bucket import Bucket
 from shapely import wkb
@@ -20,8 +19,6 @@ from config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
-from config.psql import conn, local_engine
-from new_etl.database import to_postgis_with_schema
 from new_etl.loaders import load_carto_data, load_esri_data
 
 log.basicConfig(level=log_level)
@@ -99,22 +96,22 @@ class FeatureLayer:
         else:
             log.info(f"Initialized FeatureLayer {self.name} with no data.")
 
-    def check_psql(self):
-        try:
-            if not sa.inspect(local_engine).has_table(self.psql_table):
-                log.debug(f"Table {self.psql_table} does not exist")
-                return False
-            psql_table = gpd.read_postgis(
-                f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
-            )
-            if len(psql_table) == 0:
-                return False
-            log.info(f"Loading data for {self.name} from psql...")
-            self.gdf = psql_table
-            return True
-        except Exception as e:
-            log.error(f"Error loading data for {self.name}: {e}")
-            return False
+    # def check_psql(self):
+    #     try:
+    #         if not sa.inspect(local_engine).has_table(self.psql_table):
+    #             log.debug(f"Table {self.psql_table} does not exist")
+    #             return False
+    #         psql_table = gpd.read_postgis(
+    #             f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
+    #         )
+    #         if len(psql_table) == 0:
+    #             return False
+    #         log.info(f"Loading data for {self.name} from psql...")
+    #         self.gdf = psql_table
+    #         return True
+    #     except Exception as e:
+    #         log.error(f"Error loading data for {self.name}: {e}")
+    #         return False
 
     def load_data(self):
         log.info(f"Loading data for {self.name} from {self.type}...")
@@ -149,7 +146,7 @@ class FeatureLayer:
                     ]
 
                 # Save GeoDataFrame to PostgreSQL and configure it as a hypertable
-                to_postgis_with_schema(self.gdf, self.psql_table, conn)
+                # to_postgis_with_schema(self.gdf, self.psql_table, conn)
 
         except Exception as e:
             log.error(f"Error loading data for {self.name}: {e}")
