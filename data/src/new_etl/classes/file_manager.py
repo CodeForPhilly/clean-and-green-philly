@@ -67,7 +67,7 @@ class FileManager:
         return f"{table_name}_{date}_new"
 
     def get_file_path(
-        self, file_name: str, file_type: FileType, load_type: LoadType
+        self, file_name: str, load_type: LoadType, file_type: FileType | None = None
     ) -> str:
         """
         Get the full file path for a given file depending on whether it belongs in the temporary or cache directory.
@@ -80,14 +80,15 @@ class FileManager:
         parent_directory = (
             self.temp_directory
             if load_type == LoadType.TEMP
-            else self.cache_directory
+            else self.source_cache_directory
             if load_type == LoadType.SOURCE_CACHE
             else self.pipeline_cache_directory
         )
-        return os.path.join(parent_directory, f"{file_name}.{file_type.value}")
+        file_name = f"{file_name}.{file_type.value}" if file_type else file_name
+        return os.path.join(parent_directory, file_name)
 
     def check_file_exists(
-        self, file_name: str, file_type: FileType, load_type: LoadType
+        self, file_name: str, load_type: LoadType, file_type: FileType | None = None
     ) -> bool:
         """
         Checks if a file exists in the temporary or cache directory.
@@ -97,7 +98,7 @@ class FileManager:
         Returns:
             bool: True if the file exists, False otherwise.
         """
-        file_path = self.get_file_path(file_name, file_type, load_type)
+        file_path = self.get_file_path(file_name, load_type, file_type)
         return os.path.exists(file_path)
 
     def check_source_cache_file_exists(
@@ -128,7 +129,7 @@ class FileManager:
         """
         cached_files = [
             file
-            for file in os.listdir(self.pipeline_cache_directory)
+            for file in os.listdir(self.source_cache_directory)
             if table_name in file
         ]
 
@@ -137,15 +138,17 @@ class FileManager:
 
         cached_files.sort(
             key=lambda x: os.path.getmtime(
-                os.path.join(self.pipeline_cache_directory, x)
+                os.path.join(self.source_cache_directory, x)
             ),
             reverse=True,
         )
         most_recent_file = cached_files[0]
-        return gpd.read_parquet(most_recent_file)
+        file_path = self.get_file_path(most_recent_file, LoadType.SOURCE_CACHE)
+
+        return gpd.read_parquet(file_path)
 
     def load_gdf(
-        self, file_name: str, file_type: FileType, load_type: LoadType
+        self, file_name: str, load_type: LoadType, file_type: FileType | None = None
     ) -> gpd.GeoDataFrame:
         """
         Loads a GeoDataFrame into memory from a local file in the temporary or cache directory.
@@ -155,7 +158,7 @@ class FileManager:
             file_type (FileType): The type of the file (GEOJSON or PARQUET).
             load_type (LoadType): The destination type of the file (TEMP or CACHE).
         """
-        file_path = self.get_file_path(file_name, file_type, load_type)
+        file_path = self.get_file_path(file_name, load_type, file_type)
         if os.path.exists(file_path):
             gdf = (
                 gpd.read_file(file_path)
@@ -172,8 +175,8 @@ class FileManager:
         self,
         gdf: gpd.GeoDataFrame,
         file_name: str,
-        file_type: FileType,
         load_type: LoadType,
+        file_type: FileType | None = None,
     ) -> None:
         """
         Saves a GeoDataFrame to a local file in the temporary or cache directory.
@@ -184,7 +187,7 @@ class FileManager:
             file_type (FileType): The type of the file (GEOJSON or PARQUET).
             load_type (LoadType): The destination type of the file (TEMP or CACHE).
         """
-        file_path = self.get_file_path(file_name, file_type, load_type)
+        file_path = self.get_file_path(file_name, load_type, file_type)
         if file_type == FileType.PARQUET:
             gdf.to_parquet(file_path, index=False)
         elif file_type == FileType.GEOJSON:
@@ -212,7 +215,7 @@ class FileManager:
         num_rows = len(gdf)
         num_rows_to_save = int(num_rows * self.fraction)
         reduced_gdf = gdf.iloc[:: num_rows // num_rows_to_save]
-        file_path = self.get_file_path(file_name, FileType.PARQUET, load_type)
+        file_path = self.get_file_path(file_name, load_type, FileType.PARQUET)
 
         reduced_gdf.to_parquet(file_path, index=False)
 

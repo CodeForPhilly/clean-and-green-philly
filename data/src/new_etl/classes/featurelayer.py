@@ -95,9 +95,9 @@ class FeatureLayer:
                 log.info(f"Loading data for {self.name} from cache...")
                 self.gdf = self.file_manager.get_most_recent_cache(self.table_name)
             else:
-                # Loading in the data
+                print("Loading data now...")
                 self.load_data()
-                # Caching the fetched data
+                print("Caching data now...")
                 self.cache_data()
         else:
             log.info(f"Initialized FeatureLayer {self.name} with no data.")
@@ -154,7 +154,7 @@ class FeatureLayer:
         # Save sourced data to a local parquet file in the storage/source_cache directory
         file_label = self.file_manager.generate_file_label(self.table_name)
         self.file_manager.save_gdf(
-            self.gdf, file_label, FileType.PARQUET, LoadType.SOURCE_CACHE
+            self.gdf, file_label, LoadType.SOURCE_CACHE, FileType.PARQUET
         )
 
     def _load_carto_data(self):
@@ -288,11 +288,21 @@ class FeatureLayer:
         zoom_threshold: int = 13
 
         # Export the GeoDataFrame to a temporary GeoJSON file
-        temp_geojson_points: str = f"tmp/temp_{tiles_file_id_prefix}_points.geojson"
-        temp_geojson_polygons: str = f"tmp/temp_{tiles_file_id_prefix}_polygons.geojson"
-        temp_pmtiles_points: str = f"tmp/temp_{tiles_file_id_prefix}_points.pmtiles"
-        temp_pmtiles_polygons: str = f"tmp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
-        temp_merged_pmtiles: str = f"tmp/temp_{tiles_file_id_prefix}_merged.pmtiles"
+        temp_geojson_points: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_points.geojson"
+        )
+        temp_geojson_polygons: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_polygons.geojson"
+        )
+        temp_pmtiles_points: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_points.pmtiles"
+        )
+        temp_pmtiles_polygons: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
+        )
+        temp_merged_pmtiles: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_merged.pmtiles"
+        )
 
         # Reproject
         gdf_wm = self.gdf.to_crs(epsg=4326)

@@ -2,7 +2,7 @@ import traceback
 
 import pandas as pd
 
-from new_etl.classes.file_manager import FileManager, LoadType
+from new_etl.classes.file_manager import FileManager, FileType, LoadType
 from new_etl.classes.slack_reporters import (
     send_dataframe_profile_to_slack,
     send_error_to_slack,
@@ -69,15 +69,39 @@ try:
         park_priority,
     ]
 
+    # Numeric columns to track for coercion
+    numeric_columns = [
+        "market_value",
+        "sale_price",
+        "total_assessment",
+        "total_due",
+        "num_years_owed",
+        "permit_count",
+    ]
+
     print("Loading OPA properties dataset.")
     dataset = opa_properties()
 
     for service in services:
         print(f"Running service: {service.__name__}")
         dataset = service(dataset)
-        file_manager.save_fractional_gdf(
-            dataset.gdf, service.__name__, LoadType.PIPELINE_CACHE
-        )
+
+        # If we want to save fractional steps along the pipeline, we need to coerce these types
+        # at each step otherwise it cannot validly save to the parquet file
+
+        # Coerce numeric columns to numeric at each step for valid saves to cache
+        # for col in numeric_columns:
+        #     if col in dataset.gdf.columns:
+        #         dataset.gdf[col] = pd.to_numeric(dataset.gdf[col], errors="coerce")
+
+        # if "most_recent_year_owed" in dataset.gdf.columns:
+        #     dataset.gdf["most_recent_year_owed"] = dataset.gdf[
+        #         "most_recent_year_owed"
+        #     ].astype(str)
+
+        # file_manager.save_fractional_gdf(
+        #     dataset.gdf, service.__name__, LoadType.PIPELINE_CACHE
+        # )
 
     print("Applying final dataset transformations.")
     dataset = priority_level(dataset)
@@ -94,24 +118,15 @@ try:
     dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
     print(f"Duplicate rows dropped: {before_drop - dataset.gdf.shape[0]}")
 
-    # Convert columns to numeric where necessary
-    numeric_columns = [
-        "market_value",
-        "sale_price",
-        "total_assessment",
-        "total_due",
-        "num_years_owed",
-        "permit_count",
-    ]
-    dataset.gdf[numeric_columns] = dataset.gdf[numeric_columns].apply(
-        pd.to_numeric, errors="coerce"
-    )
+    # Convert columns where necessary
+    for col in numeric_columns:
+        dataset.gdf[col] = pd.to_numeric(dataset.gdf[col], errors="coerce")
     dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].astype(
         str
     )
 
     # Dataset profiling
-    send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
+    # send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
 
     # Save dataset to PostgreSQL
     # to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
@@ -123,9 +138,11 @@ try:
     # send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
 
     # Save local Parquet file
-    parquet_path = "tmp/test_output.parquet"
-    dataset.gdf.to_parquet(parquet_path)
-    print(f"Dataset saved to Parquet: {parquet_path}")
+    file_label = file_manager.generate_file_label("all_properties_end")
+    file_manager.save_gdf(
+        dataset.gdf, file_label, LoadType.PIPELINE_CACHE, FileType.PARQUET
+    )
+    print(f"Dataset saved to Parquet in storage/pipeline_cache/{file_label}.parquet")
 
     # Publish only vacant properties
     dataset.gdf = dataset.gdf[dataset.gdf["vacant"]]

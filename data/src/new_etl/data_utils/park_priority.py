@@ -53,7 +53,10 @@ def download_and_process_shapefile(
     Returns:
         gpd.GeoDataFrame: GeoDataFrame containing the processed park data.
     """
-    if any([not os.path.exists(f"tmp/{filename}") for filename in target_files]):
+    target_files_paths = [
+        file_manager.get_file_path(filename, LoadType.TEMP) for filename in target_files
+    ]
+    if any([not os.path.exists(filepath) for filepath in target_files_paths]):
         print("Downloading and processing park priority data...")
         response: requests.Response = requests.get(park_url, stream=True)
         total_size: int = int(response.headers.get("content-length", 0))
@@ -75,7 +78,11 @@ def download_and_process_shapefile(
     print("Processing shapefile...")
 
     def filter_shapefile_generator():
-        with fiona.open("tmp/" + file_name_prefix + "_ParkPriorityAreas.shp") as source:
+        file_path = file_manager.get_file_path(
+            file_name_prefix + "_ParkPriorityAreas.shp", LoadType.TEMP
+        )
+
+        with fiona.open(file_path) as source:
             for feature in source:
                 if not feature["properties"]["ID"].startswith("42101"):
                     continue

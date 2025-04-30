@@ -64,5 +64,4 @@ data/src/app/service-account-key.json
 .python-version
 
 # Cached and temporary data files from pipeline
-tmp/
-cache/
+storage/
