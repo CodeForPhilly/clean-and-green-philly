@@ -107,7 +107,7 @@ def download_and_process_shapefile(
         raise TypeError("Expected a GeoDataFrame, got Series or another type instead")
 
     print(f"Writing filtered data to GeoJSON: {geojson_filename}")
-    file_manager.save_gdf(geojson_filename, FileType.GEOJSON, LoadType.TEMP)
+    file_manager.save_gdf(geojson_filename, LoadType.TEMP, FileType.GEOJSON)
 
     return phl_parks
 

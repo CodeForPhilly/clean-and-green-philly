@@ -86,22 +86,9 @@ try:
         print(f"Running service: {service.__name__}")
         dataset = service(dataset)
 
-        # If we want to save fractional steps along the pipeline, we need to coerce these types
-        # at each step otherwise it cannot validly save to the parquet file
-
-        # Coerce numeric columns to numeric at each step for valid saves to cache
-        # for col in numeric_columns:
-        #     if col in dataset.gdf.columns:
-        #         dataset.gdf[col] = pd.to_numeric(dataset.gdf[col], errors="coerce")
-
-        # if "most_recent_year_owed" in dataset.gdf.columns:
-        #     dataset.gdf["most_recent_year_owed"] = dataset.gdf[
-        #         "most_recent_year_owed"
-        #     ].astype(str)
-
-        # file_manager.save_fractional_gdf(
-        #     dataset.gdf, service.__name__, LoadType.PIPELINE_CACHE
-        # )
+        # If we want to save fractional steps along the pipeline, we need to coerce these the numeric data types
+        # "most_recent_year_owed" as seen in lines 108-112 and at each step otherwise it cannot validly save to the
+        # parquet file
 
     print("Applying final dataset transformations.")
     dataset = priority_level(dataset)
