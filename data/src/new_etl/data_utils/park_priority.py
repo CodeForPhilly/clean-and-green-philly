@@ -11,7 +11,7 @@ from tqdm import tqdm
 from config.config import USE_CRS
 
 from ..classes.featurelayer import FeatureLayer
-from ..classes.file_manager import FileManager, LoadType
+from ..classes.file_manager import FileManager, FileType, LoadType
 from ..metadata.metadata_utils import provide_metadata
 
 file_manager = FileManager()
@@ -100,7 +100,7 @@ def download_and_process_shapefile(
         raise TypeError("Expected a GeoDataFrame, got Series or another type instead")
 
     print(f"Writing filtered data to GeoJSON: {geojson_filename}")
-    file_manager.save_gdf(geojson_filename, LoadType.TEMP)
+    file_manager.save_gdf(geojson_filename, FileType.GEOJSON, LoadType.TEMP)
 
     return phl_parks
 
@@ -141,10 +141,12 @@ def park_priority(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         file_name_prefix + "_ParkPriorityAreas.sbn",
         file_name_prefix + "_ParkPriorityAreas.sbx",
     ]
-    geojson_filename = "phl_parks.geojson"
+    geojson_filename = "phl_parks"
 
     try:
-        phl_parks = file_manager.load_gdf(geojson_filename, LoadType.TEMP)
+        phl_parks = file_manager.load_gdf(
+            geojson_filename, FileType.GEOJSON, LoadType.TEMP
+        )
     except FileNotFoundError as e:
         print(f"Error loading GeoJSON: {e}. Re-downloading and processing shapefile.")
         phl_parks = download_and_process_shapefile(

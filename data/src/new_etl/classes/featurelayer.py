@@ -19,7 +19,7 @@ from config.config import (
     write_production_tiles_file,
 )
 from new_etl.classes.bucket_manager import GCSBucketManager
-from new_etl.classes.file_manager import FileManager, LoadType
+from new_etl.classes.file_manager import FileManager, FileType, LoadType
 from new_etl.loaders import load_carto_data, load_esri_data
 
 log.basicConfig(level=log_level)
@@ -38,13 +38,6 @@ def google_cloud_bucket(require_write_access: bool = False) -> storage.Bucket | 
     if require_write_access and bucket_manager.read_only:
         return None
     return bucket_manager.bucket
-
-
-def get_file_manager() -> FileManager:
-    """
-    Initialize a FileManager instance for managing temporary and cache files.
-    """
-    return FileManager()
 
 
 class FeatureLayer:
@@ -84,6 +77,7 @@ class FeatureLayer:
         self.use_wkb_geom_field = use_wkb_geom_field
         self.max_workers = max_workers
         self.chunk_size = chunk_size
+        self.file_manager = FileManager()
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
@@ -95,11 +89,11 @@ class FeatureLayer:
                 if self.carto_sql_queries
                 else "gdf"
             )
-            if not force_reload and self.check_cache():
+            if not force_reload and self.file_manager.check_source_cache_file_exists(
+                self.table_name, LoadType.SOURCE_CACHE
+            ):
                 log.info(f"Loading data for {self.name} from cache...")
-                file_manager = get_file_manager()
-                cached_file_name = file_manager.get_most_recent_cache(self.table_name)
-                self.gdf = gpd.read_parquet(cached_file_name)
+                self.gdf = self.file_manager.get_most_recent_cache(self.table_name)
             else:
                 # Loading in the data
                 self.load_data()
@@ -107,15 +101,6 @@ class FeatureLayer:
                 self.cache_data()
         else:
             log.info(f"Initialized FeatureLayer {self.name} with no data.")
-
-    def check_cache(self):
-        """
-        Check if the data already exists in in a cached parquet file to load.
-        """
-        file_manager = get_file_manager()
-        cached_file_name = file_manager.get_most_recent_cache(self.table_name)
-
-        return cached_file_name
 
     def load_data(self):
         log.info(f"Loading data for {self.name} from {self.type}...")
@@ -166,12 +151,11 @@ class FeatureLayer:
             log.info("No data to cache.")
             return
 
-        file_manager = get_file_manager()
-        file_label = file_manager.generate_file_label(self.table_name)
-        file_path = file_manager.get_file_path(file_label, LoadType.CACHE)
-
-        # Save the GeoDataFrame to a Parquet file
-        self.gdf.to_parquet(file_path)
+        # Save sourced data to a local parquet file in the storage/source_cache directory
+        file_label = self.file_manager.generate_file_label(self.table_name)
+        self.file_manager.save_gdf(
+            self.gdf, file_label, FileType.PARQUET, LoadType.SOURCE_CACHE
+        )
 
     def _load_carto_data(self):
         if not self.carto_sql_queries:

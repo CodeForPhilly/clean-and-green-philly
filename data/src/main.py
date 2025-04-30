@@ -2,6 +2,7 @@ import traceback
 
 import pandas as pd
 
+from new_etl.classes.file_manager import FileManager, LoadType
 from new_etl.classes.slack_reporters import (
     send_dataframe_profile_to_slack,
     send_error_to_slack,
@@ -35,6 +36,8 @@ from new_etl.data_utils import (
     unsafe_buildings,
     vacant_properties,
 )
+
+file_manager = FileManager()
 
 try:
     print("Starting ETL process.")
@@ -72,6 +75,9 @@ try:
     for service in services:
         print(f"Running service: {service.__name__}")
         dataset = service(dataset)
+        file_manager.save_fractional_gdf(
+            dataset.gdf, service.__name__, LoadType.PIPELINE_CACHE
+        )
 
     print("Applying final dataset transformations.")
     dataset = priority_level(dataset)

@@ -8,14 +8,20 @@ from typing import List
 import geopandas as gpd
 from tqdm import tqdm
 
-from config.config import ROOT_DIRECTORY
+from config.config import CACHE_FRACTION, ROOT_DIRECTORY
 
 print(f"Root directory is {ROOT_DIRECTORY}")
 
 
 class LoadType(Enum):
     TEMP = "temp"
-    CACHE = "cache"
+    SOURCE_CACHE = "source_cache"
+    PIPELINE_CACHE = "pipeline_cache"
+
+
+class FileType(Enum):
+    GEOJSON = "geojson"
+    PARQUET = "parquet"
 
 
 class FileManager:
@@ -23,17 +29,30 @@ class FileManager:
     A manager for interacting with cached files or temporary files loaded from or extracting into the local filesystem.
     """
 
-    def __init__(self):
+    def __init__(self, fraction=CACHE_FRACTION):
         """
         Initialize the FileManager with paths for the temporary and cache directories at the root directory of the project.
         """
-        self.temp_directory = os.path.join(ROOT_DIRECTORY, "tmp")
-        self.cache_directory = os.path.join(ROOT_DIRECTORY, "cache")
+        self.storage_directory = os.path.join(ROOT_DIRECTORY, "storage")
+
+        if not os.path.exists(self.storage_directory):
+            os.makedirs(self.storage_directory)
+
+        self.fraction = fraction
+        self.temp_directory = os.path.join(self.storage_directory, "tmp")
+        self.source_cache_directory = os.path.join(
+            self.storage_directory, "source_cache"
+        )
+        self.pipeline_cache_directory = os.path.join(
+            self.storage_directory, "pipeline_cache"
+        )
 
         if not os.path.exists(self.temp_directory):
             os.makedirs(self.temp_directory)
-        if not os.path.exists(self.cache_directory):
-            os.makedirs(self.cache_directory)
+        if not os.path.exists(self.source_cache_directory):
+            os.makedirs(self.source_cache_directory)
+        if not os.path.exists(self.pipeline_cache_directory):
+            os.makedirs(self.pipeline_cache_directory)
 
     def generate_file_label(self, table_name: str) -> str:
         """
@@ -45,22 +64,31 @@ class FileManager:
             str: The generated file label.
         """
         date = datetime.now().strftime("%Y_%m_%d")
-        return f"{table_name}_{date}_new.parquet"
+        return f"{table_name}_{date}_new"
 
-    def get_file_path(self, file_name: str, load_type: LoadType) -> str:
+    def get_file_path(
+        self, file_name: str, file_type: FileType, load_type: LoadType
+    ) -> str:
         """
         Get the full file path for a given file depending on whether it belongs in the temporary or cache directory.
 
         Args:
             file_name (str): The name of the file.
+            file_type (FileType): The type of the file (GEOJSON or PARQUET).
             load_type (LoadType): The destination type of the file (TEMP or CACHE).
         """
         parent_directory = (
-            self.temp_directory if load_type == LoadType.TEMP else self.cache_directory
+            self.temp_directory
+            if load_type == LoadType.TEMP
+            else self.cache_directory
+            if load_type == LoadType.SOURCE_CACHE
+            else self.pipeline_cache_directory
         )
-        return os.path.join(parent_directory, file_name)
+        return os.path.join(parent_directory, f"{file_name}.{file_type.value}")
 
-    def check_file_exists(self, file_name: str, load_type: LoadType) -> bool:
+    def check_file_exists(
+        self, file_name: str, file_type: FileType, load_type: LoadType
+    ) -> bool:
         """
         Checks if a file exists in the temporary or cache directory.
         Args:
@@ -69,50 +97,83 @@ class FileManager:
         Returns:
             bool: True if the file exists, False otherwise.
         """
-        file_path = self.get_file_path(file_name, load_type)
+        file_path = self.get_file_path(file_name, file_type, load_type)
         return os.path.exists(file_path)
 
-    def get_most_recent_cache(self, table_name: str) -> str | None:
+    def check_source_cache_file_exists(
+        self, table_name: str, load_type: LoadType
+    ) -> bool:
         """
-        Returns the most recetnly generated file in the cache directory for a given table name.
+        Checks for the existence of a file matching the given tablename in the caching directories -
+        either a source file for the data or an intermediate step in the pipeline.
+        Args:
+            table_name (str): The name of the table of source data.
+            load_type (LoadType): The destination type of the file (either SOURCE_CACHE or PIPELINE_CACHE).
+        """
+        directory = (
+            self.source_cache_directory
+            if load_type == LoadType.SOURCE_CACHE
+            else self.pipeline_cache_directory
+        )
+        return len([file for file in os.listdir(directory) if table_name in file]) > 0
+
+    def get_most_recent_cache(self, table_name: str) -> gpd.GeoDataFrame | None:
+        """
+        Returns the most recently generated file in the cache directory for a given table name.
         Args:
             table_name (str): The name of the table.
         Returns:
-            str: The name of the most recent file for the given table name.
+            GeoDataFrame: The dataframe loaded from the most recent cached file.
             None: If no files exist for the given table name.
         """
         cached_files = [
-            file for file in os.listdir(self.cache_directory) if table_name in file
+            file
+            for file in os.listdir(self.pipeline_cache_directory)
+            if table_name in file
         ]
 
         if not cached_files:
             return None
 
         cached_files.sort(
-            key=lambda x: os.path.getmtime(os.path.join(self.cache_directory, x)),
+            key=lambda x: os.path.getmtime(
+                os.path.join(self.pipeline_cache_directory, x)
+            ),
             reverse=True,
         )
         most_recent_file = cached_files[0]
-        return most_recent_file
+        return gpd.read_parquet(most_recent_file)
 
-    def load_gdf(self, file_name: str, load_type: LoadType) -> gpd.GeoDataFrame:
+    def load_gdf(
+        self, file_name: str, file_type: FileType, load_type: LoadType
+    ) -> gpd.GeoDataFrame:
         """
         Loads a GeoDataFrame into memory from a local file in the temporary or cache directory.
 
         Args:
             file_name (str): The name of the file.
+            file_type (FileType): The type of the file (GEOJSON or PARQUET).
             load_type (LoadType): The destination type of the file (TEMP or CACHE).
         """
-        file_path = self.get_file_path(file_name, load_type)
+        file_path = self.get_file_path(file_name, file_type, load_type)
         if os.path.exists(file_path):
-            return gpd.read_file(file_path)
+            gdf = (
+                gpd.read_file(file_path)
+                if file_type == FileType.GEOJSON
+                else gpd.read_parquet(file_path)
+            )
+            return gdf
         else:
             raise FileNotFoundError(
                 f"File {file_name} not found in corresponding directory."
             )
 
     def save_gdf(
-        self, gdf: gpd.GeoDataFrame, file_name: str, load_type: LoadType
+        self,
+        gdf: gpd.GeoDataFrame,
+        file_name: str,
+        file_type: FileType,
+        load_type: LoadType,
     ) -> None:
         """
         Saves a GeoDataFrame to a local file in the temporary or cache directory.
@@ -120,10 +181,40 @@ class FileManager:
         Args:
             gdf (gpd.GeoDataFrame): The GeoDataFrame to save.
             file_name (str): The name of the file.
+            file_type (FileType): The type of the file (GEOJSON or PARQUET).
             load_type (LoadType): The destination type of the file (TEMP or CACHE).
         """
-        file_path = self.get_file_path(file_name, load_type)
-        gdf.to_file(file_path, driver="GeoJSON")
+        file_path = self.get_file_path(file_name, file_type, load_type)
+        if file_type == FileType.PARQUET:
+            gdf.to_parquet(file_path, index=False)
+        elif file_type == FileType.GEOJSON:
+            gdf.to_file(file_path, driver="GeoJSON")
+        else:
+            raise ValueError(f"Unsupported file type: {file_type}")
+
+    def save_fractional_gdf(
+        self,
+        gdf: gpd.GeoDataFrame,
+        file_name: str,
+        load_type: LoadType,
+    ) -> None:
+        """
+        Saves a portion of a supplied GeoDataFrame to a local file in the temporary or cache directory based on a deterministic selection of some of the rows.
+
+        Args:
+            gdf (gpd.GeoDataFrame): The GeoDataFrame to save.
+            file_name (str): The name of the file.
+            load_type (LoadType): The destination type of the file (TEMP or CACHE).
+
+        This will always be used for a parquet file in our used case, so no need to pass in file_type.
+        """
+
+        num_rows = len(gdf)
+        num_rows_to_save = int(num_rows * self.fraction)
+        reduced_gdf = gdf.iloc[:: num_rows // num_rows_to_save]
+        file_path = self.get_file_path(file_name, FileType.PARQUET, load_type)
+
+        reduced_gdf.to_parquet(file_path, index=False)
 
     def extract_files(self, buffer: BytesIO, filenames: List[str]) -> None:
         """
