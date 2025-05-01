@@ -17,9 +17,9 @@ class TestConservatorship(unittest.TestCase):
                 "PRA",
             ],
             "sheriff_sale": ["Y", "N", "N", "N", "Y"],
-            "market_value": [2000, 500, 800, 5000, 1000],
-            "all_violations_past_year": [5, 0, 2, 0, None, 1],
-            "sale_date": ["2020-01-01", "2021-03-10", "2024-12-30", "2004-09-10", None],
+            "market_value": [2000, 500, 800, 200, 1000],
+            "all_violations_past_year": [5, 0, 2, 1, None],
+            "sale_date": ["2020-01-01", "2021-03-10", "2024-09-30", "2004-09-10", None],
         }
         gdf = gpd.GeoDataFrame(data)
         feature_layer = FeatureLayer(name="test", gdf=gdf)

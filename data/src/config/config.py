@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-FORCE_RELOAD = False
+FORCE_RELOAD = True
 """ During the data load, whether to query the various GIS API services for the data to load into the postgres tables.  If True, will query the API services, backup the database, reload the database and report on data differences.  If false will read the data from postgres."""
 
 USE_CRS = "EPSG:2272"
@@ -9,6 +9,9 @@ USE_CRS = "EPSG:2272"
 
 ROOT_DIRECTORY = Path(__file__).resolve().parent.parent
 """ the root directory of the project """
+
+FORCE_CACHE = False
+"""After loading ESRI/CARTO/other GDF data, whether to cache in the FeatureLayer initialization."""
 
 CACHE_FRACTION = 0.05
 """The fraction used to cache portions of the pipeline's transformed data in each step of the pipeline."""

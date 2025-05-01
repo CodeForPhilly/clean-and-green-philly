@@ -19,7 +19,7 @@ def transform_rco_geoms_gdf(
         lambda x: "; ".join(map(str, x)), axis=1
     )
 
-    rco_geoms_gdf.rename({"organization_name": "rco_names"}, inplace=True)
+    rco_geoms_gdf.rename(columns={"organization_name": "rco_names"}, inplace=True)
     rco_geoms_gdf = rco_geoms_gdf[output_columns].copy()
 
     return rco_geoms_gdf

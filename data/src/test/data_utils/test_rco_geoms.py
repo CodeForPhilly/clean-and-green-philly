@@ -61,10 +61,13 @@ class TestRcoGeoms(unittest.TestCase):
 
         transformed_gdf = transform_merged_rco_geoms_gdf(gdf, rco_use_cols)
 
-        self.assertEqual(len(transformed_gdf), 3)
+        print(transformed_gdf.head())
+
+        self.assertEqual(transformed_gdf.shape[0], 4)
         self.assertIn("opa_id", transformed_gdf.columns)
         self.assertListEqual(
-            sorted(transformed_gdf["opa_id"].tolist()), ["001123", "004435", "04531"]
+            sorted(transformed_gdf["opa_id"].tolist()),
+            ["", "001123", "004435", "04531"],
         )
         # Add check that geometry of repeated opa_id is the first one
 

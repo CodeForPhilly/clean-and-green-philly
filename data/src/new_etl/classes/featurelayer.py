@@ -12,6 +12,7 @@ from shapely import wkb
 from tqdm import tqdm
 
 from config.config import (
+    FORCE_CACHE,
     FORCE_RELOAD,
     USE_CRS,
     log_level,
@@ -97,8 +98,9 @@ class FeatureLayer:
             else:
                 print("Loading data now...")
                 self.load_data()
-                print("Caching data now...")
-                self.cache_data()
+                if FORCE_CACHE:
+                    print("Caching data now...")
+                    self.cache_data()
         else:
             log.info(f"Initialized FeatureLayer {self.name} with no data.")
 

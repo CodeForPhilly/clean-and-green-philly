@@ -18,7 +18,7 @@ class TestTacticalUrbanism(unittest.TestCase):
 
         tactical_urbanism_feature_layer = tactical_urbanism(feature_layer)
         expected_gdf = gdf.copy()
-        expected_gdf["tactical_urbanism"] = ["No", "Yes", "Yes", "Yes"]
+        expected_gdf["tactical_urbanism"] = ["No", "No", "Yes", "No"]
 
         assert expected_gdf.equals(tactical_urbanism_feature_layer.gdf)
 

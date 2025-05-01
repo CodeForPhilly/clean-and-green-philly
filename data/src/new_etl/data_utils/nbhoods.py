@@ -7,13 +7,18 @@ from ..constants.services import NBHOODS_URL
 from ..metadata.metadata_utils import provide_metadata
 
 
-def transform_neighborhoods_gdf(neighborhoods_gdf: gpd.GeoDataFrame):
+def transform_neighborhoods_gdf(
+    neighborhoods_gdf: gpd.GeoDataFrame,
+) -> gpd.GeoDataFrame:
     """
     Transforms the neighborhoods GeoDataFrame in place by renaming the MAPNAME column to neighborhood
     and retaining only it and the geometry columns.
 
     Args:
         gdf (gpd.GeoDataFrame): The input GeoDataFrame containing PWD parcels data.
+
+    Returns:
+        gdf (gpd.GeoDataFrame): The output, transformed GeoDataFrame.
     """
     if "MAPNAME" in neighborhoods_gdf.columns:
         neighborhoods_gdf.rename(columns={"MAPNAME": "neighborhood"}, inplace=True)
@@ -21,6 +26,8 @@ def transform_neighborhoods_gdf(neighborhoods_gdf: gpd.GeoDataFrame):
     neighborhoods_gdf = neighborhoods_gdf.to_crs(USE_CRS)
 
     neighborhoods_gdf = neighborhoods_gdf[["neighborhood", "geometry"]]
+
+    return neighborhoods_gdf
 
 
 @provide_metadata()
@@ -49,7 +56,7 @@ def nbhoods(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         https://raw.githubusercontent.com/opendataphilly/open-geo-data/master/philadelphia-neighborhoods/philadelphia-neighborhoods.geojson
     """
     neighborhoods_gdf = gpd.read_file(NBHOODS_URL)
-    transform_neighborhoods_gdf(neighborhoods_gdf)
+    neighborhoods_gdf = transform_neighborhoods_gdf(neighborhoods_gdf)
 
     neighborhoods_feature_layer = FeatureLayer("Neighborhoods")
     neighborhoods_feature_layer.gdf = neighborhoods_gdf
