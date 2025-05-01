@@ -63,6 +63,8 @@ data/src/app/service-account-key.json
 # compiled python files
 *.pyc
 
-# awkde build files
-data/src/awkde/build/
-tmp/
+# Local python development files
+.python-version
+
+# Cached and temporary data files from pipeline
+storage/

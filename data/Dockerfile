@@ -29,11 +29,11 @@ ENV GDAL_CONFIG=/usr/bin/gdal-config
 # Install Pipenv
 RUN pip install pipenv
 
-# update pipfile
-RUN pipenv lock
-
 # Copy the Pipfile and Pipfile.lock from the src directory
 COPY src/Pipfile src/Pipfile.lock ./
+
+# update pipfile
+RUN pipenv lock
 
 # Install the dependencies from Pipfile
 RUN pipenv install --deploy --ignore-pipfile
@@ -44,17 +44,9 @@ RUN git clone https://github.com/felt/tippecanoe.git \
     && make \
     && make install
 
-# Copy the src directory (including awkde)
+# Copy the src directory
 COPY src/ .
-
-# Install awkde within the Pipenv environment
-# Assuming awkde is located in /usr/src/app/awkde
-WORKDIR /usr/src/app/awkde
-RUN pipenv run pip install .
-
-# Change back to the original working directory
-WORKDIR /usr/src/app
 
 # Use Pipenv to run the script
 # Adjust the path to your main Python script if needed
-CMD ["pipenv", "run", "python", "./script.py"]
+CMD ["pipenv", "run", "python", "./main.py"]

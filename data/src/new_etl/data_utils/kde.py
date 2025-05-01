@@ -2,6 +2,7 @@ from typing import Tuple
 import numpy as np
 import rasterio
 from awkde.awkde import GaussianKDE
+from new_etl.classes.file_manager import FileManager, LoadType
 from ..classes.featurelayer import FeatureLayer
 from config.config import USE_CRS
 from rasterio.transform import Affine
@@ -11,6 +12,8 @@ import mapclassify
 
 resolution = 1320  # 0.25 miles (in feet, since the CRS is 2272)
 batch_size = 100000
+
+file_manager = FileManager()
 
 
 def kde_predict_chunk(kde: GaussianKDE, chunk: np.ndarray) -> np.ndarray:
@@ -90,11 +93,12 @@ def generic_kde(
 
     transform = Affine.translation(min_x, min_y) * Affine.scale(x_res, y_res)
 
-    raster_filename = f"tmp/{name.lower().replace(' ', '_')}.tif"
+    raster_filename = f"{name.lower().replace(' ', '_')}.tif"
+    raster_file_path = file_manager.get_file_path(raster_filename, LoadType.TEMP)
     print(f"Saving raster to {raster_filename}")
 
     with rasterio.open(
-        raster_filename,
+        raster_file_path,
         "w",
         driver="GTiff",
         height=zz.shape[0],
@@ -106,7 +110,7 @@ def generic_kde(
     ) as dst:
         dst.write(zz, 1)
 
-    return raster_filename, X
+    return raster_file_path, X
 
 
 def apply_kde_to_primary(

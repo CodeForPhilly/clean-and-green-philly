@@ -1,15 +1,11 @@
-import sys
 import traceback
 
 import pandas as pd
 
-from config.config import tiles_file_id_prefix
-from config.psql import conn
-from new_etl.classes.data_diff import DiffReport
+from new_etl.classes.file_manager import FileManager, FileType, LoadType
 from new_etl.classes.slack_reporters import (
     send_dataframe_profile_to_slack,
     send_error_to_slack,
-    send_pg_stats_to_slack,
 )
 from new_etl.data_utils import (
     access_process,
@@ -40,13 +36,8 @@ from new_etl.data_utils import (
     unsafe_buildings,
     vacant_properties,
 )
-from new_etl.database import to_postgis_with_schema
 
-# Ensure the directory containing awkde is in the Python path
-awkde_path = "/usr/src/app"
-if awkde_path not in sys.path:
-    sys.path.append(awkde_path)
-
+file_manager = FileManager()
 
 try:
     print("Starting ETL process.")
@@ -78,12 +69,26 @@ try:
         park_priority,
     ]
 
+    # Numeric columns to track for coercion
+    numeric_columns = [
+        "market_value",
+        "sale_price",
+        "total_assessment",
+        "total_due",
+        "num_years_owed",
+        "permit_count",
+    ]
+
     print("Loading OPA properties dataset.")
     dataset = opa_properties()
 
     for service in services:
         print(f"Running service: {service.__name__}")
         dataset = service(dataset)
+
+        # If we want to save fractional steps along the pipeline, we need to coerce these the numeric data types
+        # "most_recent_year_owed" as seen in lines 108-112 and at each step otherwise it cannot validly save to the
+        # parquet file
 
     print("Applying final dataset transformations.")
     dataset = priority_level(dataset)
@@ -100,46 +105,37 @@ try:
     dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
     print(f"Duplicate rows dropped: {before_drop - dataset.gdf.shape[0]}")
 
-    # Convert columns to numeric where necessary
-    numeric_columns = [
-        "market_value",
-        "sale_price",
-        "total_assessment",
-        "total_due",
-        "num_years_owed",
-        "permit_count",
-    ]
-    dataset.gdf[numeric_columns] = dataset.gdf[numeric_columns].apply(
-        pd.to_numeric, errors="coerce"
-    )
+    # Convert columns where necessary
+    for col in numeric_columns:
+        dataset.gdf[col] = pd.to_numeric(dataset.gdf[col], errors="coerce")
     dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].astype(
         str
     )
 
     # Dataset profiling
-    send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
+    # send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
 
     # Save dataset to PostgreSQL
-    to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
+    # to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
 
     # Generate and send diff report
-    diff_report = DiffReport()
-    diff_report.run()
+    # diff_report = DiffReport()
+    # diff_report.run()
 
-    send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
+    # send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
 
     # Save local Parquet file
-    parquet_path = "tmp/test_output.parquet"
-    dataset.gdf.to_parquet(parquet_path)
-    print(f"Dataset saved to Parquet: {parquet_path}")
+    file_label = file_manager.generate_file_label("all_properties_end")
+    file_manager.save_gdf(
+        dataset.gdf, file_label, LoadType.PIPELINE_CACHE, FileType.PARQUET
+    )
+    print(f"Dataset saved to Parquet in storage/pipeline_cache/{file_label}.parquet")
 
     # Publish only vacant properties
     dataset.gdf = dataset.gdf[dataset.gdf["vacant"]]
-    dataset.build_and_publish(tiles_file_id_prefix)
+    # dataset.build_and_publish(tiles_file_id_prefix)
 
     # Finalize
-    conn.commit()
-    conn.close()
     print("ETL process completed successfully.")
 
 except Exception as e:
