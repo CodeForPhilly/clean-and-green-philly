@@ -54,7 +54,18 @@ class ServiceValidator(ABC):
     def check_count_threshold(
         self, data: gpd.GeoDataFrame, min_count: int, max_count: Optional[int] = None
     ) -> List[str]:
-        """Check if row count is within expected range."""
+        """
+        Check if row count is within expected range.
+        This is a utility method intended for use by validator subclasses.
+
+        Args:
+            data: The GeoDataFrame to check
+            min_count: Minimum number of rows required
+            max_count: Optional maximum number of rows allowed
+
+        Returns:
+            List of error messages if thresholds are exceeded
+        """
         count = len(data)
         errors = []
         if count < min_count:
