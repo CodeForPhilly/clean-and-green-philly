@@ -43,6 +43,7 @@ from new_etl.database import to_postgis_with_schema
 from new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
 from new_etl.validation.council_dists import CouncilDistrictsValidator
 from new_etl.validation.nbhoods import NeighborhoodsValidator
+from new_etl.validation.phs_properties import PHSPropertiesValidator
 from new_etl.validation.rco_geoms import RCOGeomsValidator
 from new_etl.validation.vacant_properties import VacantPropertiesValidator
 
@@ -53,6 +54,7 @@ SERVICE_VALIDATORS = {
     "nbhoods": NeighborhoodsValidator(),
     "rco_geoms": RCOGeomsValidator(),
     "city_owned_properties": CityOwnedPropertiesValidator(),
+    "phs_properties": PHSPropertiesValidator(),
     # Add other service validators as they are created
 }
 
