@@ -18,6 +18,7 @@ class CouncilDistrictsValidator(ServiceValidator):
         - District numbers are valid (1-10) as strings
         - Valid geometries
         - No duplicate districts
+        - All observations have a district
 
         Returns:
             Tuple of (is_valid, list of error messages)
@@ -64,5 +65,11 @@ class CouncilDistrictsValidator(ServiceValidator):
         # Check record count (should be exactly 10 districts)
         if len(data) != 10:
             errors.append(f"Expected exactly 10 council districts, found {len(data)}")
+
+        # Check that all observations have a district
+        if "district" in data.columns:
+            null_districts = data["district"].isnull().sum()
+            if null_districts > 0:
+                errors.append(f"Found {null_districts} observations without a district")
 
         return len(errors) == 0, errors
