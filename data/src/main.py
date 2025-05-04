@@ -40,7 +40,13 @@ from new_etl.data_utils import (
     vacant_properties,
 )
 from new_etl.database import to_postgis_with_schema
+from new_etl.validation.vacant_properties import VacantPropertiesValidator
 
+# Map services to their validators
+SERVICE_VALIDATORS = {
+    "vacant_properties": VacantPropertiesValidator(),
+    # Add other service validators as they are created
+}
 
 try:
     print("Starting ETL process.")
@@ -78,6 +84,21 @@ try:
     for service in services:
         print(f"Running service: {service.__name__}")
         dataset = service(dataset)
+
+        # Run validation if a validator exists for this service
+        if service.__name__ in SERVICE_VALIDATORS:
+            validator = SERVICE_VALIDATORS[service.__name__]
+            is_valid, errors = validator.validate(dataset.gdf)
+
+            if not is_valid:
+                error_message = (
+                    f"Data validation failed for {service.__name__}:\n"
+                    + "\n".join(errors)
+                )
+                send_error_to_slack(error_message)
+                raise ValueError(error_message)
+
+            print(f"Validation passed for {service.__name__}")
 
     print("Applying final dataset transformations.")
     dataset = priority_level(dataset)
