@@ -42,6 +42,7 @@ from new_etl.data_utils import (
 from new_etl.database import to_postgis_with_schema
 from new_etl.validation.council_dists import CouncilDistrictsValidator
 from new_etl.validation.nbhoods import NeighborhoodsValidator
+from new_etl.validation.rco_geoms import RCOGeomsValidator
 from new_etl.validation.vacant_properties import VacantPropertiesValidator
 
 # Map services to their validators
@@ -49,6 +50,7 @@ SERVICE_VALIDATORS = {
     "vacant_properties": VacantPropertiesValidator(),
     "council_dists": CouncilDistrictsValidator(),
     "nbhoods": NeighborhoodsValidator(),
+    "rco_geoms": RCOGeomsValidator(),
     # Add other service validators as they are created
 }
 
