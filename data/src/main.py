@@ -48,6 +48,7 @@ from new_etl.validation import (
     TreeCanopyValidator,
     VacantValidator,
 )
+from new_etl.validation.access_process import AccessProcessValidator
 from new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
 from new_etl.validation.council_dists import CouncilDistrictsValidator
 from new_etl.validation.nbhoods import NeighborhoodsValidator
@@ -86,6 +87,7 @@ SERVICE_VALIDATORS = {
     "phs_properties": PHSPropertiesValidator(),
     "ppr_properties": PPRPropertiesValidator(),
     "tree_canopy": TreeCanopyValidator(),
+    "access_process": AccessProcessValidator(),
     # Add other service validators as they are created
 }
 

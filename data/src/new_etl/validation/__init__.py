@@ -1,4 +1,5 @@
-from .base import BaseValidator
+from .access_process import AccessProcessValidator
+from .base import ServiceValidator
 from .city_owned_properties import CityOwnedPropertiesValidator
 from .community_gardens import CommunityGardensValidator
 from .council_dists import CouncilDistrictsValidator
@@ -10,10 +11,11 @@ from .phs_properties import PHSPropertiesValidator
 from .ppr_properties import PPRPropertiesValidator
 from .rco_geoms import RCOGeomsValidator
 from .tree_canopy import TreeCanopyValidator
-from .vacant import VacantValidator
+from .vacant_properties import VacantValidator
 
 __all__ = [
-    "BaseValidator",
+    "AccessProcessValidator",
+    "ServiceValidator",
     "CityOwnedPropertiesValidator",
     "CommunityGardensValidator",
     "CouncilDistrictsValidator",
