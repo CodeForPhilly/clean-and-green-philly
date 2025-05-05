@@ -40,6 +40,9 @@ from new_etl.data_utils import (
     vacant_properties,
 )
 from new_etl.database import to_postgis_with_schema
+from new_etl.validation import (
+    PPRPropertiesValidator,
+)
 from new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
 from new_etl.validation.community_gardens import CommunityGardensValidator
 from new_etl.validation.council_dists import CouncilDistrictsValidator
@@ -57,6 +60,7 @@ SERVICE_VALIDATORS = {
     "city_owned_properties": CityOwnedPropertiesValidator(),
     "phs_properties": PHSPropertiesValidator(),
     "community_gardens": CommunityGardensValidator(),
+    "ppr_properties": PPRPropertiesValidator(),
     # Add other service validators as they are created
 }
 

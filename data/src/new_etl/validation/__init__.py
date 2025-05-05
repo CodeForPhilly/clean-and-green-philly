@@ -1,8 +1,10 @@
+from .base_validator import BaseValidator
 from .city_owned_properties import CityOwnedPropertiesValidator
 from .community_gardens import CommunityGardensValidator
 from .council_dists import CouncilDistrictsValidator
 from .nbhoods import NeighborhoodsValidator
 from .phs_properties import PHSPropertiesValidator
+from .ppr_properties import PPRPropertiesValidator
 from .rco_geoms import RCOGeomsValidator
 from .service_validator import ServiceValidator
 from .vacant_properties import VacantPropertiesValidator
@@ -16,4 +18,6 @@ __all__ = [
     "CityOwnedPropertiesValidator",
     "PHSPropertiesValidator",
     "CommunityGardensValidator",
+    "PPRPropertiesValidator",
+    "BaseValidator",
 ]
