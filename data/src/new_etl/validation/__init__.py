@@ -1,4 +1,4 @@
-from .base_validator import BaseValidator
+from .base import BaseValidator
 from .city_owned_properties import CityOwnedPropertiesValidator
 from .community_gardens import CommunityGardensValidator
 from .council_dists import CouncilDistrictsValidator
@@ -9,21 +9,21 @@ from .owner_type import OwnerTypeValidator
 from .phs_properties import PHSPropertiesValidator
 from .ppr_properties import PPRPropertiesValidator
 from .rco_geoms import RCOGeomsValidator
-from .service_validator import ServiceValidator
+from .tree_canopy import TreeCanopyValidator
 from .vacant import VacantValidator
 
 __all__ = [
-    "ServiceValidator",
-    "VacantValidator",
-    "CouncilDistrictsValidator",
-    "NeighborhoodsValidator",
-    "RCOGeomsValidator",
-    "CityOwnedPropertiesValidator",
-    "PHSPropertiesValidator",
-    "CommunityGardensValidator",
-    "PPRPropertiesValidator",
-    "OwnerTypeValidator",
-    "LIViolationsValidator",
     "BaseValidator",
+    "CityOwnedPropertiesValidator",
+    "CommunityGardensValidator",
+    "CouncilDistrictsValidator",
     "KDEValidator",
+    "LIViolationsValidator",
+    "NeighborhoodsValidator",
+    "OwnerTypeValidator",
+    "PHSPropertiesValidator",
+    "PPRPropertiesValidator",
+    "RCOGeomsValidator",
+    "TreeCanopyValidator",
+    "VacantValidator",
 ]
