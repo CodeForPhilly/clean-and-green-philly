@@ -50,6 +50,7 @@ from new_etl.validation import (
 from new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
 from new_etl.validation.community_gardens import CommunityGardensValidator
 from new_etl.validation.council_dists import CouncilDistrictsValidator
+from new_etl.validation.li_violations import LIViolationsValidator
 from new_etl.validation.nbhoods import NeighborhoodsValidator
 from new_etl.validation.phs_properties import PHSPropertiesValidator
 from new_etl.validation.rco_geoms import RCOGeomsValidator
@@ -66,6 +67,7 @@ SERVICE_VALIDATORS = {
     "community_gardens": CommunityGardensValidator(),
     "ppr_properties": PPRPropertiesValidator(),
     "owner_type": OwnerTypeValidator(),
+    "li_violations": LIViolationsValidator(),
     # Add other service validators as they are created
 }
 

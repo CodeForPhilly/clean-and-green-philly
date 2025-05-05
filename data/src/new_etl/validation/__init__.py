@@ -2,6 +2,7 @@ from .base_validator import BaseValidator
 from .city_owned_properties import CityOwnedPropertiesValidator
 from .community_gardens import CommunityGardensValidator
 from .council_dists import CouncilDistrictsValidator
+from .li_violations import LIViolationsValidator
 from .nbhoods import NeighborhoodsValidator
 from .owner_type import OwnerTypeValidator
 from .phs_properties import PHSPropertiesValidator
@@ -21,5 +22,6 @@ __all__ = [
     "CommunityGardensValidator",
     "PPRPropertiesValidator",
     "OwnerTypeValidator",
+    "LIViolationsValidator",
     "BaseValidator",
 ]
