@@ -3,6 +3,7 @@ from .city_owned_properties import CityOwnedPropertiesValidator
 from .community_gardens import CommunityGardensValidator
 from .council_dists import CouncilDistrictsValidator
 from .nbhoods import NeighborhoodsValidator
+from .owner_type import OwnerTypeValidator
 from .phs_properties import PHSPropertiesValidator
 from .ppr_properties import PPRPropertiesValidator
 from .rco_geoms import RCOGeomsValidator
@@ -19,5 +20,6 @@ __all__ = [
     "PHSPropertiesValidator",
     "CommunityGardensValidator",
     "PPRPropertiesValidator",
+    "OwnerTypeValidator",
     "BaseValidator",
 ]
