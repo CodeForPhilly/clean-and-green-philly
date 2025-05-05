@@ -24,6 +24,42 @@ class ServiceValidator(ABC):
         """
         pass
 
+    def _run_base_validation(self, data: gpd.GeoDataFrame) -> List[str]:
+        """
+        Run base validation checks that should be performed for all services.
+        Currently checks for:
+        - Duplicate OPA IDs
+        - Duplicate geometries
+        - Invalid geometries
+
+        Args:
+            data: The GeoDataFrame to validate
+
+        Returns:
+            List of error messages
+        """
+        errors = []
+
+        # Check for duplicate OPA IDs
+        if "opa_id" in data.columns:
+            duplicates = data[data["opa_id"].duplicated()]
+            if not duplicates.empty:
+                errors.append(f"Found {len(duplicates)} duplicate OPA IDs")
+
+        # Check for duplicate geometries
+        if "geometry" in data.columns:
+            duplicates = data[data["geometry"].duplicated()]
+            if not duplicates.empty:
+                errors.append(f"Found {len(duplicates)} duplicate geometries")
+
+        # Check for invalid geometries
+        if "geometry" in data.columns:
+            invalid_geoms = data[~data["geometry"].is_valid]
+            if not invalid_geoms.empty:
+                errors.append(f"Found {len(invalid_geoms)} invalid geometries")
+
+        return errors
+
     def check_required_columns(
         self, data: gpd.GeoDataFrame, required_columns: List[str]
     ) -> List[str]:
