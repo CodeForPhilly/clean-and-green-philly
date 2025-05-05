@@ -31,9 +31,6 @@ def community_gardens(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Source:
         https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/rest/services/PHS_NGT_Supported_Current_view/FeatureServer/0/
     """
-    if "vacant" not in primary_featurelayer.gdf.columns:
-        raise ValueError("The 'vacant' column is missing in the primary feature layer.")
-
     # Load community gardens
     community_gardens = FeatureLayer(
         name="Community Gardens", esri_rest_urls=COMMUNITY_GARDENS_TO_LOAD
@@ -41,30 +38,17 @@ def community_gardens(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     # Ensure both layers are in the same CRS
     if community_gardens.gdf.crs != USE_CRS:
-        print(
-            f"Transforming community gardens from {community_gardens.gdf.crs} to {USE_CRS}"
-        )
         community_gardens.gdf = community_gardens.gdf.to_crs(USE_CRS)
 
-    # Identify problematic gardens
-    geom_types = community_gardens.gdf.geometry.geom_type.value_counts()
-
-    if len(geom_types) > 1:
-        # Convert any non-point geometries to points using centroid
-        community_gardens.gdf.loc[
-            community_gardens.gdf.geometry.geom_type != "Point", "geometry"
-        ] = community_gardens.gdf[
-            community_gardens.gdf.geometry.geom_type != "Point"
-        ].geometry.centroid
-
-    # Verify all geometries are now points
-    if not all(community_gardens.gdf.geometry.geom_type == "Point"):
-        raise ValueError("Failed to convert all geometries to points")
+    # Convert any non-point geometries to points using centroid
+    community_gardens.gdf.loc[
+        community_gardens.gdf.geometry.geom_type != "Point", "geometry"
+    ] = community_gardens.gdf[
+        community_gardens.gdf.geometry.geom_type != "Point"
+    ].geometry.centroid
 
     # Limit the community gardens data to relevant columns
     community_gardens.gdf = community_gardens.gdf[["site_name", "geometry"]]
-
-    print(f"\nTotal community gardens: {len(community_gardens.gdf)}")
 
     # Use 'contains' predicate since we want the parcel that contains each point
     joined_gdf = primary_featurelayer.gdf.sjoin(
@@ -73,17 +57,9 @@ def community_gardens(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     # Get unique parcels that contain garden points
     garden_parcels = set(joined_gdf["opa_id"])
-    print(f"\nUnique parcels containing gardens: {len(garden_parcels)}")
-
-    if len(garden_parcels) > len(community_gardens.gdf):
-        print(
-            "\nWARNING: More matching parcels than gardens. This suggests possible data issues."
-        )
 
     # Update vacant status for parcels containing gardens
     mask = primary_featurelayer.gdf["opa_id"].isin(garden_parcels)
     primary_featurelayer.gdf.loc[mask, "vacant"] = False
-
-    print(f"\nTotal parcels updated: {mask.sum()}")
 
     return primary_featurelayer
