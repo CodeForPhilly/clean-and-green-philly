@@ -41,33 +41,48 @@ from new_etl.data_utils import (
 )
 from new_etl.database import to_postgis_with_schema
 from new_etl.validation import (
+    CommunityGardensValidator,
+    KDEValidator,
+    LIViolationsValidator,
     OwnerTypeValidator,
-    PHSPropertiesValidator,
-    PPRPropertiesValidator,
-    RCOGeomsValidator,
-    VacantPropertiesValidator,
+    VacantValidator,
 )
 from new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
 from new_etl.validation.community_gardens import CommunityGardensValidator
 from new_etl.validation.council_dists import CouncilDistrictsValidator
-from new_etl.validation.li_violations import LIViolationsValidator
 from new_etl.validation.nbhoods import NeighborhoodsValidator
 from new_etl.validation.phs_properties import PHSPropertiesValidator
 from new_etl.validation.rco_geoms import RCOGeomsValidator
-from new_etl.validation.vacant_properties import VacantPropertiesValidator
 
 # Map services to their validators
 SERVICE_VALIDATORS = {
-    "vacant_properties": VacantPropertiesValidator(),
+    "community_gardens": CommunityGardensValidator(),
+    "drug_crime": KDEValidator().configure(
+        density_column="drug_crimes_density",
+        zscore_column="drug_crimes_density_zscore",
+        label_column="drug_crimes_density_label",
+        percentile_column="drug_crimes_density_percentile",
+    ),
+    "gun_crime": KDEValidator().configure(
+        density_column="gun_crimes_density",
+        zscore_column="gun_crimes_density_zscore",
+        label_column="gun_crimes_density_label",
+        percentile_column="gun_crimes_density_percentile",
+    ),
+    "li_complaints": KDEValidator().configure(
+        density_column="l_and_i_complaints_density",
+        zscore_column="l_and_i_complaints_density_zscore",
+        label_column="l_and_i_complaints_density_label",
+        percentile_column="l_and_i_complaints_density_percentile",
+    ),
+    "li_violations": LIViolationsValidator(),
+    "owner_type": OwnerTypeValidator(),
+    "vacant": VacantValidator(),
     "council_dists": CouncilDistrictsValidator(),
     "nbhoods": NeighborhoodsValidator(),
     "rco_geoms": RCOGeomsValidator(),
     "city_owned_properties": CityOwnedPropertiesValidator(),
     "phs_properties": PHSPropertiesValidator(),
-    "community_gardens": CommunityGardensValidator(),
-    "ppr_properties": PPRPropertiesValidator(),
-    "owner_type": OwnerTypeValidator(),
-    "li_violations": LIViolationsValidator(),
     # Add other service validators as they are created
 }
 
