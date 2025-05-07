@@ -8,7 +8,7 @@ from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
 
 
-def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame:
+def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame | None:
     """
     Loads backup data from Google Cloud Storage as a DataFrame, ensuring compatibility for matching.
 
@@ -19,10 +19,12 @@ def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame:
         pd.DataFrame: A DataFrame containing the backup data with only the "opa_id" column.
     """
     bucket = google_cloud_bucket()
+    if not bucket:
+        print("No Google Cloud bucket available - skipping backup data load.")
+        return None
     blob = bucket.blob(file_name)
     if not blob.exists():
         raise FileNotFoundError(f"File {file_name} not found in the GCS bucket.")
-
     file_bytes = blob.download_as_bytes()
     try:
         gdf = gpd.read_file(BytesIO(file_bytes))
@@ -97,25 +99,26 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     print(f"Vacant land data size in the default dataset: {len(vacant_land_gdf)} rows.")
 
     # Check if the vacant land data is below the threshold
-    if len(vacant_land_gdf) < 20000:
-        print(
-            "Vacant land data is below the threshold. Removing vacant land rows and loading backup data from GCS."
-        )
-        vacant_properties.gdf = vacant_properties.gdf[
-            vacant_properties.gdf["parcel_type"] != "Land"
-        ]
+    # if len(vacant_land_gdf) < 20000:
+    #     print(
+    #         "Vacant land data is below the threshold. Removing vacant land rows and loading backup data from GCS."
+    #     )
+    #     vacant_properties.gdf = vacant_properties.gdf[
+    #         vacant_properties.gdf["parcel_type"] != "Land"
+    #     ]
 
-        # Load backup data
-        backup_gdf = load_backup_data_from_gcs("vacant_indicators_land_06_2024.geojson")
+    #     # Attempt to load backup data from GCS
+    #     backup_gdf = load_backup_data_from_gcs("vacant_indicators_land_06_2024.geojson")
 
-        # Add parcel_type column to backup data
-        backup_gdf["parcel_type"] = "Land"
+    #     if backup_gdf:
+    #         # Add parcel_type column to backup data
+    #         backup_gdf["parcel_type"] = "Land"
 
-        # Append backup data to the existing dataset
-        print(f"Appending backup data ({len(backup_gdf)} rows) to the existing data.")
-        vacant_properties.gdf = pd.concat(
-            [vacant_properties.gdf, backup_gdf], ignore_index=True
-        )
+    #         # Append backup data to the existing dataset
+    #         print(f"Appending backup data ({len(backup_gdf)} rows) to the existing data.")
+    #         vacant_properties.gdf = pd.concat(
+    #             [vacant_properties.gdf, backup_gdf], ignore_index=True
+    #         )
 
     # Convert to a regular DataFrame by dropping geometry
     df = vacant_properties.gdf.drop(columns=["geometry"], errors="ignore")

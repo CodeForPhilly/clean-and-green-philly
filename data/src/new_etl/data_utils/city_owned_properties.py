@@ -1,6 +1,61 @@
+import geopandas as gpd
+
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
+
+
+def transform_city_owned_properties(gdf: gpd.GeoDataFrame):
+    """
+    Transforms the city-owned properties data by renaming columns and updating access
+    information for properties based on ownership.
+
+    Args:
+        gdf (GeoDataFrame): The input GeoDataFrame as part of a primary feature layer that will have some transformations added to it.
+    """
+    rename_columns = {
+        "agency": "city_owner_agency",
+        "sideyardeligible": "side_yard_eligible",
+    }
+    gdf.rename(columns=rename_columns, inplace=True)
+
+    gdf.loc[
+        gdf["owner_1"].isin(
+            [
+                "PHILADELPHIA HOUSING AUTH",
+                "PHILADELPHIA LAND BANK",
+                "REDEVELOPMENT AUTHORITY",
+                "PHILA REDEVELOPMENT AUTH",
+            ]
+        ),
+        "city_owner_agency",
+    ] = gdf["owner_1"].replace(
+        {
+            "PHILADELPHIA HOUSING AUTH": "PHA",
+            "PHILADELPHIA LAND BANK": "Land Bank (PHDC)",
+            "REDEVELOPMENT AUTHORITY": "PRA",
+            "PHILA REDEVELOPMENT AUTH": "PRA",
+        }
+    )
+
+    gdf.loc[
+        (gdf["owner_1"] == "CITY OF PHILA")
+        & (
+            gdf["owner_2"].str.contains("PUBLIC PROP|PUBLC PROP", na=False)
+        ),  # ISSUE Check typo
+        "city_owner_agency",
+    ] = "DPP"
+
+    gdf.loc[
+        gdf["owner_1"].isin(["CITY OF PHILADELPHIA", "CITY OF PHILA"])
+        & gdf["owner_2"].isna(),
+        "city_owner_agency",
+    ] = "City of Philadelphia"
+
+    gdf.loc[:, "side_yard_eligible"] = gdf["side_yard_eligible"].fillna("No")
+
+    # Update all instances where city_owner_agency is "PLB" to "Land Bank (PHDC)"
+    gdf.loc[gdf["city_owner_agency"] == "PLB", "city_owner_agency"] = "Land Bank (PHDC)"
 
 
 @provide_metadata()
@@ -42,56 +97,6 @@ def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     primary_featurelayer.opa_join(city_owned_properties.gdf, "opabrt")
 
-    rename_columns = {
-        "agency": "city_owner_agency",
-        "sideyardeligible": "side_yard_eligible",
-    }
-    primary_featurelayer.gdf.rename(columns=rename_columns, inplace=True)
-
-    primary_featurelayer.gdf.loc[
-        primary_featurelayer.gdf["owner_1"].isin(
-            [
-                "PHILADELPHIA HOUSING AUTH",
-                "PHILADELPHIA LAND BANK",
-                "REDEVELOPMENT AUTHORITY",
-                "PHILA REDEVELOPMENT AUTH",
-            ]
-        ),
-        "city_owner_agency",
-    ] = primary_featurelayer.gdf["owner_1"].replace(
-        {
-            "PHILADELPHIA HOUSING AUTH": "PHA",
-            "PHILADELPHIA LAND BANK": "Land Bank (PHDC)",
-            "REDEVELOPMENT AUTHORITY": "PRA",
-            "PHILA REDEVELOPMENT AUTH": "PRA",
-        }
-    )
-
-    primary_featurelayer.gdf.loc[
-        (primary_featurelayer.gdf["owner_1"] == "CITY OF PHILA")
-        & (
-            primary_featurelayer.gdf["owner_2"].str.contains(
-                "PUBLIC PROP|PUBLC PROP", na=False
-            )
-        ),
-        "city_owner_agency",
-    ] = "DPP"
-
-    primary_featurelayer.gdf.loc[
-        primary_featurelayer.gdf["owner_1"].isin(
-            ["CITY OF PHILADELPHIA", "CITY OF PHILA"]
-        )
-        & primary_featurelayer.gdf["owner_2"].isna(),
-        "city_owner_agency",
-    ] = "City of Philadelphia"
-
-    primary_featurelayer.gdf.loc[:, "side_yard_eligible"] = primary_featurelayer.gdf[
-        "side_yard_eligible"
-    ].fillna("No")
-
-    # Update all instances where city_owner_agency is "PLB" to "Land Bank (PHDC)"
-    primary_featurelayer.gdf.loc[
-        primary_featurelayer.gdf["city_owner_agency"] == "PLB", "city_owner_agency"
-    ] = "Land Bank (PHDC)"
+    transform_city_owned_properties(primary_featurelayer.gdf)
 
     return primary_featurelayer

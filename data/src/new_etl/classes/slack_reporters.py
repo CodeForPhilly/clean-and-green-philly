@@ -1,12 +1,14 @@
-from sqlalchemy import text
 import os
-from slack_sdk import WebClient
 
 import pandas as pd
+from slack_sdk import WebClient
 
 
 def send_dataframe_profile_to_slack(
-    df: pd.DataFrame, df_name: str, channel="clean-and-green-philly-pipeline"
+    df: pd.DataFrame,
+    df_name: str,
+    channel="clean-and-green-philly-pipeline",
+    slack_token: str | None = None,
 ):
     """
     Profiles a DataFrame and sends the QC profile summary to a Slack channel.
@@ -15,7 +17,13 @@ def send_dataframe_profile_to_slack(
         df (pd.DataFrame): The DataFrame to profile.
         df_name (str): The name of the DataFrame being profiled.
         channel (str): The Slack channel to post the message to.
+        slack_token (str): The Slack API token. If not provided, it will be read from the environment.
     """
+    token = slack_token or os.getenv("CAGP_SLACK_API_TOKEN")
+    if not token:
+        print("Slack API token not found in environment variables.")
+        print("Skipping QC profile report to Slack.")
+        return
     # Step 1: Profile the DataFrame
     profile_summary = {}
 
@@ -58,77 +66,82 @@ def send_dataframe_profile_to_slack(
         message += f"  - `{col}`: {unique_count} unique values\n"
 
     # Step 3: Send to Slack
-    token = os.getenv("CAGP_SLACK_API_TOKEN")
-    if token:
-        client = WebClient(token=token)
-        try:
-            client.chat_postMessage(
-                channel=channel,
-                text=message,
-                username="QC Reporter",
-            )
-            print(f"QC profile for `{df_name}` sent to Slack successfully.")
-        except Exception as e:
-            print(f"Failed to send QC profile for `{df_name}` to Slack: {e}")
-    else:
-        raise ValueError("Slack API token not found in environment variables.")
-
-
-def send_pg_stats_to_slack(conn):
-    """
-    Report total sizes for all hypertables using hypertable_detailed_size
-    and send the result to a Slack channel.
-    """
-    # Step 1: Get all hypertable names
-    hypertable_query = """
-    SELECT hypertable_name
-    FROM timescaledb_information.hypertables;
-    """
-    result = conn.execute(text(hypertable_query))
-    hypertables = [row[0] for row in result]  # Extract first column of each tuple
-
-    # Step 2: Query detailed size for each hypertable
-    detailed_sizes = []
-    for hypertable in hypertables:
-        size_query = f"SELECT * FROM hypertable_detailed_size('{hypertable}');"
-        size_result = conn.execute(text(size_query))
-        for row in size_result:
-            # Append the total size (row[3] = total_bytes)
-            detailed_sizes.append(
-                {
-                    "hypertable": hypertable,
-                    "total_bytes": row[3],
-                }
-            )
-
-    # Step 3: Format the message for Slack
-    message = "*Hypertable Total Sizes:*\n"
-    for size in detailed_sizes:
-        total_bytes = size["total_bytes"]
-        total_size = (
-            f"{total_bytes / 1073741824:.2f} GB"
-            if total_bytes >= 1073741824
-            else f"{total_bytes / 1048576:.2f} MB"
-            if total_bytes >= 1048576
-            else f"{total_bytes / 1024:.2f} KB"
-        )
-        message += f"- {size['hypertable']}: {total_size}\n"
-
-    # Step 4: Send to Slack
-    token = os.getenv("CAGP_SLACK_API_TOKEN")
-    if token:
-        client = WebClient(token=token)
+    client = WebClient(token=token)
+    try:
         client.chat_postMessage(
-            channel="clean-and-green-philly-pipeline",
+            channel=channel,
             text=message,
-            username="PG Stats Reporter",
+            username="QC Reporter",
         )
-    else:
-        raise ValueError("Slack API token not found in environment variables.")
+        print(f"QC profile for `{df_name}` sent to Slack successfully.")
+    except Exception as e:
+        print(f"Failed to send QC profile for `{df_name}` to Slack: {e}")
+
+
+# def send_pg_stats_to_slack(conn, slack_token: str | None = None):
+#     """
+#     Report total sizes for all hypertables using hypertable_detailed_size
+#     and send the result to a Slack channel.
+
+#     Args:
+#         conn: SQLAlchemy connection to the PostgreSQL database.
+#         slack_token (str): The Slack API token. If not provided, it will be read from the environment.
+#     """
+#     token = slack_token or os.getenv("CAGP_SLACK_API_TOKEN")
+#     if not token:
+#         print("Slack API token not found in environment variables.")
+#         print("Skipping PostgreSQL stats report to Slack.")
+#         return
+
+#     # Step 1: Get all hypertable names
+#     hypertable_query = """
+#     SELECT hypertable_name
+#     FROM timescaledb_information.hypertables;
+#     """
+#     result = conn.execute(text(hypertable_query))
+#     hypertables = [row[0] for row in result]  # Extract first column of each tuple
+
+#     # Step 2: Query detailed size for each hypertable
+#     detailed_sizes = []
+#     for hypertable in hypertables:
+#         size_query = f"SELECT * FROM hypertable_detailed_size('{hypertable}');"
+#         size_result = conn.execute(text(size_query))
+#         for row in size_result:
+#             # Append the total size (row[3] = total_bytes)
+#             detailed_sizes.append(
+#                 {
+#                     "hypertable": hypertable,
+#                     "total_bytes": row[3],
+#                 }
+#             )
+
+#     # Step 3: Format the message for Slack
+#     message = "*Hypertable Total Sizes:*\n"
+#     for size in detailed_sizes:
+#         total_bytes = size["total_bytes"]
+#         total_size = (
+#             f"{total_bytes / 1073741824:.2f} GB"
+#             if total_bytes >= 1073741824
+#             else f"{total_bytes / 1048576:.2f} MB"
+#             if total_bytes >= 1048576
+#             else f"{total_bytes / 1024:.2f} KB"
+#         )
+#         message += f"- {size['hypertable']}: {total_size}\n"
+
+#     # Step 4: Send to Slack
+#     client = WebClient(token=token)
+#     client.chat_postMessage(
+#         channel="clean-and-green-philly-pipeline",
+#         text=message,
+#         username="PG Stats Reporter",
+#     )
 
 
 def send_diff_report_to_slack(
-    diff_summary: str, report_url: str, channel="clean-and-green-philly-pipeline"
+    diff_summary: str,
+    report_url: str,
+    channel="clean-and-green-philly-pipeline",
+    slack_token: str | None = None,
 ):
     """
     Sends a difference report summary to a Slack channel.
@@ -137,41 +150,48 @@ def send_diff_report_to_slack(
         diff_summary (str): The summary of differences to post.
         report_url (str): The URL to the detailed difference report.
         channel (str): The Slack channel to post the message to.
+        slack_token (str): The Slack API token. If not provided, it will be read from the environment.
     """
     print(
         f"send_diff_report_to_slack called with:\ndiff_summary:\n{diff_summary}\nreport_url: {report_url}"
     )
+    token = slack_token or os.getenv("CAGP_SLACK_API_TOKEN")
+    if not token:
+        print("Slack API token not found in environment variables.")
+        print("Skipping diff report to Slack.")
+        return
 
     # Step 1: Format the message
     message = f"*Data Difference Report*\n\n{diff_summary}\n\nDetailed report: <{report_url}|View Report>"
     print(f"Formatted Slack message:\n{message}")
 
     # Step 2: Send the message to Slack
-    token = os.getenv("CAGP_SLACK_API_TOKEN")
-    if token:
-        client = WebClient(token=token)
-        try:
-            client.chat_postMessage(
-                channel=channel,
-                text=message,
-                username="Diff Reporter",
-            )
-            print("Diff report sent to Slack successfully.")
-        except Exception as e:
-            print(f"Failed to send diff report to Slack: {e}")
-    else:
-        raise ValueError("Slack API token not found in environment variables.")
-
-
-def send_error_to_slack(error_message: str) -> None:
-    """Send error message to Slack."""
-    token: str | None = os.getenv("CAGP_SLACK_API_TOKEN")  # token can be None
-    if token:
-        client = WebClient(token=token)
+    client = WebClient(token=token)
+    try:
         client.chat_postMessage(
-            channel="clean-and-green-philly-back-end",  # Replace with actual Slack channel ID
-            text=error_message,
-            username="Backend Error Reporter",
+            channel=channel,
+            text=message,
+            username="Diff Reporter",
         )
-    else:
-        raise ValueError("Slack API token not found in environment variables.")
+        print("Diff report sent to Slack successfully.")
+    except Exception as e:
+        print(f"Failed to send diff report to Slack: {e}")
+
+
+def send_error_to_slack(error_message: str, slack_token: str | None = None) -> None:
+    """Send error message to Slack."""
+
+    token = slack_token or os.getenv("CAGP_SLACK_API_TOKEN")
+    if not token:
+        print("Slack API token not found in environment variables.")
+        print("Skipping error report to Slack.")
+        print("Error message:")
+        print(error_message)
+        return
+
+    client = WebClient(token=token)
+    client.chat_postMessage(
+        channel="clean-and-green-philly-back-end",  # Replace with actual Slack channel ID
+        text=error_message,
+        username="Backend Error Reporter",
+    )

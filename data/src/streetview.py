@@ -56,7 +56,7 @@ properties = properties[~properties.opa_id.astype(str).isin(blobs)]
 print(f"Found {len(properties)} images to fetch")
 
 
-for idx, row in properties.iterrows():
+for _, row in properties.iterrows():
     opa_id = row["opa_id"]
     file_name = f"{opa_id}.jpg"
     blob = bucket.blob(file_name)

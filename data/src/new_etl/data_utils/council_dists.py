@@ -7,6 +7,31 @@ from ..metadata.metadata_utils import provide_metadata
 pd.set_option("future.no_silent_downcasting", True)
 
 
+# def merge_council_dists(
+#     primary_featurelya, council_dists_gdf: pd.DataFrame
+# ) -> pd.DataFrame:
+#     """
+#     Merges the council districts GeoDataFrame with the primary feature layer GeoDataFrame.
+
+#     Args:
+#         primary_featurelayer_gdf (pd.DataFrame): The primary feature layer GeoDataFrame.
+#         council_dists_gdf (pd.DataFrame): The council districts GeoDataFrame.
+
+#     Returns:
+#         pd.DataFrame: The updated primary feature layer GeoDataFrame with council district information.
+#     """
+#     required_columns = ["district", "geometry"]
+
+#     council_dists.gdf = council_dists.gdf[required_columns].copy()
+
+#     # Perform spatial join
+#     primary_featurelayer.spatial_join(council_dists)
+
+#     # Drop duplicates in the primary feature layer
+#     primary_featurelayer.gdf.drop_duplicates(inplace=True)
+#     primary_featurelayer.rebuild_gdf()
+
+
 @provide_metadata()
 def council_dists(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """

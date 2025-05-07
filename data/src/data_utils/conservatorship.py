@@ -1,6 +1,7 @@
 import datetime
-from dateutil.parser import parse
+
 import pytz
+from dateutil.parser import parse
 
 est = pytz.timezone("US/Eastern")
 six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astimezone(
@@ -28,7 +29,7 @@ blight_words = [
 def conservatorship(primary_featurelayer):
     conservatorships = []
 
-    for idx, row in primary_featurelayer.gdf.iterrows():
+    for _, row in primary_featurelayer.gdf.iterrows():
         city_owner_agency = row["city_owner_agency"]
         sheriff_sale = row["sheriff_sale"] == "Y"
         market_value_over_1000 = (
@@ -56,4 +57,5 @@ def conservatorship(primary_featurelayer):
         conservatorships.append(conservatorship)
 
     primary_featurelayer.gdf["conservatorship"] = conservatorships
+
     return primary_featurelayer

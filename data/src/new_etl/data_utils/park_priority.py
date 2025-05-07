@@ -1,10 +1,9 @@
 import os
-import zipfile
 from io import BytesIO
 from typing import List, Union
 
+import fiona
 import geopandas as gpd
-import pyogrio
 import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
@@ -12,7 +11,10 @@ from tqdm import tqdm
 from config.config import USE_CRS
 
 from ..classes.featurelayer import FeatureLayer
+from ..classes.file_manager import FileManager, FileType, LoadType
 from ..metadata.metadata_utils import provide_metadata
+
+file_manager = FileManager()
 
 
 def get_latest_shapefile_url() -> str:
@@ -37,7 +39,7 @@ def get_latest_shapefile_url() -> str:
 
 
 def download_and_process_shapefile(
-    geojson_path: str, park_url: str, target_files: List[str], file_name_prefix: str
+    geojson_filename: str, park_url: str, target_files: List[str], file_name_prefix: str
 ) -> gpd.GeoDataFrame:
     """
     Downloads and processes the shapefile to create a GeoDataFrame for Philadelphia parks.
@@ -51,38 +53,61 @@ def download_and_process_shapefile(
     Returns:
         gpd.GeoDataFrame: GeoDataFrame containing the processed park data.
     """
-    print("Downloading and processing park priority data...")
-    response: requests.Response = requests.get(park_url, stream=True)
-    total_size: int = int(response.headers.get("content-length", 0))
+    target_files_paths = [
+        file_manager.get_file_path(filename, LoadType.TEMP) for filename in target_files
+    ]
+    if any([not os.path.exists(filepath) for filepath in target_files_paths]):
+        print("Downloading and processing park priority data...")
+        response: requests.Response = requests.get(park_url, stream=True)
+        total_size: int = int(response.headers.get("content-length", 0))
 
-    with tqdm(
-        total=total_size, unit="iB", unit_scale=True, desc="Downloading"
-    ) as progress_bar:
-        buffer: BytesIO = BytesIO()
-        for data in response.iter_content(1024):
-            size: int = buffer.write(data)
-            progress_bar.update(size)
+        with tqdm(
+            total=total_size, unit="iB", unit_scale=True, desc="Downloading"
+        ) as progress_bar:
+            buffer: BytesIO = BytesIO()
+            for data in response.iter_content(1024):
+                size: int = buffer.write(data)
+                progress_bar.update(size)
 
-    with zipfile.ZipFile(buffer) as zip_ref:
-        for file_name in tqdm(target_files, desc="Extracting"):
-            zip_ref.extract(file_name, "tmp/")
+        print("Extracting files from the downloaded zip...")
+        file_manager.extract_files(buffer, target_files)
+
+    else:
+        print("Parks data already located in filesystem - proceeding")
 
     print("Processing shapefile...")
-    pa_parks: gpd.GeoDataFrame = gpd.read_file(
-        "tmp/" + file_name_prefix + "_ParkPriorityAreas.shp"
-    )
-    pa_parks = pa_parks.to_crs(USE_CRS)
 
-    phl_parks: gpd.GeoDataFrame = pa_parks[pa_parks["ID"].str.startswith("42101")]
-    phl_parks = phl_parks.loc[:, ["ParkNeed", "geometry"]]
+    def filter_shapefile_generator():
+        file_path = file_manager.get_file_path(
+            file_name_prefix + "_ParkPriorityAreas.shp", LoadType.TEMP
+        )
+
+        with fiona.open(file_path) as source:
+            for feature in source:
+                if not feature["properties"]["ID"].startswith("42101"):
+                    continue
+                filtered_feature = feature
+                filtered_feature["properties"] = {
+                    column: value
+                    for column, value in feature["properties"].items()
+                    if column in ["ParkNeed"]
+                }
+                yield filtered_feature
+
+    phl_parks: gpd.GeoDataFrame = gpd.GeoDataFrame.from_features(
+        filter_shapefile_generator()
+    )
+
+    phl_parks.crs = USE_CRS
+    phl_parks = phl_parks.to_crs(USE_CRS)
 
     if isinstance(phl_parks, gpd.GeoDataFrame):
         phl_parks.rename(columns={"ParkNeed": "park_priority"}, inplace=True)
     else:
         raise TypeError("Expected a GeoDataFrame, got Series or another type instead")
 
-    print(f"Writing filtered data to GeoJSON: {geojson_path}")
-    phl_parks.to_file(geojson_path, driver="GeoJSON")
+    print(f"Writing filtered data to GeoJSON: {geojson_filename}")
+    file_manager.save_gdf(geojson_filename, LoadType.TEMP, FileType.GEOJSON)
 
     return phl_parks
 
@@ -123,25 +148,16 @@ def park_priority(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         file_name_prefix + "_ParkPriorityAreas.sbn",
         file_name_prefix + "_ParkPriorityAreas.sbx",
     ]
-    geojson_path: str = "tmp/phl_parks.geojson"
-
-    os.makedirs("tmp/", exist_ok=True)
+    geojson_filename = "phl_parks"
 
     try:
-        if os.path.exists(geojson_path):
-            print(f"GeoJSON file already exists, loading from {geojson_path}")
-            phl_parks: gpd.GeoDataFrame = gpd.read_file(geojson_path)
-        else:
-            raise pyogrio.errors.DataSourceError(
-                "GeoJSON file missing, forcing download."
-            )
-
-    except (pyogrio.errors.DataSourceError, ValueError) as e:
+        phl_parks = file_manager.load_gdf(
+            geojson_filename, FileType.GEOJSON, LoadType.TEMP
+        )
+    except FileNotFoundError as e:
         print(f"Error loading GeoJSON: {e}. Re-downloading and processing shapefile.")
-        if os.path.exists(geojson_path):
-            os.remove(geojson_path)  # Delete the corrupted GeoJSON if it exists
         phl_parks = download_and_process_shapefile(
-            geojson_path, park_url, target_files, file_name_prefix
+            geojson_filename, park_url, target_files, file_name_prefix
         )
 
     park_priority_layer: FeatureLayer = FeatureLayer("Park Priority")

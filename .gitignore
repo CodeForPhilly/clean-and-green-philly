@@ -57,10 +57,14 @@ cleanandgreenphilly_gcloud_bucket/
 # personal service account key for GCP
 data/src/app/service-account-key.json
 
+# python versions
+.python-version
+
 # compiled python files
 *.pyc
 
-tmp/
-
 # Local python development files
 .python-version
+
+# Cached and temporary data files from pipeline
+storage/

@@ -1,6 +1,29 @@
+import geopandas as gpd
+
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import DELINQUENCIES_QUERY
 from ..metadata.metadata_utils import provide_metadata
+
+
+def transform_delinquencies_gdf(gdf: gpd.GeoDataFrame):
+    """
+    Fills missing columns regarding deliquency data in the input GeoDataFrame with necessary defaults.
+
+    Args:
+        gdf (gpd.GeoDataFrame): The input GeoDataFrame containing delinquency data.
+    """
+
+    delinquency_cols = [
+        "total_due",
+        "is_actionable",
+        "payment_agreement",
+        "num_years_owed",
+        "most_recent_year_owed",
+        "total_assessment",
+    ]
+    gdf[delinquency_cols] = gdf[delinquency_cols].fillna("NA")
+
+    gdf["sheriff_sale"] = gdf["sheriff_sale"].fillna("N")
 
 
 @provide_metadata()
@@ -55,20 +78,6 @@ def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         "opa_number",
     )
 
-    delinquency_cols = [
-        "total_due",
-        "is_actionable",
-        "payment_agreement",
-        "num_years_owed",
-        "most_recent_year_owed",
-        "total_assessment",
-    ]
-    primary_featurelayer.gdf[delinquency_cols] = primary_featurelayer.gdf[
-        delinquency_cols
-    ].fillna("NA")
-
-    primary_featurelayer.gdf["sheriff_sale"] = primary_featurelayer.gdf[
-        "sheriff_sale"
-    ].fillna("N")
+    transform_delinquencies_gdf(primary_featurelayer.gdf)
 
     return primary_featurelayer

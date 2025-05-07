@@ -27,7 +27,7 @@ def tactical_urbanism(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     tactical_urbanism_values = []
 
-    for idx, row in primary_featurelayer.gdf.iterrows():
+    for _, row in primary_featurelayer.gdf.iterrows():
         if (
             row["parcel_type"] == "Land"
             and row["unsafe_building"] == "N"
