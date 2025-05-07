@@ -29,6 +29,10 @@ PPR_PROPERTIES_TO_LOAD = [
     "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/PPR_Properties/FeatureServer/0"
 ]
 
+PWD_PARCELS_TO_LOAD = [
+    "https://services.arcgis.com/fLeGjb7u4uXqeF9q/arcgis/rest/services/PWD_PARCELS/FeatureServer/0"
+]
+
 one_year_ago = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime(
     "%Y-%m-%d"
 )
@@ -98,3 +102,30 @@ CENSUS_BGS_URL = (
 DOR_PARCELS_URL = (
     "https://opendata.arcgis.com/datasets/1c57dd1b3ff84449a4b0e3fb29d3cafd_0.geojson"
 )
+
+ACTIVITY_QUERIES = {
+    "latest_permit_date": """
+        SELECT DISTINCT ON (opa_account_num)
+        opa_account_num,
+        permitissuedate AS latest_permit_date
+        FROM permits
+        WHERE opa_account_num IS NOT NULL
+        ORDER BY opa_account_num, permitissuedate DESC
+    """,
+    "latest_business_license_date": """
+        SELECT DISTINCT ON (opa_account_num)
+        opa_account_num,
+        mostrecentissuedate AS latest_business_license_date
+        FROM business_licenses
+        WHERE opa_account_num IS NOT NULL
+        ORDER BY opa_account_num, mostrecentissuedate DESC
+    """,
+    "latest_appeal_date": """
+        SELECT DISTINCT ON (opa_account_num)
+        opa_account_num,
+        scheduleddate AS latest_appeal_date
+        FROM appeals
+        WHERE opa_account_num IS NOT NULL
+        ORDER BY opa_account_num, scheduleddate DESC
+    """,
+}
