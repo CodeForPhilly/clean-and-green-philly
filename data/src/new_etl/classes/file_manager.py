@@ -31,10 +31,16 @@ class FileManager:
     A manager for interacting with cached files or temporary files loaded from or extracting into the local filesystem.
     """
 
+    _instance = None
+
     def __init__(self, fraction=CACHE_FRACTION):
         """
         Initialize the FileManager with paths for the temporary and cache directories at the root directory of the project.
         """
+        if FileManager._instance is not None:
+            raise ValueError(
+                "This class is a singleton and has already been initialized"
+            )
         self.storage_directory = os.path.join(ROOT_DIRECTORY, "storage")
 
         if not os.path.exists(self.storage_directory):
@@ -55,6 +61,12 @@ class FileManager:
             os.makedirs(self.source_cache_directory)
         if not os.path.exists(self.pipeline_cache_directory):
             os.makedirs(self.pipeline_cache_directory)
+
+    @staticmethod
+    def get_instance(fraction=CACHE_FRACTION):
+        if not FileManager._instance:
+            FileManager._instance = FileManager(fraction)
+        return FileManager._instance
 
     def generate_file_label(self, table_name: str) -> str:
         """

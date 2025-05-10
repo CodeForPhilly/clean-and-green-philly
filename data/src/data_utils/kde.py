@@ -14,7 +14,7 @@ from new_etl.classes.file_manager import FileManager, LoadType
 resolution = 1320  # 0.25 miles (in feet, bc the CRS is 2272)
 batch_size = 100000
 
-file_manager = FileManager()
+file_manager = FileManager.get_instance()
 
 
 def kde_predict_chunk(kde, chunk):

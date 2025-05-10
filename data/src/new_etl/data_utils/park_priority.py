@@ -14,7 +14,7 @@ from ..classes.featurelayer import FeatureLayer
 from ..classes.file_manager import FileManager, FileType, LoadType
 from ..metadata.metadata_utils import provide_metadata
 
-file_manager = FileManager()
+file_manager = FileManager.get_instance()
 
 
 def get_latest_shapefile_url() -> str:
@@ -107,7 +107,7 @@ def download_and_process_shapefile(
         raise TypeError("Expected a GeoDataFrame, got Series or another type instead")
 
     print(f"Writing filtered data to GeoJSON: {geojson_filename}")
-    file_manager.save_gdf(geojson_filename, LoadType.TEMP, FileType.GEOJSON)
+    file_manager.save_gdf(phl_parks, geojson_filename, LoadType.TEMP, FileType.GEOJSON)
 
     return phl_parks
 

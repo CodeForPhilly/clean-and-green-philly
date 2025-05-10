@@ -77,7 +77,7 @@ class FeatureLayer:
         self.use_wkb_geom_field = use_wkb_geom_field
         self.max_workers = max_workers
         self.chunk_size = chunk_size
-        self.file_manager = FileManager()
+        self.file_manager = FileManager.get_instance()
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
@@ -93,6 +93,7 @@ class FeatureLayer:
                 self.table_name, LoadType.SOURCE_CACHE
             ):
                 log.info(f"Loading data for {self.name} from cache...")
+                print(f"Loading data for {self.name} from cache...")
                 self.gdf = self.file_manager.get_most_recent_cache(self.table_name)
             else:
                 print("Loading data now...")

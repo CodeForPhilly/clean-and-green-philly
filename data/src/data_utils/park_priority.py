@@ -12,7 +12,7 @@ from classes.featurelayer import FeatureLayer
 from config.config import USE_CRS
 from new_etl.classes.file_manager import FileManager, LoadType
 
-file_manager = FileManager()
+file_manager = FileManager.get_instance()
 
 
 def get_latest_shapefile_url() -> str:

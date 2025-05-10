@@ -36,7 +36,7 @@ from new_etl.data_utils import (
     vacant_properties,
 )
 
-file_manager = FileManager()
+file_manager = FileManager.get_instance()
 
 try:
     print("Starting ETL process.")
