@@ -1,9 +1,12 @@
+import os
 import traceback
 
 import pandas as pd
 
 from new_etl.classes.file_manager import FileManager, FileType, LoadType
+from new_etl.classes.data_diff import DiffReport
 from new_etl.classes.slack_reporters import (
+    SlackReporter,
     send_error_to_slack,
 )
 from new_etl.data_utils import (
@@ -37,6 +40,29 @@ from new_etl.data_utils import (
 )
 
 file_manager = FileManager.get_instance()
+token = os.getenv("CAGP_SLACK_API_TOKEN")
+
+slack_reporter = SlackReporter(token) if token else None
+
+final_table_names = [
+    "city_owned_properties",
+    "community_gardens",
+    "council_districts",
+    "drug_crimes",
+    "gun_crimes",
+    "imminently_dangerous_buildings",
+    "l_and_i_complaints",
+    "li_violations",
+    "opa_properties",
+    "phs_properties",
+    "ppr_properties",
+    "property_tax_delinquencies",
+    "pwd_parcels",
+    "rcos",
+    "updated_census_block_groups",
+    "unsafe_buildings",
+    "vacant_properties",
+]
 
 try:
     print("Starting ETL process.")
@@ -111,17 +137,21 @@ try:
         str
     )
 
-    # Dataset profiling
-    # send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
+    token = os.getenv("CAGP_SLACK_API_TOKEN")
 
-    # Save dataset to PostgreSQL
-    # to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
+    if slack_reporter:
+        # Dataset profiling
+        slack_reporter.send_dataframe_profile_to_slack(
+            dataset.gdf, "all_properties_end"
+        )
 
-    # Generate and send diff report
-    # diff_report = DiffReport()
-    # diff_report.run()
-
-    # send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
+        # Generate and send diff report
+        diff_report = DiffReport().generate_diff()
+        slack_reporter.send_diff_report_to_slack(diff_report.summary_text)
+    else:
+        print(
+            "No slack token found in environment variables - skipping slack reporting and data diffing"
+        )
 
     # Save local Parquet file
     file_label = file_manager.generate_file_label("all_properties_end")
@@ -139,5 +169,6 @@ try:
 
 except Exception as e:
     error_message = f"Error in backend job: {str(e)}\n\n{traceback.format_exc()}"
-    send_error_to_slack(error_message)
+    if slack_reporter:
+        slack_reporter.send_error_to_slack(error_message)
     raise  # Optionally re-raise the exception
