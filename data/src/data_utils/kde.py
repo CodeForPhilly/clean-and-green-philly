@@ -1,16 +1,20 @@
-import numpy as np
-import rasterio
-from awkde.awkde import GaussianKDE
-from classes.featurelayer import FeatureLayer
-from config.config import USE_CRS
-from rasterio.transform import Affine
-from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 import mapclassify
+import numpy as np
+import rasterio
+from awkde.awkde import GaussianKDE
+from rasterio.transform import Affine
+from tqdm import tqdm
+
+from classes.featurelayer import FeatureLayer
+from config.config import USE_CRS
+from new_etl.classes.file_manager import FileManager, LoadType
 
 resolution = 1320  # 0.25 miles (in feet, bc the CRS is 2272)
 batch_size = 100000
+
+file_manager = FileManager.get_instance()
 
 
 def kde_predict_chunk(kde, chunk):
@@ -73,11 +77,13 @@ def generic_kde(name, query, resolution=resolution, batch_size=batch_size):
 
     transform = Affine.translation(min_x, min_y) * Affine.scale(x_res, y_res)
 
-    raster_filename = f"tmp/{name.lower().replace(' ', '_')}.tif"
-    print(f"Saving raster to {raster_filename}")
+    raster_file_path = file_manager.get_file_path(
+        f"{name.lower().replace(' ', '_')}.tif", LoadType.TEMP
+    )
+    print(f"Saving raster to {raster_file_path}")
 
     with rasterio.open(
-        raster_filename,
+        raster_file_path,
         "w",
         driver="GTiff",
         height=zz.shape[0],
@@ -89,12 +95,12 @@ def generic_kde(name, query, resolution=resolution, batch_size=batch_size):
     ) as dst:
         dst.write(zz, 1)
 
-    return raster_filename, X
+    return raster_file_path, X
 
 
 def apply_kde_to_primary(primary_featurelayer, name, query, resolution=resolution):
     # Generate KDE and raster file
-    raster_filename, crime_coords = generic_kde(name, query, resolution)
+    raster_file_path, crime_coords = generic_kde(name, query, resolution)
 
     # Add centroid column temporarily
     primary_featurelayer.gdf["centroid"] = primary_featurelayer.gdf.geometry.centroid
@@ -112,7 +118,7 @@ def apply_kde_to_primary(primary_featurelayer, name, query, resolution=resolutio
     primary_featurelayer.gdf = primary_featurelayer.gdf.drop(columns=["centroid"])
 
     # Open the generated raster file and sample the KDE density values at the centroids
-    with rasterio.open(raster_filename) as src:
+    with rasterio.open(raster_file_path) as src:
         sampled_values = [x[0] for x in src.sample(coord_list)]
 
     # Create a column for the density values

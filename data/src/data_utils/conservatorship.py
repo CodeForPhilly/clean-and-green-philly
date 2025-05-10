@@ -1,6 +1,7 @@
 import datetime
-from dateutil.parser import parse
+
 import pytz
+from dateutil.parser import parse
 
 est = pytz.timezone("US/Eastern")
 six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astimezone(
@@ -56,4 +57,5 @@ def conservatorship(primary_featurelayer):
         conservatorships.append(conservatorship)
 
     primary_featurelayer.gdf["conservatorship"] = conservatorships
+
     return primary_featurelayer
