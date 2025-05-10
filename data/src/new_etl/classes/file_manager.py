@@ -22,6 +22,8 @@ class LoadType(Enum):
 class FileType(Enum):
     GEOJSON = "geojson"
     PARQUET = "parquet"
+    PMTILES = "pmtiles"
+    CSV = "csv"
 
 
 class FileManager:
@@ -161,9 +163,9 @@ class FileManager:
         file_path = self.get_file_path(file_name, load_type, file_type)
         if os.path.exists(file_path):
             gdf = (
-                gpd.read_file(file_path)
-                if file_type == FileType.GEOJSON
-                else gpd.read_parquet(file_path)
+                gpd.read_parquet(file_path)
+                if file_type == FileType.PARQUET
+                else gpd.read_file(file_path)
             )
             return gdf
         else:
@@ -192,6 +194,8 @@ class FileManager:
             gdf.to_parquet(file_path, index=False)
         elif file_type == FileType.GEOJSON:
             gdf.to_file(file_path, driver="GeoJSON")
+        elif file_type == FileType.CSV:
+            gdf.to_csv(file_path)
         else:
             raise ValueError(f"Unsupported file type: {file_type}")
 
@@ -233,3 +237,14 @@ class FileManager:
         with zipfile.ZipFile(buffer) as zip_ref:
             for filename in tqdm(filenames, desc="Extracting"):
                 zip_ref.extract(filename, destination)
+
+    def extract_all(self, buffer: BytesIO) -> None:
+        """
+        Extract everything in a buffer to the local temp directory.
+
+        Args:
+            buffer (BytesIO): The zip file buffer containing all of the data to extract.
+        """
+        destination = self.temp_directory
+        with zipfile.ZipFile(buffer) as zip_ref:
+            zip_ref.extractall(destination)

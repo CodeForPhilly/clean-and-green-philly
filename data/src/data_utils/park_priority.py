@@ -1,15 +1,18 @@
 import os
-import zipfile
 from io import BytesIO
 from typing import List, Union
 
 import geopandas as gpd
+import pyogrio
 import requests
 from bs4 import BeautifulSoup
+from tqdm import tqdm
+
 from classes.featurelayer import FeatureLayer
 from config.config import USE_CRS
-from tqdm import tqdm
-import pyogrio
+from new_etl.classes.file_manager import FileManager, LoadType
+
+file_manager = FileManager()
 
 
 def get_latest_shapefile_url() -> str:
@@ -34,13 +37,13 @@ def get_latest_shapefile_url() -> str:
 
 
 def download_and_process_shapefile(
-    geojson_path: str, park_url: str, target_files: List[str], file_name_prefix: str
+    geojson_name: str, park_url: str, target_files: List[str], file_name_prefix: str
 ) -> gpd.GeoDataFrame:
     """
     Downloads and processes the shapefile to create a GeoDataFrame for Philadelphia parks.
 
     Args:
-        geojson_path (str): Path to save the GeoJSON file.
+        geojson_name (str): Name to save the GeoJSON file.
         park_url (str): URL to download the shapefile.
         target_files (List[str]): List of files to extract from the shapefile.
         file_name_prefix (str): Prefix for the file names to be extracted.
@@ -60,13 +63,11 @@ def download_and_process_shapefile(
             size: int = buffer.write(data)
             progress_bar.update(size)
 
-    with zipfile.ZipFile(buffer) as zip_ref:
-        for file_name in tqdm(target_files, desc="Extracting"):
-            zip_ref.extract(file_name, "tmp/")
+    file_manager.extract_files(buffer, target_files)
 
     print("Processing shapefile...")
-    pa_parks: gpd.GeoDataFrame = gpd.read_file(
-        "tmp/" + file_name_prefix + "_ParkPriorityAreas.shp"
+    pa_parks = file_manager.load_gdf(
+        file_name_prefix + "_ParkPriorityAreas.shp", LoadType.TEMP
     )
     pa_parks = pa_parks.to_crs(USE_CRS)
 
@@ -78,8 +79,8 @@ def download_and_process_shapefile(
     else:
         raise TypeError("Expected a GeoDataFrame, got Series or another type instead")
 
-    print(f"Writing filtered data to GeoJSON: {geojson_path}")
-    phl_parks.to_file(geojson_path, driver="GeoJSON")
+    print(f"Writing filtered data to GeoJSON: {geojson_name}")
+    file_manager.save_gdf(phl_parks, geojson_name, LoadType.TEMP)
 
     return phl_parks
 
@@ -107,14 +108,15 @@ def park_priority(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         file_name_prefix + "_ParkPriorityAreas.sbn",
         file_name_prefix + "_ParkPriorityAreas.sbx",
     ]
-    geojson_path: str = "tmp/phl_parks.geojson"
-
-    os.makedirs("tmp/", exist_ok=True)
+    final_geojson_name: str = "phl_parks.geojson"
+    final_geojson_path = file_manager.get_file_path("phl_parks.geojson", LoadType.TEMP)
 
     try:
-        if os.path.exists(geojson_path):
-            print(f"GeoJSON file already exists, loading from {geojson_path}")
-            phl_parks: gpd.GeoDataFrame = gpd.read_file(geojson_path)
+        if file_manager.check_file_exists(final_geojson_name, LoadType.TEMP):
+            print(f"GeoJSON file already exists, loading from {final_geojson_name}")
+            phl_parks: gpd.GeoDataFrame = file_manager.load_gdf(
+                final_geojson_name, LoadType.TEMP
+            )
         else:
             raise pyogrio.errors.DataSourceError(
                 "GeoJSON file missing, forcing download."
@@ -122,10 +124,10 @@ def park_priority(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     except (pyogrio.errors.DataSourceError, ValueError) as e:
         print(f"Error loading GeoJSON: {e}. Re-downloading and processing shapefile.")
-        if os.path.exists(geojson_path):
-            os.remove(geojson_path)  # Delete the corrupted GeoJSON if it exists
+        if os.path.exists(final_geojson_path):
+            os.remove(final_geojson_path)  # Delete the corrupted GeoJSON if it exists
         phl_parks = download_and_process_shapefile(
-            geojson_path, park_url, target_files, file_name_prefix
+            final_geojson_name, park_url, target_files, file_name_prefix
         )
 
     park_priority_layer: FeatureLayer = FeatureLayer("Park Priority")

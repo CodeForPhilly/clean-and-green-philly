@@ -4,7 +4,6 @@ import pandas as pd
 
 from new_etl.classes.file_manager import FileManager, FileType, LoadType
 from new_etl.classes.slack_reporters import (
-    send_dataframe_profile_to_slack,
     send_error_to_slack,
 )
 from new_etl.data_utils import (
@@ -97,7 +96,7 @@ try:
     # Save metadata
     try:
         metadata_df = pd.DataFrame(dataset.collected_metadata)
-        metadata_df.to_csv("tmp/metadata.csv", index=False)
+        file_manager.save_gdf(metadata_df, "metadata", LoadType.TEMP, FileType.CSV)
     except Exception as e:
         print(f"Error saving metadata: {str(e)}")
     # Drop duplicates
