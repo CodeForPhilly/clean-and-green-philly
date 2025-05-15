@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Dict, List, Set, Tuple
 
 import geopandas as gpd
 import pandas as pd
@@ -6,44 +6,24 @@ import pandas as pd
 from config.config import USE_CRS
 
 from ..classes.featurelayer import FeatureLayer
-from ..classes.service_validator import ServiceValidator
 from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
+from .base import ServiceValidator
 
 
 class CommunityGardensValidator(ServiceValidator):
     """Validator for community gardens data quality and processing."""
 
-    def validate(self, gdf: gpd.GeoDataFrame) -> Tuple[bool, List[str]]:
+    def _validate_service_specific(self, data: gpd.GeoDataFrame) -> List[str]:
         """
-        Validate community gardens data and processing.
+        Validate service-specific aspects of the community gardens data.
 
         Args:
-            gdf: GeoDataFrame containing the processed data
+            data: The GeoDataFrame to validate
 
         Returns:
-            Tuple of (is_valid, list of error messages)
+            List of error messages
         """
         errors = []
-
-        # Check required columns
-        required_cols = {"geometry", "vacant", "opa_id"}
-        missing_cols = required_cols - set(gdf.columns)
-        if missing_cols:
-            errors.append(f"Missing required columns: {missing_cols}")
-
-        # Check data types
-        if "vacant" in gdf.columns and not pd.api.types.is_bool_dtype(gdf["vacant"]):
-            errors.append("'vacant' column must be boolean type")
-
-        # Check for null geometries
-        null_geoms = gdf.geometry.isna().sum()
-        if null_geoms > 0:
-            errors.append(f"Found {null_geoms} null geometries")
-
-        # Check for invalid geometries
-        invalid_geoms = ~gdf.geometry.is_valid
-        if invalid_geoms.any():
-            errors.append(f"Found {invalid_geoms.sum()} invalid geometries")
 
         # Load and validate community gardens data
         try:
@@ -79,8 +59,8 @@ class CommunityGardensValidator(ServiceValidator):
                 )
 
             # Check total number of properties being masked
-            if "vacant" in gdf.columns:
-                masked_count = (~gdf["vacant"]).sum()
+            if "vacant" in data.columns:
+                masked_count = (~data["vacant"]).sum()
                 if masked_count > 5000:
                     errors.append(
                         f"Too many properties being masked ({masked_count} > 5000). This may indicate a data issue."
@@ -92,19 +72,70 @@ class CommunityGardensValidator(ServiceValidator):
                         f"More parcels being masked ({masked_count}) than there are community gardens ({len(community_gardens.gdf)}). This may indicate a data issue."
                     )
 
-            # Log statistics
-            if "vacant" in gdf.columns:
-                total_props = len(gdf)
-                masked_props = (~gdf["vacant"]).sum()
-                print("\nCommunity Gardens Statistics:")
-                print(f"Total properties: {total_props}")
-                print(f"Properties masked as non-vacant: {masked_props}")
-                print(f"Percentage masked: {(masked_props / total_props) * 100:.2f}%")
-                print(f"Total community gardens: {len(community_gardens.gdf)}")
-
         except Exception as e:
             errors.append(
                 f"Error loading or validating community gardens data: {str(e)}"
             )
+
+        return errors
+
+    def get_required_input_columns(self) -> List[str]:
+        """
+        Get the list of required input columns for this service.
+
+        Returns:
+            List of required input column names
+        """
+        return ["geometry", "vacant", "opa_id"]
+
+    def get_required_input_values(self) -> Dict[str, Set]:
+        """
+        Get the dictionary of required input values for this service.
+
+        Returns:
+            Dictionary mapping column names to sets of valid values
+        """
+        return {"vacant": {True, False}}
+
+    def validate(self, gdf: gpd.GeoDataFrame) -> Tuple[bool, List[str]]:
+        """
+        Validate community gardens data and processing.
+
+        Args:
+            gdf: GeoDataFrame containing the processed data
+
+        Returns:
+            Tuple of (is_valid, list of error messages)
+        """
+        errors = []
+
+        # Check required columns
+        required_cols = {"geometry", "vacant", "opa_id"}
+        missing_cols = required_cols - set(gdf.columns)
+        if missing_cols:
+            errors.append(f"Missing required columns: {missing_cols}")
+
+        # Check data types
+        if "vacant" in gdf.columns and not pd.api.types.is_bool_dtype(gdf["vacant"]):
+            errors.append("'vacant' column must be boolean type")
+
+        # Check for null geometries
+        null_geoms = gdf.geometry.isna().sum()
+        if null_geoms > 0:
+            errors.append(f"Found {null_geoms} null geometries")
+
+        # Check for invalid geometries
+        invalid_geoms = ~gdf.geometry.is_valid
+        if invalid_geoms.any():
+            errors.append(f"Found {invalid_geoms.sum()} invalid geometries")
+
+        # Log statistics
+        if "vacant" in gdf.columns:
+            total_props = len(gdf)
+            masked_props = (~gdf["vacant"]).sum()
+            print("\nCommunity Gardens Statistics:")
+            print(f"Total properties: {total_props}")
+            print(f"Properties masked as non-vacant: {masked_props}")
+            print(f"Percentage masked: {(masked_props / total_props) * 100:.2f}%")
 
         return len(errors) == 0, errors

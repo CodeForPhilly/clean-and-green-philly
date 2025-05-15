@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Dict, List, Set, Tuple
 
 import geopandas as gpd
 
@@ -6,84 +6,117 @@ from .base import ServiceValidator
 
 
 class PHSPropertiesValidator(ServiceValidator):
-    """Validator for PHS properties service."""
+    """
+    Validator for Philadelphia Housing Services (PHS) properties data.
+    Ensures proper data quality and consistency for PHS property assignments.
+    """
 
-    MAX_MATCHES = 30000  # Maximum reasonable number of PHS program matches
-
-    def validate(self, data: gpd.GeoDataFrame) -> Tuple[bool, List[str]]:
+    def _validate_service_specific(self, data: gpd.GeoDataFrame) -> List[str]:
         """
-        Validate PHS properties data.
+        Validate service-specific aspects of the PHS properties data.
 
-        Critical checks:
-        - Required fields present (phs_care_program)
-        - phs_care_program is string type
-        - Total matches is below threshold
-        - No null geometries
-        - Valid geometries
-        - No duplicate properties
+        Args:
+            data: The GeoDataFrame to validate
 
         Returns:
-            Tuple of (is_valid, list of error messages)
+            List of error messages
         """
         errors = []
 
-        # Check required columns
-        required_columns = ["phs_care_program", "geometry"]
-        errors.extend(self.check_required_columns(data, required_columns))
+        # Check for required columns
+        required_columns = ["opa_id", "phs_property"]
+        missing_columns = [col for col in required_columns if col not in data.columns]
+        if missing_columns:
+            errors.append(f"Missing required columns: {', '.join(missing_columns)}")
 
-        # Check data types and values
-        if "phs_care_program" in data.columns:
-            # Check type
-            if data["phs_care_program"].dtype != "object":
-                errors.append("phs_care_program must be string type")
+        # Check for null values in required columns
+        for col in required_columns:
+            if col in data.columns:
+                null_count = data[data[col].isna()].shape[0]
+                if null_count > 0:
+                    errors.append(f"Found {null_count} null values in {col}")
 
-            # Check values
-            invalid_values = data[~data["phs_care_program"].isin(["Yes", "No"])][
-                "phs_care_program"
-            ].unique()
-            if len(invalid_values) > 0:
+        # Check for valid PHS property values
+        if "phs_property" in data.columns:
+            invalid_values = data[~data["phs_property"].isin([True, False])]
+            if not invalid_values.empty:
                 errors.append(
-                    f"phs_care_program must be 'Yes' or 'No', found: {sorted(invalid_values)}"
+                    f"Found {len(invalid_values)} properties with invalid phs_property values. Valid values are: True, False"
                 )
 
-            # Get PHS properties subset
-            phs_properties = data[data["phs_care_program"] == "Yes"]
-            total_matches = len(phs_properties)
-
-            # Check total matches
-            if total_matches > self.MAX_MATCHES:
-                errors.append(
-                    f"Found {total_matches} PHS program matches, which exceeds the maximum of {self.MAX_MATCHES}"
-                )
-
-            # Check for null geometries
-            null_geoms = phs_properties.geometry.isnull().sum()
-            if null_geoms > 0:
-                errors.append(f"Found {null_geoms} PHS properties with null geometries")
-
-            # Check for duplicate geometries
-            if len(phs_properties) > 0:
-                # Convert geometries to WKT for comparison
-                wkt_geoms = phs_properties.geometry.apply(
-                    lambda x: x.wkt if x else None
-                )
-                duplicate_geoms = wkt_geoms.value_counts()
-                duplicates = duplicate_geoms[duplicate_geoms > 1]
-                if len(duplicates) > 0:
-                    errors.append(
-                        f"Found {len(duplicates)} duplicate geometries in PHS properties"
-                    )
-
-            # Log statistics
+        # Log statistics about PHS properties
+        if "phs_property" in data.columns:
+            total_properties = len(data)
+            phs_properties = data[data["phs_property"]].shape[0]
             print("\nPHS Properties Statistics:")
-            print(f"- Total properties: {len(data)}")
+            print(f"- Total properties: {total_properties}")
             print(
-                f"- Properties in PHS program: {total_matches} ({total_matches / len(data):.1%})"
+                f"- PHS properties: {phs_properties} ({phs_properties / total_properties * 100:.1f}%)"
             )
 
-        # Check geometry validity
-        if not data.geometry.is_valid.all():
-            invalid_count = (~data.geometry.is_valid).sum()
-            errors.append(f"Found {invalid_count} invalid geometries")
+        return errors
+
+    def get_required_input_columns(self) -> List[str]:
+        """
+        Get the list of required input columns for this service.
+
+        Returns:
+            List of required input column names
+        """
+        return ["opa_id", "phs_property"]
+
+    def get_required_input_values(self) -> Dict[str, Set]:
+        """
+        Get the dictionary of required input values for this service.
+
+        Returns:
+            Dictionary mapping column names to sets of valid values
+        """
+        return {"phs_property": {True, False}}
+
+    def validate(self, gdf: gpd.GeoDataFrame) -> Tuple[bool, List[str]]:
+        """
+        Validate the PHS properties data.
+
+        Args:
+            gdf (gpd.GeoDataFrame): The GeoDataFrame to validate
+
+        Returns:
+            Tuple[bool, List[str]]: A tuple containing:
+                - bool: Whether the validation passed
+                - List[str]: List of error messages if validation failed
+        """
+        errors = []
+
+        # Check for required columns
+        required_columns = ["opa_id", "phs_property"]
+        missing_columns = [col for col in required_columns if col not in gdf.columns]
+        if missing_columns:
+            errors.append(f"Missing required columns: {', '.join(missing_columns)}")
+
+        # Check for null values in required columns
+        for col in required_columns:
+            if col in gdf.columns:
+                null_count = gdf[gdf[col].isna()].shape[0]
+                if null_count > 0:
+                    errors.append(f"Found {null_count} null values in {col}")
+
+        # Check for valid PHS property values
+        if "phs_property" in gdf.columns:
+            invalid_values = gdf[~gdf["phs_property"].isin([True, False])]
+            if not invalid_values.empty:
+                errors.append(
+                    f"Found {len(invalid_values)} properties with invalid phs_property values. Valid values are: True, False"
+                )
+
+        # Log statistics about PHS properties
+        if "phs_property" in gdf.columns:
+            total_properties = len(gdf)
+            phs_properties = gdf[gdf["phs_property"]].shape[0]
+            print("\nPHS Properties Statistics:")
+            print(f"- Total properties: {total_properties}")
+            print(
+                f"- PHS properties: {phs_properties} ({phs_properties / total_properties * 100:.1f}%)"
+            )
 
         return len(errors) == 0, errors

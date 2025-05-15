@@ -5,15 +5,15 @@ import geopandas as gpd
 from .base import ServiceValidator
 
 
-class RCOGeomsValidator(ServiceValidator):
+class NeighborhoodsValidator(ServiceValidator):
     """
-    Validator for Registered Community Organization (RCO) geometries.
-    Ensures proper data quality and consistency for RCO boundaries.
+    Validator for neighborhoods data.
+    Ensures proper data quality and consistency for neighborhood boundaries.
     """
 
     def _validate_service_specific(self, data: gpd.GeoDataFrame) -> List[str]:
         """
-        Validate service-specific aspects of the RCO geometries data.
+        Validate service-specific aspects of the neighborhoods data.
 
         Args:
             data: The GeoDataFrame to validate
@@ -24,7 +24,7 @@ class RCOGeomsValidator(ServiceValidator):
         errors = []
 
         # Check for required columns
-        required_columns = ["rco_name", "geometry"]
+        required_columns = ["name", "geometry"]
         missing_columns = [col for col in required_columns if col not in data.columns]
         if missing_columns:
             errors.append(f"Missing required columns: {', '.join(missing_columns)}")
@@ -48,12 +48,12 @@ class RCOGeomsValidator(ServiceValidator):
             if not invalid_geoms.empty:
                 errors.append(f"Found {len(invalid_geoms)} invalid geometries")
 
-        # Check for duplicate RCO names
-        if "rco_name" in data.columns:
-            duplicates = data[data.duplicated(subset=["rco_name"], keep=False)]
+        # Check for duplicate neighborhood names
+        if "name" in data.columns:
+            duplicates = data[data.duplicated(subset=["name"], keep=False)]
             if not duplicates.empty:
                 errors.append(
-                    f"Found {len(duplicates)} duplicate RCO names: {', '.join(duplicates['rco_name'].unique())}"
+                    f"Found {len(duplicates)} duplicate neighborhood names: {', '.join(duplicates['name'].unique())}"
                 )
 
         return errors
@@ -65,7 +65,7 @@ class RCOGeomsValidator(ServiceValidator):
         Returns:
             List of required input column names
         """
-        return ["rco_name", "geometry"]
+        return ["name", "geometry"]
 
     def get_required_input_values(self) -> Dict[str, Set]:
         """
@@ -78,7 +78,7 @@ class RCOGeomsValidator(ServiceValidator):
 
     def validate(self, gdf: gpd.GeoDataFrame) -> Tuple[bool, List[str]]:
         """
-        Validate the RCO geometries data.
+        Validate the neighborhoods data.
 
         Args:
             gdf (gpd.GeoDataFrame): The GeoDataFrame to validate
@@ -91,7 +91,7 @@ class RCOGeomsValidator(ServiceValidator):
         errors = []
 
         # Check for required columns
-        required_columns = ["rco_name", "geometry"]
+        required_columns = ["name", "geometry"]
         missing_columns = [col for col in required_columns if col not in gdf.columns]
         if missing_columns:
             errors.append(f"Missing required columns: {', '.join(missing_columns)}")
@@ -115,19 +115,19 @@ class RCOGeomsValidator(ServiceValidator):
             if not invalid_geoms.empty:
                 errors.append(f"Found {len(invalid_geoms)} invalid geometries")
 
-        # Check for duplicate RCO names
-        if "rco_name" in gdf.columns:
-            duplicates = gdf[gdf.duplicated(subset=["rco_name"], keep=False)]
+        # Check for duplicate neighborhood names
+        if "name" in gdf.columns:
+            duplicates = gdf[gdf.duplicated(subset=["name"], keep=False)]
             if not duplicates.empty:
                 errors.append(
-                    f"Found {len(duplicates)} duplicate RCO names: {', '.join(duplicates['rco_name'].unique())}"
+                    f"Found {len(duplicates)} duplicate neighborhood names: {', '.join(duplicates['name'].unique())}"
                 )
 
-        # Log statistics about the RCOs
-        if "rco_name" in gdf.columns:
-            total_rcos = len(gdf)
-            print("\nRCO Statistics:")
-            print(f"- Total RCOs: {total_rcos}")
-            print(f"- Unique RCO names: {gdf['rco_name'].nunique()}")
+        # Log statistics about the neighborhoods
+        if "name" in gdf.columns:
+            total_neighborhoods = len(gdf)
+            print("\nNeighborhoods Statistics:")
+            print(f"- Total neighborhoods: {total_neighborhoods}")
+            print(f"- Unique neighborhood names: {gdf['name'].nunique()}")
 
         return len(errors) == 0, errors

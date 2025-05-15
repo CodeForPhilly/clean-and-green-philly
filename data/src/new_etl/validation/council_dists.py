@@ -1,4 +1,4 @@
-from typing import List, Tuple
+from typing import Dict, List, Set, Tuple
 
 import geopandas as gpd
 import pandas as pd
@@ -7,26 +7,26 @@ from .base import ServiceValidator
 
 
 class CouncilDistrictsValidator(ServiceValidator):
-    """Validator for council districts service."""
+    """
+    Validator for council district assignments.
+    Ensures proper data quality and consistency for council district assignments to properties.
+    """
 
-    def validate(self, data: gpd.GeoDataFrame) -> Tuple[bool, List[str]]:
+    VALID_DISTRICTS = {
+        str(i) for i in range(1, 11)
+    }  # Philadelphia has 10 council districts
+
+    def _validate_service_specific(self, data: gpd.GeoDataFrame) -> List[str]:
         """
-        Validate council districts data.
+        Validate service-specific aspects of the council district assignments.
 
-        Critical checks:
-        - Required fields present (district, geometry)
-        - District numbers are valid (1-10) as strings
-        - Valid geometries
-        - No duplicate districts
-        - All observations have a district
+        Args:
+            data: The GeoDataFrame to validate
 
         Returns:
-            Tuple of (is_valid, list of error messages)
+            List of error messages
         """
         errors = []
-
-        # Check required columns
-        errors.extend(self.check_required_columns(data, ["district", "geometry"]))
 
         # Check data types
         if "district" in data.columns and data["district"].dtype != "object":
@@ -50,26 +50,91 @@ class CouncilDistrictsValidator(ServiceValidator):
                     "district values must be numeric strings between 1 and 10"
                 )
 
-        # Check for duplicate districts
-        errors.extend(self.check_duplicates(data, "district"))
-
-        # Check null values in critical fields
-        errors.extend(
-            self.check_null_percentage(data, "district", threshold=0.0)
-        )  # No nulls allowed
+        # Check for null values in critical fields
+        if "district" in data.columns:
+            null_districts = data["district"].isnull().sum()
+            if null_districts > 0:
+                errors.append(f"Found {null_districts} observations without a district")
 
         # Check geometry validity
         if not data.geometry.is_valid.all():
             errors.append("Found invalid geometries")
 
-        # Check record count (should be exactly 10 districts)
-        if len(data) != 10:
-            errors.append(f"Expected exactly 10 council districts, found {len(data)}")
-
-        # Check that all observations have a district
+        # Check that all valid districts are represented
         if "district" in data.columns:
-            null_districts = data["district"].isnull().sum()
-            if null_districts > 0:
-                errors.append(f"Found {null_districts} observations without a district")
+            unique_districts = set(data["district"].dropna().unique())
+            missing_districts = self.VALID_DISTRICTS - unique_districts
+            if missing_districts:
+                errors.append(
+                    f"Missing assignments for districts: {', '.join(sorted(missing_districts))}"
+                )
+
+        return errors
+
+    def get_required_input_columns(self) -> List[str]:
+        """
+        Get the list of required input columns for this service.
+
+        Returns:
+            List of required input column names
+        """
+        return ["district", "geometry"]
+
+    def get_required_input_values(self) -> Dict[str, Set]:
+        """
+        Get the dictionary of required input values for this service.
+
+        Returns:
+            Dictionary mapping column names to sets of valid values
+        """
+        return {"district": self.VALID_DISTRICTS}
+
+    def validate(self, gdf: gpd.GeoDataFrame) -> Tuple[bool, List[str]]:
+        """
+        Validate the council district assignments.
+
+        Args:
+            gdf (gpd.GeoDataFrame): The GeoDataFrame to validate
+
+        Returns:
+            Tuple[bool, List[str]]: A tuple containing:
+                - bool: Whether the validation passed
+                - List[str]: List of error messages if validation failed
+        """
+        errors = []
+
+        # Check required columns
+        required_columns = ["district", "geometry"]
+        missing_columns = [col for col in required_columns if col not in gdf.columns]
+        if missing_columns:
+            errors.append(f"Missing required columns: {', '.join(missing_columns)}")
+
+        # Check for null values in required columns
+        for col in required_columns:
+            if col in gdf.columns:
+                null_count = gdf[col].isna().sum()
+                if null_count > 0:
+                    errors.append(f"Found {null_count} null values in {col}")
+
+        # Check for invalid district values
+        if "district" in gdf.columns:
+            invalid_values = gdf[~gdf["district"].isin(self.VALID_DISTRICTS)]
+            if not invalid_values.empty:
+                errors.append(
+                    f"Found {len(invalid_values)} properties with invalid district values"
+                )
+
+        # Log statistics about the district assignments
+        if "district" in gdf.columns:
+            total_properties = len(gdf)
+            print("\nCouncil District Statistics:")
+            print(f"- Total properties: {total_properties}")
+
+            # District distribution
+            district_counts = gdf["district"].value_counts()
+            for district in sorted(self.VALID_DISTRICTS):
+                count = district_counts.get(district, 0)
+                percentage = (count / total_properties) * 100
+                print(f"- District {district}: {count} properties ({percentage:.1f}%)")
 
         return len(errors) == 0, errors

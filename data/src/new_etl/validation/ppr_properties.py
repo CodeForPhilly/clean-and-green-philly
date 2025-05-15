@@ -1,23 +1,85 @@
-from typing import List, Tuple
+from typing import Dict, List, Set
 
 import geopandas as gpd
-import pandas as pd
 
-from .base_validator import BaseValidator
+from .base import ServiceValidator
 
 
-class PPRPropertiesValidator(BaseValidator):
+class PPRPropertiesValidator(ServiceValidator):
     """
-    Validator for PPR (Philadelphia Parks & Recreation) properties.
-    Ensures data quality and proper masking of park properties.
+    Validator for Philadelphia Parks & Recreation (PPR) properties data.
+    Ensures proper data quality and consistency for PPR property assignments.
     """
 
-    def validate(self, gdf: gpd.GeoDataFrame) -> Tuple[bool, List[str]]:
+    def _validate_service_specific(self, data: gpd.GeoDataFrame) -> List[str]:
         """
-        Validate the PPR properties data and their impact on the primary feature layer.
+        Validate service-specific aspects of the PPR properties data.
 
         Args:
-            gdf (gpd.GeoDataFrame): The GeoDataFrame to validate.
+            data: The GeoDataFrame to validate
+
+        Returns:
+            List of error messages
+        """
+        errors = []
+
+        # Check for required columns
+        required_columns = ["opa_id", "ppr_property"]
+        missing_columns = [col for col in required_columns if col not in data.columns]
+        if missing_columns:
+            errors.append(f"Missing required columns: {', '.join(missing_columns)}")
+
+        # Check for null values in required columns
+        for col in required_columns:
+            if col in data.columns:
+                null_count = data[data[col].isna()].shape[0]
+                if null_count > 0:
+                    errors.append(f"Found {null_count} null values in {col}")
+
+        # Check for valid PPR property values
+        if "ppr_property" in data.columns:
+            invalid_values = data[~data["ppr_property"].isin([True, False])]
+            if not invalid_values.empty:
+                errors.append(
+                    f"Found {len(invalid_values)} properties with invalid ppr_property values. Valid values are: True, False"
+                )
+
+        # Log statistics about PPR properties
+        if "ppr_property" in data.columns:
+            total_properties = len(data)
+            ppr_properties = data[data["ppr_property"]].shape[0]
+            print("\nPPR Properties Statistics:")
+            print(f"- Total properties: {total_properties}")
+            print(
+                f"- PPR properties: {ppr_properties} ({ppr_properties / total_properties * 100:.1f}%)"
+            )
+
+        return errors
+
+    def get_required_input_columns(self) -> List[str]:
+        """
+        Get the list of required input columns for this service.
+
+        Returns:
+            List of required input column names
+        """
+        return ["opa_id", "ppr_property"]
+
+    def get_required_input_values(self) -> Dict[str, Set]:
+        """
+        Get the dictionary of required input values for this service.
+
+        Returns:
+            Dictionary mapping column names to sets of valid values
+        """
+        return {"ppr_property": {True, False}}
+
+    def validate(self, gdf: gpd.GeoDataFrame) -> tuple[bool, List[str]]:
+        """
+        Validate the PPR properties data.
+
+        Args:
+            gdf (gpd.GeoDataFrame): The GeoDataFrame to validate
 
         Returns:
             Tuple[bool, List[str]]: A tuple containing:
@@ -26,47 +88,35 @@ class PPRPropertiesValidator(BaseValidator):
         """
         errors = []
 
-        # Check required columns
-        required_columns = ["geometry", "vacant", "public_name"]
+        # Check for required columns
+        required_columns = ["opa_id", "ppr_property"]
         missing_columns = [col for col in required_columns if col not in gdf.columns]
         if missing_columns:
             errors.append(f"Missing required columns: {', '.join(missing_columns)}")
 
-        # Check that 'vacant' column is boolean
-        if "vacant" in gdf.columns and not pd.api.types.is_bool_dtype(gdf["vacant"]):
-            errors.append("'vacant' column must be of boolean type")
+        # Check for null values in required columns
+        for col in required_columns:
+            if col in gdf.columns:
+                null_count = gdf[gdf[col].isna()].shape[0]
+                if null_count > 0:
+                    errors.append(f"Found {null_count} null values in {col}")
 
-        # Check for null geometries
-        null_geoms = gdf["geometry"].isna().sum()
-        if null_geoms > 0:
-            errors.append(f"Found {null_geoms} null geometries")
-
-        # Check for invalid geometries
-        invalid_geoms = ~gdf["geometry"].is_valid
-        if invalid_geoms.any():
-            errors.append(f"Found {invalid_geoms.sum()} invalid geometries")
-
-        # Check number of properties being masked
-        if "public_name" in gdf.columns:
-            mask = gdf["public_name"].notnull()
-            count_masked = mask.sum()
-            if count_masked < 400:
+        # Check for valid PPR property values
+        if "ppr_property" in gdf.columns:
+            invalid_values = gdf[~gdf["ppr_property"].isin([True, False])]
+            if not invalid_values.empty:
                 errors.append(
-                    f"Too few PPR properties being masked: {count_masked} (expected: 400-600)"
-                )
-            elif count_masked > 600:
-                errors.append(
-                    f"Too many PPR properties being masked: {count_masked} (expected: 400-600)"
+                    f"Found {len(invalid_values)} properties with invalid ppr_property values. Valid values are: True, False"
                 )
 
-            # Log statistics about masking
+        # Log statistics about PPR properties
+        if "ppr_property" in gdf.columns:
             total_properties = len(gdf)
-            percent_masked = (count_masked / total_properties) * 100
-            print("PPR properties masking statistics:")
+            ppr_properties = gdf[gdf["ppr_property"]].shape[0]
+            print("\nPPR Properties Statistics:")
             print(f"- Total properties: {total_properties}")
-            print(f"- Properties being masked: {count_masked}")
-            print(f"- Percentage masked: {percent_masked:.2f}%")
-            if count_masked < 400 or count_masked > 600:
-                print(f"WARNING: Expected 400-600 PPR properties, found {count_masked}")
+            print(
+                f"- PPR properties: {ppr_properties} ({ppr_properties / total_properties * 100:.1f}%)"
+            )
 
         return len(errors) == 0, errors

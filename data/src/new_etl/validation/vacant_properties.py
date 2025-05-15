@@ -1,71 +1,53 @@
-from typing import List, Tuple
+from functools import wraps
 
-import geopandas as gpd
+import pandas as pd
+import pandera as pa
+from pandera.typing import Series
 
-from .base import ServiceValidator
+from .base import BaseValidator
 
 
-class VacantPropertiesValidator(ServiceValidator):
-    """Validator for vacant properties service."""
+class VacantPropertiesValidator(BaseValidator):
+    vacant: Series[bool] = pa.Field(nullable=False)
+    opa_id: Series[str] = pa.Field(nullable=False, unique=True)
+    owner_1: Series[str] = pa.Field(nullable=True)
+    owner_2: Series[str] = pa.Field(nullable=True)
 
-    def validate(self, data: gpd.GeoDataFrame) -> Tuple[bool, List[str]]:
+    @pa.check("opa_id")
+    def check_duplicates(cls, series: Series) -> Series:
+        return ~series.duplicated()
+
+    @classmethod
+    def validate_owner_nulls(cls, df: pd.DataFrame, threshold: float = 0.01) -> None:
         """
-        Validate vacant properties data.
+        Checks if more than the threshold of properties have both owner_1 and owner_2 as null.
+        Having one owner null but not the other is acceptable.
 
-        Critical checks:
-        - Required fields present (opa_id, parcel_type)
-        - No duplicate opa_ids
-        - Valid geometries
-        - Expected number of records
+        Args:
+            df (pd.DataFrame): The DataFrame to check for owner nulls.
+            threshold (float): The threshold for acceptable percentage of both owners being null (default is 1%).
 
-        Returns:
-            Tuple of (is_valid, list of error messages)
+        Raises:
+            ValueError: If more than threshold of properties have both owners null.
         """
-        errors = []
+        both_owners_null = df["owner_1"].isnull() & df["owner_2"].isnull()
+        pct_both_null = both_owners_null.mean()
 
-        # Check required columns
-        errors.extend(self.check_required_columns(data, ["opa_id", "parcel_type"]))
-
-        # Check for duplicate opa_ids
-        errors.extend(self.check_duplicates(data, "opa_id"))
-
-        # Check data types
-        if "opa_id" in data.columns and not data["opa_id"].dtype == "object":
-            errors.append("opa_id must be string type")
-        if "parcel_type" in data.columns and not data["parcel_type"].dtype == "object":
-            errors.append("parcel_type must be string type")
-
-        # Check null values in critical fields
-        errors.extend(
-            self.check_null_percentage(data, "opa_id", threshold=0.0)
-        )  # No nulls allowed
-        errors.extend(
-            self.check_null_percentage(data, "parcel_type", threshold=0.0)
-        )  # No nulls allowed
-
-        # Check geometry validity
-        if not data.geometry.is_valid.all():
-            errors.append("Found invalid geometries")
-
-        # Check record counts
-        total_count = len(data)
-        if total_count < 10000:
-            errors.append(
-                f"Total vacant properties count ({total_count}) is below minimum threshold (10000)"
+        if pct_both_null > threshold:
+            raise ValueError(
+                f"More than {threshold * 100}% of properties ({pct_both_null * 100:.1f}%) "
+                "have both owner_1 and owner_2 as null."
             )
 
-        # Check counts by parcel type
-        if "parcel_type" in data.columns:
-            building_count = len(data[data["parcel_type"] == "Building"])
-            lot_count = len(data[data["parcel_type"] == "Land"])
+    @classmethod
+    def validate_output(cls, func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            result = func(*args, **kwargs)
+            # Run schema validation
+            cls.validate(result.gdf)
+            # Run owner null validation
+            cls.validate_owner_nulls(result.gdf)
+            return result
 
-            if building_count < 10000:
-                errors.append(
-                    f"Vacant building count ({building_count}) is below minimum threshold (10000)"
-                )
-            if lot_count < 20000:
-                errors.append(
-                    f"Vacant lot count ({lot_count}) is below minimum threshold (20000)"
-                )
-
-        return len(errors) == 0, errors
+        return wrapper

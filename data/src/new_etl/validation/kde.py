@@ -1,25 +1,144 @@
-from typing import List, Tuple
+from typing import Dict, List, Set, Tuple
 
 import geopandas as gpd
 
-from .base_validator import BaseValidator
+from .base import ServiceValidator
 
 
-class KDEValidator(BaseValidator):
+class KDEValidator(ServiceValidator):
     """
-    Validator for Kernel Density Estimation (KDE) calculations.
-    Ensures proper density calculations and data quality across all services that use KDE.
+    Validator for KDE (Kernel Density Estimation) data.
+    Ensures proper data quality and consistency for KDE assignments.
     """
 
-    # Valid density labels
-    VALID_DENSITY_LABELS = {"Low", "Medium", "High"}
+    VALID_DENSITY_LABELS = {"low", "medium", "high"}
 
     def __init__(self):
-        """Initialize the validator with default column names."""
+        super().__init__()
         self.density_column = None
         self.zscore_column = None
         self.label_column = None
         self.percentile_column = None
+
+    def _validate_service_specific(self, data: gpd.GeoDataFrame) -> List[str]:
+        """
+        Validate service-specific aspects of the KDE data.
+
+        Args:
+            data: The GeoDataFrame to validate
+
+        Returns:
+            List of error messages
+        """
+        errors = []
+
+        # Check for required columns
+        required_columns = [
+            self.density_column,
+            self.zscore_column,
+            self.label_column,
+            self.percentile_column,
+        ]
+        missing_columns = [col for col in required_columns if col not in data.columns]
+        if missing_columns:
+            errors.append(f"Missing required columns: {', '.join(missing_columns)}")
+
+        # Check for null values in required columns
+        for col in required_columns:
+            if col in data.columns:
+                null_count = data[data[col].isna()].shape[0]
+                if null_count > 0:
+                    errors.append(f"Found {null_count} null values in {col}")
+
+        # Check for valid density labels
+        if self.label_column in data.columns:
+            invalid_labels = data[
+                ~data[self.label_column].isin(self.VALID_DENSITY_LABELS)
+            ]
+            if not invalid_labels.empty:
+                errors.append(
+                    f"Found {len(invalid_labels)} properties with invalid {self.label_column} values. Valid labels are: {', '.join(sorted(self.VALID_DENSITY_LABELS))}"
+                )
+
+        # Check percentile bounds (0 to 100)
+        if self.percentile_column in data.columns:
+            invalid_percentiles = data[
+                (data[self.percentile_column] < 0)
+                | (data[self.percentile_column] > 100)
+            ]
+            if not invalid_percentiles.empty:
+                errors.append(
+                    f"Found {len(invalid_percentiles)} properties with {self.percentile_column} values outside [0,100] range"
+                )
+
+        # Log statistics about KDE assignments
+        if all(col in data.columns for col in required_columns):
+            total_properties = len(data)
+            print("\nKDE Statistics:")
+            print(f"- Total properties: {total_properties}")
+
+            # Density label distribution
+            label_counts = data[self.label_column].value_counts()
+            print("\nDensity Label Distribution:")
+            for label, count in label_counts.items():
+                percentage = (count / total_properties) * 100
+                print(f"- {label}: {count} properties ({percentage:.1f}%)")
+
+            # Percentile distribution
+            percentile_ranges = [
+                (0, 20, "0-20%"),
+                (20, 40, "20-40%"),
+                (40, 60, "40-60%"),
+                (60, 80, "60-80%"),
+                (80, 100, "80-100%"),
+            ]
+
+            print("\nPercentile Distribution:")
+            for start, end, label in percentile_ranges:
+                count = len(
+                    data[
+                        (data[self.percentile_column] >= start)
+                        & (data[self.percentile_column] < end)
+                    ]
+                )
+                percentage = (count / total_properties) * 100
+                print(f"- {label}: {count} properties ({percentage:.1f}%)")
+
+        return errors
+
+    def get_required_input_columns(self) -> List[str]:
+        """
+        Get the list of required input columns for this service.
+
+        Returns:
+            List of required input column names
+        """
+        if not all(
+            [
+                self.density_column,
+                self.zscore_column,
+                self.label_column,
+                self.percentile_column,
+            ]
+        ):
+            return []
+        return [
+            self.density_column,
+            self.zscore_column,
+            self.label_column,
+            self.percentile_column,
+        ]
+
+    def get_required_input_values(self) -> Dict[str, Set]:
+        """
+        Get the dictionary of required input values for this service.
+
+        Returns:
+            Dictionary mapping column names to sets of valid values
+        """
+        if not self.label_column:
+            return {}
+        return {self.label_column: self.VALID_DENSITY_LABELS}
 
     def configure(
         self,
@@ -82,78 +201,6 @@ class KDEValidator(BaseValidator):
         missing_columns = [col for col in required_columns if col not in gdf.columns]
         if missing_columns:
             errors.append(f"Missing required columns: {', '.join(missing_columns)}")
-
-        # Check density bounds (0 to 1)
-        if self.density_column in gdf.columns:
-            # Check for null values
-            null_density = gdf[gdf[self.density_column].isna()]
-            if not null_density.empty:
-                errors.append(
-                    f"Found {len(null_density)} properties with null {self.density_column}"
-                )
-
-            # Check bounds
-            out_of_bounds = gdf[
-                (gdf[self.density_column] < 0) | (gdf[self.density_column] > 1)
-            ]
-            if not out_of_bounds.empty:
-                errors.append(
-                    f"Found {len(out_of_bounds)} properties with density values outside [0,1] range"
-                )
-
-        # Check z-score bounds (-10 to 10)
-        if self.zscore_column in gdf.columns:
-            # Check for null values
-            null_zscore = gdf[gdf[self.zscore_column].isna()]
-            if not null_zscore.empty:
-                errors.append(
-                    f"Found {len(null_zscore)} properties with null {self.zscore_column}"
-                )
-
-            # Check bounds
-            out_of_bounds = gdf[
-                (gdf[self.zscore_column] < -10) | (gdf[self.zscore_column] > 10)
-            ]
-            if not out_of_bounds.empty:
-                errors.append(
-                    f"Found {len(out_of_bounds)} properties with z-score values outside [-10,10] range"
-                )
-
-        # Check density label
-        if self.label_column in gdf.columns:
-            # Check for null values
-            null_labels = gdf[gdf[self.label_column].isna()]
-            if not null_labels.empty:
-                errors.append(
-                    f"Found {len(null_labels)} properties with null {self.label_column}"
-                )
-
-            # Check valid values
-            invalid_labels = gdf[
-                ~gdf[self.label_column].isin(self.VALID_DENSITY_LABELS)
-            ]
-            if not invalid_labels.empty:
-                errors.append(
-                    f"Found {len(invalid_labels)} properties with invalid density labels. Valid labels are: {', '.join(self.VALID_DENSITY_LABELS)}"
-                )
-
-        # Check percentile bounds (0 to 100)
-        if self.percentile_column in gdf.columns:
-            # Check for null values
-            null_percentile = gdf[gdf[self.percentile_column].isna()]
-            if not null_percentile.empty:
-                errors.append(
-                    f"Found {len(null_percentile)} properties with null {self.percentile_column}"
-                )
-
-            # Check bounds
-            out_of_bounds = gdf[
-                (gdf[self.percentile_column] < 0) | (gdf[self.percentile_column] > 100)
-            ]
-            if not out_of_bounds.empty:
-                errors.append(
-                    f"Found {len(out_of_bounds)} properties with percentile values outside [0,100] range"
-                )
 
         # Log statistics about the density calculations
         if all(col in gdf.columns for col in [self.density_column, self.label_column]):
