@@ -1,3 +1,5 @@
+import time
+
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import COMPLAINTS_SQL_QUERY
 from ..data_utils.kde import apply_kde_to_primary
@@ -32,6 +34,18 @@ def li_complaints(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         https://phl.carto.com/api/v2/sql
 
     """
-    return apply_kde_to_primary(
-        primary_featurelayer, "L and I Complaints", COMPLAINTS_SQL_QUERY
-    )
+    start_time = time.time()
+    print("\nProcessing L&I complaints...")
+
+    try:
+        result = apply_kde_to_primary(
+            primary_featurelayer, "L and I Complaints", COMPLAINTS_SQL_QUERY
+        )
+        end_time = time.time()
+        print(
+            f"L&I complaints processing completed in {end_time - start_time:.1f} seconds"
+        )
+        return result
+    except Exception as e:
+        print(f"Error processing L&I complaints: {str(e)}")
+        raise

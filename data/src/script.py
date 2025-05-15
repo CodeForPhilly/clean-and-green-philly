@@ -31,12 +31,6 @@ from data_utils.tree_canopy import tree_canopy
 from data_utils.unsafe_buildings import unsafe_buildings
 from data_utils.vacant_properties import vacant_properties
 
-
-import traceback
-
-from classes.slack_error_reporter import send_error_to_slack
-
-
 try:
     services = [
         city_owned_properties,

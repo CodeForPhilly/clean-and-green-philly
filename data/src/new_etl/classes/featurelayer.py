@@ -22,7 +22,6 @@ from config.config import (
 from config.psql import conn, local_engine
 from new_etl.classes.bucket_manager import GCSBucketManager
 from new_etl.database import to_postgis_with_schema
-from new_etl.loaders import load_carto_data, load_esri_data
 
 log.basicConfig(level=log_level)
 
@@ -57,6 +56,7 @@ class FeatureLayer:
         max_workers=os.cpu_count(),
         chunk_size=100000,
         collected_metadata=None,
+        skip_save=False,
     ):
         if collected_metadata is None:
             self.collected_metadata = []
@@ -79,6 +79,7 @@ class FeatureLayer:
         self.use_wkb_geom_field = use_wkb_geom_field
         self.max_workers = max_workers
         self.chunk_size = chunk_size
+        self.skip_save = skip_save
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
@@ -95,63 +96,204 @@ class FeatureLayer:
         else:
             log.info(f"Initialized FeatureLayer {self.name} with no data.")
 
+    @classmethod
+    def for_validation(
+        cls, name, esri_rest_urls=None, carto_sql_queries=None, **kwargs
+    ):
+        """
+        Create a FeatureLayer instance specifically for validation purposes.
+        This instance will not save data to PostgreSQL.
+
+        Args:
+            name: Name of the feature layer
+            esri_rest_urls: ESRI REST URLs to load data from
+            carto_sql_queries: Carto SQL queries to load data from
+            **kwargs: Additional arguments to pass to the constructor
+
+        Returns:
+            FeatureLayer: A FeatureLayer instance configured for validation
+        """
+        return cls(
+            name=name,
+            esri_rest_urls=esri_rest_urls,
+            carto_sql_queries=carto_sql_queries,
+            skip_save=True,
+            **kwargs,
+        )
+
     def check_psql(self):
         try:
             if not sa.inspect(local_engine).has_table(self.psql_table):
                 log.debug(f"Table {self.psql_table} does not exist")
                 return False
-            psql_table = gpd.read_postgis(
-                f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
-            )
-            if len(psql_table) == 0:
+
+            # Get total count first
+            count_query = f"SELECT COUNT(*) as count FROM {self.psql_table}"
+            total_count = pd.read_sql(count_query, conn).iloc[0]["count"]
+
+            if total_count == 0:
                 return False
+
             log.info(f"Loading data for {self.name} from psql...")
-            self.gdf = psql_table
-            return True
+
+            # Get the most recent timestamp
+            latest_timestamp_query = f"""
+            SELECT MAX(create_date) as latest_date 
+            FROM {self.psql_table}
+            """
+            latest_date = pd.read_sql(latest_timestamp_query, conn).iloc[0][
+                "latest_date"
+            ]
+
+            # First, let's check what columns we have
+            columns_query = f"""
+            SELECT column_name, data_type 
+            FROM information_schema.columns 
+            WHERE table_name = '{self.psql_table}'
+            ORDER BY ordinal_position
+            """
+            columns = pd.read_sql(columns_query, conn)
+            print(f"\nTable structure for {self.psql_table}:")
+            print(columns.to_string())
+            print("\n")
+
+            # Column name mappings for different tables
+            column_mappings = {
+                "opa_properties": {"OPA_ID": "parcel_number"},
+                "vacant_properties": {"OPA_ID": "parcel_number"},
+            }
+
+            # Use a more efficient query that only selects needed columns and filters by latest timestamp
+            if self.cols:
+                # Map column names if needed
+                mapped_cols = []
+                for col in self.cols:
+                    if (
+                        self.psql_table in column_mappings
+                        and col in column_mappings[self.psql_table]
+                    ):
+                        mapped_cols.append(column_mappings[self.psql_table][col])
+                    else:
+                        mapped_cols.append(col)
+
+                # Filter cols to only those that exist in the table
+                valid_cols = [
+                    col
+                    for col in mapped_cols
+                    if col.lower() in [c.lower() for c in columns["column_name"]]
+                ]
+                if not valid_cols:
+                    print(
+                        f"Warning: None of the requested columns {self.cols} exist in table {self.psql_table}"
+                    )
+                    print("Falling back to selecting all columns")
+                    query = f"""
+                    SELECT *, 
+                           ST_AsText(geometry) as geometry_text,
+                           ST_SRID(geometry) as srid
+                    FROM {self.psql_table}
+                    WHERE create_date = '{latest_date}'
+                    AND ST_IsValid(geometry)
+                    AND NOT ST_IsEmpty(geometry)
+                    """
+                else:
+                    cols_str = ", ".join([f'"{col}"' for col in valid_cols])
+                    query = f"""
+                    SELECT {cols_str}, 
+                           ST_AsText(geometry) as geometry_text,
+                           ST_SRID(geometry) as srid
+                    FROM {self.psql_table}
+                    WHERE create_date = '{latest_date}'
+                    AND ST_IsValid(geometry)
+                    AND NOT ST_IsEmpty(geometry)
+                    """
+            else:
+                query = f"""
+                SELECT *, 
+                       ST_AsText(geometry) as geometry_text,
+                       ST_SRID(geometry) as srid
+                FROM {self.psql_table}
+                WHERE create_date = '{latest_date}'
+                AND ST_IsValid(geometry)
+                AND NOT ST_IsEmpty(geometry)
+                """
+
+            print(f"\nExecuting query:\n{query}\n")
+
+            # Debug: Get a single row to inspect
+            debug_query = f"{query} LIMIT 1"
+            debug_data = pd.read_sql(debug_query, conn)
+            if not debug_data.empty:
+                print("\nDEBUG - First row data:")
+                for col in debug_data.columns:
+                    if col == "geometry_text":
+                        print(f"Geometry WKT: {debug_data[col].iloc[0]}")
+                    else:
+                        print(f"{col}: {debug_data[col].iloc[0]}")
+
+            # Load data with optimized settings and collect all chunks
+            chunks = []
+            for chunk in pd.read_sql(query, conn, chunksize=10000):
+                # Convert WKT to geometry
+                chunk["geometry"] = gpd.GeoSeries.from_wkt(chunk["geometry_text"])
+                chunk = chunk.drop(columns=["geometry_text"])
+                # Set the CRS based on the SRID from the database
+                if not chunk.empty and "srid" in chunk.columns:
+                    chunk = gpd.GeoDataFrame(
+                        chunk, geometry="geometry", crs=f"EPSG:{chunk['srid'].iloc[0]}"
+                    )
+                    chunk.drop(columns=["srid"], inplace=True)
+                chunks.append(chunk)
+
+            # Combine all chunks into a single GeoDataFrame
+            if chunks:
+                self.gdf = pd.concat(chunks, ignore_index=True)
+                return True
+            return False
+
         except Exception as e:
             log.error(f"Error loading data for {self.name}: {e}")
             return False
 
     def load_data(self):
-        log.info(f"Loading data for {self.name} from {self.type}...")
+        """Load data from the appropriate source."""
+        if self.type == "esri":
+            self._load_esri_data()
+        elif self.type == "carto":
+            self._load_carto_data()
+        elif self.type == "gdf":
+            # If gdf is provided, just ensure it's in the right CRS
+            if self.gdf is not None:
+                self.gdf = self.gdf.to_crs(self.crs)
 
-        if self.type == "gdf":
-            return  # Skip processing for gdf type
+        # Only save to PostgreSQL if not in validation mode
+        if not self.skip_save and self.gdf is not None:
+            try:
+                to_postgis_with_schema(self.gdf, self.psql_table)
+            except Exception as e:
+                log.error(f"Error saving {self.name} to PostgreSQL: {str(e)}")
+                log.error(traceback.format_exc())
 
-        try:
-            # Load data based on the source type
-            if self.type == "esri":
-                self.gdf = load_esri_data(self.esri_rest_urls, self.input_crs, self.crs)
-            elif self.type == "carto":
-                self.gdf = load_carto_data(
-                    self.carto_sql_queries,
-                    self.max_workers,
-                    self.chunk_size,
-                    self.use_wkb_geom_field,
-                    self.input_crs,
-                    self.crs,
-                )
+    def _load_esri_data(self):
+        """Load data from ESRI REST endpoints."""
+        if not self.esri_rest_urls:
+            raise ValueError("Must provide ESRI REST URLs to load data")
 
-            # Standardize column names
-            if not self.gdf.empty:
-                self.gdf.columns = [col.lower() for col in self.gdf.columns]
+        from ..loaders import load_esri_data
 
-                # Filter columns if specified
-                if self.cols:
-                    self.cols = [col.lower() for col in self.cols]
-                    self.cols.append("geometry")
-                    self.gdf = self.gdf[
-                        [col for col in self.cols if col in self.gdf.columns]
-                    ]
+        self.gdf = load_esri_data(self.esri_rest_urls, self.input_crs, self.crs)
 
-                # Save GeoDataFrame to PostgreSQL and configure it as a hypertable
-                print("Saving GeoDataFrame to PostgreSQL...")
-                to_postgis_with_schema(self.gdf, self.psql_table, conn)
+        # Standardize column names
+        if not self.gdf.empty:
+            self.gdf.columns = [col.lower() for col in self.gdf.columns]
 
-        except Exception as e:
-            log.error(f"Error loading data for {self.name}: {e}")
-            traceback.print_exc()
-            self.gdf = gpd.GeoDataFrame()  # Reset to an empty GeoDataFrame
+            # Filter columns if specified
+            if self.cols:
+                self.cols = [col.lower() for col in self.cols]
+                self.cols.append("geometry")
+                self.gdf = self.gdf[
+                    [col for col in self.cols if col in self.gdf.columns]
+                ]
 
     def _load_carto_data(self):
         if not self.carto_sql_queries:

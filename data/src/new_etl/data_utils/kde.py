@@ -1,30 +1,59 @@
+import concurrent.futures
+import os
+import time
+from concurrent.futures import ProcessPoolExecutor
 from typing import Tuple
+
+import mapclassify
 import numpy as np
+import psutil
 import rasterio
 from awkde.awkde import GaussianKDE
-from ..classes.featurelayer import FeatureLayer
-from config.config import USE_CRS
 from rasterio.transform import Affine
 from tqdm import tqdm
-from concurrent.futures import ProcessPoolExecutor, as_completed
-import mapclassify
 
+from config.config import USE_CRS
+
+from ..classes.featurelayer import FeatureLayer
+
+# Reduce resolution to make it more manageable while maintaining good spatial detail
 resolution = 1320  # 0.25 miles (in feet, since the CRS is 2272)
-batch_size = 100000
+# Increase chunk size to reduce overhead while keeping reasonable memory usage
+# Each chunk takes ~20s to process, so we want chunks that take 1-2 minutes total
+batch_size = 50000  # Increased from 25000 to reduce number of chunks
 
 
-def kde_predict_chunk(kde: GaussianKDE, chunk: np.ndarray) -> np.ndarray:
+def get_memory_usage():
+    """Get current memory usage of the process."""
+    process = psutil.Process(os.getpid())
+    return process.memory_info().rss / 1024 / 1024  # Convert to MB
+
+
+def kde_predict_chunk(args):
     """
     Helper function to predict KDE for a chunk of grid points.
 
     Args:
-        kde (GaussianKDE): The KDE model to use for prediction.
-        chunk (np.ndarray): A chunk of grid points for prediction.
+        args: Tuple containing (chunk, X, glob_bw, alpha, chunk_num, total_chunks)
+            chunk: Grid points to predict
+            X: Training points
+            glob_bw: Bandwidth parameter
+            alpha: Alpha parameter
+            chunk_num: Current chunk number
+            total_chunks: Total number of chunks
 
     Returns:
-        np.ndarray: Predicted KDE values for the chunk.
+        np.ndarray: Predicted KDE values for the chunk
     """
-    return kde.predict(chunk)
+    chunk, X, glob_bw, alpha, chunk_num, total_chunks = args
+    try:
+        # Create and fit KDE model for this chunk
+        kde = GaussianKDE(glob_bw=glob_bw, alpha=alpha, diag_cov=True)
+        kde.fit(X)
+        return kde.predict(chunk)
+    except Exception as e:
+        print(f"Error in KDE prediction for chunk {chunk_num + 1}: {str(e)}")
+        raise
 
 
 def generic_kde(
@@ -37,61 +66,140 @@ def generic_kde(
         name (str): Name of the dataset being processed.
         query (str): SQL query to fetch data.
         resolution (int): Resolution for the grid. Defaults to 1320.
-        batch_size (int): Batch size for processing grid points. Defaults to 100000.
+        batch_size (int): Batch size for processing grid points. Defaults to 50000.
 
     Returns:
         Tuple[str, np.ndarray]: The raster filename and the array of input points.
     """
-    print(f"Initializing FeatureLayer for {name}")
+    start_time = time.time()
+    print(f"\nInitializing FeatureLayer for {name}")
+    print(f"Current memory usage: {get_memory_usage():.1f} MB")
 
     feature_layer = FeatureLayer(name=name, carto_sql_queries=query)
+    print(f"Loaded {len(feature_layer.gdf)} points for {name}")
+    print(f"Memory usage after loading data: {get_memory_usage():.1f} MB")
 
+    # Extract coordinates and validate
     coords = np.array([geom.xy for geom in feature_layer.gdf.geometry])
     x, y = coords[:, 0, :].flatten(), coords[:, 1, :].flatten()
+
+    # Remove any points with NaN or infinite coordinates
+    valid_mask = ~(np.isnan(x) | np.isnan(y) | np.isinf(x) | np.isinf(y))
+    x = x[valid_mask]
+    y = y[valid_mask]
+
+    if len(x) == 0:
+        raise ValueError("No valid coordinates found after cleaning")
+
+    print(f"Removed {len(coords) - len(x)} invalid points")
     X = np.column_stack((x, y))
+    print(f"Extracted coordinates for {len(X)} points")
+    print(f"Memory usage after coordinate extraction: {get_memory_usage():.1f} MB")
+
+    # Ensure grid bounds are valid
+    x_min, x_max = np.min(x), np.max(x)
+    y_min, y_max = np.min(y), np.max(y)
+
+    if not (
+        np.isfinite(x_min)
+        and np.isfinite(x_max)
+        and np.isfinite(y_min)
+        and np.isfinite(y_max)
+    ):
+        raise ValueError("Invalid grid bounds detected")
 
     x_grid, y_grid = (
-        np.linspace(x.min(), x.max(), resolution),
-        np.linspace(y.min(), y.max(), resolution),
+        np.linspace(x_min, x_max, resolution),
+        np.linspace(y_min, y_max, resolution),
     )
     xx, yy = np.meshgrid(x_grid, y_grid)
     grid_points = np.column_stack((xx.ravel(), yy.ravel()))
+    print(f"Created grid with {len(grid_points)} points ({resolution}x{resolution})")
+    print(f"Memory usage after grid creation: {get_memory_usage():.1f} MB")
 
-    print(f"Fitting KDE for {name} data")
-    kde = GaussianKDE(glob_bw=0.1, alpha=0.999, diag_cov=True)
-    kde.fit(X)
-
-    print(f"Predicting KDE values for grid of size {grid_points.shape}")
-
+    # Split grid points into chunks
     chunks = [
         grid_points[i : i + batch_size] for i in range(0, len(grid_points), batch_size)
     ]
+    print(f"Split into {len(chunks)} chunks of {batch_size} points each")
+    print(f"Memory usage after chunking: {get_memory_usage():.1f} MB")
+
+    # KDE parameters - adjusted to be more robust
+    glob_bw = 0.1
+    alpha = 0.999
+
+    # Prepare arguments for parallel processing
+    chunk_args = [
+        (chunk, X, glob_bw, alpha, i, len(chunks)) for i, chunk in enumerate(chunks)
+    ]
+
+    # Process chunks in parallel
     z = np.zeros(len(grid_points))
+    max_workers = max(1, os.cpu_count() - 1)
+    print(f"Using {max_workers} worker processes")
+    print(f"Memory usage before parallel processing: {get_memory_usage():.1f} MB")
 
-    with ProcessPoolExecutor() as executor:
-        futures = {
-            executor.submit(kde_predict_chunk, kde, chunk): i
-            for i, chunk in enumerate(tqdm(chunks, desc="Submitting tasks"))
+    with ProcessPoolExecutor(max_workers=max_workers) as executor:
+        # Submit all tasks
+        future_to_chunk = {
+            executor.submit(kde_predict_chunk, chunk_arg): i
+            for i, chunk_arg in enumerate(chunk_args)
         }
+        print(f"Submitted {len(future_to_chunk)} chunks for processing")
 
+        # Process results as they complete
+        completed_chunks = 0
+        last_progress_time = time.time()
+
+        # Use as_completed to process results in order of completion
         for future in tqdm(
-            as_completed(futures), total=len(futures), desc="Processing tasks"
+            concurrent.futures.as_completed(future_to_chunk),
+            total=len(future_to_chunk),
+            desc="Processing KDE predictions",
         ):
-            i = futures[future]
-            z[i * batch_size : (i + 1) * batch_size] = future.result()
+            chunk_idx = future_to_chunk[future]
+            try:
+                result = future.result()
+                # Replace any NaN or infinite values with 0
+                result = np.nan_to_num(result, nan=0.0, posinf=0.0, neginf=0.0)
+                z[chunk_idx * batch_size : (chunk_idx + 1) * batch_size] = result
+                completed_chunks += 1
+
+                # Print progress every 60 seconds
+                current_time = time.time()
+                if current_time - last_progress_time >= 60:
+                    elapsed_time = current_time - start_time
+                    chunks_per_second = completed_chunks / elapsed_time
+                    estimated_remaining = (
+                        len(chunks) - completed_chunks
+                    ) / chunks_per_second
+                    print(f"\nProgress update at {time.strftime('%H:%M:%S')}:")
+                    print(f"Completed {completed_chunks}/{len(chunks)} chunks")
+                    print(f"Elapsed time: {elapsed_time:.1f} seconds")
+                    print(f"Processing speed: {chunks_per_second:.2f} chunks/second")
+                    print(
+                        f"Estimated time remaining: {estimated_remaining:.1f} seconds"
+                    )
+                    print(f"Memory usage: {get_memory_usage():.1f} MB")
+                    last_progress_time = current_time
+
+            except Exception as e:
+                print(f"Error processing chunk {chunk_idx}: {str(e)}")
+                raise
 
     zz = z.reshape(xx.shape)
+    print("\nKDE predictions completed")
+    print(f"Memory usage after predictions: {get_memory_usage():.1f} MB")
 
     x_res, y_res = (
-        (x.max() - x.min()) / (resolution - 1),
-        (y.max() - y.min()) / (resolution - 1),
+        (x_max - x_min) / (resolution - 1),
+        (y_max - y_min) / (resolution - 1),
     )
-    min_x, min_y = x.min(), y.min()
 
-    transform = Affine.translation(min_x, min_y) * Affine.scale(x_res, y_res)
+    transform = Affine.translation(x_min, y_min) * Affine.scale(x_res, y_res)
 
     raster_filename = f"tmp/{name.lower().replace(' ', '_')}.tif"
-    print(f"Saving raster to {raster_filename}")
+    print(f"\nSaving raster to {raster_filename}")
 
     with rasterio.open(
         raster_filename,
@@ -105,6 +213,11 @@ def generic_kde(
         transform=transform,
     ) as dst:
         dst.write(zz, 1)
+    print("Raster file saved successfully")
+    print(f"Final memory usage: {get_memory_usage():.1f} MB")
+
+    end_time = time.time()
+    print(f"\nTotal processing time: {end_time - start_time:.1f} seconds")
 
     return raster_filename, X
 

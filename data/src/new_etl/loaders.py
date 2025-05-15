@@ -1,10 +1,11 @@
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 import geopandas as gpd
 import pandas as pd
-from esridump.dumper import EsriDumper
 import requests
-from concurrent.futures import ThreadPoolExecutor, as_completed
-from tqdm import tqdm
+from esridump.dumper import EsriDumper
 from shapely import wkb
+from tqdm import tqdm
 
 
 # Esri data loader
@@ -90,12 +91,24 @@ def fetch_carto_chunk(
     if not data:
         return gpd.GeoDataFrame()
     df = pd.DataFrame(data)
-    geometry = (
-        wkb.loads(df[use_wkb_geom_field], hex=True)
-        if use_wkb_geom_field
-        else gpd.points_from_xy(df.x, df.y)
-    )
-    return gpd.GeoDataFrame(df, geometry=geometry, crs=input_crs).to_crs(target_crs)
+
+    try:
+        if use_wkb_geom_field:
+            # Convert Buffer type to bytes
+            def convert_wkb(wkb_data):
+                if isinstance(wkb_data, dict) and wkb_data.get("type") == "Buffer":
+                    return bytes(wkb_data["data"])
+                return wkb_data
+
+            df[use_wkb_geom_field] = df[use_wkb_geom_field].apply(convert_wkb)
+            geometry = wkb.loads(df[use_wkb_geom_field], hex=True)
+        else:
+            geometry = gpd.points_from_xy(df.x, df.y)
+
+        return gpd.GeoDataFrame(df, geometry=geometry, crs=input_crs).to_crs(target_crs)
+    except Exception as e:
+        print(f"Error loading WKB: {e}")
+        raise
 
 
 def get_carto_total_rows(query):

@@ -29,7 +29,10 @@ shapely = "~=2.0.6"
 slack-sdk = "~=3.33.5"
 sqlalchemy = "~=2.0.36"
 tqdm = "~=4.67.1"
-
+great-expectations = "*"
+jsonpatch = "*"
+makefun = "*"
+pandera = {extras = ["geopandas"], version = "*"}
 
 [dev-packages]
 pytest = "~=8.3.4"

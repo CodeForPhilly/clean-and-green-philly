@@ -1,15 +1,11 @@
+import os
 import traceback
+from datetime import datetime
 
 import pandas as pd
 
 from config.config import tiles_file_id_prefix
 from config.psql import conn
-from new_etl.classes.data_diff import DiffReport
-from new_etl.classes.slack_reporters import (
-    send_dataframe_profile_to_slack,
-    send_error_to_slack,
-    send_pg_stats_to_slack,
-)
 from new_etl.data_utils import (
     access_process,
     city_owned_properties,
@@ -40,56 +36,6 @@ from new_etl.data_utils import (
     vacant_properties,
 )
 from new_etl.database import to_postgis_with_schema
-from new_etl.validation import (
-    CommunityGardensValidator,
-    KDEValidator,
-    LIViolationsValidator,
-    OwnerTypeValidator,
-    TreeCanopyValidator,
-    VacantValidator,
-)
-from new_etl.validation.access_process import AccessProcessValidator
-from new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
-from new_etl.validation.council_dists import CouncilDistrictsValidator
-from new_etl.validation.nbhoods import NeighborhoodsValidator
-from new_etl.validation.phs_properties import PHSPropertiesValidator
-from new_etl.validation.ppr_properties import PPRPropertiesValidator
-from new_etl.validation.rco_geoms import RCOGeomsValidator
-
-# Map services to their validators
-SERVICE_VALIDATORS = {
-    "community_gardens": CommunityGardensValidator(),
-    "drug_crime": KDEValidator().configure(
-        density_column="drug_crimes_density",
-        zscore_column="drug_crimes_density_zscore",
-        label_column="drug_crimes_density_label",
-        percentile_column="drug_crimes_density_percentile",
-    ),
-    "gun_crime": KDEValidator().configure(
-        density_column="gun_crimes_density",
-        zscore_column="gun_crimes_density_zscore",
-        label_column="gun_crimes_density_label",
-        percentile_column="gun_crimes_density_percentile",
-    ),
-    "li_complaints": KDEValidator().configure(
-        density_column="l_and_i_complaints_density",
-        zscore_column="l_and_i_complaints_density_zscore",
-        label_column="l_and_i_complaints_density_label",
-        percentile_column="l_and_i_complaints_density_percentile",
-    ),
-    "li_violations": LIViolationsValidator(),
-    "owner_type": OwnerTypeValidator(),
-    "vacant": VacantValidator(),
-    "council_dists": CouncilDistrictsValidator(),
-    "nbhoods": NeighborhoodsValidator(),
-    "rco_geoms": RCOGeomsValidator(),
-    "city_owned_properties": CityOwnedPropertiesValidator(),
-    "phs_properties": PHSPropertiesValidator(),
-    "ppr_properties": PPRPropertiesValidator(),
-    "tree_canopy": TreeCanopyValidator(),
-    "access_process": AccessProcessValidator(),
-    # Add other service validators as they are created
-}
 
 try:
     print("Starting ETL process.")
@@ -128,21 +74,6 @@ try:
         print(f"Running service: {service.__name__}")
         dataset = service(dataset)
 
-        # Run validation if a validator exists for this service
-        if service.__name__ in SERVICE_VALIDATORS:
-            validator = SERVICE_VALIDATORS[service.__name__]
-            is_valid, errors = validator.validate(dataset.gdf)
-
-            if not is_valid:
-                error_message = (
-                    f"Data validation failed for {service.__name__}:\n"
-                    + "\n".join(errors)
-                )
-                send_error_to_slack(error_message)
-                raise ValueError(error_message)
-
-            print(f"Validation passed for {service.__name__}")
-
     print("Applying final dataset transformations.")
     dataset = priority_level(dataset)
     dataset = access_process(dataset)
@@ -153,6 +84,7 @@ try:
         metadata_df.to_csv("tmp/metadata.csv", index=False)
     except Exception as e:
         print(f"Error saving metadata: {str(e)}")
+
     # Drop duplicates
     before_drop = dataset.gdf.shape[0]
     dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
@@ -175,20 +107,27 @@ try:
     )
 
     # Dataset profiling
-    send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
+    # send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
 
     # Save dataset to PostgreSQL
     to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
 
     # Generate and send diff report
-    diff_report = DiffReport()
-    diff_report.run()
+    # diff_report = DiffReport()
+    # diff_report.run()
 
-    send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
+    # send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
 
-    # Save local Parquet file
-    parquet_path = "tmp/test_output.parquet"
-    dataset.gdf.to_parquet(parquet_path)
+    # Add timestamp column for partitioning
+    current_time = datetime.now()
+    dataset.gdf["timestamp"] = current_time
+
+    # Create the base directory if it doesn't exist
+    parquet_path = "tmp/full_data.parquet"
+    os.makedirs(os.path.dirname(parquet_path), exist_ok=True)
+
+    # Save as a simple GeoParquet file
+    dataset.gdf.to_parquet(parquet_path, compression="snappy", index=False)
     print(f"Dataset saved to Parquet: {parquet_path}")
 
     # Publish only vacant properties
@@ -202,5 +141,5 @@ try:
 
 except Exception as e:
     error_message = f"Error in backend job: {str(e)}\n\n{traceback.format_exc()}"
-    send_error_to_slack(error_message)
+    #  send_error_to_slack(error_message)
     raise  # Optionally re-raise the exception

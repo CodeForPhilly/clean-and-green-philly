@@ -5,6 +5,8 @@ VACANT_PROPS_LAYERS_TO_LOAD = [
     "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Vacant_Indicators_Bldg/FeatureServer/0/",
 ]
 
+CITY_LIMITS_URL = "https://services.arcgis.com/fLeGjb7u4uXqeF9q/arcgis/rest/services/City_Limits/FeatureServer/0/"
+
 COUNCIL_DISTRICTS_TO_LOAD = [
     "https://services.arcgis.com/fLeGjb7u4uXqeF9q/arcgis/rest/services/Council_Districts_2024/FeatureServer/0/"
 ]
@@ -39,6 +41,7 @@ SELECT address, service_request_id, subject, status, service_name, service_code,
 FROM public_cases_fc 
 WHERE requested_datetime >= '{one_year_ago}' 
   AND lat IS NOT NULL
+  AND status ILIKE 'open'
   AND (
     subject ILIKE '%dumping%'
     OR subject ILIKE '%blight%'
@@ -62,7 +65,28 @@ DRUGCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, point_x AS x, p
 
 DELINQUENCIES_QUERY = "SELECT * FROM real_estate_tax_delinquencies"
 
-OPA_PROPERTIES_QUERY = "SELECT building_code_description, market_value, sale_date, sale_price, parcel_number, owner_1, owner_2, mailing_address_1, mailing_address_2, mailing_care_of, mailing_street, mailing_zip, mailing_city_state, zip_code, zoning, the_geom FROM opa_properties_public"
+OPA_PROPERTIES_QUERY = """
+    SELECT 
+        building_code_description,
+        market_value,
+        sale_date,
+        sale_price,
+        parcel_number as opa_id,
+        owner_1,
+        owner_2,
+        mailing_address_1,
+        mailing_address_2,
+        mailing_care_of,
+        mailing_street,
+        mailing_zip,
+        mailing_city_state,
+        zip_code,
+        zoning,
+        ST_GeometryType(the_geom) as geom_type,
+        ST_AsBinary(the_geom) as the_geom 
+    FROM opa_properties_public
+    WHERE the_geom IS NOT NULL
+"""
 
 PWD_PARCELS_QUERY = "SELECT *, the_geom FROM pwd_parcels"
 

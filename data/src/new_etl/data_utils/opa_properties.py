@@ -1,7 +1,11 @@
 import re
 
 import pandas as pd
+
+from config.config import FORCE_RELOAD
 from new_etl.metadata.metadata_utils import provide_metadata
+from new_etl.validation.base import GeoValidator
+from new_etl.validation.opa_properties import OPAPropertiesValidator
 
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import OPA_PROPERTIES_QUERY
@@ -51,7 +55,7 @@ def standardize_street(street: str) -> str:
     return street
 
 
-def create_standardized_address(row: pd.Series) -> str:
+def create_standardized_mailing_address(row: pd.Series) -> str:
     """
     Creates a standardized address from multiple address-related columns in a row.
 
@@ -74,11 +78,13 @@ def create_standardized_address(row: pd.Series) -> str:
         else "",
         row["mailing_zip"].strip() if pd.notnull(row["mailing_zip"]) else "",
     ]
-    standardized_address = ", ".join([part for part in parts if part])
-    return standardized_address.lower()
+    standardized_mailing_address = ", ".join([part for part in parts if part])
+    return standardized_mailing_address.lower()
 
 
 @provide_metadata()
+@GeoValidator.validate_output
+@OPAPropertiesValidator.validate_output
 def opa_properties() -> FeatureLayer:
     """
     Loads and processes OPA property data, standardizing addresses and cleaning geometries.
@@ -97,7 +103,7 @@ def opa_properties() -> FeatureLayer:
         owner_1 (str): The first owner of the property
         owner_2 (str): The second owner of the property
         building_code_description (str): The building code description
-        standardized_address (str): A standardized mailing address
+        standardized_mailing_address (str): A standardized mailing address
         geometry (geometry): The geometry of the property
 
     Source:
@@ -114,7 +120,7 @@ def opa_properties() -> FeatureLayer:
             "market_value",
             "sale_date",
             "sale_price",
-            "parcel_number",
+            "opa_id",
             "owner_1",
             "owner_2",
             "mailing_address_1",
@@ -128,35 +134,63 @@ def opa_properties() -> FeatureLayer:
             "zoning",
         ],
     )
-    # Rename columns
-    opa.gdf = opa.gdf.rename(columns={"parcel_number": "opa_id"})
 
-    # Convert 'sale_price' and 'market_value' to numeric values
-    opa.gdf["sale_price"] = pd.to_numeric(opa.gdf["sale_price"], errors="coerce")
-    opa.gdf["market_value"] = pd.to_numeric(opa.gdf["market_value"], errors="coerce")
+    # Process data in chunks if it's loaded from PostgreSQL
+    if not FORCE_RELOAD and opa.gdf is not None:
+        chunk_size = 100000  # Adjust based on memory constraints
+        total_rows = len(opa.gdf)
+        processed_chunks = []
 
-    # Add parcel_type
-    opa.gdf["parcel_type"] = (
-        opa.gdf["building_code_description"]
-        .str.contains("VACANT LAND", case=False, na=False)
-        .map({True: "Land", False: "Building"})
-    )
+        for start_idx in range(0, total_rows, chunk_size):
+            end_idx = min(start_idx + chunk_size, total_rows)
+            chunk = opa.gdf.iloc[start_idx:end_idx].copy()
 
-    # Standardize mailing street addresses
-    opa.gdf["mailing_street"] = (
-        opa.gdf["mailing_street"].astype(str).apply(standardize_street)
-    )
+            # Process chunk
+            chunk["sale_price"] = pd.to_numeric(chunk["sale_price"], errors="coerce")
+            chunk["market_value"] = pd.to_numeric(
+                chunk["market_value"], errors="coerce"
+            )
+            chunk["parcel_type"] = (
+                chunk["building_code_description"]
+                .str.contains("VACANT LAND", case=False, na=False)
+                .map({True: "Land", False: "Building"})
+            )
+            chunk["mailing_street"] = (
+                chunk["mailing_street"].astype(str).apply(standardize_street)
+            )
+            chunk["standardized_mailing_address"] = chunk.apply(
+                create_standardized_mailing_address, axis=1
+            )
+            chunk = chunk.loc[:, ~chunk.columns.str.startswith("mailing_")]
+            chunk["geometry"] = chunk["geometry"].make_valid()
+            chunk = chunk[~chunk.is_empty]
 
-    # Create standardized address column
-    opa.gdf["standardized_address"] = opa.gdf.apply(create_standardized_address, axis=1)
+            processed_chunks.append(chunk)
 
-    # Drop columns starting with "mailing_"
-    opa.gdf = opa.gdf.loc[:, ~opa.gdf.columns.str.startswith("mailing_")]
+        # Combine processed chunks
+        opa.gdf = pd.concat(processed_chunks, ignore_index=True)
+    else:
+        # Original processing for when loading from Carto API
+        opa.gdf["sale_price"] = pd.to_numeric(opa.gdf["sale_price"], errors="coerce")
+        opa.gdf["market_value"] = pd.to_numeric(
+            opa.gdf["market_value"], errors="coerce"
+        )
+        opa.gdf["parcel_type"] = (
+            opa.gdf["building_code_description"]
+            .str.contains("VACANT LAND", case=False, na=False)
+            .map({True: "Land", False: "Building"})
+        )
+        opa.gdf["mailing_street"] = (
+            opa.gdf["mailing_street"].astype(str).apply(standardize_street)
+        )
+        opa.gdf["standardized_mailing_address"] = opa.gdf.apply(
+            create_standardized_mailing_address, axis=1
+        )
+        opa.gdf = opa.gdf.loc[:, ~opa.gdf.columns.str.startswith("mailing_")]
+        opa.gdf["geometry"] = opa.gdf["geometry"].make_valid()
+        opa.gdf = opa.gdf[~opa.gdf.is_empty]
 
-    # Use GeoSeries.make_valid to repair geometries
-    opa.gdf["geometry"] = opa.gdf["geometry"].make_valid()
-
-    # Drop empty geometries
-    opa.gdf = opa.gdf[~opa.gdf.is_empty]
+    # Validate city limits
+    GeoValidator.validate_city_limits(opa.gdf)
 
     return opa

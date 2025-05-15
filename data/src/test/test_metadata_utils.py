@@ -1,6 +1,7 @@
 import unittest
 
 import geopandas as gpd
+
 from new_etl.classes.featurelayer import FeatureLayer
 
 from ..new_etl.metadata.metadata_utils import (
@@ -77,7 +78,7 @@ def stub_load_opa():
         owner_1 (type): desc
         owner_2 (type): desc
         building_code_description (str): desc
-        standardized_address (str): A standardized mailing address
+        standardized_mailing_address (str): A standardized mailing address
         geometry (type): desc
 
     Source:
