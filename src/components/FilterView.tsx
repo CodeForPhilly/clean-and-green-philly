@@ -21,8 +21,8 @@ const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
       <ThemeButton
         color="secondary"
         className="right-4 lg:right-[24px] absolute top-8 min-w-[3rem]"
-        aria-label="Close filter panel"
-        startContent={<PiX />}
+        label={'Reset'}
+        aria-label="Reset filters"
         id="close-filter-button" // Add an ID to this button
         onPress={() => {
           updateCurrentView('filter');
