@@ -1,13 +1,14 @@
-import numpy as np
-import rasterio
-from awkde.awkde import GaussianKDE
-from classes.featurelayer import FeatureLayer
-from config.config import USE_CRS
-from rasterio.transform import Affine
-from tqdm import tqdm
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 import mapclassify
+import numpy as np
+import rasterio
+from awkde.awkde import GaussianKDE
+from rasterio.transform import Affine
+from tqdm import tqdm
+
+from src.classes.featurelayer import FeatureLayer
+from src.config.config import USE_CRS
 
 resolution = 1320  # 0.25 miles (in feet, bc the CRS is 2272)
 batch_size = 100000

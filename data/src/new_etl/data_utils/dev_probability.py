@@ -3,7 +3,7 @@ import jenkspy
 import pandas as pd
 import requests
 
-from config.config import USE_CRS
+from src.config.config import USE_CRS
 
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import CENSUS_BGS_URL, PERMITS_QUERY

@@ -1,8 +1,8 @@
 import geopandas as gpd
-from classes.featurelayer import FeatureLayer
-from constants.services import NBHOODS_URL
 
-from config.config import USE_CRS
+from src.classes.featurelayer import FeatureLayer
+from src.config.config import USE_CRS
+from src.constants.services import NBHOODS_URL
 
 
 def nbhoods(primary_featurelayer):

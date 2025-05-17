@@ -3,7 +3,7 @@ from typing import List, Tuple
 import geopandas as gpd
 import pandas as pd
 
-from config.config import USE_CRS
+from src.config.config import USE_CRS
 
 from ..classes.featurelayer import FeatureLayer
 from ..classes.service_validator import ServiceValidator

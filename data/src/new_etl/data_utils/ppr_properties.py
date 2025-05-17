@@ -3,7 +3,7 @@ import io
 import geopandas as gpd
 import requests
 
-from config.config import USE_CRS
+from src.config.config import USE_CRS
 
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import PPR_PROPERTIES_TO_LOAD

@@ -30,7 +30,7 @@ ENV GDAL_CONFIG=/usr/bin/gdal-config
 RUN pip install pipenv
 
 # Copy the Pipfile and Pipfile.lock from the src directory
-COPY src/Pipfile src/Pipfile.lock ./
+COPY Pipfile Pipfile.lock ./
 
 # update pipfile
 RUN pipenv lock

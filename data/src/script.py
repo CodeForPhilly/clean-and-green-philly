@@ -1,41 +1,35 @@
 import time
 import traceback
 
-from classes.backup_archive_database import BackupArchiveDatabase
-from classes.diff_report import DiffReport
-from classes.slack_error_reporter import send_error_to_slack
-from config.config import BACKUP_SCHEMA, FORCE_RELOAD, tiles_file_id_prefix
-from config.psql import conn
-from data_utils.access_process import access_process
-from data_utils.city_owned_properties import city_owned_properties
-from data_utils.community_gardens import community_gardens
-from data_utils.conservatorship import conservatorship
-from data_utils.contig_neighbors import contig_neighbors
-from data_utils.deliquencies import deliquencies
-from data_utils.dev_probability import dev_probability
-from data_utils.drug_crimes import drug_crimes
-from data_utils.gun_crimes import gun_crimes
-from data_utils.imm_dang_buildings import imm_dang_buildings
-from data_utils.l_and_i import l_and_i
-from data_utils.nbhoods import nbhoods
-from data_utils.negligent_devs import negligent_devs
-from data_utils.opa_properties import opa_properties
-from data_utils.owner_type import owner_type
-from data_utils.park_priority import park_priority
-from data_utils.phs_properties import phs_properties
-from data_utils.ppr_properties import ppr_properties
-from data_utils.priority_level import priority_level
-from data_utils.rco_geoms import rco_geoms
-from data_utils.tactical_urbanism import tactical_urbanism
-from data_utils.tree_canopy import tree_canopy
-from data_utils.unsafe_buildings import unsafe_buildings
-from data_utils.vacant_properties import vacant_properties
-
-
-import traceback
-
-from classes.slack_error_reporter import send_error_to_slack
-
+from src.classes.backup_archive_database import BackupArchiveDatabase
+from src.classes.diff_report import DiffReport
+from src.classes.slack_error_reporter import send_error_to_slack
+from src.config.config import BACKUP_SCHEMA, FORCE_RELOAD, tiles_file_id_prefix
+from src.config.psql import conn
+from src.data_utils.access_process import access_process
+from src.data_utils.city_owned_properties import city_owned_properties
+from src.data_utils.community_gardens import community_gardens
+from src.data_utils.conservatorship import conservatorship
+from src.data_utils.contig_neighbors import contig_neighbors
+from src.data_utils.deliquencies import deliquencies
+from src.data_utils.dev_probability import dev_probability
+from src.data_utils.drug_crimes import drug_crimes
+from src.data_utils.gun_crimes import gun_crimes
+from src.data_utils.imm_dang_buildings import imm_dang_buildings
+from src.data_utils.l_and_i import l_and_i
+from src.data_utils.nbhoods import nbhoods
+from src.data_utils.negligent_devs import negligent_devs
+from src.data_utils.opa_properties import opa_properties
+from src.data_utils.owner_type import owner_type
+from src.data_utils.park_priority import park_priority
+from src.data_utils.phs_properties import phs_properties
+from src.data_utils.ppr_properties import ppr_properties
+from src.data_utils.priority_level import priority_level
+from src.data_utils.rco_geoms import rco_geoms
+from src.data_utils.tactical_urbanism import tactical_urbanism
+from src.data_utils.tree_canopy import tree_canopy
+from src.data_utils.unsafe_buildings import unsafe_buildings
+from src.data_utils.vacant_properties import vacant_properties
 
 try:
     services = [

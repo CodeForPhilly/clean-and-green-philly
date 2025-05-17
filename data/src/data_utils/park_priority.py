@@ -4,12 +4,13 @@ from io import BytesIO
 from typing import List, Union
 
 import geopandas as gpd
+import pyogrio
 import requests
 from bs4 import BeautifulSoup
-from classes.featurelayer import FeatureLayer
-from config.config import USE_CRS
 from tqdm import tqdm
-import pyogrio
+
+from src.classes.featurelayer import FeatureLayer
+from src.config.config import USE_CRS
 
 
 def get_latest_shapefile_url() -> str:

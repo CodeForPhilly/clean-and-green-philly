@@ -4,7 +4,7 @@ import pandas as pd
 from slack_sdk import WebClient
 from sqlalchemy import text
 
-from config.psql import conn
+from src.config.psql import conn
 
 
 class DiffReport:
@@ -32,7 +32,7 @@ class DiffReport:
         """
         # Step 1: Retrieve the two most recent timestamps
         query_timestamps = text(f"""
-        SELECT DISTINCT create_date 
+        SELECT DISTINCT create_date
         FROM {self.table_name}
         ORDER BY create_date DESC
         LIMIT 2;
