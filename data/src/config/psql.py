@@ -2,7 +2,7 @@ import os
 
 from sqlalchemy import create_engine
 
-from config.config import is_docker
+from src.config.config import is_docker
 
 
 def get_db_url():

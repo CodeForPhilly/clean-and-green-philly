@@ -7,17 +7,17 @@ from email.mime.text import MIMEText
 
 from slack_sdk import WebClient
 
-from classes.backup_archive_database import backup_schema_name
-from classes.featurelayer import google_cloud_bucket
-from config.config import (
+from src.classes.backup_archive_database import backup_schema_name
+from src.classes.featurelayer import google_cloud_bucket
+from src.config.config import (
     from_email,
     log_level,
     report_to_email,
     report_to_slack_channel,
     smtp_server,
 )
-from config.psql import conn, url
-from data_utils.utils import mask_password
+from src.config.psql import conn, url
+from src.data_utils.utils import mask_password
 
 log.basicConfig(level=log_level)
 

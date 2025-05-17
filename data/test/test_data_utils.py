@@ -7,11 +7,11 @@ import geopandas as gpd
 import numpy as np
 from shapely.geometry import LineString, MultiPolygon, Point, Polygon
 
-from config.config import USE_CRS
-from data_utils.park_priority import get_latest_shapefile_url, park_priority
-from data_utils.ppr_properties import ppr_properties
-from data_utils.vacant_properties import vacant_properties
-from new_etl.data_utils.pwd_parcels import (
+from src.config.config import USE_CRS
+from src.data_utils.park_priority import get_latest_shapefile_url, park_priority
+from src.data_utils.ppr_properties import ppr_properties
+from src.data_utils.vacant_properties import vacant_properties
+from src.new_etl.data_utils.pwd_parcels import (
     merge_pwd_parcels_gdf,
     transform_pwd_parcels_gdf,
 )
@@ -42,7 +42,7 @@ class TestDataUtils(unittest.TestCase):
 
     def setUp(self):
         # Set up the mocks that will be used in each test
-        self.patcher1 = patch("data_utils.vacant_properties.google_cloud_bucket")
+        self.patcher1 = patch("src.data_utils.vacant_properties.google_cloud_bucket")
         self.patcher2 = patch("geopandas.read_file")
 
         self.mock_gcs = self.patcher1.start()
@@ -71,7 +71,7 @@ class TestDataUtils(unittest.TestCase):
         self.assertTrue(url.startswith("https://"))
         self.assertTrue(url.endswith(".zip"))
 
-    @patch("data_utils.park_priority.requests.get")
+    @patch("src.data_utils.park_priority.requests.get")
     def test_get_latest_shapefile_url_mock(self, mock_get):
         """
         Test the get_latest_shapefile_url function.
@@ -86,7 +86,7 @@ class TestDataUtils(unittest.TestCase):
         self.assertEqual(url, "https://example.com/shapefile.zip")
 
     @patch(
-        "data_utils.park_priority.requests.get"
+        "src.data_utils.park_priority.requests.get"
     )  # Mock requests.get globally in park_priority
     @patch("geopandas.read_file")
     @patch("geopandas.GeoDataFrame.to_file")  # Mock to_file to prevent actual writing

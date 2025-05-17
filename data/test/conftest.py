@@ -8,7 +8,9 @@ from google.cloud.storage import Bucket
 def mock_gcp_bucket(monkeypatch):
     mock_bucket = MagicMock(spec=Bucket)
 
-    monkeypatch.setattr("classes.featurelayer.google_cloud_bucket", lambda: mock_bucket)
+    monkeypatch.setattr(
+        "src.classes.featurelayer.google_cloud_bucket", lambda: mock_bucket
+    )
 
     return mock_bucket
 

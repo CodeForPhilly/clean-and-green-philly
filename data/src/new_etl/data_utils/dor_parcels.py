@@ -1,8 +1,10 @@
+import geopandas as gpd
+from shapely.strtree import STRtree
+
+from src.config.config import USE_CRS
+
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import DOR_PARCELS_URL
-import geopandas as gpd
-from config.config import USE_CRS
-from shapely.strtree import STRtree
 
 
 def dor_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:

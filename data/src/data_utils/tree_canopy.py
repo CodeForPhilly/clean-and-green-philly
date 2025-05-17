@@ -1,9 +1,11 @@
-import requests
 import io
 import zipfile
+
 import geopandas as gpd
-from classes.featurelayer import FeatureLayer
-from config.config import USE_CRS
+import requests
+
+from src.classes.featurelayer import FeatureLayer
+from src.config.config import USE_CRS
 
 
 def tree_canopy(primary_featurelayer):
