@@ -14,7 +14,7 @@ interface FilterViewProps {
   updateCurrentView: (view: BarClickOptions) => void;
 }
 
-const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
+const FilterView: FC<FilterViewProps> = () => {
   const { dispatch } = useFilter();
 
   const onResetButtonPressed = () => {

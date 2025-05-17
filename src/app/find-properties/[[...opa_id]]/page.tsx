@@ -288,7 +288,7 @@ const MapPage = ({ params }: MapPageProps) => {
                 </div>
               </div>
             ) : currentView === 'filter' ? (
-              <FilterView updateCurrentView={updateCurrentView} />
+              <FilterView />
             ) : (
               <PropertyDetailSection
                 featuresInView={featuresInView}
