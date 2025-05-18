@@ -136,6 +136,9 @@ def opa_properties() -> FeatureLayer:
     opa.gdf["sale_price"] = pd.to_numeric(opa.gdf["sale_price"], errors="coerce")
     opa.gdf["market_value"] = pd.to_numeric(opa.gdf["market_value"], errors="coerce")
 
+    # Convert sale_date to datetime
+    opa.gdf["sale_date"] = pd.to_datetime(opa.gdf["sale_date"])
+
     # Add parcel_type
     opa.gdf["parcel_type"] = (
         opa.gdf["building_code_description"]

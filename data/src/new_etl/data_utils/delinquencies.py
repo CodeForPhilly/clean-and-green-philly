@@ -73,10 +73,25 @@ def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         primary_featurelayer.gdf["num_years_owed"], errors="coerce"
     ).astype("Int64")  # Using Int64 to allow NA values
 
+    # Convert total_due and total_assessment to float, allowing NA values
+    primary_featurelayer.gdf["total_due"] = pd.to_numeric(
+        primary_featurelayer.gdf["total_due"], errors="coerce"
+    )
+    primary_featurelayer.gdf["total_assessment"] = pd.to_numeric(
+        primary_featurelayer.gdf["total_assessment"], errors="coerce"
+    )
+
+    # Convert most_recent_year_owed to datetime
+    primary_featurelayer.gdf["most_recent_year_owed"] = pd.to_datetime(
+        primary_featurelayer.gdf["most_recent_year_owed"].astype(str) + "-12-31"
+    )
+
+    # Fill missing values with "NA" for string columns
+    for col in ["total_due", "total_assessment"]:
+        primary_featurelayer.gdf[col] = primary_featurelayer.gdf[col].fillna("NA")
+
     delinquency_cols = [
-        "total_due",
         "most_recent_year_owed",
-        "total_assessment",
     ]
     primary_featurelayer.gdf[delinquency_cols] = primary_featurelayer.gdf[
         delinquency_cols
