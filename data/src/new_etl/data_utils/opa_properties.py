@@ -98,7 +98,7 @@ def opa_properties() -> FeatureLayer:
         owner_1 (str): The first owner of the property
         owner_2 (str): The second owner of the property
         building_code_description (str): The building code description
-        standardized_mailing_address (str): A standardized mailing address
+        standardized_mailing_address (str): A standardized mailing address for the property owner
         geometry (geometry): The geometry of the property
 
     Source:
