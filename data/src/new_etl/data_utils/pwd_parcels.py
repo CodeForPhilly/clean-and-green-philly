@@ -82,7 +82,10 @@ def pwd_parcels(primary_feature_layer):
     """
     Updates the primary feature layer with validated geometries from PWD parcels.
     Identifies condominium units by finding duplicate geometries and replacing them
-    with parcel geometries from PWD.
+    with parcel geometries from PWD. We discovered that approximately 33,000 condo units
+    were listed with duplicate point geometries in various locations. This function
+    replaces these geometries with the associated parcel geometries from PWD and adds
+    a flag to identify condominium units.
 
     Args:
         primary_feature_layer: The primary feature layer to update
@@ -92,6 +95,15 @@ def pwd_parcels(primary_feature_layer):
         - Updated geometries from PWD parcels
         - New field:
           - is_condo_unit (boolean): Whether the property is a condominium unit
+
+    Columns updated:
+        geometry: Replaces point geometries with parcel geometries from PWD for condominium units
+        is_condo_unit (boolean): Flags properties that are condominium units, identified by having duplicate geometries
+
+    Known issues:
+        Approximately 33,000 condominium units were originally listed with duplicate point geometries
+        in various locations. These have been replaced with the associated parcel geometries from PWD
+        and flagged as condominium units.
     """
     # Get PWD parcels data
     pwd_parcels = FeatureLayer(
