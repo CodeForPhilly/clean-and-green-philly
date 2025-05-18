@@ -55,10 +55,19 @@ def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         "opa_number",
     )
 
+    # Convert string columns to boolean
+    primary_featurelayer.gdf["is_actionable"] = primary_featurelayer.gdf[
+        "is_actionable"
+    ].map({"Y": True, "N": False, "NA": False})
+    primary_featurelayer.gdf["sheriff_sale"] = primary_featurelayer.gdf[
+        "sheriff_sale"
+    ].map({"Y": True, "N": False})
+    primary_featurelayer.gdf["payment_agreement"] = primary_featurelayer.gdf[
+        "payment_agreement"
+    ].map({"Y": True, "N": False, "NA": False})
+
     delinquency_cols = [
         "total_due",
-        "is_actionable",
-        "payment_agreement",
         "num_years_owed",
         "most_recent_year_owed",
         "total_assessment",
@@ -66,9 +75,5 @@ def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     primary_featurelayer.gdf[delinquency_cols] = primary_featurelayer.gdf[
         delinquency_cols
     ].fillna("NA")
-
-    primary_featurelayer.gdf["sheriff_sale"] = primary_featurelayer.gdf[
-        "sheriff_sale"
-    ].fillna("N")
 
     return primary_featurelayer

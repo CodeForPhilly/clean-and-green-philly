@@ -35,7 +35,7 @@ def imm_dang_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         cols=["opa_account_num"],
     )
 
-    imm_dang_buildings.gdf.loc[:, "imm_dang_building"] = "Y"
+    imm_dang_buildings.gdf.loc[:, "imm_dang_building"] = True
 
     imm_dang_buildings.gdf = imm_dang_buildings.gdf.rename(
         columns={"opa_account_num": "opa_number"}
@@ -48,6 +48,6 @@ def imm_dang_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     primary_featurelayer.gdf.loc[:, "imm_dang_building"] = primary_featurelayer.gdf[
         "imm_dang_building"
-    ].fillna("N")
+    ].fillna(False)
 
     return primary_featurelayer

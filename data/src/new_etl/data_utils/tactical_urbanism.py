@@ -30,12 +30,12 @@ def tactical_urbanism(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     for idx, row in primary_featurelayer.gdf.iterrows():
         if (
             row["parcel_type"] == "Land"
-            and row["unsafe_building"] == "N"
-            and row["imm_dang_building"] == "N"
+            and not row["unsafe_building"]
+            and not row["imm_dang_building"]
         ):
-            tactical_urbanism = "Yes"
+            tactical_urbanism = True
         else:
-            tactical_urbanism = "No"
+            tactical_urbanism = False
 
         tactical_urbanism_values.append(tactical_urbanism)
 

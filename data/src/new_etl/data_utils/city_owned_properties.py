@@ -85,9 +85,13 @@ def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         "city_owner_agency",
     ] = "City of Philadelphia"
 
+    # Convert side_yard_eligible to boolean
+    primary_featurelayer.gdf["side_yard_eligible"] = primary_featurelayer.gdf[
+        "side_yard_eligible"
+    ].map({"Yes": True, "No": False})
     primary_featurelayer.gdf.loc[:, "side_yard_eligible"] = primary_featurelayer.gdf[
         "side_yard_eligible"
-    ].fillna("No")
+    ].fillna(False)
 
     # Update all instances where city_owner_agency is "PLB" to "Land Bank (PHDC)"
     primary_featurelayer.gdf.loc[
