@@ -17,7 +17,7 @@ def negligent_devs(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         n_vacant_properties_owned (int): Number of vacant properties owned by the developer
 
     Primary Feature Layer Columns Referenced:
-        opa_id, vacant, city_owner_agency, standardized_address
+        opa_id, vacant, city_owner_agency, standardized_mailing_address
 
     Tagline:
         Identify negligent developers
@@ -28,9 +28,9 @@ def negligent_devs(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     devs = primary_featurelayer.gdf
 
-    # Count total properties and vacant properties by standardized_address
+    # Count total properties and vacant properties by standardized_mailing_address
     property_counts = (
-        devs.groupby("standardized_address")
+        devs.groupby("standardized_mailing_address")
         .agg(
             n_total_properties_owned=("opa_id", "size"),
             n_vacant_properties_owned=("vacant", "sum"),
@@ -40,7 +40,7 @@ def negligent_devs(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     # Merge the property counts back to the main DataFrame
     primary_featurelayer.gdf = primary_featurelayer.gdf.merge(
-        property_counts, on="standardized_address", how="left"
+        property_counts, on="standardized_mailing_address", how="left"
     )
 
     # Identify negligent developers: non-city owned entities owning 5+ vacant properties

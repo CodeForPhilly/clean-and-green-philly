@@ -1,6 +1,7 @@
 import re
 
 import pandas as pd
+
 from new_etl.metadata.metadata_utils import provide_metadata
 
 from ..classes.featurelayer import FeatureLayer
@@ -51,7 +52,7 @@ def standardize_street(street: str) -> str:
     return street
 
 
-def create_standardized_address(row: pd.Series) -> str:
+def create_standardized_mailing_address(row: pd.Series) -> str:
     """
     Creates a standardized address from multiple address-related columns in a row.
 
@@ -74,8 +75,8 @@ def create_standardized_address(row: pd.Series) -> str:
         else "",
         row["mailing_zip"].strip() if pd.notnull(row["mailing_zip"]) else "",
     ]
-    standardized_address = ", ".join([part for part in parts if part])
-    return standardized_address.lower()
+    standardized_mailing_address = ", ".join([part for part in parts if part])
+    return standardized_mailing_address.lower()
 
 
 @provide_metadata()
@@ -97,7 +98,7 @@ def opa_properties() -> FeatureLayer:
         owner_1 (str): The first owner of the property
         owner_2 (str): The second owner of the property
         building_code_description (str): The building code description
-        standardized_address (str): A standardized mailing address
+        standardized_mailing_address (str): A standardized mailing address
         geometry (geometry): The geometry of the property
 
     Source:
@@ -148,7 +149,9 @@ def opa_properties() -> FeatureLayer:
     )
 
     # Create standardized address column
-    opa.gdf["standardized_address"] = opa.gdf.apply(create_standardized_address, axis=1)
+    opa.gdf["standardized_mailing_address"] = opa.gdf.apply(
+        create_standardized_mailing_address, axis=1
+    )
 
     # Drop columns starting with "mailing_"
     opa.gdf = opa.gdf.loc[:, ~opa.gdf.columns.str.startswith("mailing_")]
