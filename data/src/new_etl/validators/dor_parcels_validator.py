@@ -6,6 +6,9 @@ from .schema_drift_validator import SchemaDriftValidator
 class DORParcelsValidator(SchemaDriftValidator):
     """Validator for DOR Parcels dataset schema drift"""
 
+    def __init__(self):
+        super().__init__(size_tolerance=0.10)  # 10% tolerance
+
     @property
     def expected_columns(self) -> Set[str]:
         return {
