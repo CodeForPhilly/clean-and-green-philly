@@ -24,63 +24,76 @@ def transform_pwd_parcels_gdf(pwd_parcels_gdf: gpd.GeoDataFrame):
         raise ValueError("Some geometries are not polygons or multipolygons.")
 
 
-def merge_pwd_parcels_gdf(
-    primary_featurelayer_gdf: gpd.GeoDataFrame, pwd_parcels_gdf: gpd.GeoDataFrame
-) -> gpd.GeoDataFrame:
-    # Join geometries from PWD parcels
-    # Temporarily drop geometry from the primary feature layer
+def merge_pwd_parcels_gdf(primary_gdf, pwd_parcels_gdf):
+    """
+    Merge geometries from PWD parcels into the primary feature layer.
+    Identifies condominium units by finding duplicate geometries in the primary layer
+    and replacing them with parcel geometries from PWD.
 
-    # Filter PWD parcels to just the opa_ids in primary
-    opa_ids_in_primary = primary_featurelayer_gdf["opa_id"].unique()
-    pwd_subset = pwd_parcels_gdf[pwd_parcels_gdf["opa_id"].isin(opa_ids_in_primary)]
+    Args:
+        primary_gdf (GeoDataFrame): The primary feature layer
+        pwd_parcels_gdf (GeoDataFrame): The PWD parcels GeoDataFrame
 
-    # Count how many of those are missing geometry
-    no_geometry_count = pwd_subset["geometry"].isnull().sum()
-    pwd_parcels_gdf_unique_opa_id = pwd_parcels_gdf.drop_duplicates(subset="opa_id")
-    primary_featurelayer_gdf_unique_opa_id = primary_featurelayer_gdf.drop_duplicates(
-        subset="opa_id"
+    Returns:
+        GeoDataFrame: The merged GeoDataFrame with updated geometries and condo flags
+    """
+    # Add condo flag column
+    primary_gdf["is_condo_unit"] = False
+
+    # Find duplicate geometries in primary layer
+    duplicate_geoms = primary_gdf.groupby(primary_gdf.geometry.astype(str)).filter(
+        lambda x: len(x) > 1
     )
 
-    pwd_parcels_gdf_indexed = pwd_parcels_gdf_unique_opa_id.set_index("opa_id")
-    merged_gdf_indexed = primary_featurelayer_gdf_unique_opa_id.set_index("opa_id")
+    # For each duplicate geometry
+    for geom_str, group in duplicate_geoms.groupby(primary_gdf.geometry.astype(str)):
+        # Get the matching parcel from PWD
+        matching_parcel = pwd_parcels_gdf[
+            pwd_parcels_gdf["brt_id"].isin(group["opa_id"])
+        ]
 
-    # ISSUE: This update and the other transformations might be incorrect
-    merged_gdf_indexed.update(
-        pwd_parcels_gdf_indexed[["geometry"]],
-    )
-    merged_gdf = merged_gdf_indexed.reset_index()
+        if not matching_parcel.empty:
+            # Get the parcel geometry
+            parcel_geom = matching_parcel.iloc[0]["geometry"]
 
-    print("Number of observations retaining point geometry:", no_geometry_count)
-    return merged_gdf
+            # Update all units with this geometry to use the parcel geometry
+            primary_gdf.loc[group.index, "geometry"] = parcel_geom
+            primary_gdf.loc[group.index, "is_condo_unit"] = True
+
+    # For non-condo units, update geometries from PWD parcels where available
+    for idx, row in primary_gdf.iterrows():
+        if not row["is_condo_unit"]:
+            pwd_geom = (
+                pwd_parcels_gdf[pwd_parcels_gdf["brt_id"] == row["opa_id"]][
+                    "geometry"
+                ].iloc[0]
+                if not pwd_parcels_gdf[pwd_parcels_gdf["brt_id"] == row["opa_id"]].empty
+                else None
+            )
+
+            if pwd_geom:
+                primary_gdf.loc[idx, "geometry"] = pwd_geom
+
+    return primary_gdf
 
 
 @provide_metadata()
-def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def pwd_parcels(primary_feature_layer):
     """
-    Updates the primary feature layer by replacing its geometry column with validated
-    geometries from PWD parcels data. Retains point geometry for rows with no polygon
-    geometry available.
+    Updates the primary feature layer with validated geometries from PWD parcels.
+    Identifies condominium units by finding duplicate geometries and replacing them
+    with parcel geometries from PWD.
 
     Args:
-        primary_featurelayer (FeatureLayer): The primary feature layer to update.
+        primary_feature_layer: The primary feature layer to update
 
     Returns:
-        FeatureLayer: The updated primary feature layer with geometries replaced
-                      by those from PWD parcels or retained from the original layer if no match.
-
-    Columns Updated:
-        geometry: The geometry column is updated with validated geometries from PWD parcels.
-
-    Primary Feature Layer Columns Referenced:
-        opa_id, geometry
-
-    Tagline:
-        Improve geometry with PWD parcels data.
-
-    Source:
-        https://phl.carto.com/api/v2/sql
+        The updated primary feature layer with:
+        - Updated geometries from PWD parcels
+        - New field:
+          - is_condo_unit (boolean): Whether the property is a condominium unit
     """
-    # Load PWD parcels
+    # Get PWD parcels data
     pwd_parcels = FeatureLayer(
         name="PWD Parcels",
         carto_sql_queries=PWD_PARCELS_QUERY,
@@ -88,12 +101,12 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         cols=["brt_id"],
     )
 
-    pwd_parcels_gdf = pwd_parcels.gdf
+    # Transform PWD parcels data
+    pwd_parcels_gdf = transform_pwd_parcels_gdf(pwd_parcels.gdf)
 
-    transform_pwd_parcels_gdf(pwd_parcels_gdf)
-
-    primary_featurelayer.gdf = merge_pwd_parcels_gdf(
-        primary_featurelayer.gdf, pwd_parcels_gdf
+    # Merge geometries and identify condos
+    primary_feature_layer.gdf = merge_pwd_parcels_gdf(
+        primary_feature_layer.gdf, pwd_parcels_gdf
     )
 
-    return primary_featurelayer
+    return primary_feature_layer
