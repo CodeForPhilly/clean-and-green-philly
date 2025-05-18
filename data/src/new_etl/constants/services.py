@@ -98,3 +98,7 @@ CENSUS_BGS_URL = (
 DOR_PARCELS_URL = (
     "https://opendata.arcgis.com/datasets/1c57dd1b3ff84449a4b0e3fb29d3cafd_0.geojson"
 )
+
+PHILLY_BOUNDARY_URL = (
+    "https://opendata.arcgis.com/datasets/405ec3da942d4e20869d4e1449a2be48_0.geojson"
+)

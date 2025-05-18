@@ -3,7 +3,7 @@ from typing import Any, Callable
 
 import geopandas as gpd
 
-from ..services import PHILLY_BOUNDARY_URL
+from ..constants.services import PHILLY_BOUNDARY_URL
 from .base_validator import BaseValidator
 
 # Load Philadelphia boundary and convert to EPSG:2272
