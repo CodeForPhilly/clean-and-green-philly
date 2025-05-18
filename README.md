@@ -24,7 +24,7 @@ Likewise, you can view the [very first iteration as an ArcGIS Storymap here](htt
 
 **May 1, 2024:** Clean & Green Philly won second place in the [36th annual NJ DEP Mapping Contest's](https://dep.nj.gov/gis/36th-mapping-contest/) Dashboard category!
 
-**April 26, 2024:** On behalf of Clean & Green Philly, Nissim gave testimony to a Philadelphia City Council hearing on the uses of data and tech to reduce gun violence through place-based interventions. His statement is [available here](/docs/City%20Council%20Testimony%20Final,%20April%2026,%202024.pdf).
+**April 26, 2024:** On behalf of Clean & Green Philly, Nissim gave testimony to a Philadelphia City Council hearing on the uses of data and tech to reduce gun violence through place-based interventions. His statement is [available here](/docs/PROJECT_BACKGROUND/City%20Council%20Testimony%20Final,%20April%2026,%202024.pdf).
 
 **April 21, 2024:** We have officially launched v1.0.0! The website is now live at [www.cleanandgreenphilly.org](https://www.cleanandgreenphilly.org/).
 
