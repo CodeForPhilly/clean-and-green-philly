@@ -10,11 +10,7 @@ import MultiSelect from './Filters/MultiSelect';
 import Panels from './Filters/Panels';
 import { useFilter } from '@/context/FilterContext';
 
-interface FilterViewProps {
-  updateCurrentView: (view: BarClickOptions) => void;
-}
-
-const FilterView: FC<FilterViewProps> = () => {
+const FilterView: FC = () => {
   const { dispatch } = useFilter();
 
   const onResetButtonPressed = () => {
