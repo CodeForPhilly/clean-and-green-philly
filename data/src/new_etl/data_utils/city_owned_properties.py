@@ -1,9 +1,11 @@
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
+from ..validators.city_owned_properties_validator import validate_city_owned_properties
 
 
 @provide_metadata()
+@validate_city_owned_properties
 def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Processes city-owned property data by joining it with the primary feature layer,

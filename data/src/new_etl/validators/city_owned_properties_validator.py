@@ -1,6 +1,11 @@
 from typing import Optional, Set
 
-from .schema_drift_validator import SchemaDriftValidator
+from new_etl.validators.base_validator import BaseValidator
+from new_etl.validators.geometry_validator import GeometryValidator
+from new_etl.validators.schema_drift_validator import (
+    SchemaDriftValidator,
+    validate_schema_drift,
+)
 
 
 class CityOwnedPropertiesValidator(SchemaDriftValidator):
@@ -44,3 +49,12 @@ class CityOwnedPropertiesValidator(SchemaDriftValidator):
     @property
     def expected_record_count(self) -> Optional[int]:
         return 7_796
+
+
+def validate_city_owned_properties(func):
+    """Decorator to validate city owned properties data."""
+    return GeometryValidator.validate(
+        BaseValidator.validate(
+            validate_schema_drift(CityOwnedPropertiesValidator())(func)
+        )
+    )
