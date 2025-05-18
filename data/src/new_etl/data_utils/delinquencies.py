@@ -1,3 +1,5 @@
+import pandas as pd
+
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import DELINQUENCIES_QUERY
 from ..metadata.metadata_utils import provide_metadata
@@ -66,9 +68,13 @@ def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         "payment_agreement"
     ].map({"Y": True, "N": False, "NA": False})
 
+    # Convert num_years_owed to integer, allowing NA values
+    primary_featurelayer.gdf["num_years_owed"] = pd.to_numeric(
+        primary_featurelayer.gdf["num_years_owed"], errors="coerce"
+    ).astype("Int64")  # Using Int64 to allow NA values
+
     delinquency_cols = [
         "total_due",
-        "num_years_owed",
         "most_recent_year_owed",
         "total_assessment",
     ]
