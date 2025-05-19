@@ -1,7 +1,6 @@
 'use client';
 
 import { FC } from 'react';
-import { PiX } from 'react-icons/pi';
 import { ThemeButton } from './ThemeButton';
 import { BarClickOptions } from '@/app/find-properties/[[...opa_id]]/page';
 import { rcos, neighborhoods, zoning } from './Filters/filterOptions';
@@ -9,24 +8,29 @@ import FilterDescription from './Filters/FilterDescription';
 import ButtonGroup from './Filters/ButtonGroup';
 import MultiSelect from './Filters/MultiSelect';
 import Panels from './Filters/Panels';
+import { useFilter } from '@/context/FilterContext';
 
-interface FilterViewProps {
-  updateCurrentView: (view: BarClickOptions) => void;
-}
+const FilterView: FC = () => {
+  const { dispatch } = useFilter();
 
-const FilterView: FC<FilterViewProps> = ({ updateCurrentView }) => {
+  const onResetButtonPressed = () => {
+    dispatch({
+      type: 'CLEAR_DIMENSIONS',
+      property: 'reset',
+      dimensions: [],
+    });
+  };
+
   return (
     <div className="relative p-6">
       {/* Add ID to the close button */}
       <ThemeButton
         color="secondary"
         className="right-4 lg:right-[24px] absolute top-8 min-w-[3rem]"
-        aria-label="Close filter panel"
-        startContent={<PiX />}
+        label={'Reset'}
+        aria-label="Reset filters"
         id="close-filter-button" // Add an ID to this button
-        onPress={() => {
-          updateCurrentView('filter');
-        }}
+        onPress={onResetButtonPressed}
       />
       <div className="pt-3 pb-6">
         <FilterDescription
