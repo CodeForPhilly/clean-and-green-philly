@@ -6,15 +6,15 @@ from datetime import datetime, timedelta
 import sqlalchemy as sa
 from sqlalchemy import inspect
 
-from classes.featurelayer import google_cloud_bucket
-from config.config import (
+from src.classes.featurelayer import google_cloud_bucket
+from src.config.config import (
     log_level,
     max_backup_schema_days,
     tile_file_backup_directory,
     tiles_file_id_prefix,
 )
-from config.psql import conn, local_engine, url
-from data_utils.utils import mask_password
+from src.config.psql import conn, local_engine, url
+from src.data_utils.utils import mask_password
 
 log.basicConfig(level=log_level)
 

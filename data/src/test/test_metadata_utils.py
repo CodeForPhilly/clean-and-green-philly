@@ -1,9 +1,9 @@
 import unittest
 
 import geopandas as gpd
-from new_etl.classes.featurelayer import FeatureLayer
 
-from ..new_etl.metadata.metadata_utils import (
+from src.new_etl.classes.featurelayer import FeatureLayer
+from src.new_etl.metadata.metadata_utils import (
     get_column_details,
     get_description_from_docstring,
     get_sections_from_docstring,

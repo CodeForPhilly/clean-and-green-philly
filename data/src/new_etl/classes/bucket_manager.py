@@ -3,7 +3,7 @@ import os
 
 from google.cloud import storage
 
-from config.config import log_level
+from src.config.config import log_level
 
 log.basicConfig(level=log_level)
 

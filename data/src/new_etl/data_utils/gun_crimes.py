@@ -1,4 +1,4 @@
-from new_etl.data_utils.kde import apply_kde_to_primary
+from src.new_etl.data_utils.kde import apply_kde_to_primary
 
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import GUNCRIME_SQL_QUERY

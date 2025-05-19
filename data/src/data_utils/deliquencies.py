@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import DELINQUENCIES_QUERY
+from src.classes.featurelayer import FeatureLayer
+from src.constants.services import DELINQUENCIES_QUERY
 
 
 def deliquencies(primary_featurelayer):

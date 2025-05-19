@@ -1,6 +1,6 @@
 import re
 
-from data_utils import utils
+from src.data_utils import utils
 
 
 class TestUtils:
@@ -22,7 +22,7 @@ class TestUtils:
 0.18% difference score
 
 Extra-Info:
-  diff_counts = {'parcel_number_a': 0, 'market_value_a': 6, 'sale_date_a': 2, 
+  diff_counts = {'parcel_number_a': 0, 'market_value_a': 6, 'sale_date_a': 2,
 'sale_price_a': 18, 'geometry_a': 227}
   exclusive_count = 0
   table1_count = 582970

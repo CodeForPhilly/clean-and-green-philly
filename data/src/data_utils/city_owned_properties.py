@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
+from src.classes.featurelayer import FeatureLayer
+from src.constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
 
 
 def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:

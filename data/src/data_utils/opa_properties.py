@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import OPA_PROPERTIES_QUERY
+from src.classes.featurelayer import FeatureLayer
+from src.constants.services import OPA_PROPERTIES_QUERY
 
 
 def opa_properties(primary_featurelayer):

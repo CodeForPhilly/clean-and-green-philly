@@ -2,15 +2,16 @@ import os
 from datetime import datetime
 
 import pytest
-from classes.backup_archive_database import (
+from sqlalchemy import inspect
+
+from src.classes.backup_archive_database import (
     BackupArchiveDatabase,
     backup_schema_name,
     date_time_format,
 )
-from classes.diff_report import DiffReport
-from classes.featurelayer import google_cloud_bucket
-from config.psql import conn, local_engine
-from sqlalchemy import inspect
+from src.classes.diff_report import DiffReport
+from src.classes.featurelayer import google_cloud_bucket
+from src.config.psql import conn, local_engine
 
 pytestmark = pytest.mark.skip(
     reason="Skipping tests. The tests in test_diff_backup are designed for stateful, manual testing."

@@ -7,7 +7,7 @@ from datetime import datetime, timezone
 
 import geopandas as gpd
 
-from config.config import log_level
+from src.config.config import log_level
 
 log.basicConfig(level=log_level)
 
