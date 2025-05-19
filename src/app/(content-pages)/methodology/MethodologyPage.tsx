@@ -202,14 +202,13 @@ export default function MethodologyPage() {
             density estimate to calculate the intensity of gun crime at any
             given point in Philadelphia. Specifically, we use an adaptive
             bandwidth to better capture the local nuances of gun crime at small
-            spatial scales. (For more on this, please see this memo from the
-            data analysis team at the{' '}
+            spatial scales. (For more on this, please see this memo from the{' '}
             <a
-              href="##"
+              href="/docs/PROJECT_BACKGROUND/Penn_Student_GC_Memo.pdf"
               target="_blank"
               rel="noopener noreferrer"
               className="link"
-              aria-label="District Attorney’s Office, link opens in a new window"
+              aria-label="District Attorney's Office, link opens in a new window"
             >
               District Attorney&rsquo;s Office
             </a>

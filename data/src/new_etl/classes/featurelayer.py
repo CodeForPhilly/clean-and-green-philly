@@ -18,8 +18,14 @@ from config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
+<<<<<<< HEAD
 from new_etl.classes.bucket_manager import GCSBucketManager
 from new_etl.classes.file_manager import FileManager, FileType, LoadType
+=======
+from config.psql import conn, local_engine
+from new_etl.classes.bucket_manager import GCSBucketManager
+from new_etl.database import to_postgis_with_schema
+>>>>>>> staging
 from new_etl.loaders import load_carto_data, load_esri_data
 
 log.basicConfig(level=log_level)
@@ -136,9 +142,14 @@ class FeatureLayer:
                     ]
 
                 # Save GeoDataFrame to PostgreSQL and configure it as a hypertable
+<<<<<<< HEAD
                 # to_postgis_with_schema(
                 #     self.gdf, self.table_name, conn, if_exists="replace"
                 # )
+=======
+                print("Saving GeoDataFrame to PostgreSQL...")
+                to_postgis_with_schema(self.gdf, self.psql_table, conn)
+>>>>>>> staging
 
         except Exception as e:
             log.error(f"Error loading data for {self.name}: {e}")

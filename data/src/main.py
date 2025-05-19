@@ -35,8 +35,58 @@ from new_etl.data_utils import (
     unsafe_buildings,
     vacant_properties,
 )
+from new_etl.validation import (
+    CommunityGardensValidator,
+    KDEValidator,
+    LIViolationsValidator,
+    OwnerTypeValidator,
+    TreeCanopyValidator,
+    VacantValidator,
+)
+from new_etl.validation.access_process import AccessProcessValidator
+from new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
+from new_etl.validation.council_dists import CouncilDistrictsValidator
+from new_etl.validation.nbhoods import NeighborhoodsValidator
+from new_etl.validation.phs_properties import PHSPropertiesValidator
+from new_etl.validation.ppr_properties import PPRPropertiesValidator
+from new_etl.validation.rco_geoms import RCOGeomsValidator
 
 file_manager = FileManager.get_instance()
+
+# Map services to their validators
+SERVICE_VALIDATORS = {
+    "community_gardens": CommunityGardensValidator(),
+    "drug_crime": KDEValidator().configure(
+        density_column="drug_crimes_density",
+        zscore_column="drug_crimes_density_zscore",
+        label_column="drug_crimes_density_label",
+        percentile_column="drug_crimes_density_percentile",
+    ),
+    "gun_crime": KDEValidator().configure(
+        density_column="gun_crimes_density",
+        zscore_column="gun_crimes_density_zscore",
+        label_column="gun_crimes_density_label",
+        percentile_column="gun_crimes_density_percentile",
+    ),
+    "li_complaints": KDEValidator().configure(
+        density_column="l_and_i_complaints_density",
+        zscore_column="l_and_i_complaints_density_zscore",
+        label_column="l_and_i_complaints_density_label",
+        percentile_column="l_and_i_complaints_density_percentile",
+    ),
+    "li_violations": LIViolationsValidator(),
+    "owner_type": OwnerTypeValidator(),
+    "vacant": VacantValidator(),
+    "council_dists": CouncilDistrictsValidator(),
+    "nbhoods": NeighborhoodsValidator(),
+    "rco_geoms": RCOGeomsValidator(),
+    "city_owned_properties": CityOwnedPropertiesValidator(),
+    "phs_properties": PHSPropertiesValidator(),
+    "ppr_properties": PPRPropertiesValidator(),
+    "tree_canopy": TreeCanopyValidator(),
+    "access_process": AccessProcessValidator(),
+    # Add other service validators as they are created
+}
 
 try:
     print("Starting ETL process.")
@@ -68,7 +118,44 @@ try:
         park_priority,
     ]
 
-    # Numeric columns to track for coercion
+    print("Loading OPA properties dataset.")
+    dataset = opa_properties()
+
+    for service in services:
+        print(f"Running service: {service.__name__}")
+        dataset = service(dataset)
+
+        # Run validation if a validator exists for this service
+        if service.__name__ in SERVICE_VALIDATORS:
+            validator = SERVICE_VALIDATORS[service.__name__]
+            is_valid, errors = validator.validate(dataset.gdf)
+
+            if not is_valid:
+                error_message = (
+                    f"Data validation failed for {service.__name__}:\n"
+                    + "\n".join(errors)
+                )
+                send_error_to_slack(error_message)
+                raise ValueError(error_message)
+
+            print(f"Validation passed for {service.__name__}")
+
+    print("Applying final dataset transformations.")
+    dataset = priority_level(dataset)
+    dataset = access_process(dataset)
+
+    # Save metadata
+    try:
+        metadata_df = pd.DataFrame(dataset.collected_metadata)
+        metadata_df.to_csv("tmp/metadata.csv", index=False)
+    except Exception as e:
+        print(f"Error saving metadata: {str(e)}")
+    # Drop duplicates
+    before_drop = dataset.gdf.shape[0]
+    dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
+    print(f"Duplicate rows dropped: {before_drop - dataset.gdf.shape[0]}")
+
+    # Convert columns to numeric where necessary
     numeric_columns = [
         "market_value",
         "sale_price",
