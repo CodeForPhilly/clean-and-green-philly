@@ -38,7 +38,7 @@ def standardize_street(street):
     return street
 
 
-def create_standardized_address(row):
+def create_standardized_mailing_address(row):
     parts = [
         row["mailing_address_1"].strip()
         if pd.notnull(row["mailing_address_1"])
@@ -52,8 +52,8 @@ def create_standardized_address(row):
         else "",
         row["mailing_zip"].strip() if pd.notnull(row["mailing_zip"]) else "",
     ]
-    standardized_address = ", ".join([part for part in parts if part])
-    return standardized_address.lower()
+    standardized_mailing_address = ", ".join([part for part in parts if part])
+    return standardized_mailing_address.lower()
 
 
 def negligent_devs(primary_featurelayer):
@@ -118,14 +118,14 @@ def negligent_devs(primary_featurelayer):
         ].head(10)
     )
 
-    non_city_owners.loc[:, "standardized_address"] = non_city_owners.apply(
-        create_standardized_address, axis=1
+    non_city_owners.loc[:, "standardized_mailing_address"] = non_city_owners.apply(
+        create_standardized_mailing_address, axis=1
     )
 
     # Log standardized addresses and counts
     print("Standardized addresses with counts:")
     address_counts = (
-        non_city_owners.groupby("standardized_address")
+        non_city_owners.groupby("standardized_mailing_address")
         .size()
         .reset_index(name="property_count")
     )
@@ -138,7 +138,7 @@ def negligent_devs(primary_featurelayer):
     print(sorted_address_counts.head(10))
 
     non_city_owners = non_city_owners.merge(
-        sorted_address_counts, on="standardized_address", how="left"
+        sorted_address_counts, on="standardized_mailing_address", how="left"
     )
 
     # Log merged data for city owners

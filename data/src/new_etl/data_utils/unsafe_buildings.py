@@ -36,7 +36,7 @@ def unsafe_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     )
 
     # Mark unsafe buildings
-    unsafe_buildings.gdf.loc[:, "unsafe_building"] = "Y"
+    unsafe_buildings.gdf.loc[:, "unsafe_building"] = True
 
     # Rename column for consistency
     unsafe_buildings.gdf = unsafe_buildings.gdf.rename(
@@ -49,9 +49,9 @@ def unsafe_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         "opa_number",
     )
 
-    # Fill missing values with "N" for non-unsafe buildings
+    # Fill missing values with False for non-unsafe buildings
     primary_featurelayer.gdf.loc[:, "unsafe_building"] = primary_featurelayer.gdf[
         "unsafe_building"
-    ].fillna("N")
+    ].fillna(False)
 
     return primary_featurelayer

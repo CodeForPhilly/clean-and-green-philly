@@ -1,6 +1,7 @@
 import re
 
 import pandas as pd
+
 from new_etl.metadata.metadata_utils import provide_metadata
 
 from ..classes.featurelayer import FeatureLayer
@@ -51,7 +52,7 @@ def standardize_street(street: str) -> str:
     return street
 
 
-def create_standardized_address(row: pd.Series) -> str:
+def create_standardized_mailing_address(row: pd.Series) -> str:
     """
     Creates a standardized address from multiple address-related columns in a row.
 
@@ -74,8 +75,8 @@ def create_standardized_address(row: pd.Series) -> str:
         else "",
         row["mailing_zip"].strip() if pd.notnull(row["mailing_zip"]) else "",
     ]
-    standardized_address = ", ".join([part for part in parts if part])
-    return standardized_address.lower()
+    standardized_mailing_address = ", ".join([part for part in parts if part])
+    return standardized_mailing_address.lower()
 
 
 @provide_metadata()
@@ -97,7 +98,8 @@ def opa_properties() -> FeatureLayer:
         owner_1 (str): The first owner of the property
         owner_2 (str): The second owner of the property
         building_code_description (str): The building code description
-        standardized_address (str): A standardized mailing address
+        standardized_street_address (str): A standardized street address for the property
+        standardized_mailing_address (str): A standardized mailing address for the property owner
         geometry (geometry): The geometry of the property
 
     Source:
@@ -123,6 +125,8 @@ def opa_properties() -> FeatureLayer:
             "mailing_city_state",
             "mailing_street",
             "mailing_zip",
+            "unit",
+            "street_address",
             "building_code_description",
             "zip_code",
             "zoning",
@@ -135,11 +139,27 @@ def opa_properties() -> FeatureLayer:
     opa.gdf["sale_price"] = pd.to_numeric(opa.gdf["sale_price"], errors="coerce")
     opa.gdf["market_value"] = pd.to_numeric(opa.gdf["market_value"], errors="coerce")
 
+    # Convert sale_date to datetime
+    opa.gdf["sale_date"] = pd.to_datetime(opa.gdf["sale_date"])
+
     # Add parcel_type
     opa.gdf["parcel_type"] = (
         opa.gdf["building_code_description"]
         .str.contains("VACANT LAND", case=False, na=False)
         .map({True: "Land", False: "Building"})
+    )
+
+    # combine street_address and unit into a single column, if unit is not empty
+    opa.gdf["street_address"] = opa.gdf.apply(
+        lambda row: f"{row['street_address']} {row['unit']}"
+        if pd.notnull(row["unit"])
+        else row["street_address"],
+        axis=1,
+    )
+
+    # standardize street addresses
+    opa.gdf["street_address"] = (
+        opa.gdf["street_address"].astype(str).apply(standardize_street)
     )
 
     # Standardize mailing street addresses
@@ -148,10 +168,15 @@ def opa_properties() -> FeatureLayer:
     )
 
     # Create standardized address column
-    opa.gdf["standardized_address"] = opa.gdf.apply(create_standardized_address, axis=1)
+    opa.gdf["standardized_mailing_address"] = opa.gdf.apply(
+        create_standardized_mailing_address, axis=1
+    )
 
     # Drop columns starting with "mailing_"
     opa.gdf = opa.gdf.loc[:, ~opa.gdf.columns.str.startswith("mailing_")]
+
+    # drop location and unit columns
+    opa.gdf = opa.gdf.drop(columns=["location", "unit"])
 
     # Use GeoSeries.make_valid to repair geometries
     opa.gdf["geometry"] = opa.gdf["geometry"].make_valid()
