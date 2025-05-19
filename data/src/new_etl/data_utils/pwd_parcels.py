@@ -74,6 +74,9 @@ def merge_pwd_parcels_gdf(primary_gdf, pwd_parcels_gdf):
             if pwd_geom:
                 primary_gdf.loc[idx, "geometry"] = pwd_geom
 
+    # calculate the area of the parcel in square feet
+    primary_gdf["parcel_area_sqft"] = primary_gdf.geometry.area
+
     return primary_gdf
 
 

@@ -98,6 +98,7 @@ def opa_properties() -> FeatureLayer:
         owner_1 (str): The first owner of the property
         owner_2 (str): The second owner of the property
         building_code_description (str): The building code description
+        standardized_street_address (str): A standardized street address for the property
         standardized_mailing_address (str): A standardized mailing address for the property owner
         geometry (geometry): The geometry of the property
 
@@ -124,6 +125,8 @@ def opa_properties() -> FeatureLayer:
             "mailing_city_state",
             "mailing_street",
             "mailing_zip",
+            "unit",
+            "street_address",
             "building_code_description",
             "zip_code",
             "zoning",
@@ -146,6 +149,19 @@ def opa_properties() -> FeatureLayer:
         .map({True: "Land", False: "Building"})
     )
 
+    # combine street_address and unit into a single column, if unit is not empty
+    opa.gdf["street_address"] = opa.gdf.apply(
+        lambda row: f"{row['street_address']} {row['unit']}"
+        if pd.notnull(row["unit"])
+        else row["street_address"],
+        axis=1,
+    )
+
+    # standardize street addresses
+    opa.gdf["street_address"] = (
+        opa.gdf["street_address"].astype(str).apply(standardize_street)
+    )
+
     # Standardize mailing street addresses
     opa.gdf["mailing_street"] = (
         opa.gdf["mailing_street"].astype(str).apply(standardize_street)
@@ -158,6 +174,9 @@ def opa_properties() -> FeatureLayer:
 
     # Drop columns starting with "mailing_"
     opa.gdf = opa.gdf.loc[:, ~opa.gdf.columns.str.startswith("mailing_")]
+
+    # drop location and unit columns
+    opa.gdf = opa.gdf.drop(columns=["location", "unit"])
 
     # Use GeoSeries.make_valid to repair geometries
     opa.gdf["geometry"] = opa.gdf["geometry"].make_valid()
