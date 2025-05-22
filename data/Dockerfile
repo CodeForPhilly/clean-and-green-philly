@@ -49,4 +49,4 @@ COPY src/ .
 
 # Use Pipenv to run the script
 # Adjust the path to your main Python script if needed
-CMD ["pipenv", "run", "python", "./script.py"]
+CMD ["pipenv", "run", "python", "./main.py"]

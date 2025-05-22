@@ -10,6 +10,12 @@ BACKUP_SCHEMA = False
 USE_CRS = "EPSG:2272"
 """ the standard geospatial code for Pennsylvania South (ftUS) """
 
+ROOT_DIRECTORY = Path(__file__).resolve().parent.parent
+""" the root directory of the project """
+
+CACHE_FRACTION = 0.05
+"""The fraction used to cache portions of the pipeline's transformed data in each step of the pipeline."""
+
 log_level: int = logging.WARN
 """ overall log level for the project """
 
