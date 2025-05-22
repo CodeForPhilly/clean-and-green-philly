@@ -39,7 +39,7 @@ class TestDataUtils(unittest.TestCase):
         """
         pass
 
-    def test_get_latest_shapefile_url_mock(self, mock_get):
+    def test_get_latest_shapefile_url_mock(self):
         """
         Test the get_latest_shapefile_url function.
         """
@@ -47,12 +47,6 @@ class TestDataUtils(unittest.TestCase):
 
     def test_park_priority(
         self,
-        mock_extract,
-        _mock_makedirs,
-        mock_exists,
-        mock_to_file,
-        mock_read_file,
-        mock_get,
     ):
         """
         Test the park_priority function with mocking.
