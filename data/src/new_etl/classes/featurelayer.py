@@ -135,11 +135,6 @@ class FeatureLayer:
                         [col for col in self.cols if col in self.gdf.columns]
                     ]
 
-                # Save GeoDataFrame to PostgreSQL and configure it as a hypertable
-                # to_postgis_with_schema(
-                #     self.gdf, self.table_name, conn, if_exists="replace"
-                # )
-
         except Exception as e:
             log.error(f"Error loading data for {self.name}: {e}")
             traceback.print_exc()
