@@ -47,7 +47,7 @@ class FileManager:
             os.makedirs(self.storage_directory)
 
         self.fraction = fraction
-        self.temp_directory = os.path.join(self.storage_directory, "tmp")
+        self.temp_directory = os.path.join(self.storage_directory, "temp")
         self.source_cache_directory = os.path.join(
             self.storage_directory, "source_cache"
         )
