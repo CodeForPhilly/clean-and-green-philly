@@ -1,6 +1,6 @@
 import geopandas as gpd
 
-from ..classes.featurelayer import FeatureLayer
+from ..classes.featurelayer import CartoLoader
 from ..constants.services import PWD_PARCELS_QUERY
 from ..metadata.metadata_utils import provide_metadata
 
@@ -25,24 +25,22 @@ def transform_pwd_parcels_gdf(pwd_parcels_gdf: gpd.GeoDataFrame):
 
 
 def merge_pwd_parcels_gdf(
-    primary_featurelayer_gdf: gpd.GeoDataFrame, pwd_parcels_gdf: gpd.GeoDataFrame
+    primary_gdf: gpd.GeoDataFrame, pwd_parcels_gdf: gpd.GeoDataFrame
 ) -> gpd.GeoDataFrame:
     # Join geometries from PWD parcels
     # Temporarily drop geometry from the primary feature layer
 
     # Filter PWD parcels to just the opa_ids in primary
-    opa_ids_in_primary = primary_featurelayer_gdf["opa_id"].unique()
+    opa_ids_in_primary = primary_gdf["opa_id"].unique()
     pwd_subset = pwd_parcels_gdf[pwd_parcels_gdf["opa_id"].isin(opa_ids_in_primary)]
 
     # Count how many of those are missing geometry
     no_geometry_count = pwd_subset["geometry"].isnull().sum()
     pwd_parcels_gdf_unique_opa_id = pwd_parcels_gdf.drop_duplicates(subset="opa_id")
-    primary_featurelayer_gdf_unique_opa_id = primary_featurelayer_gdf.drop_duplicates(
-        subset="opa_id"
-    )
+    primary_gdf_unique_opa_id = primary_gdf.drop_duplicates(subset="opa_id")
 
     pwd_parcels_gdf_indexed = pwd_parcels_gdf_unique_opa_id.set_index("opa_id")
-    merged_gdf_indexed = primary_featurelayer_gdf_unique_opa_id.set_index("opa_id")
+    merged_gdf_indexed = primary_gdf_unique_opa_id.set_index("opa_id")
 
     # ISSUE: This update and the other transformations might be incorrect
     merged_gdf_indexed.update(
@@ -55,7 +53,7 @@ def merge_pwd_parcels_gdf(
 
 
 @provide_metadata()
-def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def pwd_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Updates the primary feature layer by replacing its geometry column with validated
     geometries from PWD parcels data. Retains point geometry for rows with no polygon
@@ -81,19 +79,23 @@ def pwd_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         https://phl.carto.com/api/v2/sql
     """
     # Load PWD parcels
-    pwd_parcels = FeatureLayer(
+    # pwd_parcels = FeatureLayer(
+    #     name="PWD Parcels",
+    #     carto_sql_queries=PWD_PARCELS_QUERY,
+    #     use_wkb_geom_field="the_geom",
+    #     cols=["brt_id"],
+    # )
+
+    loader = CartoLoader(
         name="PWD Parcels",
         carto_sql_queries=PWD_PARCELS_QUERY,
-        use_wkb_geom_field="the_geom",
-        cols=["brt_id"],
+        opa_col=["brt_id"],
     )
 
-    pwd_parcels_gdf = pwd_parcels.gdf
+    pwd_parcels = loader.load_or_fetch()
 
-    transform_pwd_parcels_gdf(pwd_parcels_gdf)
+    transform_pwd_parcels_gdf(pwd_parcels)
 
-    primary_featurelayer.gdf = merge_pwd_parcels_gdf(
-        primary_featurelayer.gdf, pwd_parcels_gdf
-    )
+    input_gdf = merge_pwd_parcels_gdf(input_gdf, pwd_parcels)
 
-    return primary_featurelayer
+    return input_gdf

@@ -1,14 +1,15 @@
 import geopandas as gpd
 
 from config.config import USE_CRS
+from new_etl.utilities import spatial_join
 
-from ..classes.featurelayer import FeatureLayer
+from ..classes.featurelayer import GdfLoader
 from ..constants.services import NBHOODS_URL
 from ..metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
-def nbhoods(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def nbhoods(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Adds neighborhood information to the primary feature layer by performing a spatial join
     with a neighborhoods dataset.
@@ -32,20 +33,17 @@ def nbhoods(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Source:
         https://raw.githubusercontent.com/opendataphilly/open-geo-data/master/philadelphia-neighborhoods/philadelphia-neighborhoods.geojson
     """
-    phl_nbhoods = gpd.read_file(NBHOODS_URL)
+
+    loader = GdfLoader(url=NBHOODS_URL)
+    phl_nbhoods = loader.load_or_fetch()
 
     # Correct the column name to lowercase if needed
     if "MAPNAME" in phl_nbhoods.columns:
         phl_nbhoods.rename(columns={"MAPNAME": "neighborhood"}, inplace=True)
 
-    phl_nbhoods = phl_nbhoods.to_crs(USE_CRS)
-
-    nbhoods = FeatureLayer("Neighborhoods")
-    nbhoods.gdf = phl_nbhoods
-
     red_cols_to_keep = ["neighborhood", "geometry"]
-    nbhoods.gdf = nbhoods.gdf[red_cols_to_keep]
+    phl_nbhoods = phl_nbhoods[red_cols_to_keep]
 
-    primary_featurelayer.spatial_join(nbhoods)
+    merged_gdf = spatial_join(input_gdf, phl_nbhoods)
 
-    return primary_featurelayer
+    return merged_gdf

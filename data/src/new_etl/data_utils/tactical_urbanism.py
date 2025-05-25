@@ -1,9 +1,10 @@
-from ..classes.featurelayer import FeatureLayer
+import geopandas as gpd
+
 from ..metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
-def tactical_urbanism(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def tactical_urbanism(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Assigns a 'tactical_urbanism' value to each row in the primary feature layer based on specific conditions.
 
@@ -27,7 +28,7 @@ def tactical_urbanism(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     tactical_urbanism_values = []
 
-    for idx, row in primary_featurelayer.gdf.iterrows():
+    for idx, row in input_gdf.iterrows():
         if (
             row["parcel_type"] == "Land"
             and row["unsafe_building"] == "N"
@@ -39,5 +40,5 @@ def tactical_urbanism(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
         tactical_urbanism_values.append(tactical_urbanism)
 
-    primary_featurelayer.gdf["tactical_urbanism"] = tactical_urbanism_values
-    return primary_featurelayer
+    input_gdf["tactical_urbanism"] = tactical_urbanism_values
+    return input_gdf

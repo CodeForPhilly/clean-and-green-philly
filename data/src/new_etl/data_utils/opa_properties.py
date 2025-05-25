@@ -1,9 +1,10 @@
 import re
 
 import pandas as pd
+import geopandas as gpd
 from new_etl.metadata.metadata_utils import provide_metadata
 
-from ..classes.featurelayer import FeatureLayer
+from ..classes.featurelayer import CartoLoader
 from ..constants.services import OPA_PROPERTIES_QUERY
 
 replacements = {
@@ -79,7 +80,7 @@ def create_standardized_address(row: pd.Series) -> str:
 
 
 @provide_metadata()
-def opa_properties() -> FeatureLayer:
+def opa_properties() -> gpd.GeoDataFrame:
     """
     Loads and processes OPA property data, standardizing addresses and cleaning geometries.
 
@@ -106,10 +107,32 @@ def opa_properties() -> FeatureLayer:
     Tagline:
         Load OPA data
     """
-    opa = FeatureLayer(
+    # opa = FeatureLayer(
+    #     name="OPA Properties",
+    #     carto_sql_queries=OPA_PROPERTIES_QUERY,
+    #     use_wkb_geom_field="the_geom",
+    #     cols=[
+    #         "market_value",
+    #         "sale_date",
+    #         "sale_price",
+    #         "parcel_number",
+    #         "owner_1",
+    #         "owner_2",
+    #         "mailing_address_1",
+    #         "mailing_address_2",
+    #         "mailing_care_of",
+    #         "mailing_city_state",
+    #         "mailing_street",
+    #         "mailing_zip",
+    #         "building_code_description",
+    #         "zip_code",
+    #         "zoning",
+    #     ],
+    # )
+    loader = CartoLoader(
+        carto_queries=OPA_PROPERTIES_QUERY,
         name="OPA Properties",
-        carto_sql_queries=OPA_PROPERTIES_QUERY,
-        use_wkb_geom_field="the_geom",
+        opa_col="parcel_number",
         cols=[
             "market_value",
             "sale_date",
@@ -128,35 +151,36 @@ def opa_properties() -> FeatureLayer:
             "zoning",
         ],
     )
+
+    opa = loader.load_or_fetch()
+
     # Rename columns
     opa.gdf = opa.gdf.rename(columns={"parcel_number": "opa_id"})
 
     # Convert 'sale_price' and 'market_value' to numeric values
-    opa.gdf["sale_price"] = pd.to_numeric(opa.gdf["sale_price"], errors="coerce")
-    opa.gdf["market_value"] = pd.to_numeric(opa.gdf["market_value"], errors="coerce")
+    opa["sale_price"] = pd.to_numeric(opa["sale_price"], errors="coerce")
+    opa["market_value"] = pd.to_numeric(opa["market_value"], errors="coerce")
 
     # Add parcel_type
-    opa.gdf["parcel_type"] = (
-        opa.gdf["building_code_description"]
+    opa["parcel_type"] = (
+        opa["building_code_description"]
         .str.contains("VACANT LAND", case=False, na=False)
         .map({True: "Land", False: "Building"})
     )
 
     # Standardize mailing street addresses
-    opa.gdf["mailing_street"] = (
-        opa.gdf["mailing_street"].astype(str).apply(standardize_street)
-    )
+    opa["mailing_street"] = opa["mailing_street"].astype(str).apply(standardize_street)
 
     # Create standardized address column
-    opa.gdf["standardized_address"] = opa.gdf.apply(create_standardized_address, axis=1)
+    opa["standardized_address"] = opa.apply(create_standardized_address, axis=1)
 
     # Drop columns starting with "mailing_"
-    opa.gdf = opa.gdf.loc[:, ~opa.gdf.columns.str.startswith("mailing_")]
+    opa = opa.loc[:, ~opa.gdf.columns.str.startswith("mailing_")]
 
     # Use GeoSeries.make_valid to repair geometries
-    opa.gdf["geometry"] = opa.gdf["geometry"].make_valid()
+    opa["geometry"] = opa["geometry"].make_valid()
 
     # Drop empty geometries
-    opa.gdf = opa.gdf[~opa.gdf.is_empty]
+    opa = opa[~opa.is_empty]
 
     return opa

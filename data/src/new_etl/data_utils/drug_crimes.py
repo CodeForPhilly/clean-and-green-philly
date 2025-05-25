@@ -1,12 +1,12 @@
-from new_etl.data_utils.kde import apply_kde_to_primary
+import geopandas as gpd
 
-from ..classes.featurelayer import FeatureLayer
+from new_etl.data_utils.kde import apply_kde_to_input
 from ..constants.services import DRUGCRIME_SQL_QUERY
 from ..metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
-def drug_crimes(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def drug_crimes(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Applies kernel density estimation (KDE) analysis for drug crimes to the primary feature layer.
 
@@ -32,6 +32,4 @@ def drug_crimes(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         https://phl.carto.com/api/v2/sql
 
     """
-    return apply_kde_to_primary(
-        primary_featurelayer, "Drug Crimes", DRUGCRIME_SQL_QUERY
-    )
+    return apply_kde_to_input(input_gdf, "Drug Crimes", DRUGCRIME_SQL_QUERY)

@@ -1,10 +1,10 @@
-from typing import Any
+import geopandas as gpd
 
 from new_etl.metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
-def access_process(dataset: Any) -> Any:
+def access_process(dataset: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Process a dataset to determine the access process for each property based on
     city ownership and market value. The result is added as a new column in the dataset.
@@ -30,7 +30,7 @@ def access_process(dataset: Any) -> Any:
     """
     access_processes = []
 
-    for _, row in dataset.gdf.iterrows():
+    for _, row in dataset.iterrows():
         # Decision Points
         city_owner_agency = row["city_owner_agency"]
         market_value_over_1000 = (
@@ -50,6 +50,6 @@ def access_process(dataset: Any) -> Any:
 
         access_processes.append(access_process)
 
-    dataset.gdf["access_process"] = access_processes
+    dataset["access_process"] = access_processes
 
     return dataset

@@ -3,7 +3,10 @@ import os
 import subprocess
 import traceback
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from abc import ABC, abstractmethod
+from typing import List
 
+from esridump.dumper import EsriDumper
 import geopandas as gpd
 import pandas as pd
 import requests
@@ -38,6 +41,136 @@ def google_cloud_bucket(require_write_access: bool = False) -> storage.Bucket | 
     if require_write_access and bucket_manager.read_only:
         return None
     return bucket_manager.bucket
+
+
+class BaseLoader(ABC):
+    def __init__(
+        self,
+        name: str,
+        cols: List[str] = [],
+        input_crs: str | None = USE_CRS,
+        opa_col: str | None = None,
+    ):
+        self.name = name
+        self.table_name = name.lower().replace(" ", "_")
+        self.cols = cols
+        self.opa_col = opa_col
+        self.input_crs = input_crs
+        self.file_manager = FileManager.get_instance()
+
+    def cache_data(self, gdf: gpd.GeoDataFrame) -> None:
+        if gdf is None or gdf.empty:
+            log.info("No data to cache")
+            return
+
+        # Save sourced data to a local parquet file in the storage/source_cache directory
+        file_label = self.file_manager.generate_file_label(self.table_name)
+        self.file_manager.save_gdf(
+            gdf, file_label, LoadType.SOURCE_CACHE, FileType.PARQUET
+        )
+
+    def load_or_fetch(self) -> gpd.GeoDataFrame:
+        if not FORCE_RELOAD and self.file_manager.check_source_cache_file_exists(
+            self.table_name, LoadType.SOURCE_CACHE
+        ):
+            print(f"Loading data for {self.name} from cache...")
+            gdf = self.file_manager.get_most_recent_cache(self.table_name)
+        else:
+            print("Loading fresh data now...")
+            gdf = self.load_data()
+            print("Caching fresh data now...")
+            self.cache_data(gdf)
+
+        return gdf
+
+    @abstractmethod
+    def load_data(self):
+        pass
+
+    @staticmethod
+    def string_to_list(input: str | List[str]) -> List[str]:
+        return [input] if isinstance(input, str) else input
+
+    @staticmethod
+    def lowercase_column_names(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+        # Standardize column names
+        if not gdf.empty:
+            gdf.columns = [col.lower() for col in gdf.columns]
+        return gdf
+
+    @staticmethod
+    def filter_columns(gdf: gpd.GeoDataFrame, cols: List[str]) -> gpd.GeoDataFrame:
+        # Filter columns if specified
+        if cols:
+            cols = [col.lower() for col in cols]
+            cols.append("geometry")
+            gdf = gdf[[col for col in cols if col in gdf.columns]]
+        return gdf
+
+    @classmethod
+    def normalize_columns(
+        cls, gdf: gpd.GeoDataFrame, cols: List[str]
+    ) -> gpd.GeoDataFrame:
+        """
+        Normalize the columns of the GeoDataFrame to lowercase.
+        """
+        gdf = cls.lowercase_column_names(gdf)
+        gdf = cls.filter_columns(gdf, cols)
+
+        return gdf
+
+
+class GdfLoader(BaseLoader):
+    def __init__(self, url: str):
+        super().__init__()
+        self.url = url
+
+    def load_data(self):
+        gdf = gpd.read_file(self.url)
+
+        if not gdf.crs:
+            raise AttributeError("Input data doesn't have an original CRS set")
+
+        gdf.to_crs(USE_CRS)
+
+        return gdf
+
+
+class EsriLoader(BaseLoader):
+    def __init__(self, esri_urls: List[str], *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.esri_urls = esri_urls
+
+    def load_data(self):
+        gdf = load_esri_data(self.esri_urls, self.input_crs)
+        gdf = self.normalize_columns(gdf, self.cols)
+
+        if self.opa_col:
+            gdf.rename(columns={self.opa_col: "opa_id"}, inplace=True)
+
+        return gdf
+
+
+class CartoLoader(BaseLoader):
+    def __init__(
+        self,
+        carto_queries: str | List[str],
+        *args,
+        wkb_geom_field: str | None = "the_geom",
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+        self.carto_queries = BaseLoader.string_to_list(carto_queries)
+        self.wkb_geom_field = wkb_geom_field
+
+    def load_data(self):
+        gdf = load_carto_data(self.carto_queries, self.input_crs, self.wkb_geom_field)
+        gdf = self.normalize_columns(gdf, self.cols)
+
+        if self.opa_col:
+            gdf.rename(columns={self.opa_col: "opa_id"}, inplace=True)
+
+        return gdf
 
 
 class FeatureLayer:

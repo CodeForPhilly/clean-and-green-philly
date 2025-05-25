@@ -21,7 +21,8 @@ def get_latest_shapefile_url() -> str:
     """
     Scrapes the TPL website to get the URL of the latest shapefile.
 
-    Returns:
+    Returns:from ..classes.featurelayer import FeatureLayer
+
         str: The URL of the latest shapefile.
 
     Raises:

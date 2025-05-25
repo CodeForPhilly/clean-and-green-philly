@@ -1,3 +1,5 @@
+import os
+from typing import List
 import geopandas as gpd
 import pandas as pd
 from esridump.dumper import EsriDumper
@@ -6,17 +8,17 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 from shapely import wkb
 
+from config.config import USE_CRS
+
 
 # Esri data loader
-def load_esri_data(esri_rest_urls, input_crs, target_crs):
+def load_esri_data(esri_rest_urls: List[str], input_crs: str):
     """
     Load data from Esri REST URLs and add a parcel_type column based on the URL.
 
     Args:
         esri_rest_urls (list[str]): List of Esri REST URLs to fetch data from.
         input_crs (str): CRS of the source data.
-        target_crs (str): Target CRS to which data should be reprojected.
-
     Returns:
         GeoDataFrame: Combined GeoDataFrame with data from all URLs.
     """
@@ -39,7 +41,7 @@ def load_esri_data(esri_rest_urls, input_crs, target_crs):
 
         geojson_features = {"type": "FeatureCollection", "features": features}
         gdf = gpd.GeoDataFrame.from_features(geojson_features, crs=input_crs).to_crs(
-            target_crs
+            USE_CRS
         )
 
         if parcel_type:
@@ -52,7 +54,11 @@ def load_esri_data(esri_rest_urls, input_crs, target_crs):
 
 # Carto data loader
 def load_carto_data(
-    queries, max_workers, chunk_size, use_wkb_geom_field, input_crs, target_crs
+    queries: List[str],
+    input_crs: str,
+    wkb_geom_field: str | None = "the_geom",
+    max_workers: int = os.cpu_count(),
+    chunk_size: int = 100000,
 ):
     gdfs = []
     with ThreadPoolExecutor(max_workers=max_workers) as executor:
@@ -65,10 +71,9 @@ def load_carto_data(
                         fetch_carto_chunk,
                         query,
                         offset,
-                        chunk_size,
-                        use_wkb_geom_field,
                         input_crs,
-                        target_crs,
+                        wkb_geom_field,
+                        chunk_size,
                     )
                 )
         for future in tqdm(
@@ -79,7 +84,11 @@ def load_carto_data(
 
 
 def fetch_carto_chunk(
-    query, offset, chunk_size, use_wkb_geom_field, input_crs, target_crs
+    query: str,
+    offset: int,
+    input_crs: str,
+    wkb_geom_field: str | None = "the_geom",
+    chunk_size: int = 100000,
 ):
     chunk_query = f"{query} LIMIT {chunk_size} OFFSET {offset}"
     response = requests.get(
@@ -91,11 +100,11 @@ def fetch_carto_chunk(
         return gpd.GeoDataFrame()
     df = pd.DataFrame(data)
     geometry = (
-        wkb.loads(df[use_wkb_geom_field], hex=True)
-        if use_wkb_geom_field
+        wkb.loads(df[wkb_geom_field], hex=True)
+        if wkb_geom_field
         else gpd.points_from_xy(df.x, df.y)
     )
-    return gpd.GeoDataFrame(df, geometry=geometry, crs=input_crs).to_crs(target_crs)
+    return gpd.GeoDataFrame(df, geometry=geometry, crs=input_crs).to_crs(USE_CRS)
 
 
 def get_carto_total_rows(query):

@@ -4,14 +4,15 @@ import geopandas as gpd
 import requests
 
 from config.config import USE_CRS
+from new_etl.utilities import spatial_join
 
-from ..classes.featurelayer import FeatureLayer
+from ..classes.featurelayer import EsriLoader, FeatureLayer
 from ..constants.services import PPR_PROPERTIES_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
-def ppr_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def ppr_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Updates the 'vacant' column in the primary feature layer to ensure PPR properties
     are marked as not vacant. This prevents PPR properties from being miscategorized
@@ -44,11 +45,18 @@ def ppr_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     try:
         # Load PPR properties from Esri REST URLs
-        ppr_properties = FeatureLayer(
+        # ppr_properties = FeatureLayer(
+        #     name="PPR Properties",
+        #     esri_rest_urls=PPR_PROPERTIES_TO_LOAD,
+        #     cols=["PUBLIC_NAME"],
+        # )
+        loader = EsriLoader(
             name="PPR Properties",
             esri_rest_urls=PPR_PROPERTIES_TO_LOAD,
             cols=["PUBLIC_NAME"],
         )
+
+        ppr_properties = loader.load_or_fetch()
 
         if ppr_properties.gdf is None or ppr_properties.gdf.empty:
             raise ValueError(
@@ -69,28 +77,26 @@ def ppr_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         ppr_properties.gdf = ppr_properties_gdf
 
     # Limit PPR properties to relevant columns and apply CRS
-    ppr_properties.gdf = ppr_properties.gdf[["public_name", "geometry"]]
-    ppr_properties.gdf = ppr_properties.gdf.to_crs(USE_CRS)
+    # ppr_properties.gdf = ppr_properties.gdf[["public_name", "geometry"]]
+    # ppr_properties.gdf = ppr_properties.gdf.to_crs(USE_CRS)
 
     # Perform a spatial join with the primary feature layer
-    primary_featurelayer.spatial_join(ppr_properties)
+    merged_gdf = spatial_join(input_gdf, ppr_properties)
 
     # Ensure the 'vacant' column exists in the primary feature layer
-    if "vacant" not in primary_featurelayer.gdf.columns:
+    if "vacant" not in merged_gdf.columns:
         raise ValueError(
             "The 'vacant' column is missing in the primary feature layer. Ensure it exists before running this function."
         )
 
     # Create a mask for rows where PPR properties are identified
-    mask = primary_featurelayer.gdf["public_name"].notnull()
+    mask = merged_gdf["public_name"].notnull()
 
     # Count rows where the garden is identified and 'vacant' is currently True
-    count_updated = primary_featurelayer.gdf.loc[
-        mask & primary_featurelayer.gdf["vacant"]
-    ].shape[0]
+    count_updated = merged_gdf.loc[mask & merged_gdf["vacant"]].shape[0]
 
     # Update the 'vacant' column to False for identified PPR properties
-    primary_featurelayer.gdf.loc[mask, "vacant"] = False
+    merged_gdf.loc[mask, "vacant"] = False
 
     # Log results
     print(
@@ -98,11 +104,9 @@ def ppr_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     )
 
     # Drop the "public_name" column if it exists, as it's no longer needed
-    if "public_name" in primary_featurelayer.gdf.columns:
-        primary_featurelayer.gdf = primary_featurelayer.gdf.drop(
-            columns=["public_name"]
-        )
+    if "public_name" in merged_gdf.columns:
+        merged_gdf = merged_gdf.drop(columns=["public_name"])
     else:
         print("'public_name' column is missing, cannot drop.")
 
-    return primary_featurelayer
+    return merged_gdf
