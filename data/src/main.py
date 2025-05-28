@@ -191,40 +191,12 @@ try:
         "permit_count",
     ]
 
-    print("Loading OPA properties dataset.")
-    dataset = opa_properties()
-
-    for service in services:
-        print(f"Running service: {service.__name__}")
-        dataset = service(dataset)
-
-        # If we want to save fractional steps along the pipeline, we need to coerce these the numeric data types
-        # "most_recent_year_owed" as seen in lines 108-112 and at each step otherwise it cannot validly save to the
-        # parquet file
-
-    print("Applying final dataset transformations.")
-    dataset = priority_level(dataset)
-    dataset = access_process(dataset)
-
-    # Save metadata
-    try:
-        metadata_df = pd.DataFrame(dataset.collected_metadata)
-        file_manager.save_gdf(metadata_df, "metadata", LoadType.TEMP, FileType.CSV)
-    except Exception as e:
-        print(f"Error saving metadata: {str(e)}")
-    # Drop duplicates
-    before_drop = dataset.gdf.shape[0]
-    dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
-    print(f"Duplicate rows dropped: {before_drop - dataset.gdf.shape[0]}")
-
     # Convert columns where necessary
     for col in numeric_columns:
         dataset.gdf[col] = pd.to_numeric(dataset.gdf[col], errors="coerce")
     dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].astype(
         str
     )
-
-    token = os.getenv("CAGP_SLACK_API_TOKEN")
 
     if slack_reporter:
         # Dataset profiling
