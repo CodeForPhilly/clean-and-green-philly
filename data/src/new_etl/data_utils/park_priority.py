@@ -14,7 +14,7 @@ from ..classes.featurelayer import FeatureLayer
 from ..classes.file_manager import FileManager, FileType, LoadType
 from ..metadata.metadata_utils import provide_metadata
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
 
 
 def get_latest_shapefile_url() -> str:

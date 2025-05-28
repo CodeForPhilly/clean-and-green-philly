@@ -10,7 +10,7 @@ from new_etl.classes.file_manager import FileManager
 from ..classes.featurelayer import FeatureLayer
 from ..metadata.metadata_utils import provide_metadata
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
 
 
 @provide_metadata()

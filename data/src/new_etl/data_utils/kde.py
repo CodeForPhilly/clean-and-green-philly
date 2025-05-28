@@ -13,7 +13,7 @@ import mapclassify
 resolution = 1320  # 0.25 miles (in feet, since the CRS is 2272)
 batch_size = 100000
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
 
 
 def kde_predict_chunk(kde: GaussianKDE, chunk: np.ndarray) -> np.ndarray:

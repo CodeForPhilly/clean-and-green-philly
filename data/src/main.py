@@ -165,50 +165,12 @@ try:
         "permit_count",
     ]
 
-    print("Loading OPA properties dataset.")
-    dataset = opa_properties()
-
-    for service in services:
-        print(f"Running service: {service.__name__}")
-        dataset = service(dataset)
-
-        # If we want to save fractional steps along the pipeline, we need to coerce these the numeric data types
-        # "most_recent_year_owed" as seen in lines 108-112 and at each step otherwise it cannot validly save to the
-        # parquet file
-
-    print("Applying final dataset transformations.")
-    dataset = priority_level(dataset)
-    dataset = access_process(dataset)
-
-    # Save metadata
-    try:
-        metadata_df = pd.DataFrame(dataset.collected_metadata)
-        file_manager.save_gdf(metadata_df, "metadata", LoadType.TEMP, FileType.CSV)
-    except Exception as e:
-        print(f"Error saving metadata: {str(e)}")
-    # Drop duplicates
-    before_drop = dataset.gdf.shape[0]
-    dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
-    print(f"Duplicate rows dropped: {before_drop - dataset.gdf.shape[0]}")
-
     # Convert columns where necessary
     for col in numeric_columns:
         dataset.gdf[col] = pd.to_numeric(dataset.gdf[col], errors="coerce")
     dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].astype(
         str
     )
-
-    # Dataset profiling
-    # send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
-
-    # Save dataset to PostgreSQL
-    # to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
-
-    # Generate and send diff report
-    # diff_report = DiffReport()
-    # diff_report.run()
-
-    # send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
 
     # Save local Parquet file
     file_label = file_manager.generate_file_label("all_properties_end")
@@ -219,7 +181,6 @@ try:
 
     # Publish only vacant properties
     dataset.gdf = dataset.gdf[dataset.gdf["vacant"]]
-    # dataset.build_and_publish(tiles_file_id_prefix)
 
     # Finalize
     print("ETL process completed successfully.")

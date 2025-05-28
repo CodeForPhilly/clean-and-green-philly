@@ -21,7 +21,7 @@ def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame | None:
     bucket = google_cloud_bucket()
     if not bucket:
         print("No Google Cloud bucket available - skipping backup data load.")
-        return None
+        raise ValueError("Missing Google cloud bucket to load backup data")
     blob = bucket.blob(file_name)
     if not blob.exists():
         raise FileNotFoundError(f"File {file_name} not found in the GCS bucket.")
@@ -99,26 +99,34 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     print(f"Vacant land data size in the default dataset: {len(vacant_land_gdf)} rows.")
 
     # Check if the vacant land data is below the threshold
-    # if len(vacant_land_gdf) < 20000:
-    #     print(
-    #         "Vacant land data is below the threshold. Removing vacant land rows and loading backup data from GCS."
-    #     )
-    #     vacant_properties.gdf = vacant_properties.gdf[
-    #         vacant_properties.gdf["parcel_type"] != "Land"
-    #     ]
+    if len(vacant_land_gdf) < 20000:
+        print(
+            "Vacant land data is below the threshold. Removing vacant land rows and loading backup data from GCS."
+        )
+        vacant_properties.gdf = vacant_properties.gdf[
+            vacant_properties.gdf["parcel_type"] != "Land"
+        ]
 
-    #     # Attempt to load backup data from GCS
-    #     backup_gdf = load_backup_data_from_gcs("vacant_indicators_land_06_2024.geojson")
+        # Attempt to load backup data from GCS
+        try:
+            backup_gdf = load_backup_data_from_gcs(
+                "vacant_indicators_land_06_2024.geojson"
+            )
 
-    #     if backup_gdf:
-    #         # Add parcel_type column to backup data
-    #         backup_gdf["parcel_type"] = "Land"
+            # Add parcel_type column to backup data
+            backup_gdf["parcel_type"] = "Land"
 
-    #         # Append backup data to the existing dataset
-    #         print(f"Appending backup data ({len(backup_gdf)} rows) to the existing data.")
-    #         vacant_properties.gdf = pd.concat(
-    #             [vacant_properties.gdf, backup_gdf], ignore_index=True
-    #         )
+            # Append backup data to the existing dataset
+            print(
+                f"Appending backup data ({len(backup_gdf)} rows) to the existing data."
+            )
+            vacant_properties.gdf = pd.concat(
+                [vacant_properties.gdf, backup_gdf], ignore_index=True
+            )
+        except Exception as e:
+            print(
+                f"Unable to load backup data for vacancies with error {e} - proceeding with pipeline using only vacant building data"
+            )
 
     # Convert to a regular DataFrame by dropping geometry
     df = vacant_properties.gdf.drop(columns=["geometry"], errors="ignore")
@@ -127,7 +135,7 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     df.dropna(subset=["opa_id"], inplace=True)
 
     # Final check for null percentages
-    # check_null_percentage(df)
+    check_null_percentage(df)
 
     # Add "vacant" column to primary feature layer
     primary_featurelayer.gdf["vacant"] = primary_featurelayer.gdf["opa_id"].isin(
