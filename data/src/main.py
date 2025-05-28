@@ -221,7 +221,6 @@ try:
 
     # Publish only vacant properties
     dataset.gdf = dataset.gdf[dataset.gdf["vacant"]]
-    # dataset.build_and_publish(tiles_file_id_prefix)
 
     # Finalize
     print("ETL process completed successfully.")

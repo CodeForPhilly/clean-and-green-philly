@@ -21,7 +21,7 @@ def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame | None:
     bucket = google_cloud_bucket()
     if not bucket:
         print("No Google Cloud bucket available - skipping backup data load.")
-        return None
+        raise ValueError("Missing Google cloud bucket to load backup data")
     blob = bucket.blob(file_name)
     if not blob.exists():
         raise FileNotFoundError(f"File {file_name} not found in the GCS bucket.")
@@ -108,9 +108,11 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         ]
 
         # Attempt to load backup data from GCS
-        backup_gdf = load_backup_data_from_gcs("vacant_indicators_land_06_2024.geojson")
+        try:
+            backup_gdf = load_backup_data_from_gcs(
+                "vacant_indicators_land_06_2024.geojson"
+            )
 
-        if backup_gdf:
             # Add parcel_type column to backup data
             backup_gdf["parcel_type"] = "Land"
 
@@ -120,6 +122,10 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
             )
             vacant_properties.gdf = pd.concat(
                 [vacant_properties.gdf, backup_gdf], ignore_index=True
+            )
+        except Exception as e:
+            print(
+                f"Unable to load backup data for vacancies with error {e} - proceeding with pipeline using only vacant building data"
             )
 
     # Convert to a regular DataFrame by dropping geometry

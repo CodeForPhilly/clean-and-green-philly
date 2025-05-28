@@ -77,7 +77,7 @@ class FeatureLayer:
         self.use_wkb_geom_field = use_wkb_geom_field
         self.max_workers = max_workers
         self.chunk_size = chunk_size
-        self.file_manager = FileManager.get_instance()
+        self.file_manager = FileManager()
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
