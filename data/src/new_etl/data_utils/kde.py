@@ -5,10 +5,10 @@ import mapclassify
 import numpy as np
 import rasterio
 from awkde.awkde import GaussianKDE
-from config.config import USE_CRS
 from rasterio.transform import Affine
 from tqdm import tqdm
 
+from src.config.config import USE_CRS
 from src.new_etl.classes.file_manager import FileManager, LoadType
 from src.new_etl.classes.featurelayer import FeatureLayer
 

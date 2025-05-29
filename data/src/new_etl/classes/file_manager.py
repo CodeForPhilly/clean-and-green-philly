@@ -8,7 +8,7 @@ from typing import List
 import geopandas as gpd
 from tqdm import tqdm
 
-from config.config import CACHE_FRACTION, ROOT_DIRECTORY
+from src.config.config import CACHE_FRACTION, ROOT_DIRECTORY
 
 print(f"Root directory is {ROOT_DIRECTORY}")
 

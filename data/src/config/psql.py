@@ -1,7 +1,8 @@
 import os
 
-from config.config import is_docker
 from sqlalchemy import create_engine
+
+from src.config.config import is_docker
 
 url: str = (
     os.environ["VACANT_LOTS_DB"].replace("localhost", "host.docker.internal")
