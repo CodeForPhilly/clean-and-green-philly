@@ -2,15 +2,15 @@ import traceback
 
 import pandas as pd
 
-from config.config import tiles_file_id_prefix
-from config.psql import conn
-from new_etl.classes.data_diff import DiffReport
-from new_etl.classes.slack_reporters import (
+from src.config.config import tiles_file_id_prefix
+from src.config.psql import conn
+from src.new_etl.classes.data_diff import DiffReport
+from src.new_etl.classes.slack_reporters import (
     send_dataframe_profile_to_slack,
     send_error_to_slack,
     send_pg_stats_to_slack,
 )
-from new_etl.data_utils import (
+from src.new_etl.data_utils import (
     access_process,
     city_owned_properties,
     community_gardens,
@@ -39,8 +39,8 @@ from new_etl.data_utils import (
     unsafe_buildings,
     vacant_properties,
 )
-from new_etl.database import to_postgis_with_schema
-from new_etl.validation import (
+from src.new_etl.database import to_postgis_with_schema
+from src.new_etl.validation import (
     CommunityGardensValidator,
     KDEValidator,
     LIViolationsValidator,
@@ -48,13 +48,13 @@ from new_etl.validation import (
     TreeCanopyValidator,
     VacantValidator,
 )
-from new_etl.validation.access_process import AccessProcessValidator
-from new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
-from new_etl.validation.council_dists import CouncilDistrictsValidator
-from new_etl.validation.nbhoods import NeighborhoodsValidator
-from new_etl.validation.phs_properties import PHSPropertiesValidator
-from new_etl.validation.ppr_properties import PPRPropertiesValidator
-from new_etl.validation.rco_geoms import RCOGeomsValidator
+from src.new_etl.validation.access_process import AccessProcessValidator
+from src.new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
+from src.new_etl.validation.council_dists import CouncilDistrictsValidator
+from src.new_etl.validation.nbhoods import NeighborhoodsValidator
+from src.new_etl.validation.phs_properties import PHSPropertiesValidator
+from src.new_etl.validation.ppr_properties import PPRPropertiesValidator
+from src.new_etl.validation.rco_geoms import RCOGeomsValidator
 
 # Map services to their validators
 SERVICE_VALIDATORS = {
