@@ -4,8 +4,12 @@ import zipfile
 import geopandas as gpd
 import requests
 
+<<<<<<< HEAD
 from config.config import USE_CRS
 from new_etl.classes.file_manager import FileManager
+=======
+from src.config.config import USE_CRS
+>>>>>>> staging
 
 from ..classes.featurelayer import FeatureLayer
 from ..metadata.metadata_utils import provide_metadata

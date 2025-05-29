@@ -1,8 +1,10 @@
-import pandas as pd
-import geopandas as gpd
 from typing import List
-from classes.featurelayer import FeatureLayer
-from constants.services import COMPLAINTS_SQL_QUERY, VIOLATIONS_SQL_QUERY
+
+import geopandas as gpd
+import pandas as pd
+
+from src.classes.featurelayer import FeatureLayer
+from src.constants.services import COMPLAINTS_SQL_QUERY, VIOLATIONS_SQL_QUERY
 
 
 def l_and_i(primary_featurelayer: FeatureLayer) -> FeatureLayer:

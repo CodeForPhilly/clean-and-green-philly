@@ -8,7 +8,7 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-from config.config import USE_CRS
+from src.config.config import USE_CRS
 
 from ..classes.featurelayer import FeatureLayer
 from ..classes.file_manager import FileManager, FileType, LoadType

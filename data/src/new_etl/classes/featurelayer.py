@@ -11,16 +11,23 @@ from google.cloud import storage
 from shapely import wkb
 from tqdm import tqdm
 
-from config.config import (
+from src.config.config import (
     FORCE_RELOAD,
     USE_CRS,
     log_level,
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
+<<<<<<< HEAD
 from new_etl.classes.bucket_manager import GCSBucketManager
 from new_etl.classes.file_manager import FileManager, FileType, LoadType
 from new_etl.loaders import load_carto_data, load_esri_data
+=======
+from src.config.psql import conn, local_engine
+from src.new_etl.classes.bucket_manager import GCSBucketManager
+from src.new_etl.database import to_postgis_with_schema
+from src.new_etl.loaders import load_carto_data, load_esri_data
+>>>>>>> staging
 
 log.basicConfig(level=log_level)
 
@@ -276,7 +283,7 @@ class FeatureLayer:
         Builds PMTiles and a Parquet file from a GeoDataFrame and publishes them to Google Cloud Storage.
 
         Args:
-            tiles_file_id_prefix (str): The ID prefix used for naming the PMTiles and Parquet files, coming from config.
+            tiles_file_id_prefix (str): The ID prefix used for naming the PMTiles and Parquet files, coming from src.config.
 
         Raises:
             ValueError: Raised if the generated PMTiles file is smaller than the minimum allowed size, indicating a potential corruption or incomplete file.

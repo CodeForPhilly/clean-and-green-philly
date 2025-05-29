@@ -1,4 +1,4 @@
-from config.config import USE_CRS
+from src.config.config import USE_CRS
 
 from ..classes.featurelayer import FeatureLayer
 from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
