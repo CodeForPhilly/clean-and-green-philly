@@ -9,9 +9,9 @@ import pytest
 from shapely.geometry import LineString, MultiPolygon, Point, Polygon
 
 from config.config import USE_CRS
-from data_utils.park_priority import get_latest_shapefile_url, park_priority
-from data_utils.ppr_properties import ppr_properties
-from data_utils.vacant_properties import vacant_properties
+from new_etl.data_utils.park_priority import get_latest_shapefile_url, park_priority
+from new_etl.data_utils.ppr_properties import ppr_properties
+from new_etl.data_utils.vacant_properties import vacant_properties
 from new_etl.data_utils.pwd_parcels import (
     merge_pwd_parcels_gdf,
     transform_pwd_parcels_gdf,

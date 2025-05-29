@@ -7,7 +7,7 @@ from ..metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
-def phs_properties(input_gdf: gpd.GeoDatamFrame) -> gpd.GeoDatamFrame:
+def phs_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Perform a spatial join between the primary feature layer and the PHS properties layer,
     then update the primary feature layer with a new column 'phs_care_program' indicating
