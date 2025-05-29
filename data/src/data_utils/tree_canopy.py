@@ -1,22 +1,13 @@
 import io
-<<<<<<< HEAD
-=======
-import zipfile
->>>>>>> staging
 
 import geopandas as gpd
 import requests
 
-<<<<<<< HEAD
-from classes.featurelayer import FeatureLayer
-from config.config import USE_CRS
-from new_etl.classes.file_manager import FileManager, LoadType
-
-file_manager = FileManager.get_instance()
-=======
 from src.classes.featurelayer import FeatureLayer
 from src.config.config import USE_CRS
->>>>>>> staging
+from src.new_etl.classes.file_manager import FileManager, LoadType
+
+file_manager = FileManager.get_instance()
 
 
 def tree_canopy(primary_featurelayer):
