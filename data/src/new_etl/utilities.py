@@ -3,14 +3,14 @@ import pandas as pd
 
 
 def opa_join(
-    first_gdf: gpd.GeoDataFrame, second_gdf: gpd.GeoDataFrame, opa_column: str
+    first_gdf: gpd.GeoDataFrame, second_gdf: gpd.GeoDataFrame, opa_col: str = "opa_id"
 ) -> gpd.GeoDataFrame:
     """
     Join 2 dataframes based on opa_id and keeps the 'geometry' column from the left dataframe if it exists in both.
     Assumes that the two dataframes are in standardized form with a string "opa_id" column and geometry columns.
     """
 
-    joined = first_gdf.merge(second_gdf, how="left", on="opa_id")
+    joined = first_gdf.merge(second_gdf, how="left", on=opa_col)
 
     # Check if 'geometry' column exists in both dataframes and clean up
     if "geometry_x" in joined.columns and "geometry_y" in joined.columns:

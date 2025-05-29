@@ -2,7 +2,7 @@ import geopandas as gpd
 
 from new_etl.utilities import opa_join
 
-from ..classes.featurelayer import CartoLoader, FeatureLayer
+from ..classes.featurelayer import CartoLoader
 from ..constants.services import DELINQUENCIES_QUERY
 from ..metadata.metadata_utils import provide_metadata
 
@@ -38,21 +38,6 @@ def delinquencies(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     Primary Feature Layer Columns Referenced:
         opa_id
     """
-    # tax_delinquencies = FeatureLayer(
-    #     name="Property Tax Delinquencies",
-    #     carto_sql_queries=DELINQUENCIES_QUERY,
-    #     use_wkb_geom_field="the_geom",
-    #     cols=[
-    #         "opa_number",
-    #         "total_due",
-    #         "is_actionable",
-    #         "payment_agreement",
-    #         "num_years_owed",
-    #         "most_recent_year_owed",
-    #         "total_assessment",
-    #         "sheriff_sale",
-    #     ],
-    # )
 
     loader = CartoLoader(
         name="Property Tax Delinquencies",
@@ -67,6 +52,7 @@ def delinquencies(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
             "total_assessment",
             "sheriff_sale",
         ],
+        opa_col="opa_number",
     )
 
     tax_delinquencies = loader.load_or_fetch()

@@ -1,7 +1,6 @@
 import geopandas as gpd
 
 from new_etl.utilities import spatial_join
-
 from ..classes.featurelayer import EsriLoader
 from ..constants.services import PHS_LAYERS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
@@ -29,10 +28,6 @@ def phs_properties(input_gdf: gpd.GeoDatamFrame) -> gpd.GeoDatamFrame:
     Primary Feature Layer Columns Referenced:
         opa_id, geometry
     """
-
-    # phs_properties = FeatureLayer(
-    #     name="PHS Properties", esri_rest_urls=PHS_LAYERS_TO_LOAD, cols=["program"]
-    # )
 
     loader = EsriLoader(
         name="PHS Properties", esri_urls=PHS_LAYERS_TO_LOAD, cols=["program"]

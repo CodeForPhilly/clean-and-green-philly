@@ -2,7 +2,6 @@ import pandas as pd
 import geopandas as gpd
 
 from new_etl.utilities import spatial_join
-
 from ..classes.featurelayer import EsriLoader
 from ..constants.services import RCOS_LAYERS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
@@ -39,8 +38,6 @@ def rco_geoms(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     Primary Feature Layer Columns Referenced:
         opa_id, geometry
     """
-    # rco_geoms = FeatureLayer(name="RCOs", esri_rest_urls=RCOS_LAYERS_TO_LOAD)
-
     loader = EsriLoader(name="RCOs", esri_urls=RCOS_LAYERS_TO_LOAD)
     rco_geoms = loader.load_or_fetch()
 

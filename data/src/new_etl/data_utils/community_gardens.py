@@ -1,6 +1,5 @@
 import geopandas as gpd
 
-from config.config import USE_CRS
 from new_etl.utilities import spatial_join
 from ..classes.featurelayer import EsriLoader
 from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
@@ -33,18 +32,14 @@ def community_gardens(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     Source:
         https://services2.arcgis.com/qjOOiLCYeUtwT7x7/arcgis/rest/services/PHS_NGT_Supported_Current_view/FeatureServer/0/
     """
-    # Load community gardens
-    # community_gardens = FeatureLayer(
-    #     name="Community Gardens", esri_rest_urls=COMMUNITY_GARDENS_TO_LOAD
-    # )
 
-    loader = EsriLoader(name="Community Gardens", esri_urls=COMMUNITY_GARDENS_TO_LOAD)
+    loader = EsriLoader(
+        name="Community Gardens",
+        esri_urls=COMMUNITY_GARDENS_TO_LOAD,
+        cols=["site_name"],
+    )
 
     community_gardens = loader.load_or_fetch()
-
-    # # Ensure both layers are in the same CRS
-    # if community_gardens.crs != USE_CRS:
-    #     community_gardens = community_gardens.to_crs(USE_CRS)
 
     # Convert any non-point geometries to points using centroid
     community_gardens.loc[
@@ -52,9 +47,6 @@ def community_gardens(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     ] = community_gardens[
         community_gardens.geometry.geom_type != "Point"
     ].geometry.centroid
-
-    # Limit the community gardens data to relevant columns
-    community_gardens = community_gardens[["site_name", "geometry"]]
 
     # Use 'contains' predicate since we want the parcel that contains each point
     merged_gdf = spatial_join(

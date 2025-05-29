@@ -6,7 +6,7 @@ import requests
 from config.config import USE_CRS
 from new_etl.utilities import spatial_join
 
-from ..classes.featurelayer import EsriLoader, FeatureLayer
+from ..classes.featurelayer import EsriLoader, FeatureLayer, GdfLoader
 from ..constants.services import PPR_PROPERTIES_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
 
@@ -44,21 +44,15 @@ def ppr_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     fallback_url = "https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson"
 
     try:
-        # Load PPR properties from Esri REST URLs
-        # ppr_properties = FeatureLayer(
-        #     name="PPR Properties",
-        #     esri_rest_urls=PPR_PROPERTIES_TO_LOAD,
-        #     cols=["PUBLIC_NAME"],
-        # )
         loader = EsriLoader(
             name="PPR Properties",
             esri_rest_urls=PPR_PROPERTIES_TO_LOAD,
-            cols=["PUBLIC_NAME"],
+            cols=["public_name"],
         )
 
         ppr_properties = loader.load_or_fetch()
 
-        if ppr_properties.gdf is None or ppr_properties.gdf.empty:
+        if ppr_properties is None or ppr_properties.empty:
             raise ValueError(
                 "PPR properties GeoDataFrame is empty or failed to load from Esri REST URL."
             )
@@ -71,14 +65,13 @@ def ppr_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
         response = requests.get(fallback_url)
         response.raise_for_status()
-        ppr_properties_gdf = gpd.read_file(io.BytesIO(response.content))
 
-        ppr_properties = FeatureLayer(name="PPR Properties")
-        ppr_properties.gdf = ppr_properties_gdf
-
-    # Limit PPR properties to relevant columns and apply CRS
-    # ppr_properties.gdf = ppr_properties.gdf[["public_name", "geometry"]]
-    # ppr_properties.gdf = ppr_properties.gdf.to_crs(USE_CRS)
+        loader = GdfLoader(
+            input=io.BytesIO(response.content),
+            name="PPR Properties",
+            cols=["public_name"],
+        )
+        ppr_properties = loader.load_or_fetch()
 
     # Perform a spatial join with the primary feature layer
     merged_gdf = spatial_join(input_gdf, ppr_properties)

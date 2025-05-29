@@ -32,12 +32,6 @@ def imm_dang_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     Source:
         https://phl.carto.com/api/v2/sql
     """
-    # imm_dang_buildings = FeatureLayer(
-    #     name="Imminently Dangerous Buildings",
-    #     use_wkb_geom_field="the_geom",
-    #     carto_sql_queries=IMMINENT_DANGER_BUILDINGS_QUERY,
-    #     cols=["opa_account_num"],
-    # )
 
     loader = CartoLoader(
         name="Imminently Dangerous Buildings",
@@ -48,10 +42,6 @@ def imm_dang_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     imm_dang_buildings = loader.load_or_fetch()
 
     imm_dang_buildings.loc[:, "imm_dang_building"] = "Y"
-
-    # imm_dang_buildings.gdf = imm_dang_buildings.gdf.rename(
-    #     columns={"opa_account_num": "opa_number"}
-    # )
 
     merged_gdf = opa_join(
         input_gdf,

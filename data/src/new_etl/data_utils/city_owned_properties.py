@@ -36,16 +36,12 @@ def city_owned_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/LAMAAssets/FeatureServer/0/
 
     """
-    # city_owned_properties = FeatureLayer(
-    #     name="City Owned Properties",
-    #     esri_rest_urls=CITY_OWNED_PROPERTIES_TO_LOAD,
-    #     cols=["OPABRT", "AGENCY", "SIDEYARDELIGIBLE"],
-    # )
 
     loader = EsriLoader(
         name="City Owned Properties",
         esri_rest_urls=CITY_OWNED_PROPERTIES_TO_LOAD,
         cols=["OPABRT", "AGENCY", "SIDEYARDELIGIBLE"],
+        opa_col="opabrt",
     )
 
     city_owned_properties = loader.load_or_fetch()

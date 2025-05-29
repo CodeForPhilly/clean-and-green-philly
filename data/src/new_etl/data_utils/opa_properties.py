@@ -2,8 +2,8 @@ import re
 
 import pandas as pd
 import geopandas as gpd
-from new_etl.metadata.metadata_utils import provide_metadata
 
+from new_etl.metadata.metadata_utils import provide_metadata
 from ..classes.featurelayer import CartoLoader
 from ..constants.services import OPA_PROPERTIES_QUERY
 
@@ -107,28 +107,6 @@ def opa_properties() -> gpd.GeoDataFrame:
     Tagline:
         Load OPA data
     """
-    # opa = FeatureLayer(
-    #     name="OPA Properties",
-    #     carto_sql_queries=OPA_PROPERTIES_QUERY,
-    #     use_wkb_geom_field="the_geom",
-    #     cols=[
-    #         "market_value",
-    #         "sale_date",
-    #         "sale_price",
-    #         "parcel_number",
-    #         "owner_1",
-    #         "owner_2",
-    #         "mailing_address_1",
-    #         "mailing_address_2",
-    #         "mailing_care_of",
-    #         "mailing_city_state",
-    #         "mailing_street",
-    #         "mailing_zip",
-    #         "building_code_description",
-    #         "zip_code",
-    #         "zoning",
-    #     ],
-    # )
     loader = CartoLoader(
         carto_queries=OPA_PROPERTIES_QUERY,
         name="OPA Properties",
@@ -153,9 +131,6 @@ def opa_properties() -> gpd.GeoDataFrame:
     )
 
     opa = loader.load_or_fetch()
-
-    # Rename columns
-    opa.gdf = opa.gdf.rename(columns={"parcel_number": "opa_id"})
 
     # Convert 'sale_price' and 'market_value' to numeric values
     opa["sale_price"] = pd.to_numeric(opa["sale_price"], errors="coerce")

@@ -10,11 +10,11 @@ def access_process(dataset: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     city ownership and market value. The result is added as a new column in the dataset.
 
     Args:
-        dataset (Any): The dataset containing a GeoDataFrame named `gdf` with
-                       columns "city_owner_agency" and "market_value".
+        dataset (GeoDataFrame): The input GeoDataFrame dataset with
+        columns "city_owner_agency" and "market_value".
 
     Returns:
-        Any: The updated dataset with an additional "access_process" column.
+        GeoDataFrame: The updated dataset with an additional "access_process" column.
 
     Tagline:
         Assigns access processes

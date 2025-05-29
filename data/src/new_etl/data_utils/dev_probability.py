@@ -38,10 +38,8 @@ def dev_probability(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     Source:
         https://phl.carto.com/api/v2/sql
     """
-    # census_bgs_gdf = gpd.read_file(CENSUS_BGS_URL)
-    # census_bgs_gdf = census_bgs_gdf.to_crs(USE_CRS)
 
-    loader = GdfLoader(url=CENSUS_BGS_URL)
+    loader = GdfLoader(name="Census BGs", url=CENSUS_BGS_URL)
     census_bgs_gdf = loader.load_or_fetch()
 
     base_url = "https://phl.carto.com/api/v2/sql"
@@ -78,7 +76,6 @@ def dev_probability(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     ).astype(str)
 
     census_bgs_gdf = census_bgs_gdf[["permit_count", "dev_rank", "geometry"]]
-    # census_bgs_gdf = census_bgs_gdf.to_crs(USE_CRS)
 
     merged_gdf = spatial_join(input_gdf, census_bgs_gdf)
 

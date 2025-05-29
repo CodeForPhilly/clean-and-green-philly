@@ -1,14 +1,11 @@
 import io
-import zipfile
 
 import geopandas as gpd
 import requests
 
-from config.config import USE_CRS
-from new_etl.classes.file_manager import FileManager
+from new_etl.classes.file_manager import FileManager, LoadType
 from new_etl.utilities import spatial_join
-
-from ..classes.featurelayer import FeatureLayer
+from ..classes.featurelayer import GdfLoader
 from ..metadata.metadata_utils import provide_metadata
 
 file_manager = FileManager.get_instance()
@@ -47,24 +44,21 @@ def tree_canopy(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     tree_response = requests.get(tree_url)
 
     with io.BytesIO(tree_response.content) as f:
-        with zipfile.ZipFile(f, "r") as zip_ref:
-            zip_ref.extractall("storage/temp")
+        file_manager.extract_all(f)
 
     # Load and process the tree canopy shapefile
-    # loader = GdfLoader(url=)
-    pa_trees = gpd.read_file("storage/temp/pa.shp")
-    pa_trees = pa_trees.to_crs(USE_CRS)
+    shapefile_file_path = file_manager.get_file_path(
+        file_name="pa.shp", load_type=LoadType.TEMP
+    )
+    loader = GdfLoader(url=shapefile_file_path, cols=["tc_gap"])
+    pa_trees = loader.load_or_fetch()
+
     phl_trees = pa_trees[pa_trees["county"] == "Philadelphia County"]
-    phl_trees = phl_trees[["tc_gap", "geometry"]]
 
     # Rename column to match intended output
     phl_trees.rename(columns={"tc_gap": "tree_canopy_gap"}, inplace=True)
 
-    # Create a FeatureLayer for tree canopy data
-    tree_canopy = FeatureLayer("Tree Canopy")
-    tree_canopy.gdf = phl_trees
-
     # Perform spatial join
-    merged_gdf = spatial_join(input_gdf, tree_canopy)
+    merged_gdf = spatial_join(input_gdf, phl_trees)
 
     return merged_gdf

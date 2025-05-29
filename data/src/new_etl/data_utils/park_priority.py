@@ -9,8 +9,7 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 from config.config import USE_CRS
-
-from ..classes.featurelayer import FeatureLayer
+from src.new_etl.utilities import spatial_join
 from ..classes.file_manager import FileManager, FileType, LoadType
 from ..metadata.metadata_utils import provide_metadata
 
@@ -57,7 +56,7 @@ def download_and_process_shapefile(
     target_files_paths = [
         file_manager.get_file_path(filename, LoadType.TEMP) for filename in target_files
     ]
-    if any([not os.path.exists(filepath) for filepath in target_files_paths]):
+    if any([not os.path.exists(file_path) for file_path in target_files_paths]):
         print("Downloading and processing park priority data...")
         response: requests.Response = requests.get(park_url, stream=True)
         total_size: int = int(response.headers.get("content-length", 0))
@@ -99,6 +98,7 @@ def download_and_process_shapefile(
         filter_shapefile_generator()
     )
 
+    # ISSUE Check this CRS
     phl_parks.crs = USE_CRS
     phl_parks = phl_parks.to_crs(USE_CRS)
 
@@ -114,7 +114,7 @@ def download_and_process_shapefile(
 
 
 @provide_metadata()
-def park_priority(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def park_priority(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Downloads and processes park priority data, then joins it with the primary feature layer.
 
@@ -161,8 +161,5 @@ def park_priority(primary_featurelayer: FeatureLayer) -> FeatureLayer:
             geojson_filename, park_url, target_files, file_name_prefix
         )
 
-    park_priority_layer: FeatureLayer = FeatureLayer("Park Priority")
-    park_priority_layer.gdf = phl_parks
-
-    primary_featurelayer.spatial_join(park_priority_layer)
-    return primary_featurelayer
+    merged_gdf = spatial_join(input_gdf, phl_parks)
+    return merged_gdf

@@ -5,6 +5,8 @@ import numpy as np
 from libpysal.weights import Queen
 import geopandas as gpd
 
+from src.new_etl.utilities import opa_join
+
 from ..metadata.metadata_utils import provide_metadata
 
 
@@ -64,9 +66,7 @@ def contig_neighbors(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     vacant_parcels["n_contiguous"] = vacant_parcels.index.map(n_contiguous)
 
     # Merge the results back to the primary feature layer
-    input_gdf = input_gdf.merge(
-        vacant_parcels[["opa_id", "n_contiguous"]], on="opa_id", how="left"
-    )
+    input_gdf = opa_join(input_gdf, vacant_parcels[["opa_id", "n_contiguous"]])
 
     # Assign NA for non-vacant properties
     input_gdf.loc[~input_gdf["vacant"], "n_contiguous"] = np.nan

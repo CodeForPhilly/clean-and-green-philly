@@ -32,12 +32,10 @@ def council_dists(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     Primary Feature Layer Columns Referenced:
         opa_id, geometry
     """
-    # Load council districts
-    # council_dists = FeatureLayer(
-    #     name="Council Districts", esri_rest_urls=COUNCIL_DISTRICTS_TO_LOAD
-    # )
 
-    loader = EsriLoader(name="Council Districts", esri_urls=COUNCIL_DISTRICTS_TO_LOAD)
+    loader = EsriLoader(
+        name="Council Districts", esri_urls=COUNCIL_DISTRICTS_TO_LOAD, cols=["district"]
+    )
 
     council_dists = loader.load_or_fetch()
 
@@ -52,7 +50,7 @@ def council_dists(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         )
 
     # Use only the required columns
-    council_dists = council_dists[required_columns].copy()
+    # council_dists = council_dists[required_columns].copy()
     council_dists.rebuild_gdf()
 
     # Perform spatial join

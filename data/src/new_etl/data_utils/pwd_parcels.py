@@ -78,14 +78,6 @@ def pwd_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     Source:
         https://phl.carto.com/api/v2/sql
     """
-    # Load PWD parcels
-    # pwd_parcels = FeatureLayer(
-    #     name="PWD Parcels",
-    #     carto_sql_queries=PWD_PARCELS_QUERY,
-    #     use_wkb_geom_field="the_geom",
-    #     cols=["brt_id"],
-    # )
-
     loader = CartoLoader(
         name="PWD Parcels",
         carto_sql_queries=PWD_PARCELS_QUERY,

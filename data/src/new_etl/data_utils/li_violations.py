@@ -52,13 +52,11 @@ def li_violations(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         "unsafe",
     ]
 
-    # Load data for violations from L&I
-    # l_and_i_violations: FeatureLayer = FeatureLayer(
-    #     name="LI Violations", carto_sql_queries=VIOLATIONS_SQL_QUERY, from_xy=True
-    # )
-
     loader = CartoLoader(
-        name="LI Violations", carto_sql_queries=VIOLATIONS_SQL_QUERY, from_xy=True
+        name="LI Violations",
+        carto_sql_queries=VIOLATIONS_SQL_QUERY,
+        wkb_geom_field=None,
+        opa_col="opa_account_num",
     )
 
     l_and_i_violations = loader.load_or_fetch()
@@ -72,9 +70,9 @@ def li_violations(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     ]
 
     all_violations_count_df: pd.DataFrame = (
-        l_and_i_violations.groupby("opa_account_num")
+        l_and_i_violations.groupby("opa_id")
         .count()
-        .reset_index()[["opa_account_num", "violationnumber", "geometry"]]
+        .reset_index()[["opa_id", "violationnumber", "geometry"]]
     )
     all_violations_count_df = all_violations_count_df.rename(
         columns={"violationnumber": "all_violations_past_year"}
@@ -85,16 +83,16 @@ def li_violations(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     ]
 
     open_violations_count_df: pd.DataFrame = (
-        violations_gdf.groupby("opa_account_num")
+        violations_gdf.groupby("opa_id")
         .count()
-        .reset_index()[["opa_account_num", "violationnumber", "geometry"]]
+        .reset_index()[["opa_id", "violationnumber", "geometry"]]
     )
     open_violations_count_df = open_violations_count_df.rename(
         columns={"violationnumber": "open_violations_past_year"}
     )
-    # join the all_violations_count_df and open_violations_count_df dataframes on opa_account_num
+    # join the all_violations_count_df and open_violations_count_df dataframes on opa_id
     violations_count_gdf: gpd.GeoDataFrame = all_violations_count_df.merge(
-        open_violations_count_df, how="left", on="opa_account_num"
+        open_violations_count_df, how="left", on="opa_id"
     )
 
     # replace NaN values with 0
@@ -108,7 +106,7 @@ def li_violations(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         "open_violations_past_year"
     ].astype(int)
     violations_count_gdf = violations_count_gdf[
-        ["opa_account_num", "all_violations_past_year", "open_violations_past_year"]
+        ["opa_id", "all_violations_past_year", "open_violations_past_year"]
     ]
 
     # collapse violations_gdf by address and concatenate the violationcodetitle values into a list with a semicolon separator

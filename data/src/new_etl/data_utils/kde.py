@@ -50,8 +50,6 @@ def generic_kde(
     """
     print(f"Initializing FeatureLayer for {name}")
 
-    # feature_layer = FeatureLayer(name=name, carto_sql_queries=query)
-
     loader = CartoLoader(name=name, carto_queries=query)
     gdf = loader.load_or_fetch()
 
@@ -140,17 +138,15 @@ def apply_kde_to_input(
     """
     raster_filename, crime_coords = generic_kde(name, query, resolution)
 
-    input_gdf["centroid"] = input_gdf.geometry.centroid
+    centroids = input_gdf.geometry.centroid
 
     coord_list = [
         (x, y)
         for x, y in zip(
-            input_gdf["centroid"].x,
-            input_gdf["centroid"].y,
+            centroids.x,
+            centroids.y,
         )
     ]
-
-    input_gdf = input_gdf.drop(columns=["centroid"])
 
     with rasterio.open(raster_filename) as src:
         sampled_values = [x[0] for x in src.sample(coord_list)]

@@ -23,10 +23,10 @@ def dor_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     print("Loading DOR properties from GeoJSON...")
 
     # Load and preprocess DOR parcels
-    loader = GdfLoader(url=DOR_PARCELS_URL)
+    loader = GdfLoader(name="DOR Parcels", url=DOR_PARCELS_URL)
     dor_parcels = loader.load_or_fetch()
 
-    dor_parcels["geometry"] = dor_parcels["geometry"].make_valid()
+    # dor_parcels["geometry"] = dor_parcels["geometry"].make_valid()
     dor_parcels = dor_parcels[
         dor_parcels["STATUS"] == 1
     ]  # filter for what I think are only active parcel boundaries
@@ -39,17 +39,8 @@ def dor_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         f"Number of valid polygon/multipolygon geometries in DOR parcels: {len(dor_parcels)}"
     )
 
-    # Ensure the primary feature layer has the same CRS
-    # primary_featurelayer.gdf = primary_featurelayer.gdf.to_crs(USE_CRS)
-
     # Perform spatial join to identify intersecting polygons
     print("Performing spatial join between points and polygons...")
-    # spatial_join_result = gpd.sjoin(
-    #     primary_featurelayer.gdf,
-    #     dor_parcels[["geometry"]],  # Only keep geometry column
-    #     how="left",
-    #     predicate="intersects",
-    # )
 
     merged_gdf = spatial_join(input_gdf, dor_parcels[["geometry"]])
 

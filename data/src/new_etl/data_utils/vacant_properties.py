@@ -3,7 +3,7 @@ from io import BytesIO
 import geopandas as gpd
 import pandas as pd
 
-from ..classes.featurelayer import EsriLoader, FeatureLayer, google_cloud_bucket
+from ..classes.featurelayer import EsriLoader, google_cloud_bucket
 from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
 
@@ -83,22 +83,13 @@ def vacant_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     Known Issues:
         - The vacant land data is below the threshold, so backup data is loaded from GCS.
     """
-    # vacant_properties = FeatureLayer(
-    #     name="Vacant Properties",
-    #     esri_rest_urls=VACANT_PROPS_LAYERS_TO_LOAD,
-    #     cols=["OPA_ID", "parcel_type"],  # Only need opa_id and parcel_type
-    # )
-
     loader = EsriLoader(
         name="Vacant Properties",
         esri_urls=VACANT_PROPS_LAYERS_TO_LOAD,
-        cols=["OPA_ID", "parcel_type"],
+        cols=["opa_id", "parcel_type"],
     )
 
     vacant_properties = loader.load_or_fetch()
-
-    # # Rename columns for consistency
-    # vacant_properties = vacant_properties.rename(columns={"OPA_ID": "opa_id"})
 
     # Filter for "Land" properties in the dataset
     vacant_land_gdf = vacant_properties[vacant_properties["parcel_type"] == "Land"]

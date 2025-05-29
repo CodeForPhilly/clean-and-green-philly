@@ -1,14 +1,13 @@
 import os
 from typing import List
+from concurrent.futures import ThreadPoolExecutor, as_completed
+
 import geopandas as gpd
 import pandas as pd
 from esridump.dumper import EsriDumper
 import requests
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 from shapely import wkb
-
-from config.config import USE_CRS
 
 
 # Esri data loader
@@ -40,9 +39,7 @@ def load_esri_data(esri_rest_urls: List[str], input_crs: str):
             continue  # Skip if no features were found
 
         geojson_features = {"type": "FeatureCollection", "features": features}
-        gdf = gpd.GeoDataFrame.from_features(geojson_features, crs=input_crs).to_crs(
-            USE_CRS
-        )
+        gdf = gpd.GeoDataFrame.from_features(geojson_features, crs=input_crs)
 
         if parcel_type:
             gdf["parcel_type"] = parcel_type  # Add the parcel_type column
@@ -104,7 +101,7 @@ def fetch_carto_chunk(
         if wkb_geom_field
         else gpd.points_from_xy(df.x, df.y)
     )
-    return gpd.GeoDataFrame(df, geometry=geometry, crs=input_crs).to_crs(USE_CRS)
+    return gpd.GeoDataFrame(df, geometry=geometry, crs=input_crs)
 
 
 def get_carto_total_rows(query):

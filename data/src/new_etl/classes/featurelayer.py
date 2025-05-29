@@ -6,7 +6,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from abc import ABC, abstractmethod
 from typing import List
 
-from esridump.dumper import EsriDumper
 import geopandas as gpd
 import pandas as pd
 import requests
@@ -121,12 +120,13 @@ class BaseLoader(ABC):
 
 
 class GdfLoader(BaseLoader):
-    def __init__(self, url: str):
+    def __init__(self, input: str):
         super().__init__()
-        self.url = url
+        self.input = input
 
     def load_data(self):
-        gdf = gpd.read_file(self.url)
+        gdf = gpd.read_file(self.input)
+        gdf = self.normalize_columns(gdf, self.cols)
 
         if not gdf.crs:
             raise AttributeError("Input data doesn't have an original CRS set")
@@ -144,6 +144,8 @@ class EsriLoader(BaseLoader):
     def load_data(self):
         gdf = load_esri_data(self.esri_urls, self.input_crs)
         gdf = self.normalize_columns(gdf, self.cols)
+
+        gdf = gdf.to_crs(USE_CRS)
 
         if self.opa_col:
             gdf.rename(columns={self.opa_col: "opa_id"}, inplace=True)
@@ -166,6 +168,8 @@ class CartoLoader(BaseLoader):
     def load_data(self):
         gdf = load_carto_data(self.carto_queries, self.input_crs, self.wkb_geom_field)
         gdf = self.normalize_columns(gdf, self.cols)
+
+        gdf = gdf.to_crs(USE_CRS)
 
         if self.opa_col:
             gdf.rename(columns={self.opa_col: "opa_id"}, inplace=True)

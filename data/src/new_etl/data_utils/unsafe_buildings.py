@@ -1,8 +1,7 @@
 import geopandas as gpd
 
 from new_etl.utilities import opa_join
-
-from ..classes.featurelayer import CartoLoader, FeatureLayer
+from ..classes.featurelayer import CartoLoader
 from ..constants.services import UNSAFE_BUILDINGS_QUERY
 from ..metadata.metadata_utils import provide_metadata
 
@@ -32,13 +31,6 @@ def unsafe_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     Source:
         https://phl.carto.com/api/v2/sql
     """
-    # unsafe_buildings = FeatureLayer(
-    #     name="Unsafe Buildings",
-    #     carto_sql_queries=UNSAFE_BUILDINGS_QUERY,
-    #     use_wkb_geom_field="the_geom",
-    #     cols=["opa_account_num"],
-    # )
-
     loader = CartoLoader(
         name="Unsafe Buildings",
         carto_sql_queries=UNSAFE_BUILDINGS_QUERY,
@@ -49,11 +41,6 @@ def unsafe_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     # Mark unsafe buildings
     unsafe_buildings.loc[:, "unsafe_building"] = "Y"
-
-    # Rename column for consistency
-    # unsafe_buildings = unsafe_buildings.rename(
-    #     columns={"opa_account_num": "opa_number"}
-    # )
 
     # Join unsafe buildings data with primary feature layer
     merged_gdf = opa_join(input_gdf, unsafe_buildings)
