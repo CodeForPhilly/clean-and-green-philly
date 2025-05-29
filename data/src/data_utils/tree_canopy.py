@@ -7,7 +7,7 @@ from src.classes.featurelayer import FeatureLayer
 from src.config.config import USE_CRS
 from src.new_etl.classes.file_manager import FileManager, LoadType
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
 
 
 def tree_canopy(primary_featurelayer):

@@ -51,7 +51,7 @@ from src.new_etl.validation.phs_properties import PHSPropertiesValidator
 from src.new_etl.validation.ppr_properties import PPRPropertiesValidator
 from src.new_etl.validation.rco_geoms import RCOGeomsValidator
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
 
 # Map services to their validators
 SERVICE_VALIDATORS = {
