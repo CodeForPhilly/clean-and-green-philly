@@ -2,11 +2,9 @@ from datetime import datetime
 import os
 import re
 
-from slack_sdk import WebClient
-
 from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
 
 
 class DiffReport:

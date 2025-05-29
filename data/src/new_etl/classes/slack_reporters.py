@@ -4,9 +4,9 @@ from typing import List
 import pandas as pd
 from slack_sdk import WebClient
 
-from new_etl.classes.file_manager import FileManager, FileType, LoadType
+from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
 
 
 class SlackReporter:

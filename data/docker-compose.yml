@@ -15,7 +15,7 @@ services:
       - GOOGLE_CLOUD_PROJECT
       - CAGP_SLACK_API_TOKEN
     volumes:
-      - ./src:/usr/src/app
+      - ./src:/usr/src/app/src
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
