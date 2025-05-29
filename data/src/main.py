@@ -3,13 +3,13 @@ import traceback
 
 import pandas as pd
 
-from new_etl.classes.file_manager import FileManager, FileType, LoadType
-from new_etl.classes.data_diff import DiffReport
-from new_etl.classes.slack_reporters import (
+from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
+from src.new_etl.classes.data_diff import DiffReport
+from src.new_etl.classes.slack_reporters import (
     SlackReporter,
     send_error_to_slack,
 )
-from new_etl.data_utils import (
+from src.new_etl.data_utils import (
     access_process,
     city_owned_properties,
     community_gardens,
@@ -38,7 +38,7 @@ from new_etl.data_utils import (
     unsafe_buildings,
     vacant_properties,
 )
-from new_etl.validation import (
+from src.new_etl.validation import (
     CommunityGardensValidator,
     KDEValidator,
     LIViolationsValidator,
@@ -46,15 +46,15 @@ from new_etl.validation import (
     TreeCanopyValidator,
     VacantValidator,
 )
-from new_etl.validation.access_process import AccessProcessValidator
-from new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
-from new_etl.validation.council_dists import CouncilDistrictsValidator
-from new_etl.validation.nbhoods import NeighborhoodsValidator
-from new_etl.validation.phs_properties import PHSPropertiesValidator
-from new_etl.validation.ppr_properties import PPRPropertiesValidator
-from new_etl.validation.rco_geoms import RCOGeomsValidator
+from src.new_etl.validation.access_process import AccessProcessValidator
+from src.new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
+from src.new_etl.validation.council_dists import CouncilDistrictsValidator
+from src.new_etl.validation.nbhoods import NeighborhoodsValidator
+from src.new_etl.validation.phs_properties import PHSPropertiesValidator
+from src.new_etl.validation.ppr_properties import PPRPropertiesValidator
+from src.new_etl.validation.rco_geoms import RCOGeomsValidator
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
 token = os.getenv("CAGP_SLACK_API_TOKEN")
 
 slack_reporter = SlackReporter(token) if token else None

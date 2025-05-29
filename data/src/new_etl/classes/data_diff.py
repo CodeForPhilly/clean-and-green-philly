@@ -4,7 +4,7 @@ import re
 
 from slack_sdk import WebClient
 
-from new_etl.classes.file_manager import FileManager, FileType, LoadType
+from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
 
 file_manager = FileManager.get_instance()
 
