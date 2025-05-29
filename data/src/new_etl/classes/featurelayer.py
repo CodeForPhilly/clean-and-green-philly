@@ -18,16 +18,9 @@ from src.config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
-<<<<<<< HEAD
-from new_etl.classes.bucket_manager import GCSBucketManager
-from new_etl.classes.file_manager import FileManager, FileType, LoadType
-from new_etl.loaders import load_carto_data, load_esri_data
-=======
-from src.config.psql import conn, local_engine
 from src.new_etl.classes.bucket_manager import GCSBucketManager
-from src.new_etl.database import to_postgis_with_schema
+from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
 from src.new_etl.loaders import load_carto_data, load_esri_data
->>>>>>> staging
 
 log.basicConfig(level=log_level)
 
