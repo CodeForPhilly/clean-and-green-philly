@@ -1,4 +1,5 @@
 import os
+import re
 from io import BytesIO
 from typing import List, Union
 
@@ -30,8 +31,9 @@ def get_latest_shapefile_url() -> str:
     url: str = "https://www.tpl.org/park-data-downloads"
     response: requests.Response = requests.get(url)
     soup: BeautifulSoup = BeautifulSoup(response.content, "html.parser")
-
-    shapefile_link: Union[BeautifulSoup, None] = soup.find("a", string="Shapefile")
+    shapefile_link: Union[BeautifulSoup, None] = soup.find(
+        "a", string=re.compile(r"Shapefile")
+    )
     if shapefile_link:
         return str(shapefile_link["href"])
     else:
