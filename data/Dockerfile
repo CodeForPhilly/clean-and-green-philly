@@ -45,8 +45,11 @@ RUN git clone https://github.com/felt/tippecanoe.git \
     && make install
 
 # Copy the src directory
-COPY src/ .
+COPY src ./src
 
 # Use Pipenv to run the script
 # Adjust the path to your main Python script if needed
-CMD ["pipenv", "run", "python", "./script.py"]
+RUN ls -a /usr/src/app
+
+CMD ["pipenv", "run", "python", "-m", "src.main.py"]
+

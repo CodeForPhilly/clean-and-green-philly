@@ -5,9 +5,11 @@ import geopandas as gpd
 import requests
 
 from src.config.config import USE_CRS
-
+from src.new_etl.classes.file_manager import FileManager
 from ..classes.featurelayer import FeatureLayer
 from ..metadata.metadata_utils import provide_metadata
+
+file_manager = FileManager()
 
 
 @provide_metadata()
@@ -44,10 +46,10 @@ def tree_canopy(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     with io.BytesIO(tree_response.content) as f:
         with zipfile.ZipFile(f, "r") as zip_ref:
-            zip_ref.extractall("tmp/")
+            zip_ref.extractall("storage/temp")
 
     # Load and process the tree canopy shapefile
-    pa_trees = gpd.read_file("tmp/pa.shp")
+    pa_trees = gpd.read_file("storage/temp/pa.shp")
     pa_trees = pa_trees.to_crs(USE_CRS)
     phl_trees = pa_trees[pa_trees["county"] == "Philadelphia County"]
     phl_trees = phl_trees[["tc_gap", "geometry"]]

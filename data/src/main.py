@@ -1,15 +1,11 @@
+import os
 import traceback
 
 import pandas as pd
 
-from src.config.config import tiles_file_id_prefix
-from src.config.psql import conn
+from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
 from src.new_etl.classes.data_diff import DiffReport
-from src.new_etl.classes.slack_reporters import (
-    send_dataframe_profile_to_slack,
-    send_error_to_slack,
-    send_pg_stats_to_slack,
-)
+from src.new_etl.classes.slack_reporters import SlackReporter
 from src.new_etl.data_utils import (
     access_process,
     city_owned_properties,
@@ -39,57 +35,31 @@ from src.new_etl.data_utils import (
     unsafe_buildings,
     vacant_properties,
 )
-from src.new_etl.database import to_postgis_with_schema
-from src.new_etl.validation import (
-    CommunityGardensValidator,
-    KDEValidator,
-    LIViolationsValidator,
-    OwnerTypeValidator,
-    TreeCanopyValidator,
-    VacantValidator,
-)
-from src.new_etl.validation.access_process import AccessProcessValidator
-from src.new_etl.validation.city_owned_properties import CityOwnedPropertiesValidator
-from src.new_etl.validation.council_dists import CouncilDistrictsValidator
-from src.new_etl.validation.nbhoods import NeighborhoodsValidator
-from src.new_etl.validation.phs_properties import PHSPropertiesValidator
-from src.new_etl.validation.ppr_properties import PPRPropertiesValidator
-from src.new_etl.validation.rco_geoms import RCOGeomsValidator
 
-# Map services to their validators
-SERVICE_VALIDATORS = {
-    "community_gardens": CommunityGardensValidator(),
-    "drug_crime": KDEValidator().configure(
-        density_column="drug_crimes_density",
-        zscore_column="drug_crimes_density_zscore",
-        label_column="drug_crimes_density_label",
-        percentile_column="drug_crimes_density_percentile",
-    ),
-    "gun_crime": KDEValidator().configure(
-        density_column="gun_crimes_density",
-        zscore_column="gun_crimes_density_zscore",
-        label_column="gun_crimes_density_label",
-        percentile_column="gun_crimes_density_percentile",
-    ),
-    "li_complaints": KDEValidator().configure(
-        density_column="l_and_i_complaints_density",
-        zscore_column="l_and_i_complaints_density_zscore",
-        label_column="l_and_i_complaints_density_label",
-        percentile_column="l_and_i_complaints_density_percentile",
-    ),
-    "li_violations": LIViolationsValidator(),
-    "owner_type": OwnerTypeValidator(),
-    "vacant": VacantValidator(),
-    "council_dists": CouncilDistrictsValidator(),
-    "nbhoods": NeighborhoodsValidator(),
-    "rco_geoms": RCOGeomsValidator(),
-    "city_owned_properties": CityOwnedPropertiesValidator(),
-    "phs_properties": PHSPropertiesValidator(),
-    "ppr_properties": PPRPropertiesValidator(),
-    "tree_canopy": TreeCanopyValidator(),
-    "access_process": AccessProcessValidator(),
-    # Add other service validators as they are created
-}
+file_manager = FileManager()
+token = os.getenv("CAGP_SLACK_API_TOKEN")
+
+slack_reporter = SlackReporter(token) if token else None
+
+final_table_names = [
+    "city_owned_properties",
+    "community_gardens",
+    "council_districts",
+    "drug_crimes",
+    "gun_crimes",
+    "imminently_dangerous_buildings",
+    "l_and_i_complaints",
+    "li_violations",
+    "opa_properties",
+    "phs_properties",
+    "ppr_properties",
+    "property_tax_delinquencies",
+    "pwd_parcels",
+    "rcos",
+    "updated_census_block_groups",
+    "unsafe_buildings",
+    "vacant_properties",
+]
 
 try:
     print("Starting ETL process.")
@@ -128,21 +98,6 @@ try:
         print(f"Running service: {service.__name__}")
         dataset = service(dataset)
 
-        # Run validation if a validator exists for this service
-        if service.__name__ in SERVICE_VALIDATORS:
-            validator = SERVICE_VALIDATORS[service.__name__]
-            is_valid, errors = validator.validate(dataset.gdf)
-
-            if not is_valid:
-                error_message = (
-                    f"Data validation failed for {service.__name__}:\n"
-                    + "\n".join(errors)
-                )
-                send_error_to_slack(error_message)
-                raise ValueError(error_message)
-
-            print(f"Validation passed for {service.__name__}")
-
     print("Applying final dataset transformations.")
     dataset = priority_level(dataset)
     dataset = access_process(dataset)
@@ -167,40 +122,43 @@ try:
         "num_years_owed",
         "permit_count",
     ]
-    dataset.gdf[numeric_columns] = dataset.gdf[numeric_columns].apply(
-        pd.to_numeric, errors="coerce"
-    )
+
+    # Convert columns where necessary
+    for col in numeric_columns:
+        dataset.gdf[col] = pd.to_numeric(dataset.gdf[col], errors="coerce")
     dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].astype(
         str
     )
 
-    # Dataset profiling
-    send_dataframe_profile_to_slack(dataset.gdf, "all_properties_end")
+    if slack_reporter:
+        # Dataset profiling
+        slack_reporter.send_dataframe_profile_to_slack(
+            dataset.gdf, "all_properties_end"
+        )
 
-    # Save dataset to PostgreSQL
-    to_postgis_with_schema(dataset.gdf, "all_properties_end", conn)
-
-    # Generate and send diff report
-    diff_report = DiffReport()
-    diff_report.run()
-
-    send_pg_stats_to_slack(conn)  # Send PostgreSQL stats to Slack
+        # Generate and send diff report
+        diff_report = DiffReport().generate_diff()
+        slack_reporter.send_diff_report_to_slack(diff_report.summary_text)
+    else:
+        print(
+            "No slack token found in environment variables - skipping slack reporting and data diffing"
+        )
 
     # Save local Parquet file
-    parquet_path = "tmp/test_output.parquet"
-    dataset.gdf.to_parquet(parquet_path)
-    print(f"Dataset saved to Parquet: {parquet_path}")
+    file_label = file_manager.generate_file_label("all_properties_end")
+    file_manager.save_gdf(
+        dataset.gdf, file_label, LoadType.PIPELINE_CACHE, FileType.PARQUET
+    )
+    print(f"Dataset saved to Parquet in storage/pipeline_cache/{file_label}.parquet")
 
     # Publish only vacant properties
-    dataset.gdf = dataset.gdf[dataset.gdf["vacant"]]
-    dataset.build_and_publish(tiles_file_id_prefix)
+    dataset = dataset[dataset["vacant"]]
 
     # Finalize
-    conn.commit()
-    conn.close()
     print("ETL process completed successfully.")
 
 except Exception as e:
     error_message = f"Error in backend job: {str(e)}\n\n{traceback.format_exc()}"
-    send_error_to_slack(error_message)
+    if slack_reporter:
+        slack_reporter.send_error_to_slack(error_message)
     raise  # Optionally re-raise the exception

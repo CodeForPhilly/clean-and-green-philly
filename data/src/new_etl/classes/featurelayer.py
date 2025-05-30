@@ -7,7 +7,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import geopandas as gpd
 import pandas as pd
 import requests
-import sqlalchemy as sa
 from google.cloud import storage
 from shapely import wkb
 from tqdm import tqdm
@@ -19,9 +18,8 @@ from src.config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
-from src.config.psql import conn, local_engine
 from src.new_etl.classes.bucket_manager import GCSBucketManager
-from src.new_etl.database import to_postgis_with_schema
+from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
 from src.new_etl.loaders import load_carto_data, load_esri_data
 
 log.basicConfig(level=log_level)
@@ -74,11 +72,12 @@ class FeatureLayer:
         self.gdf = gdf
         self.crs = crs
         self.cols = cols
-        self.psql_table = name.lower().replace(" ", "_")
+        self.table_name = name.lower().replace(" ", "_")
         self.input_crs = "EPSG:4326" if not from_xy else USE_CRS
         self.use_wkb_geom_field = use_wkb_geom_field
         self.max_workers = max_workers
         self.chunk_size = chunk_size
+        self.file_manager = FileManager()
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
@@ -90,27 +89,19 @@ class FeatureLayer:
                 if self.carto_sql_queries
                 else "gdf"
             )
-            if force_reload or not self.check_psql():
+            if not force_reload and self.file_manager.check_source_cache_file_exists(
+                self.table_name, LoadType.SOURCE_CACHE
+            ):
+                log.info(f"Loading data for {self.name} from cache...")
+                print(f"Loading data for {self.name} from cache...")
+                self.gdf = self.file_manager.get_most_recent_cache(self.table_name)
+            else:
+                print("Loading data now...")
                 self.load_data()
+                print("Caching data now...")
+                self.cache_data()
         else:
             log.info(f"Initialized FeatureLayer {self.name} with no data.")
-
-    def check_psql(self):
-        try:
-            if not sa.inspect(local_engine).has_table(self.psql_table):
-                log.debug(f"Table {self.psql_table} does not exist")
-                return False
-            psql_table = gpd.read_postgis(
-                f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
-            )
-            if len(psql_table) == 0:
-                return False
-            log.info(f"Loading data for {self.name} from psql...")
-            self.gdf = psql_table
-            return True
-        except Exception as e:
-            log.error(f"Error loading data for {self.name}: {e}")
-            return False
 
     def load_data(self):
         log.info(f"Loading data for {self.name} from {self.type}...")
@@ -144,14 +135,23 @@ class FeatureLayer:
                         [col for col in self.cols if col in self.gdf.columns]
                     ]
 
-                # Save GeoDataFrame to PostgreSQL and configure it as a hypertable
-                print("Saving GeoDataFrame to PostgreSQL...")
-                to_postgis_with_schema(self.gdf, self.psql_table, conn)
-
         except Exception as e:
             log.error(f"Error loading data for {self.name}: {e}")
             traceback.print_exc()
             self.gdf = gpd.GeoDataFrame()  # Reset to an empty GeoDataFrame
+
+    def cache_data(self):
+        log.info(f"Caching data for {self.name} to local file system...")
+
+        if self.gdf is None and self.gdf.empty:
+            log.info("No data to cache.")
+            return
+
+        # Save sourced data to a local parquet file in the storage/source_cache directory
+        file_label = self.file_manager.generate_file_label(self.table_name)
+        self.file_manager.save_gdf(
+            self.gdf, file_label, LoadType.SOURCE_CACHE, FileType.PARQUET
+        )
 
     def _load_carto_data(self):
         if not self.carto_sql_queries:
@@ -284,11 +284,21 @@ class FeatureLayer:
         zoom_threshold: int = 13
 
         # Export the GeoDataFrame to a temporary GeoJSON file
-        temp_geojson_points: str = f"tmp/temp_{tiles_file_id_prefix}_points.geojson"
-        temp_geojson_polygons: str = f"tmp/temp_{tiles_file_id_prefix}_polygons.geojson"
-        temp_pmtiles_points: str = f"tmp/temp_{tiles_file_id_prefix}_points.pmtiles"
-        temp_pmtiles_polygons: str = f"tmp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
-        temp_merged_pmtiles: str = f"tmp/temp_{tiles_file_id_prefix}_merged.pmtiles"
+        temp_geojson_points: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_points.geojson"
+        )
+        temp_geojson_polygons: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_polygons.geojson"
+        )
+        temp_pmtiles_points: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_points.pmtiles"
+        )
+        temp_pmtiles_polygons: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
+        )
+        temp_merged_pmtiles: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_merged.pmtiles"
+        )
 
         # Reproject
         gdf_wm = self.gdf.to_crs(epsg=4326)

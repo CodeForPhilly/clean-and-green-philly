@@ -2,7 +2,7 @@ from typing import List, Tuple
 
 import geopandas as gpd
 
-from .base_validator import BaseValidator
+from .base import BaseValidator
 
 
 class KDEValidator(BaseValidator):
