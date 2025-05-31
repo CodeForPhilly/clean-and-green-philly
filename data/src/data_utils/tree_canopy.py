@@ -5,7 +5,7 @@ import geopandas as gpd
 import requests
 
 from src.config.config import USE_CRS
-from src.new_etl.classes.file_manager import FileManager
+from src.classes.file_manager import FileManager
 from ..classes.featurelayer import FeatureLayer
 from ..metadata.metadata_utils import provide_metadata
 

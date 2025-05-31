@@ -4,7 +4,7 @@ from typing import List
 import pandas as pd
 from slack_sdk import WebClient
 
-from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
+from src.classes.file_manager import FileManager, FileType, LoadType
 
 file_manager = FileManager()
 

@@ -3,10 +3,10 @@ import traceback
 
 import pandas as pd
 
-from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
-from src.new_etl.classes.data_diff import DiffReport
-from src.new_etl.classes.slack_reporters import SlackReporter
-from src.new_etl.data_utils import (
+from src.classes.file_manager import FileManager, FileType, LoadType
+from src.classes.data_diff import DiffReport
+from src.classes.slack_reporters import SlackReporter
+from src.data_utils import (
     access_process,
     city_owned_properties,
     community_gardens,

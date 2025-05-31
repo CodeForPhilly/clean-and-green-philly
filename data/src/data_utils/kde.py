@@ -9,8 +9,8 @@ from rasterio.transform import Affine
 from tqdm import tqdm
 
 from src.config.config import USE_CRS
-from src.new_etl.classes.file_manager import FileManager, LoadType
-from src.new_etl.classes.featurelayer import FeatureLayer
+from src.classes.file_manager import FileManager, LoadType
+from src.classes.featurelayer import FeatureLayer
 
 resolution = 1320  # 0.25 miles (in feet, since the CRS is 2272)
 batch_size = 100000

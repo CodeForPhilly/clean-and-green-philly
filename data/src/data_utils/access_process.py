@@ -1,6 +1,6 @@
 from typing import Any
 
-from src.new_etl.metadata.metadata_utils import provide_metadata
+from src.metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
