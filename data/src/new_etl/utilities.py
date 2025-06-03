@@ -35,7 +35,6 @@ def spatial_join(
     joined = gpd.sjoin(first_gdf, second_gdf, how=how, predicate=predicate)
     joined.drop(columns=["index_right"], inplace=True)
     joined.drop_duplicates(inplace=True)
-
-    joined = joined.dropna(subset=["opa_id"])
+    joined.dropna(subset=["opa_id"], inplace=True)
 
     return joined

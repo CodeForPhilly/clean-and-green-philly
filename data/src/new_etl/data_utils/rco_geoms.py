@@ -58,7 +58,6 @@ def rco_geoms(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     rco_geoms["rco_names"] = rco_geoms["organization_name"]
 
     rco_geoms = rco_geoms[rco_use_cols].copy()
-    rco_geoms.rebuild_gdf()
 
     # Perform spatial join
     merged_gdf = spatial_join(input_gdf, rco_geoms)
@@ -83,6 +82,5 @@ def rco_geoms(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     )
 
     merged_gdf.drop_duplicates(inplace=True)
-    merged_gdf.rebuild_gdf()
 
     return merged_gdf

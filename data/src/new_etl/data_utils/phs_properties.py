@@ -41,7 +41,4 @@ def phs_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     # Create 'phs_care_program' column with values from 'program', drop 'program'
     merged_gdf["phs_care_program"] = merged_gdf.pop("program")
 
-    # Rebuild the GeoDataFrame after updates
-    merged_gdf.rebuild_gdf()
-
     return merged_gdf

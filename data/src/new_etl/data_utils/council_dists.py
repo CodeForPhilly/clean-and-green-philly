@@ -51,13 +51,11 @@ def council_dists(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     # Use only the required columns
     # council_dists = council_dists[required_columns].copy()
-    council_dists.rebuild_gdf()
 
     # Perform spatial join
     merged_gdf = spatial_join(input_gdf, council_dists)
 
     # Drop duplicates in the primary feature layer
     merged_gdf.drop_duplicates(inplace=True)
-    # primary_featurelayer.rebuild_gdf()
 
     return merged_gdf
