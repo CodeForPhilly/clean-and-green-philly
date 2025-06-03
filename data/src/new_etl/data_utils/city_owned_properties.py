@@ -39,14 +39,12 @@ def city_owned_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     loader = EsriLoader(
         name="City Owned Properties",
-        esri_rest_urls=CITY_OWNED_PROPERTIES_TO_LOAD,
+        esri_urls=CITY_OWNED_PROPERTIES_TO_LOAD,
         cols=["OPABRT", "AGENCY", "SIDEYARDELIGIBLE"],
         opa_col="opabrt",
     )
 
     city_owned_properties = loader.load_or_fetch()
-
-    # city_owned_properties.dropna(subset=["opabrt"], inplace=True)
 
     merged_gdf = opa_join(input_gdf, city_owned_properties)
 

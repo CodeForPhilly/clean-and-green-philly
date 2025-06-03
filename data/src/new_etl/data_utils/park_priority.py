@@ -9,7 +9,8 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 from config.config import USE_CRS
-from src.new_etl.utilities import spatial_join
+from new_etl.utilities import spatial_join
+
 from ..classes.file_manager import FileManager, FileType, LoadType
 from ..metadata.metadata_utils import provide_metadata
 

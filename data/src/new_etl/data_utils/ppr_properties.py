@@ -3,10 +3,9 @@ import io
 import geopandas as gpd
 import requests
 
-from config.config import USE_CRS
 from new_etl.utilities import spatial_join
 
-from ..classes.featurelayer import EsriLoader, FeatureLayer, GdfLoader
+from ..classes.featurelayer import EsriLoader, GdfLoader
 from ..constants.services import PPR_PROPERTIES_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
 
@@ -46,7 +45,7 @@ def ppr_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     try:
         loader = EsriLoader(
             name="PPR Properties",
-            esri_rest_urls=PPR_PROPERTIES_TO_LOAD,
+            esri_urls=PPR_PROPERTIES_TO_LOAD,
             cols=["public_name"],
         )
 

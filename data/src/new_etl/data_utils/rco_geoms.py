@@ -1,7 +1,8 @@
-import pandas as pd
 import geopandas as gpd
+import pandas as pd
 
 from new_etl.utilities import spatial_join
+
 from ..classes.featurelayer import EsriLoader
 from ..constants.services import RCOS_LAYERS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
@@ -81,6 +82,7 @@ def rco_geoms(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         .reset_index()
     )
 
+    merged_gdf = gpd.GeoDataFrame(merged_gdf, geometry="geometry", crs=input_gdf.crs)
     merged_gdf.drop_duplicates(inplace=True)
 
     return merged_gdf

@@ -1,9 +1,10 @@
 import re
 
-import pandas as pd
 import geopandas as gpd
+import pandas as pd
 
 from new_etl.metadata.metadata_utils import provide_metadata
+
 from ..classes.featurelayer import CartoLoader
 from ..constants.services import OPA_PROPERTIES_QUERY
 
@@ -150,10 +151,7 @@ def opa_properties() -> gpd.GeoDataFrame:
     opa["standardized_address"] = opa.apply(create_standardized_address, axis=1)
 
     # Drop columns starting with "mailing_"
-    opa = opa.loc[:, ~opa.gdf.columns.str.startswith("mailing_")]
-
-    # Use GeoSeries.make_valid to repair geometries
-    opa["geometry"] = opa["geometry"].make_valid()
+    opa = opa.loc[:, ~opa.columns.str.startswith("mailing_")]
 
     # Drop empty geometries
     opa = opa[~opa.is_empty]

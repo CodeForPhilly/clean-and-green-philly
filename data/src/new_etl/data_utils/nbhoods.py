@@ -1,6 +1,7 @@
 import geopandas as gpd
 
 from new_etl.utilities import spatial_join
+
 from ..classes.featurelayer import GdfLoader
 from ..constants.services import NBHOODS_URL
 from ..metadata.metadata_utils import provide_metadata
@@ -32,7 +33,7 @@ def nbhoods(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         https://raw.githubusercontent.com/opendataphilly/open-geo-data/master/philadelphia-neighborhoods/philadelphia-neighborhoods.geojson
     """
 
-    loader = GdfLoader(name="Neighborhoods", url=NBHOODS_URL, cols=["mapname"])
+    loader = GdfLoader(name="Neighborhoods", input=NBHOODS_URL, cols=["mapname"])
     phl_nbhoods = loader.load_or_fetch()
 
     # Correct the column name to lowercase if needed

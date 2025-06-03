@@ -5,6 +5,7 @@ import requests
 
 from new_etl.classes.file_manager import FileManager, LoadType
 from new_etl.utilities import spatial_join
+
 from ..classes.featurelayer import GdfLoader
 from ..metadata.metadata_utils import provide_metadata
 
@@ -50,7 +51,9 @@ def tree_canopy(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     shapefile_file_path = file_manager.get_file_path(
         file_name="pa.shp", load_type=LoadType.TEMP
     )
-    loader = GdfLoader(url=shapefile_file_path, cols=["tc_gap"])
+    loader = GdfLoader(
+        name="Tree Canopy", input=shapefile_file_path, cols=["county", "tc_gap"]
+    )
     pa_trees = loader.load_or_fetch()
 
     phl_trees = pa_trees[pa_trees["county"] == "Philadelphia County"]

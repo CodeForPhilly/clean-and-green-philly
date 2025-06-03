@@ -107,7 +107,7 @@ def vacant_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         # Attempt to load backup data from GCS
         backup_gdf = load_backup_data_from_gcs("vacant_indicators_land_06_2024.geojson")
 
-        if backup_gdf:
+        if not backup_gdf.empty:
             # Add parcel_type column to backup data
             backup_gdf["parcel_type"] = "Land"
 

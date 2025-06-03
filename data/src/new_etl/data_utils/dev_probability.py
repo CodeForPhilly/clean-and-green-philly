@@ -39,7 +39,7 @@ def dev_probability(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         https://phl.carto.com/api/v2/sql
     """
 
-    loader = GdfLoader(name="Census BGs", url=CENSUS_BGS_URL)
+    loader = GdfLoader(name="Census BGs", input=CENSUS_BGS_URL)
     census_bgs_gdf = loader.load_or_fetch()
 
     base_url = "https://phl.carto.com/api/v2/sql"

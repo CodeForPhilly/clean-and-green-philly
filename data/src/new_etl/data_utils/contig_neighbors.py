@@ -1,11 +1,11 @@
 import warnings
 
+import geopandas as gpd
 import networkx as nx
 import numpy as np
 from libpysal.weights import Queen
-import geopandas as gpd
 
-from src.new_etl.utilities import opa_join
+from new_etl.utilities import opa_join
 
 from ..metadata.metadata_utils import provide_metadata
 

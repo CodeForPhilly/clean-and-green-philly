@@ -36,7 +36,7 @@ def imm_dang_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     loader = CartoLoader(
         name="Imminently Dangerous Buildings",
         carto_sql_queries=IMMINENT_DANGER_BUILDINGS_QUERY,
-        opa_col=["opa_account_num"],
+        opa_col="opa_account_num",
     )
 
     imm_dang_buildings = loader.load_or_fetch()

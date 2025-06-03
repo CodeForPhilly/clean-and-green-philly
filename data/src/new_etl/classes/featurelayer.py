@@ -1,17 +1,11 @@
 import logging as log
 import os
 import subprocess
-import traceback
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from abc import ABC, abstractmethod
 from typing import List
 
 import geopandas as gpd
-import pandas as pd
-import requests
 from google.cloud import storage
-from shapely import wkb
-from tqdm import tqdm
 
 from config.config import (
     FORCE_RELOAD,
@@ -82,6 +76,21 @@ class BaseLoader(ABC):
 
         return gdf
 
+    def standardize_opa(self, gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+        """
+        Standardize the OPA column in the GeoDataFrame to be a string and renamed properly to "opa_id".
+        """
+        if self.opa_col:
+            gdf.rename(columns={self.opa_col: "opa_id"}, inplace=True)
+
+        if "opa_id" in gdf.columns:
+            gdf["opa_id"] = gdf["opa_id"].map(
+                lambda x: str(x) if x is not None else None
+            )
+            gdf.dropna(subset=["opa_id"], inplace=True)
+
+        return gdf
+
     @abstractmethod
     def load_data(self):
         pass
@@ -120,8 +129,8 @@ class BaseLoader(ABC):
 
 
 class GdfLoader(BaseLoader):
-    def __init__(self, input: str):
-        super().__init__()
+    def __init__(self, input: str, *args, **kwargs):
+        super().__init__(*args, **kwargs)
         self.input = input
 
     def load_data(self):
@@ -132,6 +141,7 @@ class GdfLoader(BaseLoader):
             raise AttributeError("Input data doesn't have an original CRS set")
 
         gdf.to_crs(USE_CRS)
+        gdf.geometry.make_valid()
 
         return gdf
 
@@ -146,9 +156,8 @@ class EsriLoader(BaseLoader):
         gdf = self.normalize_columns(gdf, self.cols)
 
         gdf = gdf.to_crs(USE_CRS)
-
-        if self.opa_col:
-            gdf.rename(columns={self.opa_col: "opa_id"}, inplace=True)
+        gdf = self.standardize_opa(gdf)
+        gdf.geometry.make_valid()
 
         return gdf
 
@@ -170,42 +179,10 @@ class CartoLoader(BaseLoader):
         gdf = self.normalize_columns(gdf, self.cols)
 
         gdf = gdf.to_crs(USE_CRS)
-
-        if self.opa_col:
-            gdf.rename(columns={self.opa_col: "opa_id"}, inplace=True)
+        gdf = self.standardize_opa(gdf)
+        gdf.geometry.make_valid()
 
         return gdf
-
-    def opa_join(self, other_df, opa_column):
-        """
-        Join 2 dataframes based on opa_id and keep the 'geometry' column from the left dataframe if it exists in both.
-        """
-
-        # Coerce opa_column to integer and drop rows where opa_column is null or non-numeric
-        other_df.loc[:, opa_column] = pd.to_numeric(
-            other_df[opa_column], errors="coerce"
-        )
-        other_df = other_df.dropna(subset=[opa_column])
-
-        # Coerce opa_id to integer and drop rows where opa_id is null or non-numeric
-        self.gdf.loc[:, "opa_id"] = pd.to_numeric(self.gdf["opa_id"], errors="coerce")
-        self.gdf = self.gdf.dropna(subset=["opa_id"])
-
-        # Perform the merge
-        joined = self.gdf.merge(
-            other_df, how="left", right_on=opa_column, left_on="opa_id"
-        )
-
-        # Check if 'geometry' column exists in both dataframes and clean up
-        if "geometry_x" in joined.columns and "geometry_y" in joined.columns:
-            joined = joined.drop(columns=["geometry_y"]).copy()  # Ensure a full copy
-            joined = joined.rename(columns={"geometry_x": "geometry"})
-
-        if opa_column != "opa_id":
-            joined = joined.drop(columns=[opa_column])
-
-        # Assign the joined DataFrame to self.gdf as a full copy
-        self.gdf = joined.copy()
 
     def build_and_publish(self, tiles_file_id_prefix: str) -> None:
         """

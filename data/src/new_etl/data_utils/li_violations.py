@@ -54,8 +54,7 @@ def li_violations(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     loader = CartoLoader(
         name="LI Violations",
-        carto_sql_queries=VIOLATIONS_SQL_QUERY,
-        wkb_geom_field=None,
+        carto_queries=VIOLATIONS_SQL_QUERY,
         opa_col="opa_account_num",
     )
 

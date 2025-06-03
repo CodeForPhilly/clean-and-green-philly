@@ -1,5 +1,4 @@
 import geopandas as gpd
-import pandas as pd
 
 
 def opa_join(
@@ -10,14 +9,20 @@ def opa_join(
     Assumes that the two dataframes are in standardized form with a string "opa_id" column and geometry columns.
     """
 
+    first_gdf.dropna(subset=[opa_col], inplace=True)
+    second_gdf.dropna(subset=[opa_col], inplace=True)
+
     joined = first_gdf.merge(second_gdf, how="left", on=opa_col)
 
     # Check if 'geometry' column exists in both dataframes and clean up
     if "geometry_x" in joined.columns and "geometry_y" in joined.columns:
-        joined = joined.drop(columns=["geometry_y"]).copy()  # Ensure a full copy
-        joined = joined.rename(columns={"geometry_x": "geometry"})
+        joined = (
+            joined.drop(columns=["geometry_y"])
+            .rename(columns={"geometry_x": "geometry"})
+            .copy()
+        )
 
-    joined.set_geometry("geometry")
+    joined = gpd.GeoDataFrame(joined, geometry="geometry", crs=first_gdf.crs)
     return joined
 
 

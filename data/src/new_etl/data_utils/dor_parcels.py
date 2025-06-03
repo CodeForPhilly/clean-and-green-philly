@@ -1,11 +1,11 @@
 import geopandas as gpd
 from shapely.strtree import STRtree
 
+from config.config import USE_CRS
 from new_etl.classes.featurelayer import GdfLoader
 from new_etl.utilities import spatial_join
 
 from ..constants.services import DOR_PARCELS_URL
-from config.config import USE_CRS
 
 
 def dor_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
@@ -23,10 +23,9 @@ def dor_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     print("Loading DOR properties from GeoJSON...")
 
     # Load and preprocess DOR parcels
-    loader = GdfLoader(name="DOR Parcels", url=DOR_PARCELS_URL)
+    loader = GdfLoader(name="DOR Parcels", input=DOR_PARCELS_URL)
     dor_parcels = loader.load_or_fetch()
 
-    # dor_parcels["geometry"] = dor_parcels["geometry"].make_valid()
     dor_parcels = dor_parcels[
         dor_parcels["STATUS"] == 1
     ]  # filter for what I think are only active parcel boundaries

@@ -14,11 +14,6 @@ def transform_pwd_parcels_gdf(pwd_parcels_gdf: gpd.GeoDataFrame):
         gdf (gpd.GeoDataFrame): The input GeoDataFrame containing PWD parcels data.
 
     """
-    # Drop rows with null brt_id, rename to opa_id, and validate geometries
-    pwd_parcels_gdf.dropna(subset=["brt_id"], inplace=True)
-    pwd_parcels_gdf.rename(columns={"brt_id": "opa_id"}, inplace=True)
-    pwd_parcels_gdf["geometry"] = pwd_parcels_gdf["geometry"].make_valid()
-
     # Ensure geometries are polygons or multipolygons
     if not all(pwd_parcels_gdf.geometry.type.isin(["Polygon", "MultiPolygon"])):
         raise ValueError("Some geometries are not polygons or multipolygons.")
@@ -80,8 +75,8 @@ def pwd_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     loader = CartoLoader(
         name="PWD Parcels",
-        carto_sql_queries=PWD_PARCELS_QUERY,
-        opa_col=["brt_id"],
+        carto_queries=PWD_PARCELS_QUERY,
+        opa_col="brt_id",
     )
 
     pwd_parcels = loader.load_or_fetch()
