@@ -19,13 +19,8 @@ from src.config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
-<<<<<<< HEAD
-from config.psql import conn, local_engine
-from new_etl.classes.file_manager import FileManager, FileType, LoadType
-=======
 from src.config.psql import conn, local_engine
 from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
->>>>>>> staging
 
 log.basicConfig(level=log_level)
 

@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, Mock, patch
 import geopandas as gpd
 
 from src.config.config import USE_CRS
-from src.new_etl.classes.featurelayer import (
+from src.new_etl.classes.loaders import (
     BaseLoader,
     EsriLoader,
     GdfLoader,
