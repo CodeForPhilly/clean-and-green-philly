@@ -3,13 +3,12 @@ import io
 import geopandas as gpd
 import requests
 
-from new_etl.classes.file_manager import FileManager, LoadType
-from new_etl.utilities import spatial_join
-
+from src.new_etl.utilities import spatial_join
 from ..classes.featurelayer import GdfLoader
 from ..metadata.metadata_utils import provide_metadata
+from src.new_etl.classes.file_manager import FileManager, LoadType
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
 
 
 @provide_metadata()

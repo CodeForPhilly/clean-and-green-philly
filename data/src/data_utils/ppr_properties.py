@@ -2,10 +2,10 @@ import io
 
 import geopandas as gpd
 import requests
-from classes.featurelayer import FeatureLayer
-from constants.services import PPR_PROPERTIES_TO_LOAD
 
-from config.config import USE_CRS
+from src.classes.featurelayer import FeatureLayer
+from src.config.config import USE_CRS
+from src.constants.services import PPR_PROPERTIES_TO_LOAD
 
 
 def ppr_properties(primary_featurelayer):

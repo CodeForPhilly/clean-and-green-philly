@@ -1,5 +1,5 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import UNSAFE_BUILDINGS_QUERY
+from src.classes.featurelayer import FeatureLayer
+from src.constants.services import UNSAFE_BUILDINGS_QUERY
 
 
 def unsafe_buildings(primary_featurelayer):

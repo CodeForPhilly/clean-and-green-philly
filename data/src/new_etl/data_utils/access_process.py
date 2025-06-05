@@ -1,6 +1,6 @@
 import geopandas as gpd
 
-from new_etl.metadata.metadata_utils import provide_metadata
+from src.new_etl.metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()

@@ -1,6 +1,6 @@
 import geopandas as gpd
 
-from new_etl.data_utils.kde import apply_kde_to_input
+from src.new_etl.data_utils.kde import apply_kde_to_input
 from ..constants.services import DRUGCRIME_SQL_QUERY
 from ..metadata.metadata_utils import provide_metadata
 

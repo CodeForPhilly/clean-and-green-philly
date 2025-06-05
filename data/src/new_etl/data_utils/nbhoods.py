@@ -1,6 +1,6 @@
 import geopandas as gpd
 
-from new_etl.utilities import spatial_join
+from src.new_etl.utilities import spatial_join
 
 from ..classes.featurelayer import GdfLoader
 from ..constants.services import NBHOODS_URL

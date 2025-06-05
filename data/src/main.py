@@ -1,13 +1,12 @@
+import os
 import traceback
 
-import geopandas as gpd
 import pandas as pd
 
-from new_etl.classes.file_manager import FileManager, FileType, LoadType
-from new_etl.classes.slack_reporters import (
-    send_error_to_slack,
-)
-from new_etl.data_utils import (
+from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
+from src.new_etl.classes.data_diff import DiffReport
+from src.new_etl.classes.slack_reporters import SlackReporter
+from src.new_etl.data_utils import (
     access_process,
     city_owned_properties,
     community_gardens,
@@ -37,7 +36,30 @@ from new_etl.data_utils import (
     vacant_properties,
 )
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
+token = os.getenv("CAGP_SLACK_API_TOKEN")
+
+slack_reporter = SlackReporter(token) if token else None
+
+final_table_names = [
+    "city_owned_properties",
+    "community_gardens",
+    "council_districts",
+    "drug_crimes",
+    "gun_crimes",
+    "imminently_dangerous_buildings",
+    "l_and_i_complaints",
+    "li_violations",
+    "opa_properties",
+    "phs_properties",
+    "ppr_properties",
+    "property_tax_delinquencies",
+    "pwd_parcels",
+    "rcos",
+    "updated_census_block_groups",
+    "unsafe_buildings",
+    "vacant_properties",
+]
 
 try:
     print("Starting ETL process.")
@@ -73,11 +95,6 @@ try:
     dataset = opa_properties()
 
     for service in services:
-        print(f"Running service: {service.__name__}")
-        if not isinstance(dataset, gpd.GeoDataFrame):
-            raise TypeError(
-                f"Expected GeoDataFrame from {service.__name__}, got {type(dataset)}"
-            )
         dataset = service(dataset)
 
     print("Applying final dataset transformations.")
@@ -110,6 +127,18 @@ try:
         dataset[col] = pd.to_numeric(dataset[col], errors="coerce")
     dataset["most_recent_year_owed"] = dataset["most_recent_year_owed"].astype(str)
 
+    if slack_reporter:
+        # Dataset profiling
+        slack_reporter.send_dataframe_profile_to_slack(dataset, "all_properties_end")
+
+        # Generate and send diff report
+        diff_report = DiffReport().generate_diff()
+        slack_reporter.send_diff_report_to_slack(diff_report.summary_text)
+    else:
+        print(
+            "No slack token found in environment variables - skipping slack reporting and data diffing"
+        )
+
     # Save local Parquet file
     file_label = file_manager.generate_file_label("all_properties_end")
     file_manager.save_gdf(
@@ -118,13 +147,13 @@ try:
     print(f"Dataset saved to Parquet in storage/pipeline_cache/{file_label}.parquet")
 
     # Publish only vacant properties
-    dataset = dataset[dataset.gdf["vacant"]]
-    # dataset.build_and_publish(tiles_file_id_prefix)
+    dataset = dataset[dataset["vacant"]]
 
     # Finalize
     print("ETL process completed successfully.")
 
 except Exception as e:
     error_message = f"Error in backend job: {str(e)}\n\n{traceback.format_exc()}"
-    send_error_to_slack(error_message)
+    if slack_reporter:
+        slack_reporter.send_error_to_slack(error_message)
     raise  # Optionally re-raise the exception

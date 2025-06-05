@@ -3,8 +3,7 @@ import io
 import geopandas as gpd
 import requests
 
-from new_etl.utilities import spatial_join
-
+from src.new_etl.utilities import spatial_join
 from ..classes.featurelayer import EsriLoader, GdfLoader
 from ..constants.services import PPR_PROPERTIES_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata

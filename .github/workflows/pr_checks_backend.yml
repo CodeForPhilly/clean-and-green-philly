@@ -70,7 +70,7 @@ jobs:
 
       - name: Run Pytest
         working-directory: data/src
-        run: PYTHONPATH=$PYTHONPATH:. pipenv run pytest
+        run: pipenv run pytest
 
   run-formatter:
     runs-on: ubuntu-latest

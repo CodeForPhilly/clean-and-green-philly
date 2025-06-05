@@ -189,7 +189,7 @@ class CartoLoader(BaseLoader):
         Builds PMTiles and a Parquet file from a GeoDataFrame and publishes them to Google Cloud Storage.
 
         Args:
-            tiles_file_id_prefix (str): The ID prefix used for naming the PMTiles and Parquet files, coming from config.
+            tiles_file_id_prefix (str): The ID prefix used for naming the PMTiles and Parquet files, coming from src.config.
 
         Raises:
             ValueError: Raised if the generated PMTiles file is smaller than the minimum allowed size, indicating a potential corruption or incomplete file.

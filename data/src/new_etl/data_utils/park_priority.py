@@ -8,13 +8,12 @@ import requests
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-from config.config import USE_CRS
-from new_etl.utilities import spatial_join
-
+from src.new_etl.utilities import spatial_join
+from src.config.config import USE_CRS
 from ..classes.file_manager import FileManager, FileType, LoadType
 from ..metadata.metadata_utils import provide_metadata
 
-file_manager = FileManager.get_instance()
+file_manager = FileManager()
 
 
 def get_latest_shapefile_url() -> str:

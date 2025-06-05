@@ -7,14 +7,24 @@ from awkde.awkde import GaussianKDE
 from rasterio.transform import Affine
 from tqdm import tqdm
 
+<<<<<<< HEAD
 from classes.featurelayer import FeatureLayer
 from config.config import USE_CRS
 from new_etl.classes.file_manager import FileManager, LoadType
+=======
+from src.classes.featurelayer import FeatureLayer
+from src.config.config import USE_CRS
+from src.new_etl.classes.file_manager import FileManager, LoadType
+>>>>>>> staging
 
 resolution = 1320  # 0.25 miles (in feet, bc the CRS is 2272)
 batch_size = 100000
 
+<<<<<<< HEAD
 file_manager = FileManager.get_instance()
+=======
+file_manager = FileManager()
+>>>>>>> staging
 
 
 def kde_predict_chunk(kde, chunk):

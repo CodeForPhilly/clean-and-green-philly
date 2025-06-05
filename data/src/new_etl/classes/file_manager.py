@@ -8,7 +8,7 @@ from typing import List
 import geopandas as gpd
 from tqdm import tqdm
 
-from config.config import CACHE_FRACTION, ROOT_DIRECTORY
+from src.config.config import CACHE_FRACTION, ROOT_DIRECTORY
 
 print(f"Root directory is {ROOT_DIRECTORY}")
 
@@ -38,16 +38,15 @@ class FileManager:
         Initialize the FileManager with paths for the temporary and cache directories at the root directory of the project.
         """
         if FileManager._instance is not None:
-            raise ValueError(
-                "This class is a singleton and has already been initialized"
-            )
+            return FileManager._instance
+
         self.storage_directory = os.path.join(ROOT_DIRECTORY, "storage")
 
         if not os.path.exists(self.storage_directory):
             os.makedirs(self.storage_directory)
 
         self.fraction = fraction
-        self.temp_directory = os.path.join(self.storage_directory, "tmp")
+        self.temp_directory = os.path.join(self.storage_directory, "temp")
         self.source_cache_directory = os.path.join(
             self.storage_directory, "source_cache"
         )
@@ -61,12 +60,6 @@ class FileManager:
             os.makedirs(self.source_cache_directory)
         if not os.path.exists(self.pipeline_cache_directory):
             os.makedirs(self.pipeline_cache_directory)
-
-    @staticmethod
-    def get_instance(fraction=CACHE_FRACTION):
-        if not FileManager._instance:
-            FileManager._instance = FileManager(fraction)
-        return FileManager._instance
 
     def generate_file_label(self, table_name: str) -> str:
         """

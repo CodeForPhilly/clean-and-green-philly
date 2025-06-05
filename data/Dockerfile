@@ -30,7 +30,7 @@ ENV GDAL_CONFIG=/usr/bin/gdal-config
 RUN pip install pipenv
 
 # Copy the Pipfile and Pipfile.lock from the src directory
-COPY src/Pipfile src/Pipfile.lock ./
+COPY Pipfile Pipfile.lock ./
 
 # update pipfile
 RUN pipenv lock
@@ -45,8 +45,11 @@ RUN git clone https://github.com/felt/tippecanoe.git \
     && make install
 
 # Copy the src directory
-COPY src/ .
+COPY src ./src
 
 # Use Pipenv to run the script
 # Adjust the path to your main Python script if needed
-CMD ["pipenv", "run", "python", "./main.py"]
+
+
+CMD ["pipenv", "run", "python", "-m", "src.main.py"]
+

@@ -1,16 +1,14 @@
+from datetime import datetime
 import os
+import re
 
-import pandas as pd
-from slack_sdk import WebClient
-from sqlalchemy import text
+from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
 
-from config.psql import conn
+file_manager = FileManager()
 
 
 class DiffReport:
-    def __init__(
-        self, conn=conn, table_name="all_properties_end", unique_id_col="opa_id"
-    ):
+    def __init__(self, table_name="all_properties_end", unique_id_col="opa_id"):
         """
         Initialize the DiffReport.
 
@@ -19,7 +17,6 @@ class DiffReport:
             table_name (str): The name of the table to analyze.
             unique_id_col (str): Column used as a unique identifier.
         """
-        self.conn = conn
         self.table_name = table_name
         self.unique_id_col = unique_id_col
         self.latest_timestamp = None
@@ -30,61 +27,58 @@ class DiffReport:
         """
         Generate the data diff and summarize changes.
         """
-        # Step 1: Retrieve the two most recent timestamps
-        query_timestamps = text(f"""
-        SELECT DISTINCT create_date 
-        FROM {self.table_name}
-        ORDER BY create_date DESC
-        LIMIT 2;
-        """)
-
-        timestamps = pd.read_sql(query_timestamps, self.conn)["create_date"].tolist()
-
-        if len(timestamps) < 2:
-            print(
-                f"Table '{self.table_name}' has less than two timestamps. Cannot perform comparison."
-            )
-            return
-
-        self.latest_timestamp, self.previous_timestamp = timestamps[0], timestamps[1]
-
-        print("Last two timestamps are:")
-        print(self.latest_timestamp)
-        print(self.previous_timestamp)
-
-        # Step 2: Load data for the two timestamps into DataFrames
-        query_latest = text(f"""
-        SELECT * FROM {self.table_name} WHERE create_date = '{self.latest_timestamp}';
-        """)
-        query_previous = text(f"""
-        SELECT * FROM {self.table_name} WHERE create_date = '{self.previous_timestamp}';
-        """)
-
-        df_latest = pd.read_sql(query_latest, self.conn)
-        df_previous = pd.read_sql(query_previous, self.conn)
-
-        # Step 3: Ensure DataFrames are aligned on the same index and columns
-        common_columns = [
-            col for col in df_latest.columns if col in df_previous.columns
+        cache_directory = file_manager.pipeline_cache_directory
+        cached_files = [
+            file for file in os.listdir(cache_directory) if self.table_name in file
         ]
-        df_latest = df_latest[common_columns]
-        df_previous = df_previous[common_columns]
+
+        if len(cached_files) < 2:
+            print(
+                f"Table {self.table_name} has less than two separate files with different timestamps. Cannot perform comparison"
+            )
+
+        def extract_date(str) -> datetime:
+            pattern = "\b\d{4}_\d{1,2}_\d{1,2}\b"
+            match = re.search(pattern, str)
+
+            if match:
+                date_str = match.group()
+                return datetime.strptime(date_str, "%Y_%m_%d")
+            else:
+                raise ValueError("Unable to find matching date string within input")
+
+        cached_files.sort(key=extract_date)
+
+        latest_file, previous_file = cached_files[0], cached_files[1]
+
+        gdf_latest = file_manager.load_gdf(
+            latest_file, LoadType.PIPELINE_CACHE, FileType.PARQUET
+        )
+        gdf_previous = file_manager.load_gdf(
+            previous_file, LoadType.PIPELINE_CACHE, FileType.PARQUET
+        )
+
+        common_columns = [
+            col for col in gdf_latest.columns if col in gdf_previous.columns
+        ]
+        gdf_latest = gdf_latest[common_columns]
+        gdf_previous = gdf_previous[common_columns]
 
         # Align indexes to include all rows from both DataFrames
-        df_latest = df_latest.set_index(self.unique_id_col).reindex(
-            df_previous.index.union(df_latest.index)
+        gdf_latest = gdf_latest.set_index(self.unique_id_col).reindex(
+            gdf_previous.index.union(gdf_latest.index)
         )
-        df_previous = df_previous.set_index(self.unique_id_col).reindex(
-            df_previous.index.union(df_latest.index)
+        gdf_previous = gdf_previous.set_index(self.unique_id_col).reindex(
+            gdf_previous.index.union(gdf_latest.index)
         )
 
         # Ensure columns are in the same order
-        df_latest = df_latest[sorted(df_latest.columns)]
-        df_previous = df_previous[sorted(df_previous.columns)]
+        gdf_latest = gdf_latest[sorted(gdf_latest.columns)]
+        gdf_previous = gdf_previous[sorted(gdf_previous.columns)]
 
         # Step 4: Perform the comparison
-        diff = df_latest.compare(
-            df_previous, align_axis=1, keep_shape=False, keep_equal=False
+        diff = gdf_latest.compare(
+            gdf_previous, align_axis=1, keep_shape=False, keep_equal=False
         )
 
         if diff.empty:
@@ -94,7 +88,7 @@ class DiffReport:
 
         # Step 5: Calculate percentage changes
         print("Calculating percentages...")
-        total_rows = len(df_latest)
+        total_rows = len(gdf_latest)
         changes_by_column = {
             col: (diff.xs(col, level=0, axis=1).notna().sum().sum() / total_rows) * 100
             for col in diff.columns.get_level_values(0).unique()
@@ -115,43 +109,3 @@ class DiffReport:
             summary_lines.append(f"  - {col}: {pct_change:.2f}%")
 
         self.summary_text = "\n".join(summary_lines)
-
-    def send_to_slack(
-        self, channel="clean-and-green-philly-pipeline", slack_token=None
-    ):
-        """
-        Sends the diff summary to a Slack channel.
-
-        Args:
-            channel (str): The Slack channel to post the message to.
-        """
-        token = slack_token or os.getenv("CAGP_SLACK_API_TOKEN")
-        if not token:
-            print("Slack API token not found in environment variables.")
-            print("Skipping sending diff report to Slack.")
-            return
-
-        client = WebClient(token=token)
-        try:
-            client.chat_postMessage(
-                channel=channel,
-                text=f"*Data Difference Report*\n\n{self.summary_text}",
-                username="Diff Reporter",
-            )
-            print("Diff report sent to Slack successfully.")
-        except Exception as e:
-            print(f"Failed to send diff report to Slack: {e}")
-
-    def run(self, send_to_slack=True, slack_channel="clean-and-green-philly-pipeline"):
-        """
-        Orchestrates the diff generation and optional Slack notification.
-
-        Args:
-            send_to_slack (bool): Whether to send the diff summary to Slack.
-            slack_channel (str): The Slack channel to post the message to.
-        """
-        self.generate_diff()
-
-        if send_to_slack and self.summary_text:
-            print(f"Sending report to Slack channel: {slack_channel}...")
-            self.send_to_slack(channel=slack_channel)
