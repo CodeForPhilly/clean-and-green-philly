@@ -257,10 +257,10 @@ class TestDataUtils(unittest.TestCase):
 
         with self.assertRaises(ValueError) as context:
             transform_pwd_parcels_gdf(gdf)
-        
-        self.assertEqual("Some geometries are not polygons or multipolygons.", str(context.exception))
 
-
+        self.assertEqual(
+            "Some geometries are not polygons or multipolygons.", str(context.exception)
+        )
 
 
 if __name__ == "__main__":

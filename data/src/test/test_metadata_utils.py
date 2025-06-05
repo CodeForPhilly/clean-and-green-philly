@@ -168,7 +168,7 @@ def sample_add_columns(primary_featurelayer):
     Tagline:
         Example tagline
     """
-    new_layer = FeatureLayer(
+    new_layer = FeatureLayer(  # noqa: F821
         name="stub_add_columns",
     )
 
@@ -361,11 +361,11 @@ class TestMetadataUtils(unittest.TestCase):
                     if field == "columns added":
                         continue
                     self.assertEqual(metadata.get(field), expected_metadata[field])
-                    
+
     @pytest.mark.skip
     def test_provide_metadata_with_sample_add_columns(self):
         # Test that the metadata is correctly added to the function output.
-        primary_featurelayer = FeatureLayer(name="stub")
+        primary_featurelayer = FeatureLayer(name="stub")  # noqa F821
         primary_featurelayer.gdf = gpd.GeoDataFrame(
             data={
                 "opa_id": ["1", "2", "3"],
