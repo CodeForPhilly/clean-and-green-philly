@@ -1,8 +1,7 @@
 import pandas as pd
 import geopandas as gpd
 
-from new_etl.utilities import spatial_join
-
+from src.new_etl.utilities import spatial_join
 from ..classes.loaders import EsriLoader
 from ..constants.services import COUNCIL_DISTRICTS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata

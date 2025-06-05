@@ -57,7 +57,7 @@ class TestBaseLoader(unittest.TestCase):
             standardized_gdf["opa_id"].apply(lambda x: isinstance(x, str)).all()
         )
 
-    @patch("src.new_etl.classes.featurelayer.BaseLoader")
+    @patch("src.new_etl.classes.loaders.BaseLoader")
     def test_cache_data(self, mock_file_manager: MagicMock):
         mock_instance = mock_file_manager.get_instance.return_value
         loader = EsriLoader(name="TestLoader", esri_urls=["Test"], opa_col="opa")
@@ -71,7 +71,7 @@ class TestBaseLoader(unittest.TestCase):
         loader.cache_data(gdf)
         mock_instance.save_gdf.assert_called_once()
 
-    @patch("src.new_etl.classes.featurelayer.load_esri_data")
+    @patch("src.new_etl.classes.loaders.load_esri_data")
     def test_load(self, mock_load: Mock):
         mock_gdf = gpd.GeoDataFrame(
             {
@@ -95,7 +95,7 @@ class TestBaseLoader(unittest.TestCase):
 
         self.assertTrue(gdf.geometry.is_valid.all())
 
-    @patch("src.new_etl.classes.featurelayer.gpd.read_file")
+    @patch("src.new_etl.classes.loaders.gpd.read_file")
     def test_load_no_crs(self, mock_load: Mock):
         mock_load.return_value = gpd.GeoDataFrame(
             {

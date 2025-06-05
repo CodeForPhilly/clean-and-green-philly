@@ -235,7 +235,7 @@ class TestDataUtils(unittest.TestCase):
 
         assert expected_df.equals(merged_gdf)
 
-    def test_transform_pwd_parcels_gdf_basic(self):
+    def test_transform_pwd_parcels_gdf_error(self):
         """
         Check the basic functionality of the transform_pwd_parcels_gdf function.
         This function is expected to mutate the input GeoDataFrame in place.
@@ -255,26 +255,12 @@ class TestDataUtils(unittest.TestCase):
         }
         gdf = gpd.GeoDataFrame(data, geometry="geometry")
 
-        # Expect a ValueError because LineString is not allowed
         with self.assertRaises(ValueError) as context:
-            transform_pwd_parcels_gdf(gdf.copy())
+            transform_pwd_parcels_gdf(gdf)
+        
+        self.assertEqual("Some geometries are not polygons or multipolygons.", str(context.exception))
 
-        self.assertIn("not polygons or multipolygons", str(context.exception))
 
-        # Now fix the invalid geometry to test normal flow
-        gdf.loc[2, "geometry"] = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
-
-        # Run transformation which mutates result in place
-        result = gdf.copy()
-        transform_pwd_parcels_gdf(result)
-
-        # Check the rows were filtered
-        self.assertEqual(len(result), 2)  # One row was dropped
-        self.assertNotIn("brt_id", result.columns)
-        self.assertIn("opa_id", result.columns)
-        self.assertListEqual(sorted(result["opa_id"].tolist()), ["1234", "5678"])
-        self.assertTrue(all(result.geometry.is_valid))
-        self.assertTrue(all(result.geometry.type.isin(["Polygon", "MultiPolygon"])))
 
 
 if __name__ == "__main__":

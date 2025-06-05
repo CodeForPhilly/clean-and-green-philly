@@ -5,8 +5,7 @@ import networkx as nx
 import numpy as np
 from libpysal.weights import Queen
 
-from new_etl.utilities import opa_join
-
+from src.new_etl.utilities import opa_join
 from ..metadata.metadata_utils import provide_metadata
 
 

@@ -1,8 +1,7 @@
 import geopandas as gpd
 import pandas as pd
 
-from new_etl.utilities import spatial_join
-
+from src.new_etl.utilities import spatial_join
 from ..classes.loaders import EsriLoader
 from ..constants.services import RCOS_LAYERS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
