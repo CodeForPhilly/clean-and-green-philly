@@ -7,16 +7,16 @@ from typing import List
 import geopandas as gpd
 from google.cloud import storage
 
-from config.config import (
+from src.config.config import (
     FORCE_RELOAD,
     USE_CRS,
     log_level,
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
-from new_etl.classes.bucket_manager import GCSBucketManager
-from new_etl.classes.file_manager import FileManager, FileType, LoadType
-from new_etl.loaders import load_carto_data, load_esri_data
+from src.new_etl.classes.bucket_manager import GCSBucketManager
+from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
+from src.new_etl.loaders import load_carto_data, load_esri_data
 
 log.basicConfig(level=log_level)
 
