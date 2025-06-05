@@ -4,7 +4,7 @@ import geopandas as gpd
 import requests
 
 from src.new_etl.utilities import spatial_join
-from ..classes.featurelayer import GdfLoader
+from ..classes.loaders import GdfLoader
 from ..metadata.metadata_utils import provide_metadata
 from src.new_etl.classes.file_manager import FileManager, LoadType
 

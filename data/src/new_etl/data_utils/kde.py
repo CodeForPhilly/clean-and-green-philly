@@ -9,7 +9,7 @@ import mapclassify
 from rasterio.transform import Affine
 from tqdm import tqdm
 
-from ..classes.featurelayer import CartoLoader
+from ..classes.loaders import CartoLoader
 from src.config.config import USE_CRS
 from src.new_etl.classes.file_manager import FileManager, LoadType
 

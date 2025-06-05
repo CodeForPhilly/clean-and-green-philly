@@ -5,7 +5,7 @@ import pandas as pd
 
 from src.new_etl.metadata.metadata_utils import provide_metadata
 
-from ..classes.featurelayer import CartoLoader
+from ..classes.loaders import CartoLoader
 from ..constants.services import OPA_PROPERTIES_QUERY
 
 replacements = {

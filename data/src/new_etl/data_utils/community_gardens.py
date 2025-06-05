@@ -1,7 +1,7 @@
 import geopandas as gpd
 
 from new_etl.utilities import spatial_join
-from ..classes.featurelayer import EsriLoader
+from ..classes.loaders import EsriLoader
 from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
 

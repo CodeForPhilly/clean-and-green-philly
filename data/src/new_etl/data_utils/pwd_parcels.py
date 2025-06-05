@@ -1,6 +1,6 @@
 import geopandas as gpd
 
-from ..classes.featurelayer import CartoLoader
+from ..classes.loaders import CartoLoader
 from ..constants.services import PWD_PARCELS_QUERY
 from ..metadata.metadata_utils import provide_metadata
 

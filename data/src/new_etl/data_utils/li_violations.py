@@ -5,7 +5,7 @@ import pandas as pd
 
 from new_etl.utilities import opa_join
 
-from ..classes.featurelayer import CartoLoader
+from ..classes.loaders import CartoLoader
 from ..constants.services import VIOLATIONS_SQL_QUERY
 from ..metadata.metadata_utils import provide_metadata
 

@@ -6,7 +6,7 @@ import requests
 from config.config import USE_CRS
 from new_etl.utilities import spatial_join
 
-from ..classes.featurelayer import GdfLoader
+from ..classes.loaders import GdfLoader
 from ..constants.services import CENSUS_BGS_URL, PERMITS_QUERY
 from ..metadata.metadata_utils import provide_metadata
 

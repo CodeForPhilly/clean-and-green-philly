@@ -2,7 +2,7 @@ import geopandas as gpd
 
 from new_etl.utilities import opa_join
 
-from ..classes.featurelayer import CartoLoader
+from ..classes.loaders import CartoLoader
 from ..constants.services import UNSAFE_BUILDINGS_QUERY
 from ..metadata.metadata_utils import provide_metadata
 

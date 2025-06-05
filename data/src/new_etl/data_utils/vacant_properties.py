@@ -3,7 +3,7 @@ from io import BytesIO
 import geopandas as gpd
 import pandas as pd
 
-from ..classes.featurelayer import EsriLoader, google_cloud_bucket
+from ..classes.loaders import EsriLoader, google_cloud_bucket
 from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
 
