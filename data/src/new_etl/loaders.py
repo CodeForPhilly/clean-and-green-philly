@@ -11,7 +11,7 @@ from shapely import wkb
 
 
 # Esri data loader
-def load_esri_data(esri_rest_urls: List[str], input_crs: str):
+def load_esri_data(esri_urls: List[str], input_crs: str):
     """
     Load data from Esri REST URLs and add a parcel_type column based on the URL.
 
@@ -22,7 +22,7 @@ def load_esri_data(esri_rest_urls: List[str], input_crs: str):
         GeoDataFrame: Combined GeoDataFrame with data from all URLs.
     """
     gdfs = []
-    for url in esri_rest_urls:
+    for url in esri_urls:
         # Determine parcel_type based on URL patterns
         parcel_type = (
             "Land"

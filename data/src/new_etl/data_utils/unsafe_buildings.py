@@ -34,7 +34,7 @@ def unsafe_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     loader = CartoLoader(
         name="Unsafe Buildings",
-        carto_sql_queries=UNSAFE_BUILDINGS_QUERY,
+        carto_queries=UNSAFE_BUILDINGS_QUERY,
         opa_col="opa_account_num",
     )
 

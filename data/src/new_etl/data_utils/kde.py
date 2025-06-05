@@ -53,6 +53,8 @@ def generic_kde(
     loader = CartoLoader(name=name, carto_queries=query)
     gdf = loader.load_or_fetch()
 
+    gdf.dropna(subset=["geometry"], inplace=True)
+
     coords = np.array([geom.xy for geom in gdf.geometry])
     x, y = coords[:, 0, :].flatten(), coords[:, 1, :].flatten()
     X = np.column_stack((x, y))

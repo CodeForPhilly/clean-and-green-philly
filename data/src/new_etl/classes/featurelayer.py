@@ -140,8 +140,8 @@ class GdfLoader(BaseLoader):
         if not gdf.crs:
             raise AttributeError("Input data doesn't have an original CRS set")
 
-        gdf.to_crs(USE_CRS)
-        gdf.geometry.make_valid()
+        gdf = gdf.to_crs(USE_CRS)
+        gdf["geometry"] = gdf.geometry.make_valid()
 
         return gdf
 
@@ -157,7 +157,7 @@ class EsriLoader(BaseLoader):
 
         gdf = gdf.to_crs(USE_CRS)
         gdf = self.standardize_opa(gdf)
-        gdf.geometry.make_valid()
+        gdf["geometry"] = gdf.geometry.make_valid()
 
         return gdf
 
@@ -180,7 +180,7 @@ class CartoLoader(BaseLoader):
 
         gdf = gdf.to_crs(USE_CRS)
         gdf = self.standardize_opa(gdf)
-        gdf.geometry.make_valid()
+        gdf["geometry"] = gdf.geometry.make_valid()
 
         return gdf
 

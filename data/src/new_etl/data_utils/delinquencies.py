@@ -41,7 +41,7 @@ def delinquencies(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     loader = CartoLoader(
         name="Property Tax Delinquencies",
-        carto_sql_queries=DELINQUENCIES_QUERY,
+        carto_queries=DELINQUENCIES_QUERY,
         cols=[
             "opa_number",
             "total_due",
