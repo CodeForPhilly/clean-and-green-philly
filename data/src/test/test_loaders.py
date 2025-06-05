@@ -20,24 +20,24 @@ class TestBaseLoader(unittest.TestCase):
 
     def test_lowercase_column_names(self):
         gdf = BaseLoader.lowercase_column_names(
-            gpd.GeoDataFrame(columns=["Column1", "Column2"])
+            gpd.GeoDataFrame(
+                {"Column1": ["test1", "test2"], "Column2": ["test1", "test2"]}
+            )
         )
         self.assertListEqual(list(gdf.columns), ["column1", "column2"])
 
     def test_filter_columns(self):
-        cols = ["column1", "column2", "geometry"]
-        gdf = gpd.GeoDataFrame(columns=["column1", "column2", "column3", "geometry"])
+        cols = ["column1", "column2"]
+        gdf = gpd.GeoDataFrame(columns=["column1", "column2", "column3"])
         filtered_gdf = BaseLoader.filter_columns(gdf, cols)
-        self.assertListEqual(
-            list(filtered_gdf.columns), ["column1", "column2", "geometry"]
-        )
+        self.assertListEqual(list(filtered_gdf.columns), ["column1", "column2"])
 
     def test_normalize_columns(self):
         gdf = gpd.GeoDataFrame(
             columns=["Column1", "Column2", "geometry"],
             data=[[1, 2, None], [3, 4, None]],
         )
-        cols = ["column1", "column2", "geometry"]
+        cols = ["column1", "column2"]
         normalized_gdf = BaseLoader.normalize_columns(gdf, cols)
         self.assertListEqual(
             list(normalized_gdf.columns), ["column1", "column2", "geometry"]
@@ -48,19 +48,19 @@ class TestBaseLoader(unittest.TestCase):
             columns=["opa", "geometry"],
             data=[["354", None], [243, None], [None, None]],
         )
-        loader = BaseLoader(name="TestLoader", opa_col="opa")
+        loader = EsriLoader(name="TestLoader", esri_urls=["Test"], opa_col="opa")
         standardized_gdf = loader.standardize_opa(gdf)
         self.assertListEqual(list(standardized_gdf.columns), ["opa_id", "geometry"])
         self.assertTrue(standardized_gdf["opa_id"].is_unique)
         self.assertTrue(standardized_gdf["opa_id"].isnull().sum() == 0)
         self.assertTrue(
-            standardized_gdf["opa_id"].apply(lambda x: isinstance(x, str).all())
+            standardized_gdf["opa_id"].apply(lambda x: isinstance(x, str)).all()
         )
 
     @patch("src.new_etl.classes.featurelayer.BaseLoader")
-    def test_cache_data(mock_file_manager: MagicMock):
+    def test_cache_data(self, mock_file_manager: MagicMock):
         mock_instance = mock_file_manager.get_instance.return_value
-        loader = BaseLoader(name="TestLoader", opa_col="opa")
+        loader = EsriLoader(name="TestLoader", esri_urls=["Test"], opa_col="opa")
 
         loader.file_manager = mock_instance
 
@@ -71,7 +71,7 @@ class TestBaseLoader(unittest.TestCase):
         loader.cache_data(gdf)
         mock_instance.save_gdf.assert_called_once()
 
-    @patch("src.new_etl.loaders.load_esri_data")
+    @patch("src.new_etl.classes.featurelayer.load_esri_data")
     def test_load(self, mock_load: Mock):
         mock_gdf = gpd.GeoDataFrame(
             {
@@ -95,7 +95,7 @@ class TestBaseLoader(unittest.TestCase):
 
         self.assertTrue(gdf.geometry.is_valid.all())
 
-    @patch("gpd.read_file")
+    @patch("src.new_etl.classes.featurelayer.gpd.read_file")
     def test_load_no_crs(self, mock_load: Mock):
         mock_load.return_value = gpd.GeoDataFrame(
             {
@@ -106,8 +106,15 @@ class TestBaseLoader(unittest.TestCase):
         )
 
         with self.assertRaises(AttributeError) as context:
-            _ = GdfLoader(input="test_file.geojson", name="TestLoader", opa_col="opa")
+            loader = GdfLoader(
+                input="test_file.geojson", name="TestLoader", opa_col="opa"
+            )
+            _ = loader.load_data()
 
         self.assertEqual(
             "Input data doesn't have an original CRS set", str(context.exception)
         )
+
+
+if __name__ == "__main__":
+    unittest.main()
