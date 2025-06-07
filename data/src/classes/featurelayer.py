@@ -2,16 +2,15 @@ import logging as log
 import os
 import subprocess
 import traceback
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 import geopandas as gpd
 import pandas as pd
 import requests
-import sqlalchemy as sa
-from esridump.dumper import EsriDumper
 from google.cloud import storage
-from shapely import Point, wkb
+from shapely import wkb
+from tqdm import tqdm
 
-from src.classes.bucket_manager import GCSBucketManager
 from src.config.config import (
     FORCE_RELOAD,
     USE_CRS,
@@ -19,18 +18,18 @@ from src.config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
-from src.config.psql import conn, local_engine
-from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
+from src.classes.bucket_manager import GCSBucketManager
+from src.classes.file_manager import FileManager, FileType, LoadType
+from src.loaders import load_carto_data, load_esri_data
 
 log.basicConfig(level=log_level)
-
-file_manager = FileManager()
 
 
 def google_cloud_bucket(require_write_access: bool = False) -> storage.Bucket | None:
     """
     Initialize a Google Cloud Storage bucket client using Application Default Credentials.
     If a writable bucket is requested and the user does not have write access None is returned.
+
     Args:
         require_write_access (bool): Whether it is required that the bucket should be writable. Defaults to False.
     """
@@ -42,10 +41,6 @@ def google_cloud_bucket(require_write_access: bool = False) -> storage.Bucket | 
 
 
 class FeatureLayer:
-    """
-    FeatureLayer is a class to represent a GIS dataset. It can be initialized with a URL to an Esri Feature Service, a SQL query to Carto, or a GeoDataFrame.
-    """
-
     def __init__(
         self,
         name,
@@ -57,7 +52,14 @@ class FeatureLayer:
         from_xy=False,
         use_wkb_geom_field=None,
         cols: list[str] = None,
+        max_workers=os.cpu_count(),
+        chunk_size=100000,
+        collected_metadata=None,
     ):
+        if collected_metadata is None:
+            self.collected_metadata = []
+        else:
+            self.collected_metadata = collected_metadata
         self.name = name
         self.esri_rest_urls = (
             [esri_rest_urls] if isinstance(esri_rest_urls, str) else esri_rest_urls
@@ -70,150 +72,138 @@ class FeatureLayer:
         self.gdf = gdf
         self.crs = crs
         self.cols = cols
-        self.psql_table = name.lower().replace(" ", "_")
+        self.table_name = name.lower().replace(" ", "_")
         self.input_crs = "EPSG:4326" if not from_xy else USE_CRS
         self.use_wkb_geom_field = use_wkb_geom_field
+        self.max_workers = max_workers
+        self.chunk_size = chunk_size
+        self.file_manager = FileManager()
 
         inputs = [self.esri_rest_urls, self.carto_sql_queries, self.gdf]
         non_none_inputs = [i for i in inputs if i is not None]
-
         if len(non_none_inputs) > 0:
-            if self.esri_rest_urls is not None:
-                self.type = "esri"
-            elif self.carto_sql_queries is not None:
-                self.type = "carto"
-            elif self.gdf is not None:
-                self.type = "gdf"
-
-            if force_reload:
-                self.load_data()
-            else:
-                psql_exists = self.check_psql()
-                if not psql_exists:
-                    self.load_data()
-        else:
-            print(f"Initialized FeatureLayer {self.name} with no data.")
-
-    def check_psql(self):
-        try:
-            if not sa.inspect(local_engine).has_table(self.psql_table):
-                print(f"Table {self.psql_table} does not exist")
-                return False
-            psql_table = gpd.read_postgis(
-                f"SELECT * FROM {self.psql_table}", conn, geom_col="geometry"
+            self.type = (
+                "esri"
+                if self.esri_rest_urls
+                else "carto"
+                if self.carto_sql_queries
+                else "gdf"
             )
-            if len(psql_table) == 0:
-                return False
+            if not force_reload and self.file_manager.check_source_cache_file_exists(
+                self.table_name, LoadType.SOURCE_CACHE
+            ):
+                log.info(f"Loading data for {self.name} from cache...")
+                print(f"Loading data for {self.name} from cache...")
+                self.gdf = self.file_manager.get_most_recent_cache(self.table_name)
             else:
-                print(f"Loading data for {self.name} from psql...")
-                self.gdf = psql_table
-                return True
-        except Exception as e:
-            print(f"Error loading data for {self.name}: {e}")
-            return False
+                print("Loading data now...")
+                self.load_data()
+                print("Caching data now...")
+                self.cache_data()
+        else:
+            log.info(f"Initialized FeatureLayer {self.name} with no data.")
 
     def load_data(self):
-        print(f"Loading data for {self.name} from {self.type}...")
+        log.info(f"Loading data for {self.name} from {self.type}...")
+
         if self.type == "gdf":
-            pass
-        else:
-            try:
-                if self.type == "esri":
-                    if self.esri_rest_urls is None:
-                        raise ValueError("Must provide a URL to load data from Esri")
+            return  # Skip processing for gdf type
 
-                    gdfs = []
-                    for url in self.esri_rest_urls:
-                        parcel_type = (
-                            "Land"
-                            if "Vacant_Indicators_Land" in url
-                            else "Building"
-                            if "Vacant_Indicators_Bldg" in url
-                            else None
-                        )
-                        self.dumper = EsriDumper(url)
-                        features = [feature for feature in self.dumper]
-
-                        geojson_features = {
-                            "type": "FeatureCollection",
-                            "features": features,
-                        }
-
-                        this_gdf = gpd.GeoDataFrame.from_features(
-                            geojson_features, crs=self.input_crs
-                        )
-
-                        # Check if 'X' and 'Y' columns exist and create geometry if necessary
-                        if "X" in this_gdf.columns and "Y" in this_gdf.columns:
-                            this_gdf["geometry"] = this_gdf.apply(
-                                lambda row: Point(row["X"], row["Y"]), axis=1
-                            )
-                        elif "geometry" not in this_gdf.columns:
-                            raise ValueError(
-                                "No geometry information found in the data."
-                            )
-
-                        this_gdf = this_gdf.to_crs(USE_CRS)
-
-                        # Assign the parcel_type to the GeoDataFrame
-                        if parcel_type:
-                            this_gdf["parcel_type"] = parcel_type
-
-                        gdfs.append(this_gdf)
-
-                    self.gdf = pd.concat(gdfs, ignore_index=True)
-
-                elif self.type == "carto":
-                    if self.carto_sql_queries is None:
-                        raise ValueError(
-                            "Must provide a SQL query to load data from Carto"
-                        )
-
-                    gdfs = []
-                    for sql_query in self.carto_sql_queries:
-                        response = requests.get(
-                            "https://phl.carto.com/api/v2/sql", params={"q": sql_query}
-                        )
-
-                        data = response.json()["rows"]
-                        df = pd.DataFrame(data)
-                        geometry = (
-                            wkb.loads(df[self.use_wkb_geom_field], hex=True)
-                            if self.use_wkb_geom_field
-                            else gpd.points_from_xy(df.x, df.y)
-                        )
-
-                        gdf = gpd.GeoDataFrame(
-                            df,
-                            geometry=geometry,
-                            crs=self.input_crs,
-                        )
-                        gdf = gdf.to_crs(USE_CRS)
-
-                        gdfs.append(gdf)
-                    self.gdf = pd.concat(gdfs, ignore_index=True)
-
-                # Drop columns
-                if self.cols:
-                    self.cols.append("geometry")
-                    self.gdf = self.gdf[self.cols]
-
-                # save self.gdf to psql
-                # rename columns to lowercase for table creation in postgres
-                if self.cols:
-                    self.gdf = self.gdf.rename(
-                        columns={x: x.lower() for x in self.cols}
-                    )
-                self.gdf.to_postgis(
-                    name=self.psql_table,
-                    con=conn,
-                    if_exists="replace",
-                    chunksize=1000,
+        try:
+            # Load data based on the source type
+            if self.type == "esri":
+                self.gdf = load_esri_data(self.esri_rest_urls, self.input_crs, self.crs)
+            elif self.type == "carto":
+                self.gdf = load_carto_data(
+                    self.carto_sql_queries,
+                    self.max_workers,
+                    self.chunk_size,
+                    self.use_wkb_geom_field,
+                    self.input_crs,
+                    self.crs,
                 )
-            except Exception as e:
-                print(f"Error loading data for {self.name}: {e}")
-                traceback.print_exc()
-                self.gdf = None
+
+            # Standardize column names
+            if not self.gdf.empty:
+                self.gdf.columns = [col.lower() for col in self.gdf.columns]
+
+                # Filter columns if specified
+                if self.cols:
+                    self.cols = [col.lower() for col in self.cols]
+                    self.cols.append("geometry")
+                    self.gdf = self.gdf[
+                        [col for col in self.cols if col in self.gdf.columns]
+                    ]
+
+        except Exception as e:
+            log.error(f"Error loading data for {self.name}: {e}")
+            traceback.print_exc()
+            self.gdf = gpd.GeoDataFrame()  # Reset to an empty GeoDataFrame
+
+    def cache_data(self):
+        log.info(f"Caching data for {self.name} to local file system...")
+
+        if self.gdf is None and self.gdf.empty:
+            log.info("No data to cache.")
+            return
+
+        # Save sourced data to a local parquet file in the storage/source_cache directory
+        file_label = self.file_manager.generate_file_label(self.table_name)
+        self.file_manager.save_gdf(
+            self.gdf, file_label, LoadType.SOURCE_CACHE, FileType.PARQUET
+        )
+
+    def _load_carto_data(self):
+        if not self.carto_sql_queries:
+            raise ValueError("Must provide SQL query to load data from Carto")
+        gdfs = []
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            futures = []
+            for query in self.carto_sql_queries:
+                total_rows = self._get_carto_total_rows(query)
+                for offset in range(0, total_rows, self.chunk_size):
+                    futures.append(
+                        executor.submit(
+                            self._fetch_carto_chunk, query, offset, self.chunk_size
+                        )
+                    )
+            for future in tqdm(
+                as_completed(futures),
+                total=len(futures),
+                desc="Processing Carto chunks",
+            ):
+                try:
+                    gdfs.append(future.result())
+                except Exception as e:
+                    log.error(f"Error processing Carto chunk: {e}")
+        self.gdf = pd.concat(gdfs, ignore_index=True)
+
+    def _fetch_carto_chunk(self, query, offset, chunk_size):
+        chunk_query = f"{query} LIMIT {chunk_size} OFFSET {offset}"
+        response = requests.get(
+            "https://phl.carto.com/api/v2/sql", params={"q": chunk_query}
+        )
+        response.raise_for_status()
+        data = response.json().get("rows", [])
+        if not data:
+            return gpd.GeoDataFrame()
+        df = pd.DataFrame(data)
+        geometry = (
+            wkb.loads(df[self.use_wkb_geom_field], hex=True)
+            if self.use_wkb_geom_field
+            else gpd.points_from_xy(df.x, df.y)
+        )
+        return gpd.GeoDataFrame(df, geometry=geometry, crs=self.input_crs).to_crs(
+            self.crs
+        )
+
+    def _get_carto_total_rows(self, query):
+        count_query = f"SELECT COUNT(*) as count FROM ({query}) as subquery"
+        response = requests.get(
+            "https://phl.carto.com/api/v2/sql", params={"q": count_query}
+        )
+        response.raise_for_status()
+        return response.json()["rows"][0]["count"]
 
     def spatial_join(self, other_layer, how="left", predicate="intersects"):
         """
@@ -293,96 +283,43 @@ class FeatureLayer:
         """
         zoom_threshold: int = 13
 
-        # Export the GeoDataFrames to a temporary GeoJSON files
-        temp_geojson_points_file_name: str = f"temp_{tiles_file_id_prefix}_points"
-        temp_geojson_polygons_file_name: str = f"temp_{tiles_file_id_prefix}_polygons"
-        temp_parquet_file_name: str = f"{tiles_file_id_prefix}"
+        # Export the GeoDataFrame to a temporary GeoJSON file
+        temp_geojson_points: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_points.geojson"
+        )
+        temp_geojson_polygons: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_polygons.geojson"
+        )
+        temp_pmtiles_points: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_points.pmtiles"
+        )
+        temp_pmtiles_polygons: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
+        )
+        temp_merged_pmtiles: str = (
+            f"storage/temp/temp_{tiles_file_id_prefix}_merged.pmtiles"
+        )
 
         # Reproject
         gdf_wm = self.gdf.to_crs(epsg=4326)
-        file_manager.save_gdf(
-            gdf_wm, temp_geojson_polygons_file_name, LoadType.TEMP, FileType.GEOJSON
-        )
-        gdf_wm.to_file(temp_geojson_polygons_file_name, driver="GeoJSON")
+        gdf_wm.to_file(temp_geojson_polygons, driver="GeoJSON")
 
         # Create points dataset
-        centroid_gdf = self.gdf.copy()
-        centroid_gdf["geometry"] = centroid_gdf["geometry"].centroid
-        centroid_gdf = centroid_gdf.to_crs(epsg=4326)
-        centroid_gdf.to_file(temp_geojson_points_file_name, driver="GeoJSON")
-        file_manager.save_gdf(
-            centroid_gdf, temp_geojson_points_file_name, LoadType.TEMP, FileType.GEOJSON
-        )
-
-        # Drop geometry, and save as Parquet
-        df_no_geom = gdf_wm.drop(columns=["geometry"])
-
-        # Check if the DataFrame has fewer than 25,000 rows
-        num_rows, num_cols = df_no_geom.shape
-        if num_rows < 25000:
-            print(
-                f"Parquet file has {num_rows} rows, which is fewer than 25,000. Skipping upload."
-            )
-            return
-
-        # Save the DataFrame as Parquet
-        file_manager.save_gdf(
-            df_no_geom, temp_parquet_file_name, LoadType.TEMP, FileType.PARQUET
-        )
-
-        # Upload Parquet to Google Cloud Storage
-        temp_parquet_file_path = file_manager.get_file_path(
-            temp_parquet_file_name, LoadType.TEMP, FileType.PARQUET
-        )
-        bucket = google_cloud_bucket(require_write_access=True)
-        if bucket is None:
-            print(
-                "Skipping Parquest and PMTiles upload due to read-only bucket access."
-            )
-            return
-        blob_parquet = bucket.blob(f"{tiles_file_id_prefix}.parquet")
-        try:
-            blob_parquet.upload_from_filename(temp_parquet_file_path)
-            parquet_size = os.stat(temp_parquet_file_path).st_size
-            parquet_size_mb = parquet_size / (1024 * 1024)
-            print(
-                f"Parquet upload successful! Size: {parquet_size} bytes ({parquet_size_mb:.2f} MB), Dimensions: {num_rows} rows, {num_cols} columns."
-            )
-        except Exception as e:
-            print(f"Parquet upload failed: {e}")
-            return
-
-        temp_pmtiles_points_file_name: str = f"temp_{tiles_file_id_prefix}_points"
-        temp_pmtiles_polygons_file_name: str = f"temp_{tiles_file_id_prefix}_polygons"
-        temp_merged_pmtiles_file_name: str = f"temp_{tiles_file_id_prefix}_merged"
-
-        temp_pmtiles_points_file_path = file_manager.get_file_path(
-            temp_pmtiles_points_file_name, LoadType.TEMP, FileType.PMTILES
-        )
-        temp_pmtiles_polygons_file_path = file_manager.get_file_path(
-            temp_pmtiles_polygons_file_name, LoadType.TEMP, FileType.PMTILES
-        )
-        temp_merged_pmtiles_file_path = file_manager.get_file_path(
-            temp_merged_pmtiles_file_name, LoadType.TEMP, FileType.PMTILES
-        )
-
-        temp_geojson_points_file_path = file_manager.get_file_path(
-            temp_geojson_points_file_name, LoadType.TEMP, FileType.GEOJSON
-        )
-        temp_geojson_polygons_file_path = file_manager.get_file_path(
-            temp_geojson_points_file_name, LoadType.TEMP, FileType.GEOJSON
-        )
+        self.centroid_gdf = self.gdf.copy()
+        self.centroid_gdf["geometry"] = self.centroid_gdf["geometry"].centroid
+        self.centroid_gdf = self.centroid_gdf.to_crs(epsg=4326)
+        self.centroid_gdf.to_file(temp_geojson_points, driver="GeoJSON")
 
         # Command for generating PMTiles for points up to zoom level zoom_threshold
         points_command: list[str] = [
             "tippecanoe",
-            f"--output={temp_pmtiles_points_file_path}",
+            f"--output={temp_pmtiles_points}",
             f"--maximum-zoom={zoom_threshold}",
             "--minimum-zoom=10",
             "-zg",
             "-aC",
             "-r0",
-            temp_geojson_points_file_path,
+            temp_geojson_points,
             "-l",
             "vacant_properties_tiles_points",
             "--force",
@@ -391,12 +328,12 @@ class FeatureLayer:
         # Command for generating PMTiles for polygons from zoom level zoom_threshold
         polygons_command: list[str] = [
             "tippecanoe",
-            f"--output={temp_pmtiles_polygons_file_path}",
+            f"--output={temp_pmtiles_polygons}",
             f"--minimum-zoom={zoom_threshold}",
             "--maximum-zoom=16",
             "-zg",
             "--no-tile-size-limit",
-            temp_geojson_polygons_file_path,
+            temp_geojson_polygons,
             "-l",
             "vacant_properties_tiles_polygons",
             "--force",
@@ -405,10 +342,10 @@ class FeatureLayer:
         # Command for merging the two PMTiles files into a single output file
         merge_command: list[str] = [
             "tile-join",
-            f"--output={temp_merged_pmtiles_file_path}",
+            f"--output={temp_merged_pmtiles}",
             "--no-tile-size-limit",
-            temp_pmtiles_polygons_file_path,
-            temp_pmtiles_points_file_path,
+            temp_pmtiles_polygons,
+            temp_pmtiles_points,
             "--force",
         ]
 
@@ -422,17 +359,23 @@ class FeatureLayer:
             write_files.append(f"{tiles_file_id_prefix}.pmtiles")
 
         # Check whether the temp saved tiles files is big enough.
-        file_size: int = os.stat(temp_merged_pmtiles_file_path).st_size
+        file_size: int = os.stat(temp_merged_pmtiles).st_size
         if file_size < min_tiles_file_size_in_bytes:
             raise ValueError(
-                f"{temp_merged_pmtiles_file_path} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}. Therefore, we are not uploading any files to the GCP bucket. The file may be corrupt or incomplete."
+                f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}. Therefore, we are not uploading any files to the GCP bucket. The file may be corrupt or incomplete."
             )
 
+        bucket = google_cloud_bucket(require_write_access=True)
+        if bucket is None:
+            print("Skipping PMTiles upload due to read-only bucket access.")
+            return
+
         # Upload PMTiles to Google Cloud Storage
+        bucket = google_cloud_bucket()
         for file in write_files:
             blob = bucket.blob(file)
             try:
-                blob.upload_from_filename(temp_merged_pmtiles_file_path)
+                blob.upload_from_filename(temp_merged_pmtiles)
                 print(f"PMTiles upload successful for {file}!")
             except Exception as e:
                 print(f"PMTiles upload failed for {file}: {e}")

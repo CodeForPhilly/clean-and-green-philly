@@ -3,12 +3,40 @@ import jenkspy
 import pandas as pd
 import requests
 
-from src.classes.featurelayer import FeatureLayer
 from src.config.config import USE_CRS
-from src.constants.services import CENSUS_BGS_URL, PERMITS_QUERY
+
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import CENSUS_BGS_URL, PERMITS_QUERY
+from ..metadata.metadata_utils import provide_metadata
 
 
-def dev_probability(primary_featurelayer):
+@provide_metadata()
+def dev_probability(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Calculates development probability based on permit counts and assigns
+    development ranks to census block groups. The results are joined to the
+    primary feature layer.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with added spatial join data for
+        development probability and ranks.
+
+    Tagline:
+        Calculate development probability
+
+    Columns Added:
+        permit_count (int): The number of permits issued in the census block group.
+        dev_rank (str): The development rank of the census block group.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
+
+    Source:
+        https://phl.carto.com/api/v2/sql
+    """
     census_bgs_gdf = gpd.read_file(CENSUS_BGS_URL)
     census_bgs_gdf = census_bgs_gdf.to_crs(USE_CRS)
 

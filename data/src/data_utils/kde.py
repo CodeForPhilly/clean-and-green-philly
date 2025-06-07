@@ -1,4 +1,5 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
+from typing import Tuple
 
 import mapclassify
 import numpy as np
@@ -7,29 +8,51 @@ from awkde.awkde import GaussianKDE
 from rasterio.transform import Affine
 from tqdm import tqdm
 
-from src.classes.featurelayer import FeatureLayer
 from src.config.config import USE_CRS
-from src.new_etl.classes.file_manager import FileManager, LoadType
+from src.classes.file_manager import FileManager, LoadType
+from src.classes.featurelayer import FeatureLayer
 
-resolution = 1320  # 0.25 miles (in feet, bc the CRS is 2272)
+resolution = 1320  # 0.25 miles (in feet, since the CRS is 2272)
 batch_size = 100000
 
 file_manager = FileManager()
 
 
-def kde_predict_chunk(kde, chunk):
-    """Helper function to predict KDE for a chunk of grid points."""
+def kde_predict_chunk(kde: GaussianKDE, chunk: np.ndarray) -> np.ndarray:
+    """
+    Helper function to predict KDE for a chunk of grid points.
+
+    Args:
+        kde (GaussianKDE): The KDE model to use for prediction.
+        chunk (np.ndarray): A chunk of grid points for prediction.
+
+    Returns:
+        np.ndarray: Predicted KDE values for the chunk.
+    """
     return kde.predict(chunk)
 
 
-def generic_kde(name, query, resolution=resolution, batch_size=batch_size):
+def generic_kde(
+    name: str, query: str, resolution: int = resolution, batch_size: int = batch_size
+) -> Tuple[str, np.ndarray]:
+    """
+    Generates a raster file and grid points from kernel density estimation (KDE) for a dataset.
+
+    Args:
+        name (str): Name of the dataset being processed.
+        query (str): SQL query to fetch data.
+        resolution (int): Resolution for the grid. Defaults to 1320.
+        batch_size (int): Batch size for processing grid points. Defaults to 100000.
+
+    Returns:
+        Tuple[str, np.ndarray]: The raster filename and the array of input points.
+    """
     print(f"Initializing FeatureLayer for {name}")
 
     feature_layer = FeatureLayer(name=name, carto_sql_queries=query)
 
     coords = np.array([geom.xy for geom in feature_layer.gdf.geometry])
     x, y = coords[:, 0, :].flatten(), coords[:, 1, :].flatten()
-
     X = np.column_stack((x, y))
 
     x_grid, y_grid = (
@@ -45,22 +68,17 @@ def generic_kde(name, query, resolution=resolution, batch_size=batch_size):
 
     print(f"Predicting KDE values for grid of size {grid_points.shape}")
 
-    # Split grid points into chunks
     chunks = [
         grid_points[i : i + batch_size] for i in range(0, len(grid_points), batch_size)
     ]
-
-    # Run predictions in parallel
-    z = np.zeros(len(grid_points))  # Placeholder for predicted values
+    z = np.zeros(len(grid_points))
 
     with ProcessPoolExecutor() as executor:
-        # Submit the tasks first, wrapped with tqdm to monitor as they're submitted
         futures = {
             executor.submit(kde_predict_chunk, kde, chunk): i
             for i, chunk in enumerate(tqdm(chunks, desc="Submitting tasks"))
         }
 
-        # Now wrap the as_completed with tqdm for progress tracking
         for future in tqdm(
             as_completed(futures), total=len(futures), desc="Processing tasks"
         ):
@@ -77,10 +95,9 @@ def generic_kde(name, query, resolution=resolution, batch_size=batch_size):
 
     transform = Affine.translation(min_x, min_y) * Affine.scale(x_res, y_res)
 
-    raster_file_path = file_manager.get_file_path(
-        f"{name.lower().replace(' ', '_')}.tif", LoadType.TEMP
-    )
-    print(f"Saving raster to {raster_file_path}")
+    raster_filename = f"{name.lower().replace(' ', '_')}.tif"
+    raster_file_path = file_manager.get_file_path(raster_filename, LoadType.TEMP)
+    print(f"Saving raster to {raster_filename}")
 
     with rasterio.open(
         raster_file_path,
@@ -98,14 +115,29 @@ def generic_kde(name, query, resolution=resolution, batch_size=batch_size):
     return raster_file_path, X
 
 
-def apply_kde_to_primary(primary_featurelayer, name, query, resolution=resolution):
-    # Generate KDE and raster file
-    raster_file_path, crime_coords = generic_kde(name, query, resolution)
+def apply_kde_to_primary(
+    primary_featurelayer: FeatureLayer,
+    name: str,
+    query: str,
+    resolution: int = resolution,
+) -> FeatureLayer:
+    """
+    Applies KDE to the primary feature layer and adds columns for density, z-score,
+    percentile, and percentile as a string.
 
-    # Add centroid column temporarily
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        name (str): Name of the KDE feature.
+        query (str): SQL query to fetch data for KDE.
+        resolution (int): Resolution for the KDE raster grid.
+
+    Returns:
+        FeatureLayer: The input feature layer with added KDE-related columns.
+    """
+    raster_filename, crime_coords = generic_kde(name, query, resolution)
+
     primary_featurelayer.gdf["centroid"] = primary_featurelayer.gdf.geometry.centroid
 
-    # Create list of (x, y) coordinates for centroids
     coord_list = [
         (x, y)
         for x, y in zip(
@@ -114,45 +146,50 @@ def apply_kde_to_primary(primary_featurelayer, name, query, resolution=resolutio
         )
     ]
 
-    # Remove the temporary centroid column
     primary_featurelayer.gdf = primary_featurelayer.gdf.drop(columns=["centroid"])
 
-    # Open the generated raster file and sample the KDE density values at the centroids
-    with rasterio.open(raster_file_path) as src:
+    with rasterio.open(raster_filename) as src:
         sampled_values = [x[0] for x in src.sample(coord_list)]
 
-    # Create a column for the density values
     density_column = f"{name.lower().replace(' ', '_')}_density"
     primary_featurelayer.gdf[density_column] = sampled_values
 
-    # Calculate percentiles using mapclassify.Percentiles
-    percentile_breaks = list(range(101))  # Percentile breaks from 0 to 100
+    # Calculate z-scores
+    mean_density = primary_featurelayer.gdf[density_column].mean()
+    std_density = primary_featurelayer.gdf[density_column].std()
+    z_score_column = f"{density_column}_zscore"
+    primary_featurelayer.gdf[z_score_column] = (
+        primary_featurelayer.gdf[density_column] - mean_density
+    ) / std_density
+
+    # Calculate percentiles
+    percentile_breaks = list(range(101))
     classifier = mapclassify.Percentiles(
         primary_featurelayer.gdf[density_column], pct=percentile_breaks
     )
+    percentile_column = f"{density_column}_percentile"
+    primary_featurelayer.gdf[percentile_column] = classifier.yb.astype(float)
 
-    # Assign the percentile bins to the density values
-    primary_featurelayer.gdf[density_column + "_percentile"] = (
-        classifier.yb
-    )  # yb gives the bin index
-
-    # Apply percentile labels (e.g., 1st Percentile, 2nd Percentile, etc.)
-    primary_featurelayer.gdf[density_column + "_label"] = primary_featurelayer.gdf[
-        density_column + "_percentile"
+    # Assign percentile labels
+    label_column = f"{density_column}_label"
+    primary_featurelayer.gdf[label_column] = primary_featurelayer.gdf[
+        percentile_column
     ].apply(label_percentile)
-
-    # Convert the percentile column to float and drop the density column
-    primary_featurelayer.gdf[density_column + "_percentile"] = primary_featurelayer.gdf[
-        density_column + "_percentile"
-    ].astype(float)
-
-    primary_featurelayer.gdf = primary_featurelayer.gdf.drop(columns=[density_column])
 
     print(f"Finished processing {name}")
     return primary_featurelayer
 
 
-def label_percentile(value):
+def label_percentile(value: float) -> str:
+    """
+    Converts a percentile value into a human-readable string.
+
+    Args:
+        value (float): The percentile value.
+
+    Returns:
+        str: The formatted percentile string (e.g., '1st Percentile').
+    """
     if 10 <= value % 100 <= 13:
         return f"{value}th Percentile"
     elif value % 10 == 1:

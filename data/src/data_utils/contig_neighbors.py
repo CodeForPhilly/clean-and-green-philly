@@ -1,11 +1,45 @@
 import warnings
 
 import networkx as nx
+import numpy as np
 from libpysal.weights import Queen
 
+from ..classes.featurelayer import FeatureLayer
+from ..metadata.metadata_utils import provide_metadata
 
-def contig_neighbors(primary_featurelayer):
-    parcels = primary_featurelayer.gdf
+
+@provide_metadata()
+def contig_neighbors(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+    """
+    Calculates the number of contiguous vacant neighbors for each property in a feature layer.
+
+    Args:
+        primary_featurelayer (FeatureLayer): A feature layer containing property data in a GeoDataFrame (`gdf`).
+
+    Returns:
+        FeatureLayer: The input feature layer with an added "n_contiguous" column indicating
+        the number of contiguous vacant neighbors for each property.
+
+    Tagline:
+        Count vacant neighbors
+
+    Columns Added:
+        n_contiguous (int): The number of contiguous vacant neighbors for each property.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, vacant
+    """
+    # Create a filtered dataframe with only vacant properties and polygon geometries
+    vacant_parcels = primary_featurelayer.gdf.loc[
+        (primary_featurelayer.gdf["vacant"])
+        & (primary_featurelayer.gdf.geometry.type.isin(["Polygon", "MultiPolygon"])),
+        ["opa_id", "geometry"],
+    ]
+
+    if vacant_parcels.empty:
+        print("No vacant properties found in the dataset.")
+        primary_featurelayer.gdf["n_contiguous"] = np.nan
+        return primary_featurelayer
 
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
@@ -15,13 +49,28 @@ def contig_neighbors(primary_featurelayer):
             message="The weights matrix is not fully connected",
         )
 
-        w = Queen.from_dataframe(parcels)
+        # Create a spatial weights matrix for vacant parcels
+        w = Queen.from_dataframe(vacant_parcels)
 
+    # Convert the spatial weights matrix to a NetworkX graph
     g = w.to_networkx()
 
-    # Calculate the number of contiguous neighbors for each feature in parcels
-    n_contiguous = [len(nx.node_connected_component(g, i)) for i in range(len(parcels))]
+    # Calculate the number of contiguous vacant properties for each vacant parcel
+    n_contiguous = {
+        node: len(nx.node_connected_component(g, node)) - 1 for node in g.nodes
+    }
 
-    primary_featurelayer.gdf["n_contiguous"] = n_contiguous
+    # Assign the contiguous neighbor count to the filtered vacant parcels
+    vacant_parcels["n_contiguous"] = vacant_parcels.index.map(n_contiguous)
+
+    # Merge the results back to the primary feature layer
+    primary_featurelayer.gdf = primary_featurelayer.gdf.merge(
+        vacant_parcels[["opa_id", "n_contiguous"]], on="opa_id", how="left"
+    )
+
+    # Assign NA for non-vacant properties
+    primary_featurelayer.gdf.loc[
+        ~primary_featurelayer.gdf["vacant"], "n_contiguous"
+    ] = np.nan
 
     return primary_featurelayer

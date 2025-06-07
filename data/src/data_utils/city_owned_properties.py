@@ -1,7 +1,9 @@
-from src.classes.featurelayer import FeatureLayer
-from src.constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Processes city-owned property data by joining it with the primary feature layer,
@@ -15,6 +17,20 @@ def city_owned_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Returns:
         FeatureLayer: The updated primary feature layer with processed city ownership
                       information.
+
+    Columns added:
+        city_owner_agency (str): The agency that owns the city property.
+        side_yard_eligible (str): Indicates if the property is eligible for the side yard program.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, owner_1, owner2
+
+    Tagline:
+        Categorizes City Owned Properties
+
+    Source:
+        https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/LAMAAssets/FeatureServer/0/
+
     """
     city_owned_properties = FeatureLayer(
         name="City Owned Properties",

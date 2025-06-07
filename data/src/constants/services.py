@@ -34,7 +34,25 @@ one_year_ago = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime
 )
 
 # Load data for complaints from L&I
-COMPLAINTS_SQL_QUERY = f"SELECT address, service_request_id, subject, status, service_name, service_code, lat AS y, lon AS x FROM public_cases_fc WHERE requested_datetime >= '{one_year_ago}' AND lat IS NOT NULL"
+COMPLAINTS_SQL_QUERY = f"""
+SELECT address, service_request_id, subject, status, service_name, service_code, lat AS y, lon AS x 
+FROM public_cases_fc 
+WHERE requested_datetime >= '{one_year_ago}' 
+  AND lat IS NOT NULL
+  AND (
+    subject ILIKE '%dumping%'
+    OR subject ILIKE '%blight%'
+    OR subject ILIKE '%rubbish%'
+    OR subject ILIKE '%weeds%'
+    OR subject ILIKE '%graffiti%'
+    OR subject ILIKE '%abandoned%'
+    OR subject ILIKE '%sanitation%'
+    OR subject ILIKE '%litter%'
+    OR subject ILIKE '%vacant%'
+    OR subject ILIKE '%trash%'
+    OR subject ILIKE '%unsafe%'
+  )
+"""
 
 VIOLATIONS_SQL_QUERY = f"SELECT parcel_id_num, casenumber, casecreateddate, casetype, casestatus, violationnumber, violationcodetitle, violationstatus, opa_account_num, address, opa_owner, geocode_x AS x, geocode_y AS y FROM violations WHERE violationdate >= '{one_year_ago}' AND geocode_x IS NOT NULL"
 
@@ -75,4 +93,8 @@ NBHOODS_URL = "https://raw.githubusercontent.com/opendataphilly/open-geo-data/ma
 
 CENSUS_BGS_URL = (
     "https://opendata.arcgis.com/datasets/2f982bada233478ea0100528227febce_0.geojson"
+)
+
+DOR_PARCELS_URL = (
+    "https://opendata.arcgis.com/datasets/1c57dd1b3ff84449a4b0e3fb29d3cafd_0.geojson"
 )

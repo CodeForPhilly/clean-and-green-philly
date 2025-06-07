@@ -1,7 +1,9 @@
-from src.classes.featurelayer import FeatureLayer
-from src.constants.services import PHS_LAYERS_TO_LOAD
+from ..classes.featurelayer import FeatureLayer
+from ..constants.services import PHS_LAYERS_TO_LOAD
+from ..metadata.metadata_utils import provide_metadata
 
 
+@provide_metadata()
 def phs_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     Perform a spatial join between the primary feature layer and the PHS properties layer,
@@ -13,6 +15,15 @@ def phs_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     Returns:
         FeatureLayer: The updated primary feature layer with the 'phs_care_program' column.
+
+    Tagline:
+        Identifies PHS Care properties
+
+    Columns added:
+        phs_care_program (str): The PHS care program associated with the property.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
     """
 
     phs_properties = FeatureLayer(
@@ -22,13 +33,10 @@ def phs_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     # Perform spatial join between primary feature layer and PHS properties
     primary_featurelayer.spatial_join(phs_properties)
 
-    # Initialize 'phs_care_program' column with default "no" for all rows
-    primary_featurelayer.gdf["phs_care_program"] = "No"
-
-    # Set 'phs_care_program' to "yes" for matched rows
-    primary_featurelayer.gdf.loc[
-        primary_featurelayer.gdf["program"].notna(), "phs_care_program"
-    ] = "Yes"
+    # Create 'phs_care_program' column with values from 'program', drop 'program'
+    primary_featurelayer.gdf["phs_care_program"] = primary_featurelayer.gdf.pop(
+        "program"
+    )
 
     # Rebuild the GeoDataFrame after updates
     primary_featurelayer.rebuild_gdf()
