@@ -7,8 +7,6 @@ services:
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - VACANT_LOTS_DB
-      - POSTGRES_PASSWORD
-      - POSTGRES_PORT=5434
       - CLEAN_GREEN_GOOGLE_KEY
       - PYTHONUNBUFFERED=1
       - GOOGLE_CLOUD_BUCKET_NAME
