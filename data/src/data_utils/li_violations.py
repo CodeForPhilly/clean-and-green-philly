@@ -3,7 +3,7 @@ from typing import List
 import geopandas as gpd
 import pandas as pd
 
-from src.new_etl.utilities import opa_join
+from utilities import opa_join
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import VIOLATIONS_SQL_QUERY

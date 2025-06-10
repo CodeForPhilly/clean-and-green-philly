@@ -2,17 +2,19 @@ import logging as log
 import os
 import subprocess
 from abc import ABC, abstractmethod
-from typing import List
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from typing import List
 
 import geopandas as gpd
-from google.cloud import storage
 import pandas as pd
-from esridump.dumper import EsriDumper
 import requests
-from tqdm import tqdm
+from esridump.dumper import EsriDumper
+from google.cloud import storage
 from shapely import wkb
+from tqdm import tqdm
 
+from src.classes.bucket_manager import GCSBucketManager
+from src.classes.file_manager import FileManager, FileType, LoadType
 from src.config.config import (
     FORCE_RELOAD,
     USE_CRS,
@@ -20,8 +22,6 @@ from src.config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
-from src.new_etl.classes.bucket_manager import GCSBucketManager
-from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
 
 log.basicConfig(level=log_level)
 

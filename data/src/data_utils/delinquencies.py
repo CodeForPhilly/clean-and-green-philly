@@ -1,6 +1,7 @@
 import geopandas as gpd
 
-from src.new_etl.utilities import opa_join
+from utilities import opa_join
+
 from ..classes.loaders import CartoLoader
 from ..constants.services import DELINQUENCIES_QUERY
 from ..metadata.metadata_utils import provide_metadata

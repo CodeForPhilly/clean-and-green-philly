@@ -1,9 +1,10 @@
 import geopandas as gpd
 from shapely.strtree import STRtree
 
+from src.classes.loaders import GdfLoader
 from src.config.config import USE_CRS
-from src.new_etl.classes.loaders import GdfLoader
-from src.new_etl.utilities import spatial_join
+from utilities import spatial_join
+
 from ..constants.services import DOR_PARCELS_URL
 
 

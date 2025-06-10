@@ -1,8 +1,8 @@
-from datetime import datetime
 import os
 import re
+from datetime import datetime
 
-from src.new_etl.classes.file_manager import FileManager, FileType, LoadType
+from src.classes.file_manager import FileManager, FileType, LoadType
 
 file_manager = FileManager()
 

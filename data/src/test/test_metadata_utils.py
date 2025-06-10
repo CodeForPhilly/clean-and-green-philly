@@ -3,7 +3,7 @@ import unittest
 import geopandas as gpd
 import pytest
 
-from src.new_etl.metadata.metadata_utils import (
+from src.metadata.metadata_utils import (
     get_column_details,
     get_description_from_docstring,
     get_sections_from_docstring,

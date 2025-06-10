@@ -9,13 +9,13 @@ import pytest
 from shapely.geometry import LineString, MultiPolygon, Point, Polygon
 
 from src.config.config import USE_CRS
-from src.new_etl.data_utils.park_priority import get_latest_shapefile_url, park_priority
-from src.new_etl.data_utils.ppr_properties import ppr_properties
-from src.new_etl.data_utils.vacant_properties import vacant_properties
-from src.new_etl.data_utils.pwd_parcels import (
+from src.data_utils.park_priority import get_latest_shapefile_url, park_priority
+from src.data_utils.ppr_properties import ppr_properties
+from src.data_utils.pwd_parcels import (
     merge_pwd_parcels_gdf,
     transform_pwd_parcels_gdf,
 )
+from src.data_utils.vacant_properties import vacant_properties
 
 
 class TestDataUtils(unittest.TestCase):

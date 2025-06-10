@@ -1,25 +1,45 @@
 import geopandas as gpd
 
-from src.classes.featurelayer import FeatureLayer
-from src.config.config import USE_CRS
-from src.constants.services import NBHOODS_URL
+from utilities import spatial_join
+
+from ..classes.loaders import GdfLoader
+from ..constants.services import NBHOODS_URL
+from ..metadata.metadata_utils import provide_metadata
 
 
-def nbhoods(primary_featurelayer):
-    phl_nbhoods = gpd.read_file(NBHOODS_URL)
+@provide_metadata()
+def nbhoods(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    """
+    Adds neighborhood information to the primary feature layer by performing a spatial join
+    with a neighborhoods dataset.
 
-    # Correct the column name to uppercase if needed
-    if "MAPNAME" in phl_nbhoods.columns:
-        phl_nbhoods.rename(columns={"MAPNAME": "neighborhood"}, inplace=True)
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
 
-    phl_nbhoods = phl_nbhoods.to_crs(USE_CRS)
+    Returns:
+        FeatureLayer: The input feature layer with an added "neighborhood" column,
+        containing the name of the neighborhood for each property.
 
-    nbhoods = FeatureLayer("Neighborhoods")
-    nbhoods.gdf = phl_nbhoods
+    Tagline:
+        Assigns neighborhoods
 
-    red_cols_to_keep = ["neighborhood", "geometry"]
-    nbhoods.gdf = nbhoods.gdf[red_cols_to_keep]
+    Columns added:
+        neighborhood (str): The name of the neighborhood associated with the property.
 
-    primary_featurelayer.spatial_join(nbhoods)
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
 
-    return primary_featurelayer
+    Source:
+        https://raw.githubusercontent.com/opendataphilly/open-geo-data/master/philadelphia-neighborhoods/philadelphia-neighborhoods.geojson
+    """
+
+    loader = GdfLoader(name="Neighborhoods", input=NBHOODS_URL, cols=["mapname"])
+    phl_nbhoods = loader.load_or_fetch()
+
+    # Correct the column name to lowercase if needed
+    if "mapname" in phl_nbhoods.columns:
+        phl_nbhoods.rename(columns={"mapname": "neighborhood"}, inplace=True)
+
+    merged_gdf = spatial_join(input_gdf, phl_nbhoods)
+
+    return merged_gdf
