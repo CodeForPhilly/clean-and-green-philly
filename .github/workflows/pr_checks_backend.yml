@@ -6,8 +6,6 @@ on:
       - staging
     paths:
       - 'data/**'
-      - 'Dockerfile-pg'
-      - 'init_pg.sql'
       - 'docker compose.yml'
   workflow_dispatch:
 
@@ -35,23 +33,6 @@ jobs:
     defaults:
       run:
         working-directory: data/src
-    env:
-      VACANT_LOTS_DB: 'postgresql://postgres:temp-CI-only@localhost:5433/vacantlotdb'
-    services:
-      postgres:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: temp-CI-only # CI-only, safe to hardcode for temporary container
-          POSTGRES_DB: vacantlotdb
-        ports:
-          - 5433:5432
-        # Set health checks to wait until postgres is ready
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4

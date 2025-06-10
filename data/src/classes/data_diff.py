@@ -1,6 +1,6 @@
-from datetime import datetime
 import os
 import re
+from datetime import datetime
 
 from src.classes.file_manager import FileManager, FileType, LoadType
 
@@ -13,7 +13,6 @@ class DiffReport:
         Initialize the DiffReport.
 
         Args:
-            conn: SQLAlchemy connection to the database.
             table_name (str): The name of the table to analyze.
             unique_id_col (str): Column used as a unique identifier.
         """

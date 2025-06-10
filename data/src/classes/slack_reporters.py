@@ -86,10 +86,6 @@ class SlackReporter:
         """
         Report total sizes for all hypertables using hypertable_detailed_size
         and send the result to a Slack channel.
-
-        Args:
-            conn: SQLAlchemy connection to the PostgreSQL database.
-            slack_token (str): The Slack API token. If not provided, it will be read from the environment.
         """
 
         detailed_sizes = []

@@ -15,13 +15,6 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     && rm -rf /var/lib/apt/lists/*
 
-# install postgres client 16 for psql and pg_dump executables for backups.
-# should match the version used in the other docker file for the postgres install
-RUN sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
-RUN curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc |  gpg --dearmor -o /etc/apt/trusted.gpg.d/postgresql.gpg
-RUN apt update
-RUN apt install -y postgresql-client-16
-
 # Set GDAL environment variables
 ENV GDAL_VERSION=3.6.2
 ENV GDAL_CONFIG=/usr/bin/gdal-config
@@ -52,4 +45,3 @@ COPY src ./src
 RUN ls -a /usr/src/app
 
 CMD ["pipenv", "run", "python", "-m", "src.main.py"]
-
