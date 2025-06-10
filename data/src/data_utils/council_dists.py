@@ -1,11 +1,10 @@
 import geopandas as gpd
 import pandas as pd
 
-from utilities import spatial_join
-
 from ..classes.loaders import EsriLoader
 from ..constants.services import COUNCIL_DISTRICTS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
+from ..utilities import spatial_join
 
 pd.set_option("future.no_silent_downcasting", True)
 

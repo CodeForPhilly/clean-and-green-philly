@@ -1,10 +1,9 @@
 import geopandas as gpd
 
-from utilities import opa_join
-
 from ..classes.loaders import EsriLoader
 from ..constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
+from ..utilities import opa_join
 
 
 @provide_metadata()

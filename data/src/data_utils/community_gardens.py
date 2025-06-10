@@ -1,10 +1,9 @@
 import geopandas as gpd
 
-from utilities import spatial_join
-
 from ..classes.loaders import EsriLoader
 from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
+from ..utilities import spatial_join
 
 
 @provide_metadata()

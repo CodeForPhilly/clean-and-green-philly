@@ -5,10 +5,10 @@ import geopandas as gpd
 import requests
 
 from src.classes.file_manager import FileManager, LoadType
-from utilities import spatial_join
 
 from ..classes.loaders import GdfLoader
 from ..metadata.metadata_utils import provide_metadata
+from ..utilities import spatial_join
 
 file_manager = FileManager()
 

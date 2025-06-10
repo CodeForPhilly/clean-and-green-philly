@@ -3,9 +3,9 @@ from shapely.strtree import STRtree
 
 from src.classes.loaders import GdfLoader
 from src.config.config import USE_CRS
-from utilities import spatial_join
 
 from ..constants.services import DOR_PARCELS_URL
+from ..utilities import spatial_join
 
 
 def dor_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:

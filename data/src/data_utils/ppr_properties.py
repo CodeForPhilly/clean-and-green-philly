@@ -3,11 +3,10 @@ import io
 import geopandas as gpd
 import requests
 
-from utilities import spatial_join
-
 from ..classes.loaders import EsriLoader, GdfLoader
 from ..constants.services import PPR_PROPERTIES_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
+from ..utilities import spatial_join
 
 
 @provide_metadata()

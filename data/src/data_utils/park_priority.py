@@ -10,10 +10,10 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 from src.config.config import USE_CRS
-from utilities import spatial_join
 
 from ..classes.file_manager import FileManager, FileType, LoadType
 from ..metadata.metadata_utils import provide_metadata
+from ..utilities import spatial_join
 
 file_manager = FileManager()
 
