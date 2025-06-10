@@ -1,4 +1,5 @@
 import io
+import zipfile
 
 import geopandas as gpd
 import requests
@@ -45,7 +46,8 @@ def tree_canopy(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     tree_response = requests.get(tree_url)
 
     with io.BytesIO(tree_response.content) as f:
-        file_manager.extract_all(f)
+        with zipfile.ZipFile(f, "r") as zip_ref:
+            zip_ref.extractall("storage/temp")
 
     # Load and process the tree canopy shapefile
     shapefile_file_path = file_manager.get_file_path(

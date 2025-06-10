@@ -59,7 +59,7 @@ We use a variety of file types for storage of the end dataset constructed by the
 
 The first are PMtiles, which is a single-file vector tile format for geospatial data. It's main benefit is that it, as a single file, encompasses all vector tiles are each zoom level for our data, and so it can be hosted in our Google Cloud Bucket and simply fetched from by Maplibre rather than needing a more complex backend or querying solution as an intermediary. More information can be found [here](https://docs.protomaps.com/pmtiles/).
 
-The second are GeoParquet files, which are a geospatial addition to Apache Parquet files. Their benefit is they are a highly performant way to compress and store columnar data, and they have useful mechanisms for self-describing and partitioning the data within the file itself for faster retrieval and querying in the future. We are in the process of shifting the majority of our storage into this format and phasing out the Postgres-based service we have previously been using, which is mentioned below. You can find out more [here](https://geoparquet.org/releases/v0.2.0/).
+The second are GeoParquet files, which are a geospatial addition to Apache Parquet files. Their benefit is they are a highly performant way to compress and store columnar data, and they have useful mechanisms for self-describing and partitioning the data within the file itself for faster retrieval and querying in the future. You can find out more [here](https://geoparquet.org/releases/v0.2.0/).
 
 ### Python version and dependency management - Pipenv - Pyenv
 

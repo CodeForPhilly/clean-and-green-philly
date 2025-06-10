@@ -6,8 +6,6 @@ services:
     image: vacant-lots-proj:latest
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
-      - POSTGRES_PASSWORD
-      - POSTGRES_PORT=5434
       - CLEAN_GREEN_GOOGLE_KEY
       - PYTHONUNBUFFERED=1
       - GOOGLE_CLOUD_BUCKET_NAME

@@ -25,6 +25,15 @@ def access_process(dataset: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     Primary Feature Layer Columns Referenced:
         city_owner_agency, market_value
 
+    Tagline:
+        Assigns access processes
+
+    Columns added:
+        access_process (str): The access process for each property based on city ownership and market value.
+
+    Primary Feature Layer Columns Referenced:
+        city_owner_agency, market_value
+
     Side Effects:
         Prints the distribution of the "access_process" column.
     """

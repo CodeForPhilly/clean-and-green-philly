@@ -1,8 +1,8 @@
 import datetime
 
+import geopandas as gpd
 import pytz
 from dateutil.parser import parse
-import geopandas as gpd
 
 from ..metadata.metadata_utils import provide_metadata
 
