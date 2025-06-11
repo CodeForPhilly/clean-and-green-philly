@@ -1,6 +1,8 @@
+from typing import Tuple
+
 import geopandas as gpd
 
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.city_owned_properties import CityOwnedPropertiesOutputValidator
 
 from ..classes.loaders import EsriLoader
@@ -11,7 +13,9 @@ from ..utilities import opa_join
 
 @provide_metadata()
 @validate_output(CityOwnedPropertiesOutputValidator)
-def city_owned_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def city_owned_properties(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Processes city-owned property data by joining it with the primary feature layer,
     renaming columns, and updating access information for properties based on ownership.
@@ -47,7 +51,7 @@ def city_owned_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         opa_col="opabrt",
     )
 
-    city_owned_properties = loader.load_or_fetch()
+    city_owned_properties, input_validation = loader.load_or_fetch()
 
     merged_gdf = opa_join(input_gdf, city_owned_properties)
 
@@ -97,4 +101,4 @@ def city_owned_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         "Land Bank (PHDC)"
     )
 
-    return merged_gdf
+    return merged_gdf, input_validation

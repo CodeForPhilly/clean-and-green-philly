@@ -1,6 +1,8 @@
+from typing import Tuple
+
 import geopandas as gpd
 
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.nbhoods import NeighborhoodsOutputValidator
 
 from ..classes.loaders import GdfLoader
@@ -11,7 +13,7 @@ from ..utilities import spatial_join
 
 @provide_metadata()
 @validate_output(NeighborhoodsOutputValidator)
-def nbhoods(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def nbhoods(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds neighborhood information to the primary feature layer by performing a spatial join
     with a neighborhoods dataset.
@@ -37,7 +39,7 @@ def nbhoods(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
 
     loader = GdfLoader(name="Neighborhoods", input=NBHOODS_URL, cols=["mapname"])
-    phl_nbhoods = loader.load_or_fetch()
+    phl_nbhoods, input_validation = loader.load_or_fetch()
 
     # Correct the column name to lowercase if needed
     if "mapname" in phl_nbhoods.columns:
@@ -45,4 +47,4 @@ def nbhoods(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     merged_gdf = spatial_join(input_gdf, phl_nbhoods)
 
-    return merged_gdf
+    return merged_gdf, input_validation

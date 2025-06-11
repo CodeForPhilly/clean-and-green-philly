@@ -1,11 +1,12 @@
 import io
 import zipfile
+from typing import Tuple
 
 import geopandas as gpd
 import requests
 
 from src.classes.file_manager import FileManager, LoadType
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.tree_canopy import TreeCanopyOutputValidator
 
 from ..classes.loaders import GdfLoader
@@ -17,7 +18,9 @@ file_manager = FileManager()
 
 @provide_metadata()
 @validate_output(TreeCanopyOutputValidator)
-def tree_canopy(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def tree_canopy(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds tree canopy gap information to the primary feature layer by downloading,
     processing, and spatially joining tree canopy data for Philadelphia County.
@@ -59,7 +62,7 @@ def tree_canopy(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     loader = GdfLoader(
         name="Tree Canopy", input=shapefile_file_path, cols=["county", "tc_gap"]
     )
-    pa_trees = loader.load_or_fetch()
+    pa_trees, input_validation = loader.load_or_fetch()
 
     phl_trees = pa_trees[pa_trees["county"] == "Philadelphia County"]
 
@@ -69,4 +72,4 @@ def tree_canopy(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     # Perform spatial join
     merged_gdf = spatial_join(input_gdf, phl_trees)
 
-    return merged_gdf
+    return merged_gdf, input_validation

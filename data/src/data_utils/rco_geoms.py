@@ -1,7 +1,9 @@
+from typing import Tuple
+
 import geopandas as gpd
 import pandas as pd
 
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.rco_geoms import RCOGeomsOutputValidator
 
 from ..classes.loaders import EsriLoader
@@ -14,7 +16,7 @@ pd.set_option("future.no_silent_downcasting", True)
 
 @provide_metadata()
 @validate_output(RCOGeomsOutputValidator)
-def rco_geoms(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def rco_geoms(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds Registered Community Organization (RCO) information to the primary feature layer
     by performing a spatial join and aggregating RCO data.
@@ -43,7 +45,7 @@ def rco_geoms(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         opa_id, geometry
     """
     loader = EsriLoader(name="RCOs", esri_urls=RCOS_LAYERS_TO_LOAD)
-    rco_geoms = loader.load_or_fetch()
+    rco_geoms, input_validation = loader.load_or_fetch()
 
     rco_aggregate_cols = [
         "organization_name",
@@ -88,4 +90,4 @@ def rco_geoms(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     merged_gdf = gpd.GeoDataFrame(merged_gdf, geometry="geometry", crs=input_gdf.crs)
     merged_gdf.drop_duplicates(inplace=True)
 
-    return merged_gdf
+    return merged_gdf, input_validation

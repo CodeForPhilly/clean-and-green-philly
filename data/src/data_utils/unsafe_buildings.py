@@ -1,6 +1,8 @@
+from typing import Tuple
+
 import geopandas as gpd
 
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.unsafe_buildings import UnsafeBuildingsOutputValidator
 
 from ..classes.loaders import CartoLoader
@@ -11,7 +13,9 @@ from ..utilities import opa_join
 
 @provide_metadata()
 @validate_output(UnsafeBuildingsOutputValidator)
-def unsafe_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def unsafe_buildings(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds unsafe building information to the primary feature layer by joining with a dataset
     of unsafe buildings.
@@ -41,7 +45,7 @@ def unsafe_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         opa_col="opa_account_num",
     )
 
-    unsafe_buildings = loader.load_or_fetch()
+    unsafe_buildings, input_validation = loader.load_or_fetch()
 
     # Mark unsafe buildings
     unsafe_buildings.loc[:, "unsafe_building"] = "Y"
@@ -52,4 +56,4 @@ def unsafe_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     # Fill missing values with "N" for non-unsafe buildings
     merged_gdf.loc[:, "unsafe_building"] = merged_gdf["unsafe_building"].fillna("N")
 
-    return merged_gdf
+    return merged_gdf, input_validation

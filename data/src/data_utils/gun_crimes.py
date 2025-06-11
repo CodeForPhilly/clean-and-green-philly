@@ -1,12 +1,15 @@
 import geopandas as gpd
 
 from src.data_utils.kde import apply_kde_to_input
+from src.validation.base import validate_output
+from src.validation.gun_crimes import GunCrimesOutputValidator
 
 from ..constants.services import GUNCRIME_SQL_QUERY
 from ..metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
+@validate_output(GunCrimesOutputValidator)
 def gun_crimes(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Applies kernel density estimation (KDE) analysis for gun crimes to the primary feature layer.

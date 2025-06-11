@@ -134,7 +134,7 @@ def opa_properties() -> gpd.GeoDataFrame:
         ],
     )
 
-    opa = loader.load_or_fetch()
+    opa, input_validation = loader.load_or_fetch()
 
     # Convert 'sale_price' and 'market_value' to numeric values
     opa["sale_price"] = pd.to_numeric(opa["sale_price"], errors="coerce")
@@ -159,4 +159,4 @@ def opa_properties() -> gpd.GeoDataFrame:
     # Drop empty geometries
     opa = opa[~opa.is_empty]
 
-    return opa
+    return opa, input_validation

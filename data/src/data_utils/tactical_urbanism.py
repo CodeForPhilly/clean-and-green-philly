@@ -1,6 +1,8 @@
+from typing import Tuple
+
 import geopandas as gpd
 
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.tactical_urbanism import TacticalUrbanismOutputValidator
 
 from ..metadata.metadata_utils import provide_metadata
@@ -8,7 +10,9 @@ from ..metadata.metadata_utils import provide_metadata
 
 @provide_metadata()
 @validate_output(TacticalUrbanismOutputValidator)
-def tactical_urbanism(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def tactical_urbanism(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Assigns a 'tactical_urbanism' value to each row in the primary feature layer based on specific conditions.
 
@@ -45,4 +49,4 @@ def tactical_urbanism(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         tactical_urbanism_values.append(tactical_urbanism)
 
     input_gdf["tactical_urbanism"] = tactical_urbanism_values
-    return input_gdf
+    return input_gdf, ValidationResult(True)

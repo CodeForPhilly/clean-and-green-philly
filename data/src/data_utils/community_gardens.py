@@ -1,6 +1,8 @@
+from typing import Tuple
+
 import geopandas as gpd
 
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.community_gardens import CommunityGardensOutputValidator
 
 from ..classes.loaders import EsriLoader
@@ -11,7 +13,9 @@ from ..utilities import spatial_join
 
 @provide_metadata()
 @validate_output(CommunityGardensOutputValidator)
-def community_gardens(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def community_gardens(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Updates the 'vacant' column in the primary feature layer to ensure community gardens
     are marked as not vacant. This protects known community gardens from being categorized
@@ -43,7 +47,7 @@ def community_gardens(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         cols=["site_name"],
     )
 
-    community_gardens = loader.load_or_fetch()
+    community_gardens, input_validation = loader.load_or_fetch()
 
     # Convert any non-point geometries to points using centroid
     community_gardens.loc[
@@ -64,4 +68,4 @@ def community_gardens(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     mask = input_gdf["opa_id"].isin(garden_parcels)
     input_gdf.loc[mask, "vacant"] = False
 
-    return input_gdf
+    return input_gdf, input_validation

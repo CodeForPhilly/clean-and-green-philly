@@ -1,13 +1,17 @@
+from typing import Tuple
+
 import geopandas as gpd
 
 from src.metadata.metadata_utils import provide_metadata
 from src.validation.access_process import AccessProcessOutputValidator
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 
 
 @provide_metadata()
 @validate_output(AccessProcessOutputValidator)
-def access_process(dataset: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def access_process(
+    dataset: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Process a dataset to determine the access process for each property based on
     city ownership and market value. The result is added as a new column in the dataset.
@@ -64,4 +68,4 @@ def access_process(dataset: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     dataset["access_process"] = access_processes
 
-    return dataset
+    return dataset, ValidationResult(True)

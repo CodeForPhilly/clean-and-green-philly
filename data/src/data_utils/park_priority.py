@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 from tqdm import tqdm
 
 from src.config.config import USE_CRS
+from src.validation.base import validate_output
+from src.validation.park_priority import ParkPriorityOutputValidator
 
 from ..classes.file_manager import FileManager, FileType, LoadType
 from ..metadata.metadata_utils import provide_metadata
@@ -117,6 +119,7 @@ def download_and_process_shapefile(
 
 
 @provide_metadata()
+@validate_output(ParkPriorityOutputValidator)
 def park_priority(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Downloads and processes park priority data, then joins it with the primary feature layer.

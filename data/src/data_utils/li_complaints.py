@@ -1,11 +1,15 @@
 import geopandas as gpd
 
+from src.validation.base import validate_output
+from src.validation.li_complaints import LIComplaintsOutputValidator
+
 from ..constants.services import COMPLAINTS_SQL_QUERY
 from ..data_utils.kde import apply_kde_to_input
 from ..metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
+@validate_output(LIComplaintsOutputValidator)
 def li_complaints(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Applies kernel density estimation (KDE) analysis for L&I complaints to the primary feature layer.
