@@ -3,6 +3,9 @@ from io import BytesIO
 import geopandas as gpd
 import pandas as pd
 
+from src.validation.base import validate_output
+from src.validation.vacant_properties import VacantPropertiesOutputValidator
+
 from ..classes.loaders import EsriLoader, google_cloud_bucket
 from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
@@ -60,6 +63,7 @@ def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05) -> None:
 
 
 @provide_metadata()
+@validate_output(VacantPropertiesOutputValidator)
 def vacant_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Adds a "vacant" column to the primary feature layer based on vacant property data from

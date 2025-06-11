@@ -3,6 +3,9 @@ import io
 import geopandas as gpd
 import requests
 
+from src.validation.base import validate_output
+from src.validation.ppr_properties import PPRPropertiesOutputValidator
+
 from ..classes.loaders import EsriLoader, GdfLoader
 from ..constants.services import PPR_PROPERTIES_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
@@ -10,6 +13,7 @@ from ..utilities import spatial_join
 
 
 @provide_metadata()
+@validate_output(PPRPropertiesOutputValidator)
 def ppr_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Updates the 'vacant' column in the primary feature layer to ensure PPR properties

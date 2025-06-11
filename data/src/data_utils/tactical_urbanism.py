@@ -1,9 +1,13 @@
 import geopandas as gpd
 
+from src.validation.base import validate_output
+from src.validation.tactical_urbanism import TacticalUrbanismOutputValidator
+
 from ..metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
+@validate_output(TacticalUrbanismOutputValidator)
 def tactical_urbanism(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Assigns a 'tactical_urbanism' value to each row in the primary feature layer based on specific conditions.

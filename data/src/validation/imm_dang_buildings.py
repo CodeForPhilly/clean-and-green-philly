@@ -3,8 +3,8 @@ import geopandas as gpd
 from .base import BaseValidator
 
 
-class NeighborhoodsInputValidator(BaseValidator):
-    """Validator for access process service input."""
+class ImmDangerInputValidator(BaseValidator):
+    """Validator for imminent danger buildings service input."""
 
     schema = None
 
@@ -12,8 +12,8 @@ class NeighborhoodsInputValidator(BaseValidator):
         pass
 
 
-class NeighborhoodsOutputValidator(BaseValidator):
-    """Validator for access process service output."""
+class ImmDangerOutputValidator(BaseValidator):
+    """Validator for imminent danger buildings service output."""
 
     schema = None
 

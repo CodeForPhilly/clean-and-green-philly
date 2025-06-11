@@ -1,18 +1,74 @@
+import functools
 import logging
-from abc import ABC, abstractmethod
-from typing import List, Optional, Tuple
+from abc import ABC
+from typing import Callable, List
 
 import geopandas as gpd
+import pandera as pa
+
+from src.config.config import USE_CRS
+
+CITY_LIMITS = gpd.read_file("./constants/city_limits.geojson")
+CITY_LIMITS.to_crs(USE_CRS)
+PHL_GEOMETRY = CITY_LIMITS.geometry.iloc[0]
 
 
-class ServiceValidator(ABC):
+class ValidationResult:
+    def __init__(self, success: bool, errors: List[str] = []):
+        self.success = success
+        self.errors = errors
+
+    def __bool__(self):
+        return self.success
+
+
+class BaseValidator(ABC):
     """Base class for service-specific data validation."""
+
+    schema: pa.SchemaModel = None
+
+    def __init_subclass__(cls):
+        return super().__init_subclass__()
+        if not isinstance(getattr(cls, "schema", None), type) or not isinstance(
+            cls.schema, pa.SchemaModel
+        ):
+            raise TypeError(
+                f"{cls.__name__} must define a 'schema' class variable that is a subclass of pandera.SchemaModel."
+            )
 
     def __init__(self):
         self.logger = logging.getLogger(self.__class__.__name__)
+        self.errors = []
 
-    @abstractmethod
-    def validate(self, data: gpd.GeoDataFrame) -> Tuple[bool, List[str]]:
+    def geometry_validation(self, gdf: gpd.GeoDataFrame):
+        correct_crs = gdf.crs == USE_CRS
+        within_phl = gdf.geometry.within(PHL_GEOMETRY).all()
+
+        if not correct_crs:
+            self.errors.append(
+                f"Geodataframe for {self.__name__} is not using the correct coordinate system pegged to Philadelphia"
+            )
+
+        if not within_phl:
+            self.errors.append(
+                f"Dataframe for {self.__name__} not contained within Philadelphia limits."
+            )
+
+    def opa_validation(self, gdf: gpd.GeoDataFrame):
+        if "opa_id" in gdf.columns:
+            opa_string = gdf["opa_id"].apply(lambda x: isinstance(x, str)).all()
+            if not opa_string:
+                self.errors.append(
+                    f"OPA ids are not all typed as strings for {self.__name__}"
+                )
+
+            unique_opa = gdf["opa_id"].is_unique
+            if not unique_opa:
+                self.errors.append(
+                    f"OPA ids contain some duplicates for {self.__name__}"
+                )
+
+    def validate(self, gdf: gpd.GeoDataFrame) -> ValidationResult:
         """
         Validate the data after a service runs.
 
@@ -22,94 +78,38 @@ class ServiceValidator(ABC):
         Returns:
             Tuple of (is_valid, list of error messages)
         """
+        self.geometry_validation(gdf)
+        self.opa_validation(gdf)
+
+        self._custom_validation(gdf)
+        self.schema.validate(gdf)
+
+        return ValidationResult(success=not self.errors, errors=self.errors)
+
+    def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass
 
-    def _run_base_validation(self, data: gpd.GeoDataFrame) -> List[str]:
-        """
-        Run base validation checks that should be performed for all services.
-        Currently checks for:
-        - Duplicate OPA IDs
-        - Duplicate geometries
-        - Invalid geometries
+    # Validations
+    # Duplicate opa_ids
+    # Duplicate geometries
+    # Invalid geometries
+    # Required columns
+    # Null percentage
+    # Duplicate count
+    # Row count
 
-        Args:
-            data: The GeoDataFrame to validate
 
-        Returns:
-            List of error messages
-        """
-        errors = []
+def validate_output(
+    validator_cls: BaseValidator,
+):
+    def decorator(func: Callable[[gpd.GeoDataFrame], gpd.GeoDataFrame]):
+        @functools.wraps(func)
+        def wrapper(gdf: gpd.GeoDataFrame, *args, **kwargs):
+            validator = validator_cls()
+            output_gdf = func(gdf, *args, **kwargs)
+            validation_result = validator.validate(output_gdf)
+            return output_gdf, validation_result
 
-        # Check for duplicate OPA IDs
-        if "opa_id" in data.columns:
-            duplicates = data[data["opa_id"].duplicated()]
-            if not duplicates.empty:
-                errors.append(f"Found {len(duplicates)} duplicate OPA IDs")
+        return wrapper
 
-        # Check for duplicate geometries
-        if "geometry" in data.columns:
-            duplicates = data[data["geometry"].duplicated()]
-            if not duplicates.empty:
-                errors.append(f"Found {len(duplicates)} duplicate geometries")
-
-        # Check for invalid geometries
-        if "geometry" in data.columns:
-            invalid_geoms = data[~data["geometry"].is_valid]
-            if not invalid_geoms.empty:
-                errors.append(f"Found {len(invalid_geoms)} invalid geometries")
-
-        return errors
-
-    def check_required_columns(
-        self, data: gpd.GeoDataFrame, required_columns: List[str]
-    ) -> List[str]:
-        """Check if all required columns are present."""
-        missing_columns = [col for col in required_columns if col not in data.columns]
-        if missing_columns:
-            return [f"Missing required columns: {', '.join(missing_columns)}"]
-        return []
-
-    def check_null_percentage(
-        self, data: gpd.GeoDataFrame, column: str, threshold: float = 0.1
-    ) -> List[str]:
-        """Check if null percentage in a column exceeds threshold."""
-        null_pct = data[column].isna().mean()
-        if null_pct > threshold:
-            return [
-                f"Column {column} has {null_pct:.1%} null values (threshold: {threshold:.1%})"
-            ]
-        return []
-
-    def check_duplicates(self, data: gpd.GeoDataFrame, column: str) -> List[str]:
-        """Check for duplicate values in a column."""
-        duplicates = data[data[column].duplicated()]
-        if not duplicates.empty:
-            return [f"Found {len(duplicates)} duplicate values in column {column}"]
-        return []
-
-    def check_count_threshold(
-        self, data: gpd.GeoDataFrame, min_count: int, max_count: Optional[int] = None
-    ) -> List[str]:
-        """
-        Check if row count is within expected range.
-        This is a utility method intended for use by validator subclasses.
-
-        Args:
-            data: The GeoDataFrame to check
-            min_count: Minimum number of rows required
-            max_count: Optional maximum number of rows allowed
-
-        Returns:
-            List of error messages if thresholds are exceeded
-        """
-        count = len(data)
-        errors = []
-        if count < min_count:
-            errors.append(
-                f"Row count ({count}) is below minimum threshold ({min_count})"
-            )
-        if max_count and count > max_count:
-            errors.append(
-                f"Row count ({count}) exceeds maximum threshold ({max_count})"
-            )
-        return errors
+    return decorator

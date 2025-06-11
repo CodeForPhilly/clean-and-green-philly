@@ -1,9 +1,12 @@
 import geopandas as gpd
 
 from src.metadata.metadata_utils import provide_metadata
+from src.validation.access_process import AccessProcessOutputValidator
+from src.validation.base import validate_output
 
 
 @provide_metadata()
+@validate_output(AccessProcessOutputValidator)
 def access_process(dataset: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Process a dataset to determine the access process for each property based on

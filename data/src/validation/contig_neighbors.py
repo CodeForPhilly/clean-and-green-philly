@@ -3,8 +3,8 @@ import geopandas as gpd
 from .base import BaseValidator
 
 
-class AccessProcessOutputValidator(BaseValidator):
-    """Validator for access process service output."""
+class ContigNeighborsOutputValidator(BaseValidator):
+    """Validator for contiguous neighbors service output."""
 
     schema = None
 

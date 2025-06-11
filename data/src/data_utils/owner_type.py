@@ -1,10 +1,14 @@
 import geopandas as gpd
 import pandas as pd
 
+from src.validation.base import validate_output
+from src.validation.owner_type import OwnerTypeOutputValidator
+
 from ..metadata.metadata_utils import provide_metadata
 
 
 @provide_metadata()
+@validate_output(OwnerTypeOutputValidator)
 def owner_type(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Determines the ownership type for each property in the primary feature layer based on

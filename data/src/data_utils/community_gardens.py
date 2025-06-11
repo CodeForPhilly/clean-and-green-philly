@@ -1,5 +1,8 @@
 import geopandas as gpd
 
+from src.validation.base import validate_output
+from src.validation.community_gardens import CommunityGardensOutputValidator
+
 from ..classes.loaders import EsriLoader
 from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
@@ -7,6 +10,7 @@ from ..utilities import spatial_join
 
 
 @provide_metadata()
+@validate_output(CommunityGardensOutputValidator)
 def community_gardens(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Updates the 'vacant' column in the primary feature layer to ensure community gardens

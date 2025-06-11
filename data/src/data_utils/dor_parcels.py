@@ -3,11 +3,14 @@ from shapely.strtree import STRtree
 
 from src.classes.loaders import GdfLoader
 from src.config.config import USE_CRS
+from src.validation.base import validate_output
+from src.validation.dor_parcels import DorParcelsOutputValidator
 
 from ..constants.services import DOR_PARCELS_URL
 from ..utilities import spatial_join
 
 
+@validate_output(DorParcelsOutputValidator)
 def dor_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Updates the primary feature layer by replacing its geometry column with

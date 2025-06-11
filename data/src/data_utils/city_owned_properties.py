@@ -1,5 +1,8 @@
 import geopandas as gpd
 
+from src.validation.base import validate_output
+from src.validation.city_owned_properties import CityOwnedPropertiesOutputValidator
+
 from ..classes.loaders import EsriLoader
 from ..constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
@@ -7,6 +10,7 @@ from ..utilities import opa_join
 
 
 @provide_metadata()
+@validate_output(CityOwnedPropertiesOutputValidator)
 def city_owned_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Processes city-owned property data by joining it with the primary feature layer,

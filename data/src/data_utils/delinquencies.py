@@ -1,5 +1,8 @@
 import geopandas as gpd
 
+from src.validation.base import validate_output
+from src.validation.delinquencies import DelinquenciesOutputValidator
+
 from ..classes.loaders import CartoLoader
 from ..constants.services import DELINQUENCIES_QUERY
 from ..metadata.metadata_utils import provide_metadata
@@ -7,6 +10,7 @@ from ..utilities import opa_join
 
 
 @provide_metadata()
+@validate_output(DelinquenciesOutputValidator)
 def delinquencies(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Adds property tax delinquency information to the primary feature layer by

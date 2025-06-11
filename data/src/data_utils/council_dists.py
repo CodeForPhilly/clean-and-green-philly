@@ -1,6 +1,9 @@
 import geopandas as gpd
 import pandas as pd
 
+from src.validation.base import validate_output
+from src.validation.council_dists import CouncilDistrictsOutputValidator
+
 from ..classes.loaders import EsriLoader
 from ..constants.services import COUNCIL_DISTRICTS_TO_LOAD
 from ..metadata.metadata_utils import provide_metadata
@@ -10,6 +13,7 @@ pd.set_option("future.no_silent_downcasting", True)
 
 
 @provide_metadata()
+@validate_output(CouncilDistrictsOutputValidator)
 def council_dists(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Associates properties in the primary feature layer with council districts
