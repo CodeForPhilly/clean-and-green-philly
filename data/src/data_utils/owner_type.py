@@ -6,10 +6,7 @@ import pandas as pd
 from src.validation.base import ValidationResult, validate_output
 from src.validation.owner_type import OwnerTypeOutputValidator
 
-from ..metadata.metadata_utils import provide_metadata
 
-
-@provide_metadata()
 @validate_output(OwnerTypeOutputValidator)
 def owner_type(
     input_gdf: gpd.GeoDataFrame,

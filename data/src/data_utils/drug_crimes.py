@@ -5,10 +5,8 @@ from src.validation.base import validate_output
 from src.validation.drug_crimes import DrugCrimesOutputValidator
 
 from ..constants.services import DRUGCRIME_SQL_QUERY
-from ..metadata.metadata_utils import provide_metadata
 
 
-@provide_metadata()
 @validate_output(DrugCrimesOutputValidator)
 def drug_crimes(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """

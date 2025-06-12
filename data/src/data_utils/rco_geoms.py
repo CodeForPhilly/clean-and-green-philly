@@ -8,13 +8,11 @@ from src.validation.rco_geoms import RCOGeomsOutputValidator
 
 from ..classes.loaders import EsriLoader
 from ..constants.services import RCOS_LAYERS_TO_LOAD
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import spatial_join
 
 pd.set_option("future.no_silent_downcasting", True)
 
 
-@provide_metadata()
 @validate_output(RCOGeomsOutputValidator)
 def rco_geoms(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """

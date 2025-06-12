@@ -9,7 +9,6 @@ from src.validation.vacant_properties import VacantPropertiesOutputValidator
 
 from ..classes.loaders import EsriLoader, google_cloud_bucket
 from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
-from ..metadata.metadata_utils import provide_metadata
 
 
 def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame | None:
@@ -63,7 +62,6 @@ def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05) -> None:
             )
 
 
-@provide_metadata()
 @validate_output(VacantPropertiesOutputValidator)
 def vacant_properties(
     input_gdf: gpd.GeoDataFrame,

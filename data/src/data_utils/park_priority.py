@@ -14,7 +14,6 @@ from src.validation.base import validate_output
 from src.validation.park_priority import ParkPriorityOutputValidator
 
 from ..classes.file_manager import FileManager, FileType, LoadType
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import spatial_join
 
 file_manager = FileManager()
@@ -118,7 +117,6 @@ def download_and_process_shapefile(
     return phl_parks
 
 
-@provide_metadata()
 @validate_output(ParkPriorityOutputValidator)
 def park_priority(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """

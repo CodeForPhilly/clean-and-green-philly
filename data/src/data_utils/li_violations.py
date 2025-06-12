@@ -8,11 +8,9 @@ from src.validation.li_violations import LIViolationsOutputValidator
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import VIOLATIONS_SQL_QUERY
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import opa_join
 
 
-@provide_metadata()
 @validate_output(LIViolationsOutputValidator)
 def li_violations(
     input_gdf: gpd.GeoDataFrame,

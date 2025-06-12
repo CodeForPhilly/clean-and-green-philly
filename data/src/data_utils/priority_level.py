@@ -3,12 +3,10 @@ from typing import Tuple
 import geopandas as gpd
 import pandas as pd
 
-from src.metadata.metadata_utils import provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.priority_level import PriorityLevelOutputValidator
 
 
-@provide_metadata()
 @validate_output(PriorityLevelOutputValidator)
 def priority_level(
     dataset: gpd.GeoDataFrame,

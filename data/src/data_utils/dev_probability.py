@@ -9,11 +9,9 @@ from src.validation.dev_probability import DevProbabilityOutputValidator
 
 from ..classes.loaders import GdfLoader
 from ..constants.services import CENSUS_BGS_URL, PERMITS_QUERY
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import spatial_join
 
 
-@provide_metadata()
 @validate_output(DevProbabilityOutputValidator)
 def dev_probability(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """

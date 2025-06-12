@@ -7,11 +7,9 @@ from src.validation.nbhoods import NeighborhoodsOutputValidator
 
 from ..classes.loaders import GdfLoader
 from ..constants.services import NBHOODS_URL
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import spatial_join
 
 
-@provide_metadata()
 @validate_output(NeighborhoodsOutputValidator)
 def nbhoods(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """

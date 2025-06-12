@@ -10,13 +10,11 @@ from src.validation.base import ValidationResult, validate_output
 from src.validation.tree_canopy import TreeCanopyOutputValidator
 
 from ..classes.loaders import GdfLoader
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import spatial_join
 
 file_manager = FileManager()
 
 
-@provide_metadata()
 @validate_output(TreeCanopyOutputValidator)
 def tree_canopy(
     input_gdf: gpd.GeoDataFrame,

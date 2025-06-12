@@ -7,11 +7,9 @@ from src.validation.imm_dang_buildings import ImmDangerOutputValidator
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import IMMINENT_DANGER_BUILDINGS_QUERY
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import opa_join
 
 
-@provide_metadata()
 @validate_output(ImmDangerOutputValidator)
 def imm_dang_buildings(
     input_gdf: gpd.GeoDataFrame,

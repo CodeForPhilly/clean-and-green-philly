@@ -7,11 +7,9 @@ from src.validation.unsafe_buildings import UnsafeBuildingsOutputValidator
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import UNSAFE_BUILDINGS_QUERY
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import opa_join
 
 
-@provide_metadata()
 @validate_output(UnsafeBuildingsOutputValidator)
 def unsafe_buildings(
     input_gdf: gpd.GeoDataFrame,

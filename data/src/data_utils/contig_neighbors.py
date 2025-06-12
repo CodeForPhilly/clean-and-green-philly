@@ -9,11 +9,9 @@ from libpysal.weights import Queen
 from src.validation.base import ValidationResult, validate_output
 from src.validation.contig_neighbors import ContigNeighborsOutputValidator
 
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import opa_join
 
 
-@provide_metadata()
 @validate_output(ContigNeighborsOutputValidator)
 def contig_neighbors(
     input_gdf: gpd.GeoDataFrame,

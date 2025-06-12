@@ -5,10 +5,7 @@ import geopandas as gpd
 from src.validation.base import ValidationResult, validate_output
 from src.validation.negligent_devs import NegligentDevsOutputValidator
 
-from ..metadata.metadata_utils import provide_metadata
 
-
-@provide_metadata()
 @validate_output(NegligentDevsOutputValidator)
 def negligent_devs(
     input_gdf: gpd.GeoDataFrame,

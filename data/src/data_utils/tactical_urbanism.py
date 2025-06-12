@@ -5,10 +5,7 @@ import geopandas as gpd
 from src.validation.base import ValidationResult, validate_output
 from src.validation.tactical_urbanism import TacticalUrbanismOutputValidator
 
-from ..metadata.metadata_utils import provide_metadata
 
-
-@provide_metadata()
 @validate_output(TacticalUrbanismOutputValidator)
 def tactical_urbanism(
     input_gdf: gpd.GeoDataFrame,
