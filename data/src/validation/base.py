@@ -7,11 +7,7 @@ import geopandas as gpd
 import pandera.pandas as pa
 
 from src.config.config import USE_CRS
-
-city_limits_file_path = "src/constants/city_limits.geojson"
-CITY_LIMITS = gpd.read_file(city_limits_file_path)
-CITY_LIMITS.to_crs(USE_CRS)
-PHL_GEOMETRY = CITY_LIMITS.geometry.iloc[0]
+from src.constants.city_limits import PHL_GEOMETRY
 
 
 class ValidationResult:
