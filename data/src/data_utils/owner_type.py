@@ -1,10 +1,7 @@
 import geopandas as gpd
 import pandas as pd
 
-from ..metadata.metadata_utils import provide_metadata
 
-
-@provide_metadata()
 def owner_type(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Determines the ownership type for each property in the primary feature layer based on

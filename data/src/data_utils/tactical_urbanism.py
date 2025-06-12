@@ -1,9 +1,6 @@
 import geopandas as gpd
 
-from ..metadata.metadata_utils import provide_metadata
 
-
-@provide_metadata()
 def tactical_urbanism(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Assigns a 'tactical_urbanism' value to each row in the primary feature layer based on specific conditions.

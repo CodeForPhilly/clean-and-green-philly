@@ -1,10 +1,7 @@
 import geopandas as gpd
 import pandas as pd
 
-from src.metadata.metadata_utils import provide_metadata
 
-
-@provide_metadata()
 def priority_level(dataset: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Determines priority levels for properties based on gun crime density,

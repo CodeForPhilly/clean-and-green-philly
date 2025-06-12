@@ -3,8 +3,6 @@ import re
 import geopandas as gpd
 import pandas as pd
 
-from src.metadata.metadata_utils import provide_metadata
-
 from ..classes.loaders import CartoLoader
 from ..constants.services import OPA_PROPERTIES_QUERY
 
@@ -80,7 +78,6 @@ def create_standardized_address(row: pd.Series) -> str:
     return standardized_address.lower()
 
 
-@provide_metadata()
 def opa_properties() -> gpd.GeoDataFrame:
     """
     Loads and processes OPA property data, standardizing addresses and cleaning geometries.

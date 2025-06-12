@@ -5,11 +5,9 @@ import requests
 
 from ..classes.loaders import EsriLoader, GdfLoader
 from ..constants.services import PPR_PROPERTIES_TO_LOAD
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import spatial_join
 
 
-@provide_metadata()
 def ppr_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Updates the 'vacant' column in the primary feature layer to ensure PPR properties

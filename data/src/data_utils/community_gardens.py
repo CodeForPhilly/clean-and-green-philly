@@ -2,11 +2,9 @@ import geopandas as gpd
 
 from ..classes.loaders import EsriLoader
 from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import spatial_join
 
 
-@provide_metadata()
 def community_gardens(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Updates the 'vacant' column in the primary feature layer to ensure community gardens

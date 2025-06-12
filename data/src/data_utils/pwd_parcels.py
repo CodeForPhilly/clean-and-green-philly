@@ -2,7 +2,6 @@ import geopandas as gpd
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import PWD_PARCELS_QUERY
-from ..metadata.metadata_utils import provide_metadata
 
 
 def transform_pwd_parcels_gdf(pwd_parcels_gdf: gpd.GeoDataFrame):
@@ -47,7 +46,6 @@ def merge_pwd_parcels_gdf(
     return merged_gdf
 
 
-@provide_metadata()
 def pwd_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Updates the primary feature layer by replacing its geometry column with validated

@@ -2,11 +2,9 @@ import geopandas as gpd
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import UNSAFE_BUILDINGS_QUERY
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import opa_join
 
 
-@provide_metadata()
 def unsafe_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Adds unsafe building information to the primary feature layer by joining with a dataset

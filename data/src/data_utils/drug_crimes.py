@@ -3,10 +3,8 @@ import geopandas as gpd
 from src.data_utils.kde import apply_kde_to_input
 
 from ..constants.services import DRUGCRIME_SQL_QUERY
-from ..metadata.metadata_utils import provide_metadata
 
 
-@provide_metadata()
 def drug_crimes(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Applies kernel density estimation (KDE) analysis for drug crimes to the primary feature layer.

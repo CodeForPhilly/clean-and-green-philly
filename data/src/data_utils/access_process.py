@@ -1,9 +1,6 @@
 import geopandas as gpd
 
-from src.metadata.metadata_utils import provide_metadata
 
-
-@provide_metadata()
 def access_process(dataset: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Process a dataset to determine the access process for each property based on

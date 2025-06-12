@@ -5,11 +5,9 @@ import networkx as nx
 import numpy as np
 from libpysal.weights import Queen
 
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import opa_join
 
 
-@provide_metadata()
 def contig_neighbors(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Calculates the number of contiguous vacant neighbors for each property in a feature layer.

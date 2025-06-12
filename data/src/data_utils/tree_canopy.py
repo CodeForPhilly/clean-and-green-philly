@@ -7,13 +7,11 @@ import requests
 from src.classes.file_manager import FileManager, LoadType
 
 from ..classes.loaders import GdfLoader
-from ..metadata.metadata_utils import provide_metadata
 from ..utilities import spatial_join
 
 file_manager = FileManager()
 
 
-@provide_metadata()
 def tree_canopy(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Adds tree canopy gap information to the primary feature layer by downloading,

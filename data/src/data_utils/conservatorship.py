@@ -4,15 +4,12 @@ import geopandas as gpd
 import pytz
 from dateutil.parser import parse
 
-from ..metadata.metadata_utils import provide_metadata
-
 est = pytz.timezone("US/Eastern")
 six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astimezone(
     est
 )
 
 
-@provide_metadata()
 def conservatorship(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Determines conservatorship eligibility for properties in a feature layer.
