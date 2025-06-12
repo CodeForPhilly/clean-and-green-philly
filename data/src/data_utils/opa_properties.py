@@ -3,12 +3,9 @@ import re
 import geopandas as gpd
 import pandas as pd
 
-<<<<<<< HEAD
 from src.validation.base import validate_output
 from src.validation.opa_properties import OPAPropertiesOutputValidator
 
-=======
->>>>>>> cfreedman/feature-layer-refactor
 from ..classes.loaders import CartoLoader
 from ..constants.services import OPA_PROPERTIES_QUERY
 
@@ -84,12 +81,8 @@ def create_standardized_address(row: pd.Series) -> str:
     return standardized_address.lower()
 
 
-<<<<<<< HEAD
 @validate_output(OPAPropertiesOutputValidator)
 def opa_properties(gdf: gpd.GeoDataFrame = None) -> gpd.GeoDataFrame:
-=======
-def opa_properties() -> gpd.GeoDataFrame:
->>>>>>> cfreedman/feature-layer-refactor
     """
     Loads and processes OPA property data, standardizing addresses and cleaning geometries.
 

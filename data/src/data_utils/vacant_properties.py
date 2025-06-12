@@ -122,8 +122,8 @@ def vacant_properties(
             print(
                 f"Appending backup data ({len(backup_gdf)} rows) to the existing data."
             )
-            vacant_properties.gdf = pd.concat(
-                [vacant_properties.gdf, backup_gdf], ignore_index=True
+            vacant_properties = pd.concat(
+                [vacant_properties, backup_gdf], ignore_index=True
             )
         except Exception as e:
             print(

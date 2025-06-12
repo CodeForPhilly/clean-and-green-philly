@@ -102,6 +102,7 @@ try:
         pipeline_errors["opa_properties"] = opa_validation
 
     for service in services:
+        print(dataset)
         dataset, validation = service(dataset)
 
         if ("input" in validation and not validation["input"]) or (
