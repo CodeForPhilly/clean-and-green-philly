@@ -3,9 +3,8 @@ from io import BytesIO
 import geopandas as gpd
 import pandas as pd
 
-from ..classes.featurelayer import FeatureLayer, google_cloud_bucket
+from ..classes.loaders import EsriLoader, google_cloud_bucket
 from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
-from ..metadata.metadata_utils import provide_metadata
 
 
 def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame | None:
@@ -59,8 +58,7 @@ def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05) -> None:
             )
 
 
-@provide_metadata()
-def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def vacant_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Adds a "vacant" column to the primary feature layer based on vacant property data from
     ESRI layers and backup data from Google Cloud Storage if necessary.
@@ -83,19 +81,16 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Known Issues:
         - The vacant land data is below the threshold, so backup data is loaded from GCS.
     """
-    vacant_properties = FeatureLayer(
+    loader = EsriLoader(
         name="Vacant Properties",
-        esri_rest_urls=VACANT_PROPS_LAYERS_TO_LOAD,
-        cols=["OPA_ID", "parcel_type"],  # Only need opa_id and parcel_type
+        esri_urls=VACANT_PROPS_LAYERS_TO_LOAD,
+        cols=["opa_id", "parcel_type"],
     )
 
-    # Rename columns for consistency
-    vacant_properties.gdf = vacant_properties.gdf.rename(columns={"OPA_ID": "opa_id"})
+    vacant_properties = loader.load_or_fetch()
 
     # Filter for "Land" properties in the dataset
-    vacant_land_gdf = vacant_properties.gdf[
-        vacant_properties.gdf["parcel_type"] == "Land"
-    ]
+    vacant_land_gdf = vacant_properties[vacant_properties["parcel_type"] == "Land"]
     print(f"Vacant land data size in the default dataset: {len(vacant_land_gdf)} rows.")
 
     # Check if the vacant land data is below the threshold
@@ -103,8 +98,8 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         print(
             "Vacant land data is below the threshold. Removing vacant land rows and loading backup data from GCS."
         )
-        vacant_properties.gdf = vacant_properties.gdf[
-            vacant_properties.gdf["parcel_type"] != "Land"
+        vacant_properties = vacant_properties[
+            vacant_properties["parcel_type"] != "Land"
         ]
 
         # Attempt to load backup data from GCS
@@ -129,7 +124,7 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
             )
 
     # Convert to a regular DataFrame by dropping geometry
-    df = vacant_properties.gdf.drop(columns=["geometry"], errors="ignore")
+    df = vacant_properties.drop(columns=["geometry"], errors="ignore")
 
     # Drop rows with missing opa_id
     df.dropna(subset=["opa_id"], inplace=True)
@@ -138,11 +133,9 @@ def vacant_properties(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     check_null_percentage(df)
 
     # Add "vacant" column to primary feature layer
-    primary_featurelayer.gdf["vacant"] = primary_featurelayer.gdf["opa_id"].isin(
-        df["opa_id"]
-    )
+    input_gdf["vacant"] = input_gdf["opa_id"].isin(df["opa_id"])
 
     # Drop parcel_type column after processing
     df.drop(columns=["parcel_type"], inplace=True)
 
-    return primary_featurelayer
+    return input_gdf

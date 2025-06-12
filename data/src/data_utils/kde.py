@@ -1,6 +1,7 @@
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import Tuple
 
+import geopandas as gpd
 import mapclassify
 import numpy as np
 import rasterio
@@ -8,9 +9,10 @@ from awkde.awkde import GaussianKDE
 from rasterio.transform import Affine
 from tqdm import tqdm
 
-from src.config.config import USE_CRS
 from src.classes.file_manager import FileManager, LoadType
-from src.classes.featurelayer import FeatureLayer
+from src.config.config import USE_CRS
+
+from ..classes.loaders import CartoLoader
 
 resolution = 1320  # 0.25 miles (in feet, since the CRS is 2272)
 batch_size = 100000
@@ -49,9 +51,12 @@ def generic_kde(
     """
     print(f"Initializing FeatureLayer for {name}")
 
-    feature_layer = FeatureLayer(name=name, carto_sql_queries=query)
+    loader = CartoLoader(name=name, carto_queries=query)
+    gdf = loader.load_or_fetch()
 
-    coords = np.array([geom.xy for geom in feature_layer.gdf.geometry])
+    gdf.dropna(subset=["geometry"], inplace=True)
+
+    coords = np.array([geom.xy for geom in gdf.geometry])
     x, y = coords[:, 0, :].flatten(), coords[:, 1, :].flatten()
     X = np.column_stack((x, y))
 
@@ -115,12 +120,12 @@ def generic_kde(
     return raster_file_path, X
 
 
-def apply_kde_to_primary(
-    primary_featurelayer: FeatureLayer,
+def apply_kde_to_input(
+    input_gdf: gpd.GeoDataFrame,
     name: str,
     query: str,
     resolution: int = resolution,
-) -> FeatureLayer:
+) -> gpd.GeoDataFrame:
     """
     Applies KDE to the primary feature layer and adds columns for density, z-score,
     percentile, and percentile as a string.
@@ -136,48 +141,42 @@ def apply_kde_to_primary(
     """
     raster_filename, crime_coords = generic_kde(name, query, resolution)
 
-    primary_featurelayer.gdf["centroid"] = primary_featurelayer.gdf.geometry.centroid
+    centroids = input_gdf.geometry.centroid
 
     coord_list = [
         (x, y)
         for x, y in zip(
-            primary_featurelayer.gdf["centroid"].x,
-            primary_featurelayer.gdf["centroid"].y,
+            centroids.x,
+            centroids.y,
         )
     ]
-
-    primary_featurelayer.gdf = primary_featurelayer.gdf.drop(columns=["centroid"])
 
     with rasterio.open(raster_filename) as src:
         sampled_values = [x[0] for x in src.sample(coord_list)]
 
     density_column = f"{name.lower().replace(' ', '_')}_density"
-    primary_featurelayer.gdf[density_column] = sampled_values
+    input_gdf[density_column] = sampled_values
 
     # Calculate z-scores
-    mean_density = primary_featurelayer.gdf[density_column].mean()
-    std_density = primary_featurelayer.gdf[density_column].std()
+    mean_density = input_gdf[density_column].mean()
+    std_density = input_gdf[density_column].std()
     z_score_column = f"{density_column}_zscore"
-    primary_featurelayer.gdf[z_score_column] = (
-        primary_featurelayer.gdf[density_column] - mean_density
-    ) / std_density
+    input_gdf[z_score_column] = (input_gdf[density_column] - mean_density) / std_density
 
     # Calculate percentiles
     percentile_breaks = list(range(101))
     classifier = mapclassify.Percentiles(
-        primary_featurelayer.gdf[density_column], pct=percentile_breaks
+        input_gdf[density_column], pct=percentile_breaks
     )
     percentile_column = f"{density_column}_percentile"
-    primary_featurelayer.gdf[percentile_column] = classifier.yb.astype(float)
+    input_gdf[percentile_column] = classifier.yb.astype(float)
 
     # Assign percentile labels
     label_column = f"{density_column}_label"
-    primary_featurelayer.gdf[label_column] = primary_featurelayer.gdf[
-        percentile_column
-    ].apply(label_percentile)
+    input_gdf[label_column] = input_gdf[percentile_column].apply(label_percentile)
 
     print(f"Finished processing {name}")
-    return primary_featurelayer
+    return input_gdf
 
 
 def label_percentile(value: float) -> str:

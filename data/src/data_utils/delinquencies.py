@@ -1,10 +1,11 @@
-from ..classes.featurelayer import FeatureLayer
+import geopandas as gpd
+
+from ..classes.loaders import CartoLoader
 from ..constants.services import DELINQUENCIES_QUERY
-from ..metadata.metadata_utils import provide_metadata
+from ..utilities import opa_join
 
 
-@provide_metadata()
-def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def delinquencies(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Adds property tax delinquency information to the primary feature layer by
     joining with a tax delinquencies dataset.
@@ -34,10 +35,10 @@ def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Primary Feature Layer Columns Referenced:
         opa_id
     """
-    tax_delinquencies = FeatureLayer(
+
+    loader = CartoLoader(
         name="Property Tax Delinquencies",
-        carto_sql_queries=DELINQUENCIES_QUERY,
-        use_wkb_geom_field="the_geom",
+        carto_queries=DELINQUENCIES_QUERY,
         cols=[
             "opa_number",
             "total_due",
@@ -48,11 +49,14 @@ def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
             "total_assessment",
             "sheriff_sale",
         ],
+        opa_col="opa_number",
     )
 
-    primary_featurelayer.opa_join(
-        tax_delinquencies.gdf,
-        "opa_number",
+    tax_delinquencies = loader.load_or_fetch()
+
+    merged_gdf = opa_join(
+        input_gdf,
+        tax_delinquencies,
     )
 
     delinquency_cols = [
@@ -63,12 +67,8 @@ def delinquencies(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         "most_recent_year_owed",
         "total_assessment",
     ]
-    primary_featurelayer.gdf[delinquency_cols] = primary_featurelayer.gdf[
-        delinquency_cols
-    ].fillna("NA")
+    merged_gdf[delinquency_cols] = merged_gdf[delinquency_cols].fillna("NA")
 
-    primary_featurelayer.gdf["sheriff_sale"] = primary_featurelayer.gdf[
-        "sheriff_sale"
-    ].fillna("N")
+    merged_gdf["sheriff_sale"] = merged_gdf["sheriff_sale"].fillna("N")
 
-    return primary_featurelayer
+    return merged_gdf

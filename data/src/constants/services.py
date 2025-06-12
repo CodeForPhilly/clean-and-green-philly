@@ -35,7 +35,7 @@ one_year_ago = (datetime.datetime.now() - datetime.timedelta(days=365)).strftime
 
 # Load data for complaints from L&I
 COMPLAINTS_SQL_QUERY = f"""
-SELECT address, service_request_id, subject, status, service_name, service_code, lat AS y, lon AS x 
+SELECT address, service_request_id, subject, status, service_name, service_code, the_geom, lat AS y, lon AS x 
 FROM public_cases_fc 
 WHERE requested_datetime >= '{one_year_ago}' 
   AND lat IS NOT NULL
@@ -54,11 +54,11 @@ WHERE requested_datetime >= '{one_year_ago}'
   )
 """
 
-VIOLATIONS_SQL_QUERY = f"SELECT parcel_id_num, casenumber, casecreateddate, casetype, casestatus, violationnumber, violationcodetitle, violationstatus, opa_account_num, address, opa_owner, geocode_x AS x, geocode_y AS y FROM violations WHERE violationdate >= '{one_year_ago}' AND geocode_x IS NOT NULL"
+VIOLATIONS_SQL_QUERY = f"SELECT parcel_id_num, casenumber, casecreateddate, casetype, casestatus, violationnumber, violationcodetitle, violationstatus, opa_account_num, address, opa_owner, the_geom, geocode_x AS x, geocode_y AS y FROM violations WHERE violationdate >= '{one_year_ago}' AND geocode_x IS NOT NULL"
 
-GUNCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, point_x AS x, point_y AS y FROM incidents_part1_part2 WHERE dispatch_date_time >= '{one_year_ago}' AND text_general_code IN ('Aggravated Assault Firearm', 'Robbery Firearm') AND point_x IS NOT NULL"
+GUNCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, the_geom, point_x AS x, point_y AS y FROM incidents_part1_part2 WHERE dispatch_date_time >= '{one_year_ago}' AND text_general_code IN ('Aggravated Assault Firearm', 'Robbery Firearm') AND point_x IS NOT NULL"
 
-DRUGCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, point_x AS x, point_y AS y FROM incidents_part1_part2 WHERE dispatch_date_time >= '{one_year_ago}' AND text_general_code IN ('Narcotic / Drug Law Violations') AND point_x IS NOT NULL"
+DRUGCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, the_geom, point_x AS x, point_y AS y FROM incidents_part1_part2 WHERE dispatch_date_time >= '{one_year_ago}' AND text_general_code IN ('Narcotic / Drug Law Violations') AND point_x IS NOT NULL"
 
 DELINQUENCIES_QUERY = "SELECT * FROM real_estate_tax_delinquencies"
 

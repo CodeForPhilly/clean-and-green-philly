@@ -1,20 +1,26 @@
-from typing import Any
-
-from src.metadata.metadata_utils import provide_metadata
+import geopandas as gpd
 
 
-@provide_metadata()
-def access_process(dataset: Any) -> Any:
+def access_process(dataset: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Process a dataset to determine the access process for each property based on
     city ownership and market value. The result is added as a new column in the dataset.
 
     Args:
-        dataset (Any): The dataset containing a GeoDataFrame named `gdf` with
-                       columns "city_owner_agency" and "market_value".
+        dataset (GeoDataFrame): The input GeoDataFrame dataset with
+        columns "city_owner_agency" and "market_value".
 
     Returns:
-        Any: The updated dataset with an additional "access_process" column.
+        GeoDataFrame: The updated dataset with an additional "access_process" column.
+
+    Tagline:
+        Assigns access processes
+
+    Columns added:
+        access_process (str): The access process for each property based on city ownership and market value.
+
+    Primary Feature Layer Columns Referenced:
+        city_owner_agency, market_value
 
     Tagline:
         Assigns access processes
@@ -30,7 +36,7 @@ def access_process(dataset: Any) -> Any:
     """
     access_processes = []
 
-    for _, row in dataset.gdf.iterrows():
+    for _, row in dataset.iterrows():
         # Decision Points
         city_owner_agency = row["city_owner_agency"]
         market_value_over_1000 = (
@@ -50,6 +56,6 @@ def access_process(dataset: Any) -> Any:
 
         access_processes.append(access_process)
 
-    dataset.gdf["access_process"] = access_processes
+    dataset["access_process"] = access_processes
 
     return dataset

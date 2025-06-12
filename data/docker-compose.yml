@@ -6,7 +6,6 @@ services:
     image: vacant-lots-proj:latest
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
-      - VACANT_LOTS_DB
       - CLEAN_GREEN_GOOGLE_KEY
       - PYTHONUNBUFFERED=1
       - GOOGLE_CLOUD_BUCKET_NAME
@@ -43,7 +42,6 @@ services:
     environment:
       - GOOGLE_APPLICATION_CREDENTIALS=/app/service-account-key.json
       - CLEAN_GREEN_GOOGLE_KEY
-      - VACANT_LOTS_DB
       - GOOGLE_CLOUD_BUCKET_NAME
     volumes:
       - ./src:/usr/src/app

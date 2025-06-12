@@ -1,14 +1,14 @@
+import geopandas as gpd
 import pandas as pd
 
-from ..classes.featurelayer import FeatureLayer
+from ..classes.loaders import EsriLoader
 from ..constants.services import COUNCIL_DISTRICTS_TO_LOAD
-from ..metadata.metadata_utils import provide_metadata
+from ..utilities import spatial_join
 
 pd.set_option("future.no_silent_downcasting", True)
 
 
-@provide_metadata()
-def council_dists(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+def council_dists(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Associates properties in the primary feature layer with council districts
     using a spatial join.
@@ -29,15 +29,17 @@ def council_dists(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Primary Feature Layer Columns Referenced:
         opa_id, geometry
     """
-    # Load council districts
-    council_dists = FeatureLayer(
-        name="Council Districts", esri_rest_urls=COUNCIL_DISTRICTS_TO_LOAD
+
+    loader = EsriLoader(
+        name="Council Districts", esri_urls=COUNCIL_DISTRICTS_TO_LOAD, cols=["district"]
     )
+
+    council_dists = loader.load_or_fetch()
 
     # Check that the required columns exist in the DataFrame
     required_columns = ["district", "geometry"]
     missing_columns = [
-        col for col in required_columns if col not in council_dists.gdf.columns
+        col for col in required_columns if col not in council_dists.columns
     ]
     if missing_columns:
         raise KeyError(
@@ -45,14 +47,12 @@ def council_dists(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         )
 
     # Use only the required columns
-    council_dists.gdf = council_dists.gdf[required_columns].copy()
-    council_dists.rebuild_gdf()
+    # council_dists = council_dists[required_columns].copy()
 
     # Perform spatial join
-    primary_featurelayer.spatial_join(council_dists)
+    merged_gdf = spatial_join(input_gdf, council_dists)
 
     # Drop duplicates in the primary feature layer
-    primary_featurelayer.gdf.drop_duplicates(inplace=True)
-    primary_featurelayer.rebuild_gdf()
+    merged_gdf.drop_duplicates(inplace=True)
 
-    return primary_featurelayer
+    return merged_gdf

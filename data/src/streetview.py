@@ -5,7 +5,7 @@ from urllib.parse import quote
 import pandas as pd
 import requests
 
-from src.classes.featurelayer import google_cloud_bucket
+from src.classes.loaders import google_cloud_bucket
 from src.config.psql import conn
 
 # Configure Google

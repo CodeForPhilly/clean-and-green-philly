@@ -42,6 +42,6 @@ COPY src ./src
 
 # Use Pipenv to run the script
 # Adjust the path to your main Python script if needed
-RUN ls -a /usr/src/app
+
 
 CMD ["pipenv", "run", "python", "-m", "src.main.py"]
