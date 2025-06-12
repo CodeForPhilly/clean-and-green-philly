@@ -98,10 +98,11 @@ class BaseValidator(ABC):
         """
         self.geometry_validation(gdf)
         self.opa_validation(gdf)
-        try:
-            self.schema.validate(gdf, lazy_validation=True)
-        except pa.errors.SchemaErrors as err:
-            self.errors.append(err.failure_case)
+        if self.schema:
+            try:
+                self.schema.validate(gdf, lazy_validation=True)
+            except pa.errors.SchemaErrors as err:
+                self.errors.append(err.failure_case)
         self._custom_validation(gdf)
 
         return ValidationResult(success=not self.errors, errors=self.errors)
@@ -115,7 +116,7 @@ def validate_output(
 ):
     def decorator(func: Callable[[gpd.GeoDataFrame], gpd.GeoDataFrame]):
         @functools.wraps(func)
-        def wrapper(gdf: gpd.GeoDataFrame, *args, **kwargs):
+        def wrapper(gdf: gpd.GeoDataFrame = None, *args, **kwargs):
             validator = validator_cls()
             output_gdf, input_validation = func(gdf, *args, **kwargs)
             output_validation = validator.validate(output_gdf)

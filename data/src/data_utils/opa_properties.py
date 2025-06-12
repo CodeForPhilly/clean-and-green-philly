@@ -3,7 +3,6 @@ import re
 import geopandas as gpd
 import pandas as pd
 
-from src.metadata.metadata_utils import provide_metadata
 from src.validation.base import validate_output
 from src.validation.opa_properties import OPAPropertiesOutputValidator
 
@@ -82,9 +81,8 @@ def create_standardized_address(row: pd.Series) -> str:
     return standardized_address.lower()
 
 
-@provide_metadata()
 @validate_output(OPAPropertiesOutputValidator)
-def opa_properties() -> gpd.GeoDataFrame:
+def opa_properties(gdf: gpd.GeoDataFrame = None) -> gpd.GeoDataFrame:
     """
     Loads and processes OPA property data, standardizing addresses and cleaning geometries.
 
