@@ -122,6 +122,7 @@ def vacant_properties(
             print(
                 f"Appending backup data ({len(backup_gdf)} rows) to the existing data."
             )
+
             vacant_properties = pd.concat(
                 [vacant_properties, backup_gdf], ignore_index=True
             )

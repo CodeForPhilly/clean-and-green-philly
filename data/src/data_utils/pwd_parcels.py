@@ -81,10 +81,10 @@ def pwd_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         opa_col="brt_id",
     )
 
-    pwd_parcels = loader.load_or_fetch()
+    pwd_parcels, input_validation = loader.load_or_fetch()
 
     transform_pwd_parcels_gdf(pwd_parcels)
 
     input_gdf = merge_pwd_parcels_gdf(input_gdf, pwd_parcels)
 
-    return input_gdf
+    return input_gdf, input_validation

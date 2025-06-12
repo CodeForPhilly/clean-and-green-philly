@@ -1,14 +1,17 @@
+from typing import Tuple
 import geopandas as gpd
 
 from src.data_utils.kde import apply_kde_to_input
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.gun_crimes import GunCrimesOutputValidator
 
 from ..constants.services import GUNCRIME_SQL_QUERY
 
 
 @validate_output(GunCrimesOutputValidator)
-def gun_crimes(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def gun_crimes(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Applies kernel density estimation (KDE) analysis for gun crimes to the primary feature layer.
 
