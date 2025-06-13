@@ -1,7 +1,11 @@
 from io import BytesIO
+from typing import Tuple
 
 import geopandas as gpd
 import pandas as pd
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.vacant_properties import VacantPropertiesOutputValidator
 
 from ..classes.loaders import EsriLoader, google_cloud_bucket
 from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
@@ -58,7 +62,10 @@ def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05) -> None:
             )
 
 
-def vacant_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+@validate_output(VacantPropertiesOutputValidator)
+def vacant_properties(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds a "vacant" column to the primary feature layer based on vacant property data from
     ESRI layers and backup data from Google Cloud Storage if necessary.
@@ -87,7 +94,7 @@ def vacant_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         cols=["opa_id", "parcel_type"],
     )
 
-    vacant_properties = loader.load_or_fetch()
+    vacant_properties, input_validation = loader.load_or_fetch()
 
     # Filter for "Land" properties in the dataset
     vacant_land_gdf = vacant_properties[vacant_properties["parcel_type"] == "Land"]
@@ -115,8 +122,9 @@ def vacant_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
             print(
                 f"Appending backup data ({len(backup_gdf)} rows) to the existing data."
             )
-            vacant_properties.gdf = pd.concat(
-                [vacant_properties.gdf, backup_gdf], ignore_index=True
+
+            vacant_properties = pd.concat(
+                [vacant_properties, backup_gdf], ignore_index=True
             )
         except Exception as e:
             print(
@@ -138,4 +146,4 @@ def vacant_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     # Drop parcel_type column after processing
     df.drop(columns=["parcel_type"], inplace=True)
 
-    return input_gdf
+    return input_gdf, input_validation

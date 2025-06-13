@@ -1,14 +1,21 @@
 import io
+from typing import Tuple
 
 import geopandas as gpd
 import requests
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.ppr_properties import PPRPropertiesOutputValidator
 
 from ..classes.loaders import EsriLoader, GdfLoader
 from ..constants.services import PPR_PROPERTIES_TO_LOAD
 from ..utilities import spatial_join
 
 
-def ppr_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+@validate_output(PPRPropertiesOutputValidator)
+def ppr_properties(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Updates the 'vacant' column in the primary feature layer to ensure PPR properties
     are marked as not vacant. This prevents PPR properties from being miscategorized
@@ -46,7 +53,7 @@ def ppr_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
             cols=["public_name"],
         )
 
-        ppr_properties = loader.load_or_fetch()
+        ppr_properties, input_validation = loader.load_or_fetch()
 
         if ppr_properties is None or ppr_properties.empty:
             raise ValueError(
@@ -67,7 +74,7 @@ def ppr_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
             name="PPR Properties",
             cols=["public_name"],
         )
-        ppr_properties = loader.load_or_fetch()
+        ppr_properties, input_validation = loader.load_or_fetch()
 
     # Perform a spatial join with the primary feature layer
     merged_gdf = spatial_join(input_gdf, ppr_properties)
@@ -98,4 +105,4 @@ def ppr_properties(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     else:
         print("'public_name' column is missing, cannot drop.")
 
-    return merged_gdf
+    return merged_gdf, input_validation

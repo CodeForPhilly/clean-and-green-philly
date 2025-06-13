@@ -1,7 +1,15 @@
+from typing import Tuple
+
 import geopandas as gpd
 
+from src.validation.base import ValidationResult, validate_output
+from src.validation.negligent_devs import NegligentDevsOutputValidator
 
-def negligent_devs(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+
+@validate_output(NegligentDevsOutputValidator)
+def negligent_devs(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Identifies negligent developers based on the number of vacant properties owned
     and flags them in the primary feature layer.

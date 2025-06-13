@@ -1,8 +1,16 @@
+from typing import Tuple
+
 import geopandas as gpd
 import pandas as pd
 
+from src.validation.base import ValidationResult, validate_output
+from src.validation.owner_type import OwnerTypeOutputValidator
 
-def owner_type(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+
+@validate_output(OwnerTypeOutputValidator)
+def owner_type(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Determines the ownership type for each property in the primary feature layer based on
     the 'owner_1', 'owner_2', and 'city_owner_agency' columns. The ownership type is set as:
@@ -44,4 +52,4 @@ def owner_type(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     # Add the 'owner_type' column to the GeoDataFrame
     input_gdf["owner_type"] = owner_types
 
-    return input_gdf
+    return input_gdf, ValidationResult(True)

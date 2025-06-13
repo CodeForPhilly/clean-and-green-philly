@@ -89,17 +89,25 @@ try:
         tactical_urbanism,
         conservatorship,
         park_priority,
+        priority_level,
+        access_process,
     ]
 
+    pipeline_errors = {}
+
     print("Loading OPA properties dataset.")
-    dataset = opa_properties()
+    dataset, opa_validation = opa_properties()
+
+    if not opa_validation["input"] or not opa_validation["output"]:
+        pipeline_errors["opa_properties"] = opa_validation
 
     for service in services:
-        dataset = service(dataset)
+        dataset, validation = service(dataset)
 
-    print("Applying final dataset transformations.")
-    dataset = priority_level(dataset)
-    dataset = access_process(dataset)
+        if ("input" in validation and not validation["input"]) or (
+            "output" in validation and not validation["output"]
+        ):
+            pipeline_errors[service.__name__] = validation
 
     # Save metadata
     try:

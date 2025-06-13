@@ -4,12 +4,15 @@ import pandas as pd
 import requests
 
 from src.config.config import USE_CRS
+from src.validation.base import validate_output
+from src.validation.dev_probability import DevProbabilityOutputValidator
 
 from ..classes.loaders import GdfLoader
 from ..constants.services import CENSUS_BGS_URL, PERMITS_QUERY
 from ..utilities import spatial_join
 
 
+@validate_output(DevProbabilityOutputValidator)
 def dev_probability(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Calculates development probability based on permit counts and assigns
@@ -38,7 +41,7 @@ def dev_probability(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
 
     loader = GdfLoader(name="Census BGs", input=CENSUS_BGS_URL)
-    census_bgs_gdf = loader.load_or_fetch()
+    census_bgs_gdf, census_input_validation = loader.load_or_fetch()
 
     base_url = "https://phl.carto.com/api/v2/sql"
     response = requests.get(f"{base_url}?q={PERMITS_QUERY}&format=GeoJSON")

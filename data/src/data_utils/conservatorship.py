@@ -1,8 +1,12 @@
 import datetime
+from typing import Tuple
 
 import geopandas as gpd
 import pytz
 from dateutil.parser import parse
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.conservatorship import ConservatorshipOutputValidator
 
 est = pytz.timezone("US/Eastern")
 six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astimezone(
@@ -10,7 +14,10 @@ six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astime
 )
 
 
-def conservatorship(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+@validate_output(ConservatorshipOutputValidator)
+def conservatorship(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Determines conservatorship eligibility for properties in a feature layer.
 
@@ -59,4 +66,4 @@ def conservatorship(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         conservatorships.append(conservatorship)
 
     input_gdf["conservatorship"] = conservatorships
-    return input_gdf
+    return input_gdf, ValidationResult(True)

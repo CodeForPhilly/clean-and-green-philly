@@ -1,14 +1,21 @@
 import warnings
+from typing import Tuple
 
 import geopandas as gpd
 import networkx as nx
 import numpy as np
 from libpysal.weights import Queen
 
+from src.validation.base import ValidationResult, validate_output
+from src.validation.contig_neighbors import ContigNeighborsOutputValidator
+
 from ..utilities import opa_join
 
 
-def contig_neighbors(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+@validate_output(ContigNeighborsOutputValidator)
+def contig_neighbors(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Calculates the number of contiguous vacant neighbors for each property in a feature layer.
 
@@ -68,4 +75,4 @@ def contig_neighbors(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     # Assign NA for non-vacant properties
     input_gdf.loc[~input_gdf["vacant"], "n_contiguous"] = np.nan
 
-    return input_gdf
+    return input_gdf, ValidationResult(True)

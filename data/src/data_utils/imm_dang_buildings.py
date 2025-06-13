@@ -1,11 +1,19 @@
+from typing import Tuple
+
 import geopandas as gpd
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.imm_dang_buildings import ImmDangerOutputValidator
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import IMMINENT_DANGER_BUILDINGS_QUERY
 from ..utilities import opa_join
 
 
-def imm_dang_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+@validate_output(ImmDangerOutputValidator)
+def imm_dang_buildings(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds information about imminently dangerous buildings to the primary feature layer
     by joining with a dataset of dangerous buildings.
@@ -36,7 +44,7 @@ def imm_dang_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         opa_col="opa_account_num",
     )
 
-    imm_dang_buildings = loader.load_or_fetch()
+    imm_dang_buildings, input_validation = loader.load_or_fetch()
 
     imm_dang_buildings.loc[:, "imm_dang_building"] = "Y"
 
@@ -47,4 +55,4 @@ def imm_dang_buildings(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     merged_gdf.loc[:, "imm_dang_building"] = merged_gdf["imm_dang_building"].fillna("N")
 
-    return merged_gdf
+    return merged_gdf, input_validation

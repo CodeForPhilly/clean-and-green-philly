@@ -11,6 +11,7 @@ from tqdm import tqdm
 
 from src.classes.file_manager import FileManager, LoadType
 from src.config.config import USE_CRS
+from src.validation.base import ValidationResult
 
 from ..classes.loaders import CartoLoader
 
@@ -52,7 +53,7 @@ def generic_kde(
     print(f"Initializing FeatureLayer for {name}")
 
     loader = CartoLoader(name=name, carto_queries=query)
-    gdf = loader.load_or_fetch()
+    gdf, input_validation = loader.load_or_fetch()
 
     gdf.dropna(subset=["geometry"], inplace=True)
 
@@ -117,7 +118,7 @@ def generic_kde(
     ) as dst:
         dst.write(zz, 1)
 
-    return raster_file_path, X
+    return raster_file_path, X, input_validation
 
 
 def apply_kde_to_input(
@@ -125,7 +126,7 @@ def apply_kde_to_input(
     name: str,
     query: str,
     resolution: int = resolution,
-) -> gpd.GeoDataFrame:
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Applies KDE to the primary feature layer and adds columns for density, z-score,
     percentile, and percentile as a string.
@@ -139,7 +140,9 @@ def apply_kde_to_input(
     Returns:
         FeatureLayer: The input feature layer with added KDE-related columns.
     """
-    raster_filename, crime_coords = generic_kde(name, query, resolution)
+    raster_filename, crime_coords, input_validation = generic_kde(
+        name, query, resolution
+    )
 
     centroids = input_gdf.geometry.centroid
 
@@ -176,7 +179,7 @@ def apply_kde_to_input(
     input_gdf[label_column] = input_gdf[percentile_column].apply(label_percentile)
 
     print(f"Finished processing {name}")
-    return input_gdf
+    return input_gdf, input_validation
 
 
 def label_percentile(value: float) -> str:

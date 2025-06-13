@@ -3,7 +3,7 @@ import os
 import subprocess
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import List
+from typing import List, Tuple
 
 import geopandas as gpd
 import pandas as pd
@@ -22,6 +22,7 @@ from src.config.config import (
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
+from src.validation.base import BaseValidator, ValidationResult
 
 log.basicConfig(level=log_level)
 
@@ -151,6 +152,7 @@ class BaseLoader(ABC):
         cols: List[str] = [],
         input_crs: str | None = USE_CRS,
         opa_col: str | None = None,
+        validator: BaseValidator | None = None,
     ):
         self.name = name
         self.table_name = name.lower().replace(" ", "_")
@@ -158,6 +160,7 @@ class BaseLoader(ABC):
         self.opa_col = opa_col
         self.input_crs = input_crs
         self.file_manager = FileManager()
+        self.validator = validator
 
     def cache_data(self, gdf: gpd.GeoDataFrame) -> None:
         if gdf is None or gdf.empty:
@@ -170,7 +173,7 @@ class BaseLoader(ABC):
             gdf, file_label, LoadType.SOURCE_CACHE, FileType.PARQUET
         )
 
-    def load_or_fetch(self) -> gpd.GeoDataFrame:
+    def load_or_fetch(self) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
         if not FORCE_RELOAD and self.file_manager.check_source_cache_file_exists(
             self.table_name, LoadType.SOURCE_CACHE
         ):
@@ -182,7 +185,11 @@ class BaseLoader(ABC):
             print("Caching fresh data now...")
             self.cache_data(gdf)
 
-        return gdf
+        validation_result = (
+            self.validator.validate(gdf) if self.validator else ValidationResult(True)
+        )
+
+        return gdf, validation_result
 
     def standardize_opa(self, gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """

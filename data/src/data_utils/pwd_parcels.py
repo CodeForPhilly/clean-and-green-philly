@@ -1,5 +1,8 @@
 import geopandas as gpd
 
+from src.validation.base import validate_output
+from src.validation.pwd_parcels import PWDParcelsOutputValidator
+
 from ..classes.loaders import CartoLoader
 from ..constants.services import PWD_PARCELS_QUERY
 
@@ -46,6 +49,7 @@ def merge_pwd_parcels_gdf(
     return merged_gdf
 
 
+@validate_output(PWDParcelsOutputValidator)
 def pwd_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
     """
     Updates the primary feature layer by replacing its geometry column with validated
@@ -77,10 +81,10 @@ def pwd_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         opa_col="brt_id",
     )
 
-    pwd_parcels = loader.load_or_fetch()
+    pwd_parcels, input_validation = loader.load_or_fetch()
 
     transform_pwd_parcels_gdf(pwd_parcels)
 
     input_gdf = merge_pwd_parcels_gdf(input_gdf, pwd_parcels)
 
-    return input_gdf
+    return input_gdf, input_validation

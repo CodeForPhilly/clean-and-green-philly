@@ -3,8 +3,8 @@ import geopandas as gpd
 from .base import BaseValidator
 
 
-class AccessProcessOutputValidator(BaseValidator):
-    """Validator for access process service output."""
+class DrugCrimesOutputValidator(BaseValidator):
+    """Validator for drug crimes service output."""
 
     schema = None
 

@@ -3,8 +3,8 @@ import geopandas as gpd
 from .base import BaseValidator
 
 
-class NeighborhoodsInputValidator(BaseValidator):
-    """Validator for access process service input."""
+class DevProbabilityInputValidator(BaseValidator):
+    """Validator for dev probability service input from census block groups."""
 
     schema = None
 
@@ -12,8 +12,8 @@ class NeighborhoodsInputValidator(BaseValidator):
         pass
 
 
-class NeighborhoodsOutputValidator(BaseValidator):
-    """Validator for access process service output."""
+class DevProbabilityOutputValidator(BaseValidator):
+    """Validator for dev probability service output."""
 
     schema = None
 

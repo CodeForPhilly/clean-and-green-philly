@@ -3,6 +3,9 @@ import re
 import geopandas as gpd
 import pandas as pd
 
+from src.validation.base import validate_output
+from src.validation.opa_properties import OPAPropertiesOutputValidator
+
 from ..classes.loaders import CartoLoader
 from ..constants.services import OPA_PROPERTIES_QUERY
 
@@ -78,7 +81,8 @@ def create_standardized_address(row: pd.Series) -> str:
     return standardized_address.lower()
 
 
-def opa_properties() -> gpd.GeoDataFrame:
+@validate_output(OPAPropertiesOutputValidator)
+def opa_properties(gdf: gpd.GeoDataFrame = None) -> gpd.GeoDataFrame:
     """
     Loads and processes OPA property data, standardizing addresses and cleaning geometries.
 
@@ -128,7 +132,7 @@ def opa_properties() -> gpd.GeoDataFrame:
         ],
     )
 
-    opa = loader.load_or_fetch()
+    opa, input_validation = loader.load_or_fetch()
 
     # Convert 'sale_price' and 'market_value' to numeric values
     opa["sale_price"] = pd.to_numeric(opa["sale_price"], errors="coerce")
@@ -153,4 +157,4 @@ def opa_properties() -> gpd.GeoDataFrame:
     # Drop empty geometries
     opa = opa[~opa.is_empty]
 
-    return opa
+    return opa, input_validation

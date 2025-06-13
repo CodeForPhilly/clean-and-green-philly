@@ -1,11 +1,19 @@
+from typing import Tuple
+
 import geopandas as gpd
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.delinquencies import DelinquenciesOutputValidator
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import DELINQUENCIES_QUERY
 from ..utilities import opa_join
 
 
-def delinquencies(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+@validate_output(DelinquenciesOutputValidator)
+def delinquencies(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds property tax delinquency information to the primary feature layer by
     joining with a tax delinquencies dataset.
@@ -52,7 +60,7 @@ def delinquencies(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         opa_col="opa_number",
     )
 
-    tax_delinquencies = loader.load_or_fetch()
+    tax_delinquencies, input_validation = loader.load_or_fetch()
 
     merged_gdf = opa_join(
         input_gdf,
@@ -71,4 +79,4 @@ def delinquencies(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     merged_gdf["sheriff_sale"] = merged_gdf["sheriff_sale"].fillna("N")
 
-    return merged_gdf
+    return merged_gdf, input_validation

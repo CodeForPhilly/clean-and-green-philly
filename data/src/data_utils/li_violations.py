@@ -1,14 +1,20 @@
-from typing import List
+from typing import List, Tuple
 
 import geopandas as gpd
 import pandas as pd
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.li_violations import LIViolationsOutputValidator
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import VIOLATIONS_SQL_QUERY
 from ..utilities import opa_join
 
 
-def li_violations(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+@validate_output(LIViolationsOutputValidator)
+def li_violations(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Process L&I (Licenses and Inspections) data for violations.
 
@@ -55,7 +61,7 @@ def li_violations(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         opa_col="opa_account_num",
     )
 
-    l_and_i_violations = loader.load_or_fetch()
+    l_and_i_violations, input_validation = loader.load_or_fetch()
 
     # Filter for rows where 'casetype' contains any of the keywords, handling NaN values
     l_and_i_violations = l_and_i_violations[
@@ -130,4 +136,4 @@ def li_violations(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         .astype(int)
     )
 
-    return merged_gdf
+    return merged_gdf, input_validation

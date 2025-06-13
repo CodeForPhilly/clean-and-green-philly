@@ -1,14 +1,21 @@
+from typing import Tuple
+
 import geopandas as gpd
 from shapely.strtree import STRtree
 
 from src.classes.loaders import GdfLoader
 from src.config.config import USE_CRS
+from src.validation.base import ValidationResult, validate_output
+from src.validation.dor_parcels import DorParcelsOutputValidator
 
 from ..constants.services import DOR_PARCELS_URL
 from ..utilities import spatial_join
 
 
-def dor_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+@validate_output(DorParcelsOutputValidator)
+def dor_parcels(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Updates the primary feature layer by replacing its geometry column with
     polygon geometries from DOR parcels where intersections occur.
@@ -24,7 +31,7 @@ def dor_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     # Load and preprocess DOR parcels
     loader = GdfLoader(name="DOR Parcels", input=DOR_PARCELS_URL)
-    dor_parcels = loader.load_or_fetch()
+    dor_parcels, input_validation = loader.load_or_fetch()
 
     dor_parcels = dor_parcels[
         dor_parcels["STATUS"] == 1
@@ -94,4 +101,4 @@ def dor_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         f"Updated size of primary feature layer after dropping duplicates: {len(input_gdf)}"
     )
 
-    return input_gdf
+    return input_gdf, input_validation
