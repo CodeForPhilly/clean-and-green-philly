@@ -440,6 +440,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
         onMouseEnter={(e) => changeCursor(e, 'pointer')}
         onMouseLeave={(e) => changeCursor(e, 'grab')}
         onMouseDown={(e) => changeCursor(e, 'grabbing')}
+        onMouseUp={(e) => changeCursor(e, 'grab')}
         onClick={onMapClick}
         minZoom={MIN_MAP_ZOOM}
         maxZoom={MAX_MAP_ZOOM}
