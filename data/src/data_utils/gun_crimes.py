@@ -1,12 +1,17 @@
-from src.data_utils.kde import apply_kde_to_primary
+from typing import Tuple
+import geopandas as gpd
 
-from ..classes.featurelayer import FeatureLayer
+from src.data_utils.kde import apply_kde_to_input
+from src.validation.base import ValidationResult, validate_output
+from src.validation.gun_crimes import GunCrimesOutputValidator
+
 from ..constants.services import GUNCRIME_SQL_QUERY
-from ..metadata.metadata_utils import provide_metadata
 
 
-@provide_metadata()
-def gun_crimes(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+@validate_output(GunCrimesOutputValidator)
+def gun_crimes(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Applies kernel density estimation (KDE) analysis for gun crimes to the primary feature layer.
 
@@ -31,4 +36,4 @@ def gun_crimes(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Source:
         https://phl.carto.com/api/v2/sql
     """
-    return apply_kde_to_primary(primary_featurelayer, "Gun Crimes", GUNCRIME_SQL_QUERY)
+    return apply_kde_to_input(input_gdf, "Gun Crimes", GUNCRIME_SQL_QUERY)

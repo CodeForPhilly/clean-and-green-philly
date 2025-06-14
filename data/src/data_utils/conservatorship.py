@@ -1,10 +1,12 @@
 import datetime
+from typing import Tuple
 
+import geopandas as gpd
 import pytz
 from dateutil.parser import parse
 
-from ..classes.featurelayer import FeatureLayer
-from ..metadata.metadata_utils import provide_metadata
+from src.validation.base import ValidationResult, validate_output
+from src.validation.conservatorship import ConservatorshipOutputValidator
 
 est = pytz.timezone("US/Eastern")
 six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astimezone(
@@ -12,8 +14,10 @@ six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astime
 )
 
 
-@provide_metadata()
-def conservatorship(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+@validate_output(ConservatorshipOutputValidator)
+def conservatorship(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Determines conservatorship eligibility for properties in a feature layer.
 
@@ -35,7 +39,7 @@ def conservatorship(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     """
     conservatorships = []
 
-    for idx, row in primary_featurelayer.gdf.iterrows():
+    for idx, row in input_gdf.iterrows():
         city_owner_agency = row["city_owner_agency"]
         sheriff_sale = row["sheriff_sale"] == "Y"
         market_value_over_1000 = (
@@ -61,5 +65,5 @@ def conservatorship(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
         conservatorships.append(conservatorship)
 
-    primary_featurelayer.gdf["conservatorship"] = conservatorships
-    return primary_featurelayer
+    input_gdf["conservatorship"] = conservatorships
+    return input_gdf, ValidationResult(True)

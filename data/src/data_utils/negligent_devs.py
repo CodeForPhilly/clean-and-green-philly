@@ -1,9 +1,15 @@
-from ..classes.featurelayer import FeatureLayer
-from ..metadata.metadata_utils import provide_metadata
+from typing import Tuple
+
+import geopandas as gpd
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.negligent_devs import NegligentDevsOutputValidator
 
 
-@provide_metadata()
-def negligent_devs(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+@validate_output(NegligentDevsOutputValidator)
+def negligent_devs(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Identifies negligent developers based on the number of vacant properties owned
     and flags them in the primary feature layer.
@@ -26,11 +32,9 @@ def negligent_devs(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         FeatureLayer: The input feature layer with additional columns for total properties
         owned, vacant properties owned, and a "negligent_dev" flag.
     """
-    devs = primary_featurelayer.gdf
-
     # Count total properties and vacant properties by standardized_address
     property_counts = (
-        devs.groupby("standardized_address")
+        input_gdf.groupby("standardized_address")
         .agg(
             n_total_properties_owned=("opa_id", "size"),
             n_vacant_properties_owned=("vacant", "sum"),
@@ -39,16 +43,11 @@ def negligent_devs(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     )
 
     # Merge the property counts back to the main DataFrame
-    primary_featurelayer.gdf = primary_featurelayer.gdf.merge(
-        property_counts, on="standardized_address", how="left"
-    )
+    input_gdf = input_gdf.merge(property_counts, on="standardized_address", how="left")
 
     # Identify negligent developers: non-city owned entities owning 5+ vacant properties
-    primary_featurelayer.gdf["negligent_dev"] = (
-        primary_featurelayer.gdf["n_vacant_properties_owned"] >= 5
-    ) & (
-        primary_featurelayer.gdf["city_owner_agency"].isna()
-        | (primary_featurelayer.gdf["city_owner_agency"] == "")
+    input_gdf["negligent_dev"] = (input_gdf["n_vacant_properties_owned"] >= 5) & (
+        input_gdf["city_owner_agency"].isna() | (input_gdf["city_owner_agency"] == "")
     )
 
-    return primary_featurelayer
+    return input_gdf

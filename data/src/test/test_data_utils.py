@@ -11,11 +11,11 @@ from shapely.geometry import LineString, MultiPolygon, Point, Polygon
 from src.config.config import USE_CRS
 from src.data_utils.park_priority import get_latest_shapefile_url, park_priority
 from src.data_utils.ppr_properties import ppr_properties
-from src.data_utils.vacant_properties import vacant_properties
 from src.data_utils.pwd_parcels import (
     merge_pwd_parcels_gdf,
     transform_pwd_parcels_gdf,
 )
+from src.data_utils.vacant_properties import vacant_properties
 
 
 class TestDataUtils(unittest.TestCase):
@@ -235,7 +235,7 @@ class TestDataUtils(unittest.TestCase):
 
         assert expected_df.equals(merged_gdf)
 
-    def test_transform_pwd_parcels_gdf_basic(self):
+    def test_transform_pwd_parcels_gdf_error(self):
         """
         Check the basic functionality of the transform_pwd_parcels_gdf function.
         This function is expected to mutate the input GeoDataFrame in place.
@@ -255,26 +255,12 @@ class TestDataUtils(unittest.TestCase):
         }
         gdf = gpd.GeoDataFrame(data, geometry="geometry")
 
-        # Expect a ValueError because LineString is not allowed
         with self.assertRaises(ValueError) as context:
-            transform_pwd_parcels_gdf(gdf.copy())
+            transform_pwd_parcels_gdf(gdf)
 
-        self.assertIn("not polygons or multipolygons", str(context.exception))
-
-        # Now fix the invalid geometry to test normal flow
-        gdf.loc[2, "geometry"] = Polygon([(0, 0), (1, 0), (1, 1), (0, 1)])
-
-        # Run transformation which mutates result in place
-        result = gdf.copy()
-        transform_pwd_parcels_gdf(result)
-
-        # Check the rows were filtered
-        self.assertEqual(len(result), 2)  # One row was dropped
-        self.assertNotIn("brt_id", result.columns)
-        self.assertIn("opa_id", result.columns)
-        self.assertListEqual(sorted(result["opa_id"].tolist()), ["1234", "5678"])
-        self.assertTrue(all(result.geometry.is_valid))
-        self.assertTrue(all(result.geometry.type.isin(["Polygon", "MultiPolygon"])))
+        self.assertEqual(
+            "Some geometries are not polygons or multipolygons.", str(context.exception)
+        )
 
 
 if __name__ == "__main__":

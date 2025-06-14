@@ -1,14 +1,17 @@
+from typing import Tuple
+
 import geopandas as gpd
 
-from src.config.config import USE_CRS
+from src.validation.base import ValidationResult, validate_output
+from src.validation.nbhoods import NeighborhoodsOutputValidator
 
-from ..classes.featurelayer import FeatureLayer
+from ..classes.loaders import GdfLoader
 from ..constants.services import NBHOODS_URL
-from ..metadata.metadata_utils import provide_metadata
+from ..utilities import spatial_join
 
 
-@provide_metadata()
-def nbhoods(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+@validate_output(NeighborhoodsOutputValidator)
+def nbhoods(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds neighborhood information to the primary feature layer by performing a spatial join
     with a neighborhoods dataset.
@@ -32,20 +35,14 @@ def nbhoods(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Source:
         https://raw.githubusercontent.com/opendataphilly/open-geo-data/master/philadelphia-neighborhoods/philadelphia-neighborhoods.geojson
     """
-    phl_nbhoods = gpd.read_file(NBHOODS_URL)
+
+    loader = GdfLoader(name="Neighborhoods", input=NBHOODS_URL, cols=["mapname"])
+    phl_nbhoods, input_validation = loader.load_or_fetch()
 
     # Correct the column name to lowercase if needed
-    if "MAPNAME" in phl_nbhoods.columns:
-        phl_nbhoods.rename(columns={"MAPNAME": "neighborhood"}, inplace=True)
+    if "mapname" in phl_nbhoods.columns:
+        phl_nbhoods.rename(columns={"mapname": "neighborhood"}, inplace=True)
 
-    phl_nbhoods = phl_nbhoods.to_crs(USE_CRS)
+    merged_gdf = spatial_join(input_gdf, phl_nbhoods)
 
-    nbhoods = FeatureLayer("Neighborhoods")
-    nbhoods.gdf = phl_nbhoods
-
-    red_cols_to_keep = ["neighborhood", "geometry"]
-    nbhoods.gdf = nbhoods.gdf[red_cols_to_keep]
-
-    primary_featurelayer.spatial_join(nbhoods)
-
-    return primary_featurelayer
+    return merged_gdf, input_validation

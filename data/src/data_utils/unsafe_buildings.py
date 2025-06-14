@@ -1,10 +1,19 @@
-from ..classes.featurelayer import FeatureLayer
+from typing import Tuple
+
+import geopandas as gpd
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.unsafe_buildings import UnsafeBuildingsOutputValidator
+
+from ..classes.loaders import CartoLoader
 from ..constants.services import UNSAFE_BUILDINGS_QUERY
-from ..metadata.metadata_utils import provide_metadata
+from ..utilities import opa_join
 
 
-@provide_metadata()
-def unsafe_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+@validate_output(UnsafeBuildingsOutputValidator)
+def unsafe_buildings(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds unsafe building information to the primary feature layer by joining with a dataset
     of unsafe buildings.
@@ -28,30 +37,21 @@ def unsafe_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Source:
         https://phl.carto.com/api/v2/sql
     """
-    unsafe_buildings = FeatureLayer(
+    loader = CartoLoader(
         name="Unsafe Buildings",
-        carto_sql_queries=UNSAFE_BUILDINGS_QUERY,
-        use_wkb_geom_field="the_geom",
-        cols=["opa_account_num"],
+        carto_queries=UNSAFE_BUILDINGS_QUERY,
+        opa_col="opa_account_num",
     )
+
+    unsafe_buildings, input_validation = loader.load_or_fetch()
 
     # Mark unsafe buildings
-    unsafe_buildings.gdf.loc[:, "unsafe_building"] = "Y"
-
-    # Rename column for consistency
-    unsafe_buildings.gdf = unsafe_buildings.gdf.rename(
-        columns={"opa_account_num": "opa_number"}
-    )
+    unsafe_buildings.loc[:, "unsafe_building"] = "Y"
 
     # Join unsafe buildings data with primary feature layer
-    primary_featurelayer.opa_join(
-        unsafe_buildings.gdf,
-        "opa_number",
-    )
+    merged_gdf = opa_join(input_gdf, unsafe_buildings)
 
     # Fill missing values with "N" for non-unsafe buildings
-    primary_featurelayer.gdf.loc[:, "unsafe_building"] = primary_featurelayer.gdf[
-        "unsafe_building"
-    ].fillna("N")
+    merged_gdf.loc[:, "unsafe_building"] = merged_gdf["unsafe_building"].fillna("N")
 
-    return primary_featurelayer
+    return merged_gdf, input_validation

@@ -1,11 +1,16 @@
+from typing import Tuple
+
+import geopandas as gpd
 import pandas as pd
 
-from src.metadata.metadata_utils import provide_metadata
-from ..classes.featurelayer import FeatureLayer
+from src.validation.base import ValidationResult, validate_output
+from src.validation.priority_level import PriorityLevelOutputValidator
 
 
-@provide_metadata()
-def priority_level(dataset: FeatureLayer) -> FeatureLayer:
+@validate_output(PriorityLevelOutputValidator)
+def priority_level(
+    dataset: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Determines priority levels for properties based on gun crime density,
     violations, tree canopy gaps, and PHS Landcare status.
@@ -29,7 +34,7 @@ def priority_level(dataset: FeatureLayer) -> FeatureLayer:
         tree_canopy_gap, phs_care_program columns in the primary feature layer.
     """
     priority_levels = []
-    for idx, row in dataset.gdf.iterrows():
+    for idx, row in dataset.iterrows():
         priority_level = ""
 
         # Decision Points
@@ -74,6 +79,6 @@ def priority_level(dataset: FeatureLayer) -> FeatureLayer:
 
         priority_levels.append(priority_level)
 
-    dataset.gdf["priority_level"] = priority_levels
+    dataset["priority_level"] = priority_levels
 
-    return dataset
+    return dataset, ValidationResult(True)

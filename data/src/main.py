@@ -3,8 +3,8 @@ import traceback
 
 import pandas as pd
 
-from src.classes.file_manager import FileManager, FileType, LoadType
 from src.classes.data_diff import DiffReport
+from src.classes.file_manager import FileManager, FileType, LoadType
 from src.classes.slack_reporters import SlackReporter
 from src.data_utils import (
     access_process,
@@ -89,18 +89,25 @@ try:
         tactical_urbanism,
         conservatorship,
         park_priority,
+        priority_level,
+        access_process,
     ]
 
+    pipeline_errors = {}
+
     print("Loading OPA properties dataset.")
-    dataset = opa_properties()
+    dataset, opa_validation = opa_properties()
+
+    if not opa_validation["input"] or not opa_validation["output"]:
+        pipeline_errors["opa_properties"] = opa_validation
 
     for service in services:
-        print(f"Running service: {service.__name__}")
-        dataset = service(dataset)
+        dataset, validation = service(dataset)
 
-    print("Applying final dataset transformations.")
-    dataset = priority_level(dataset)
-    dataset = access_process(dataset)
+        if ("input" in validation and not validation["input"]) or (
+            "output" in validation and not validation["output"]
+        ):
+            pipeline_errors[service.__name__] = validation
 
     # Save metadata
     try:
@@ -109,9 +116,9 @@ try:
     except Exception as e:
         print(f"Error saving metadata: {str(e)}")
     # Drop duplicates
-    before_drop = dataset.gdf.shape[0]
-    dataset.gdf = dataset.gdf.drop_duplicates(subset="opa_id")
-    print(f"Duplicate rows dropped: {before_drop - dataset.gdf.shape[0]}")
+    before_drop = dataset.shape[0]
+    dataset = dataset.drop_duplicates(subset="opa_id")
+    print(f"Duplicate rows dropped: {before_drop - dataset.shape[0]}")
 
     # Convert columns to numeric where necessary
     numeric_columns = [
@@ -125,16 +132,12 @@ try:
 
     # Convert columns where necessary
     for col in numeric_columns:
-        dataset.gdf[col] = pd.to_numeric(dataset.gdf[col], errors="coerce")
-    dataset.gdf["most_recent_year_owed"] = dataset.gdf["most_recent_year_owed"].astype(
-        str
-    )
+        dataset[col] = pd.to_numeric(dataset[col], errors="coerce")
+    dataset["most_recent_year_owed"] = dataset["most_recent_year_owed"].astype(str)
 
     if slack_reporter:
         # Dataset profiling
-        slack_reporter.send_dataframe_profile_to_slack(
-            dataset.gdf, "all_properties_end"
-        )
+        slack_reporter.send_dataframe_profile_to_slack(dataset, "all_properties_end")
 
         # Generate and send diff report
         diff_report = DiffReport().generate_diff()
@@ -147,7 +150,7 @@ try:
     # Save local Parquet file
     file_label = file_manager.generate_file_label("all_properties_end")
     file_manager.save_gdf(
-        dataset.gdf, file_label, LoadType.PIPELINE_CACHE, FileType.PARQUET
+        dataset, file_label, LoadType.PIPELINE_CACHE, FileType.PARQUET
     )
     print(f"Dataset saved to Parquet in storage/pipeline_cache/{file_label}.parquet")
 

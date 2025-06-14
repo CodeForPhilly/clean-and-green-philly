@@ -1,13 +1,21 @@
+from typing import Tuple
+
 import geopandas as gpd
 from shapely.strtree import STRtree
 
+from src.classes.loaders import GdfLoader
 from src.config.config import USE_CRS
+from src.validation.base import ValidationResult, validate_output
+from src.validation.dor_parcels import DorParcelsOutputValidator
 
-from ..classes.featurelayer import FeatureLayer
 from ..constants.services import DOR_PARCELS_URL
+from ..utilities import spatial_join
 
 
-def dor_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+@validate_output(DorParcelsOutputValidator)
+def dor_parcels(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Updates the primary feature layer by replacing its geometry column with
     polygon geometries from DOR parcels where intersections occur.
@@ -22,8 +30,9 @@ def dor_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     print("Loading DOR properties from GeoJSON...")
 
     # Load and preprocess DOR parcels
-    dor_parcels = gpd.read_file(DOR_PARCELS_URL).to_crs(USE_CRS)
-    dor_parcels["geometry"] = dor_parcels["geometry"].make_valid()
+    loader = GdfLoader(name="DOR Parcels", input=DOR_PARCELS_URL)
+    dor_parcels, input_validation = loader.load_or_fetch()
+
     dor_parcels = dor_parcels[
         dor_parcels["STATUS"] == 1
     ]  # filter for what I think are only active parcel boundaries
@@ -36,34 +45,25 @@ def dor_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         f"Number of valid polygon/multipolygon geometries in DOR parcels: {len(dor_parcels)}"
     )
 
-    # Ensure the primary feature layer has the same CRS
-    primary_featurelayer.gdf = primary_featurelayer.gdf.to_crs(USE_CRS)
-
     # Perform spatial join to identify intersecting polygons
     print("Performing spatial join between points and polygons...")
-    spatial_join_result = gpd.sjoin(
-        primary_featurelayer.gdf,
-        dor_parcels[["geometry"]],  # Only keep geometry column
-        how="left",
-        predicate="intersects",
-    )
+
+    merged_gdf = spatial_join(input_gdf, dor_parcels[["geometry"]])
 
     # Replace point geometries with polygon geometries where intersections occur
-    mask = ~spatial_join_result["index_right"].isna()
-    spatial_join_result.loc[mask, "geometry"] = dor_parcels.loc[
-        spatial_join_result.loc[mask, "index_right"], "geometry"
+    mask = ~merged_gdf["index_right"].isna()
+    merged_gdf.loc[mask, "geometry"] = dor_parcels.loc[
+        merged_gdf.loc[mask, "index_right"], "geometry"
     ].values
 
     # Drop spatial join index column
-    spatial_join_result.drop(columns=["index_right"], errors="ignore", inplace=True)
+    merged_gdf.drop(columns=["index_right"], errors="ignore", inplace=True)
 
     # Update primary feature layer
-    primary_featurelayer.gdf = gpd.GeoDataFrame(
-        spatial_join_result, geometry="geometry", crs=USE_CRS
-    )
+    input_gdf = gpd.GeoDataFrame(merged_gdf, geometry="geometry", crs=USE_CRS)
 
     # Count match statistics
-    total_rows = len(spatial_join_result)
+    total_rows = len(merged_gdf)
     matched_rows = mask.sum()
     unmatched_rows = total_rows - matched_rows
 
@@ -72,43 +72,33 @@ def dor_parcels(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     print(f"Unmatched rows: {unmatched_rows}")
 
     # Filter out POINT geometries
-    primary_featurelayer.gdf = primary_featurelayer.gdf[
-        primary_featurelayer.gdf.geometry.type.isin(["Polygon", "MultiPolygon"])
-    ]
+    input_gdf = input_gdf[input_gdf.geometry.type.isin(["Polygon", "MultiPolygon"])]
 
     # Dissolve overlapping parcels by opa_id
     print("Dissolving overlapping parcels by opa_id...")
-    primary_featurelayer.gdf = primary_featurelayer.gdf.dissolve(
-        by="opa_id", as_index=False
-    )
-    print(
-        f"Size of primary feature layer after dissolve: {len(primary_featurelayer.gdf)}"
-    )
+    input_gdf = input_gdf.dissolve(by="opa_id", as_index=False)
+    print(f"Size of primary feature layer after dissolve: {len(input_gdf)}")
 
     # Create an STRtree for fast spatial indexing of the parcel geometries
-    parcel_tree = STRtree(primary_featurelayer.gdf.geometry)
+    parcel_tree = STRtree(input_gdf.geometry)
 
     # Count overlapping geometries
-    overlapping_count = primary_featurelayer.gdf.geometry.apply(
+    overlapping_count = input_gdf.geometry.apply(
         lambda geom: len(parcel_tree.query(geom))
     )
     print("Number of overlaps per parcel after dissolve:")
     print(overlapping_count.value_counts())
 
     # Count and drop duplicate opa_ids in the primary feature layer
-    multiple_matches = primary_featurelayer.gdf.duplicated(
-        subset="opa_id", keep=False
-    ).sum()
+    multiple_matches = input_gdf.duplicated(subset="opa_id", keep=False).sum()
     print(
         f"Rows with duplicate opa_id values in the primary feature layer: {multiple_matches}"
     )
 
     # Drop duplicates based on opa_id
-    primary_featurelayer.gdf = primary_featurelayer.gdf.drop_duplicates(
-        subset="opa_id", keep="first"
-    )
+    input_gdf = input_gdf.drop_duplicates(subset="opa_id", keep="first")
     print(
-        f"Updated size of primary feature layer after dropping duplicates: {len(primary_featurelayer.gdf)}"
+        f"Updated size of primary feature layer after dropping duplicates: {len(input_gdf)}"
     )
 
-    return primary_featurelayer
+    return input_gdf, input_validation

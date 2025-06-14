@@ -1,11 +1,17 @@
-from ..classes.featurelayer import FeatureLayer
+from typing import Tuple
+import geopandas as gpd
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.li_complaints import LIComplaintsOutputValidator
+
 from ..constants.services import COMPLAINTS_SQL_QUERY
-from ..data_utils.kde import apply_kde_to_primary
-from ..metadata.metadata_utils import provide_metadata
+from ..data_utils.kde import apply_kde_to_input
 
 
-@provide_metadata()
-def li_complaints(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+@validate_output(LIComplaintsOutputValidator)
+def li_complaints(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Applies kernel density estimation (KDE) analysis for L&I complaints to the primary feature layer.
 
@@ -32,6 +38,4 @@ def li_complaints(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         https://phl.carto.com/api/v2/sql
 
     """
-    return apply_kde_to_primary(
-        primary_featurelayer, "L and I Complaints", COMPLAINTS_SQL_QUERY
-    )
+    return apply_kde_to_input(input_gdf, "L and I Complaints", COMPLAINTS_SQL_QUERY)

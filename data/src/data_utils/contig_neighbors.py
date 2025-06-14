@@ -1,15 +1,21 @@
 import warnings
+from typing import Tuple
 
+import geopandas as gpd
 import networkx as nx
 import numpy as np
 from libpysal.weights import Queen
 
-from ..classes.featurelayer import FeatureLayer
-from ..metadata.metadata_utils import provide_metadata
+from src.validation.base import ValidationResult, validate_output
+from src.validation.contig_neighbors import ContigNeighborsOutputValidator
+
+from ..utilities import opa_join
 
 
-@provide_metadata()
-def contig_neighbors(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+@validate_output(ContigNeighborsOutputValidator)
+def contig_neighbors(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Calculates the number of contiguous vacant neighbors for each property in a feature layer.
 
@@ -30,16 +36,16 @@ def contig_neighbors(primary_featurelayer: FeatureLayer) -> FeatureLayer:
         opa_id, vacant
     """
     # Create a filtered dataframe with only vacant properties and polygon geometries
-    vacant_parcels = primary_featurelayer.gdf.loc[
-        (primary_featurelayer.gdf["vacant"])
-        & (primary_featurelayer.gdf.geometry.type.isin(["Polygon", "MultiPolygon"])),
+    vacant_parcels = input_gdf.loc[
+        (input_gdf["vacant"])
+        & (input_gdf.geometry.type.isin(["Polygon", "MultiPolygon"])),
         ["opa_id", "geometry"],
     ]
 
     if vacant_parcels.empty:
         print("No vacant properties found in the dataset.")
-        primary_featurelayer.gdf["n_contiguous"] = np.nan
-        return primary_featurelayer
+        input_gdf["n_contiguous"] = np.nan
+        return input_gdf
 
     with warnings.catch_warnings():
         warnings.filterwarnings("ignore", category=FutureWarning)
@@ -64,13 +70,9 @@ def contig_neighbors(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     vacant_parcels["n_contiguous"] = vacant_parcels.index.map(n_contiguous)
 
     # Merge the results back to the primary feature layer
-    primary_featurelayer.gdf = primary_featurelayer.gdf.merge(
-        vacant_parcels[["opa_id", "n_contiguous"]], on="opa_id", how="left"
-    )
+    input_gdf = opa_join(input_gdf, vacant_parcels[["opa_id", "n_contiguous"]])
 
     # Assign NA for non-vacant properties
-    primary_featurelayer.gdf.loc[
-        ~primary_featurelayer.gdf["vacant"], "n_contiguous"
-    ] = np.nan
+    input_gdf.loc[~input_gdf["vacant"], "n_contiguous"] = np.nan
 
-    return primary_featurelayer
+    return input_gdf, ValidationResult(True)

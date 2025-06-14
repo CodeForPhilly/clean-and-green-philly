@@ -1,10 +1,19 @@
-from ..classes.featurelayer import FeatureLayer
+from typing import Tuple
+
+import geopandas as gpd
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.imm_dang_buildings import ImmDangerOutputValidator
+
+from ..classes.loaders import CartoLoader
 from ..constants.services import IMMINENT_DANGER_BUILDINGS_QUERY
-from ..metadata.metadata_utils import provide_metadata
+from ..utilities import opa_join
 
 
-@provide_metadata()
-def imm_dang_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+@validate_output(ImmDangerOutputValidator)
+def imm_dang_buildings(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds information about imminently dangerous buildings to the primary feature layer
     by joining with a dataset of dangerous buildings.
@@ -28,26 +37,22 @@ def imm_dang_buildings(primary_featurelayer: FeatureLayer) -> FeatureLayer:
     Source:
         https://phl.carto.com/api/v2/sql
     """
-    imm_dang_buildings = FeatureLayer(
+
+    loader = CartoLoader(
         name="Imminently Dangerous Buildings",
-        use_wkb_geom_field="the_geom",
-        carto_sql_queries=IMMINENT_DANGER_BUILDINGS_QUERY,
-        cols=["opa_account_num"],
+        carto_queries=IMMINENT_DANGER_BUILDINGS_QUERY,
+        opa_col="opa_account_num",
     )
 
-    imm_dang_buildings.gdf.loc[:, "imm_dang_building"] = "Y"
+    imm_dang_buildings, input_validation = loader.load_or_fetch()
 
-    imm_dang_buildings.gdf = imm_dang_buildings.gdf.rename(
-        columns={"opa_account_num": "opa_number"}
+    imm_dang_buildings.loc[:, "imm_dang_building"] = "Y"
+
+    merged_gdf = opa_join(
+        input_gdf,
+        imm_dang_buildings,
     )
 
-    primary_featurelayer.opa_join(
-        imm_dang_buildings.gdf,
-        "opa_number",
-    )
+    merged_gdf.loc[:, "imm_dang_building"] = merged_gdf["imm_dang_building"].fillna("N")
 
-    primary_featurelayer.gdf.loc[:, "imm_dang_building"] = primary_featurelayer.gdf[
-        "imm_dang_building"
-    ].fillna("N")
-
-    return primary_featurelayer
+    return merged_gdf, input_validation
