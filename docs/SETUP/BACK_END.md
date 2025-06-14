@@ -104,7 +104,7 @@ In the terminal, use the `cd` command to navigate to your repository location, a
 
 ## Python Development
 
-You can set up your local Python environment so you can develop and run the backend `script.py` and create and run unit tests outside of Docker. Build your local environment to match what is defined in the `Dockerfile`. Install the same python version as is in the Dockerfile, using `pyenv` to manage multiple distributions if needed. Use `pipenv` to create a virtual environment. Install the pip dependencies that are defined in the `Pipfile` into your virtual environment. Install the executables with `apt-get`. Now you can develop in Python in your terminal and IDE and run unit tests with `pytest`.
+You can set up your local Python environment so you can develop and run the backend `script.py` and create and run unit tests outside of Docker. Build your local environment to match what is defined in the `Dockerfile`. Install the same python version as is in the Dockerfile, using `uv` to manage multiple distributions if needed. Use `uv` to create a virtual environment. Install the pip dependencies that are defined in `pyproject.toml` into your virtual environment. Install the executables with `apt-get`. Now you can develop in Python in your terminal and IDE and run unit tests with `pytest`.
 
 ## Configuration
 
@@ -124,7 +124,7 @@ Changes to our codebase should always address an [issue](https://github.com/Code
 Format all python files by running:
 
 ```sh
-docker compose run formatter
+docker compose run --rm vacant-lots-proj sh -c "ruff format"
 ```
 
 #### Google Cloud (GCP)

@@ -61,13 +61,13 @@ The first are PMtiles, which is a single-file vector tile format for geospatial 
 
 The second are GeoParquet files, which are a geospatial addition to Apache Parquet files. Their benefit is they are a highly performant way to compress and store columnar data, and they have useful mechanisms for self-describing and partitioning the data within the file itself for faster retrieval and querying in the future. You can find out more [here](https://geoparquet.org/releases/v0.2.0/).
 
-### Python version and dependency management - Pipenv - Pyenv
+### Python version and dependency management - uv
 
-We manage our Python dependencies using `pipenv` which mantains them through the `Pipfile` and `Pipfile.lock`. Our Python versioning is managed through Docker when running the main script, but if you were interested in doing local development, you can also pin your python version to 3.11.4 using `pyenv`.
+We manage our Python dependencies using [`uv`](https://docs.astral.sh/uv/) which mantains them through the `pyproject.toml` and `uv.lock`. Our Python versioning is managed through Docker when running the main script, but if you were interested in doing local development, you can also pin your Python version to 3.11.4 using `uv`.
 
-`pipenv` - https://pipenv.pypa.io/en/latest/
-
-`pyenv` - https://github.com/pyenv/pyenv
+```shell
+uv python install 3.11.4
+```
 
 ### Vulture
 
