@@ -6,8 +6,6 @@ on:
       - staging
     paths:
       - 'data/**'
-      - 'Dockerfile-pg'
-      - 'init_pg.sql'
       - 'docker compose.yml'
   workflow_dispatch:
 
@@ -24,53 +22,17 @@ jobs:
       - name: Set up Docker Compose
         uses: docker/setup-qemu-action@v3
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11.4'
-
   test:
     runs-on: ubuntu-latest
     needs: setup
-    defaults:
-      run:
-        working-directory: data/src
-    env:
-      VACANT_LOTS_DB: 'postgresql://postgres:temp-CI-only@localhost:5433/vacantlotdb'
-    services:
-      postgres:
-        image: postgis/postgis:16-3.4
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: temp-CI-only # CI-only, safe to hardcode for temporary container
-          POSTGRES_DB: vacantlotdb
-        ports:
-          - 5433:5432
-        # Set health checks to wait until postgres is ready
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11.4'
-
-      - name: Install and configure pipenv
-        run: |
-          python -m pip install --upgrade pip
-          pip install pipenv
-          echo "Using Python: $(which python)"
-          pipenv --python $(which python) install --dev
-
       - name: Run Pytest
-        working-directory: data/src
-        run: PYTHONPATH=$PYTHONPATH:. pipenv run pytest
+        run: |
+          cd data
+          docker compose run --rm vacant-lots-proj sh -c "pytest"
 
   run-formatter:
     runs-on: ubuntu-latest
@@ -84,7 +46,7 @@ jobs:
       - name: Run Ruff Formatter in Docker
         run: |
           cd data
-          docker compose run --rm formatter sh -c "pip install ruff && ruff format --check --exclude '/usr/src/app/awkde/'"
+          docker compose run --rm vacant-lots-proj sh -c "ruff format --check"
 
   run-linter:
     runs-on: ubuntu-latest
@@ -98,7 +60,7 @@ jobs:
       - name: Run Ruff Linter in Docker
         run: |
           cd data
-          docker compose run --rm linter
+          docker compose run --rm vacant-lots-proj sh -c "ruff check"
 
   build-project:
     runs-on: ubuntu-latest

@@ -18,13 +18,6 @@ repos:
         types_or: [python, pyi, jupyter]
         files: \.py$
 
-      # Dependency checks for Python
-      - id: check-python-dependencies
-        name: Check Python dependencies
-        entry: bash -c 'cd data/src && pipenv check --bare --quiet || (echo "Python dependencies check failed" && exit 1)'
-        language: system
-        files: ^data/src/Pipfile$
-
       # Radon MI and Halstead checks
       - id: radon-check
         name: Radon Maintainability and Halstead Checks

@@ -1,19 +1,43 @@
-def tactical_urbanism(dataset):
-    unsafe_words = [
-        "dangerous",
-    ]
+from typing import Tuple
 
+import geopandas as gpd
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.tactical_urbanism import TacticalUrbanismOutputValidator
+
+
+@validate_output(TacticalUrbanismOutputValidator)
+def tactical_urbanism(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
+    """
+    Assigns a 'tactical_urbanism' value to each row in the primary feature layer based on specific conditions.
+
+    Tactical urbanism is marked as "Yes" if the property is a parcel of type 'Land',
+    and does not have any unsafe or immediately dangerous buildings. Otherwise, it is "No".
+
+    Args:
+        primary_featurelayer: A FeatureLayer object containing a GeoDataFrame (`gdf`) as an attribute.
+
+    Columns Added:
+        tactical_urbanism (str): Indicates whether each property qualifies for tactical urbanism ("Yes" or "No").
+
+    Primary Feature Layer Columns Referenced:
+        parcel_type, unsafe_building, imm_dang_building
+
+    Tagline:
+        Identify tactical urbanism-eligible properties
+
+    Returns:
+        The input FeatureLayer with a new column 'tactical_urbanism' added to its GeoDataFrame.
+    """
     tactical_urbanism_values = []
 
-    for idx, row in dataset.gdf.iterrows():
-        li_complaints_lower = str(row["li_complaints"]).lower().split(" ")
-        contains_unsafe_word = any(word in li_complaints_lower for word in unsafe_words)
-
+    for idx, row in input_gdf.iterrows():
         if (
             row["parcel_type"] == "Land"
             and row["unsafe_building"] == "N"
             and row["imm_dang_building"] == "N"
-            and not contains_unsafe_word
         ):
             tactical_urbanism = "Yes"
         else:
@@ -21,5 +45,5 @@ def tactical_urbanism(dataset):
 
         tactical_urbanism_values.append(tactical_urbanism)
 
-    dataset.gdf["tactical_urbanism"] = tactical_urbanism_values
-    return dataset
+    input_gdf["tactical_urbanism"] = tactical_urbanism_values
+    return input_gdf, ValidationResult(True)

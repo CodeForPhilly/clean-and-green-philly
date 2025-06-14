@@ -2,7 +2,7 @@
 
 ## Overview
 
-If you plan to contribute to the data wrangling and database management on this project and need to run the Python script, follow the installation and setup instructions below.
+If you plan to contribute to the data wrangling on this project and need to run the Python script, follow the installation and setup instructions below.
 
 ## Setup
 
@@ -54,10 +54,7 @@ The project requires specific and sensitive information to run, which should be 
 1. Create a file named `.env` in the `/data` subdirectory of your project.
 2. Add the following environment variables to the `.env` file:
 
-```sh
-POSTGRES_PASSWORD=a-strong-password-here
-VACANT_LOTS_DB=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5433/vacantlotdb
-```
+<!-- TODO: What env vars do we need? -->
 
 All local environment variables will be passed through to docker compose, so if you have them set up in the `.env` file, you should not need to hard-code them elsewhere.
 
@@ -67,39 +64,23 @@ For Mac and Linux, you can permanently store the environment variables in your c
 
 For Windows, you can set environment variables under System -> Advanced or you can download a terminal emulator such as [Git Bash](https://gitforwindows.org/) and follow the instructions for Mac and Linux above. A terminal emulator is recommended.
 
-```sh
-export POSTGRES_PASSWORD=a-strong-password-here
-export VACANT_LOTS_DB=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5433/vacantlotdb
-```
-
 All of your local environment variables will be passed through to docker compose, so if you have them locally, you should not have to hard-code them.
 
 ### Docker Build
 
 Docker is a platform that allows you to containerize and run applications in isolated environments, making it easier to manage dependencies and ensure consistent deployments. Download the [latest version of Docker Desktop for your operating system](https://www.docker.com/products/docker-desktop/).
 
-We use [docker compose](https://docs.docker.com/compose/) to manage the backend Docker services. The `data/docker-compose.yaml` file defines the services. The only service that runs perpetually in Docker is `postgres`. The other services are one-time batch jobs to build the data sets.
+We use [docker compose](https://docs.docker.com/compose/) to manage the backend Docker services. The `data/docker-compose.yaml` file defines the services.
 
-1. The first time you set up your backend, or any time either of the two Docker files change, build the Docker services by running:
+1. The first time you set up your backend, or any the Docker file changes, build the Docker services by running:
 
    ```sh
    docker compose build
    ```
 
-   This should correctly build both containers. However, if it does not, you can explicitly build the postgres container with the following:
-
-   ```sh
-   docker compose build postgres
-   ```
-
-2. When both containers are built, connect to the PG database in the container by running:
-   ```sh
-   docker compose up -d postgres
-   ```
-
 For first-time runs, set `FORCE_RELOAD=True` in `config.py` and optionally `log_level: int = logging.DEBUG` to get more verbose output.
 
-All Docker commands should be run from the `data/` directory. There is one main `Dockerfile` for the batch scripts and one called `Dockerfile-pg` for the PostgreSQL and postgis installation. There is also a file called `init_pg.sql` that is run one time by Docker when the postgres data volume is empty to create the database and install postgis. You should not have to touch any of the above three files.
+All Docker commands should be run from the `data/` directory.
 
 #### Windows
 
@@ -121,55 +102,13 @@ The backend also works on WSL Ubuntu running Docker for Linux on Windows 10.
 
 In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker compose run vacant-lots-proj`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker compose down`.
 
-### PostgreSQL
-
-[PostgreSQL](https://www.postgresql.org/) AKA postgres, pg, psql is an open-source relational database management system. It is used in this project only by the data load script to stage data and by the data diff process to compare new data with backed up data. It is not needed by the front-end to run. We run Postgres with the [Postgis](https://postgis.net/) extension for geospatial data in a Docker container.
-
-We are running postgres on the non-standard port 5433 instead of the default of 5432. This is so our Docker postgres will not conflict with any native postgres already running on the developer's PC.
-
-To start the postgres Docker container, run:
-
-```sh
-docker compose up -d postgres
-```
-
-You can access the psql command line in your container to work with the database with this command:
-
-```sh
-docker exec -it cagp-postgres psql -U postgres -d vacantlotdb
-```
-
-To stop the postgres container run:
-
-```sh
-docker compose down postgres
-```
-
-### PostgreSQL Extensions
-
-We use Postgres extensions for GIS and time series functionality not included in base Postgres.
-
-#### PostGIS
-
-[PostGIS](https://postgis.net/) is an open-source extension for PostgreSQL that adds support for spatial and geographic data types and functions. It enables the storage, querying, and analysis of location-based data directly within the database, replacing the need for many external tools and libraries.
-
-#### Timescale DB
-
-[TimescaleDB](https://docs.timescale.com/) is an open-source relational database built on PostgreSQL, optimized for handling time-series data efficiently.
-
-At the core of TimescaleDB are hypertables, which partition data across time for efficient querying. Hypertables behave like normal Postgres tables, but are optimized for querying data based on timestamps. For our use case, hypertables simplify data management by automatically creating monthly partitions, replacing our previous method of manually creating a separate schema for each month.
-
-#### pg_stat_statements
-
-The [pg_stat_statements](https://www.postgresql.org/docs/current/pgstatstatements.html) extension provides detailed statistics on query performance, helping to identify slow or resource-intensive queries. It tracks execution counts, execution times, and rows returned, making it a useful tool for analyzing slow or problematic queries.
-
 ## Python Development
 
-You can set up your local Python environment so you can develop and run the backend `script.py` and create and run unit tests outside of Docker. Build your local environment to match what is defined in the `Dockerfile`. Install the same python version as is in the Dockerfile, using `pyenv` to manage multiple distributions if needed. Use `pipenv` to create a virtual environment. Install the pip dependencies that are defined in the `Pipfile` into your virtual environment. Install the executables with `apt-get`. Now you can develop in Python in your terminal and IDE and run unit tests with `pytest`.
+You can set up your local Python environment so you can develop and run the backend `script.py` and create and run unit tests outside of Docker. Build your local environment to match what is defined in the `Dockerfile`. Install the same python version as is in the Dockerfile, using `uv` to manage multiple distributions if needed. Use `uv` to create a virtual environment. Install the pip dependencies that are defined in `pyproject.toml` into your virtual environment. Install the executables with `apt-get`. Now you can develop in Python in your terminal and IDE and run unit tests with `pytest`.
 
 ## Configuration
 
-There are numerous configuration variables in `data/src/config/config.py`. See the documentation in that file for each variable. You will also have to set up environmental variables for keys and database connection parameters as defined throughout this document.
+There are numerous configuration variables in `data/src/config/config.py`. See the documentation in that file for each variable. You will also have to set up environmental variables as defined throughout this document.
 
 There are the following secrets that may be securely shared with you by the project leads:
 
@@ -185,7 +124,7 @@ Changes to our codebase should always address an [issue](https://github.com/Code
 Format all python files by running:
 
 ```sh
-docker compose run formatter
+docker compose run --rm vacant-lots-proj sh -c "ruff format"
 ```
 
 #### Google Cloud (GCP)
@@ -201,8 +140,6 @@ You can run the tile build locally with `docker compose run vacant-lots-proj` to
 Your `/data/.env` file should now look like this:
 
 ```sh
-POSTGRES_PASSWORD=a-strong-password-here
-VACANT_LOTS_DB=postgresql://postgres:${POSTGRES_PASSWORD}@localhost:5433/vacantlotdb
 CLEAN_GREEN_GOOGLE_KEY=your-api-key-here
 GOOGLE_CLOUD_BUCKET_NAME=your-bucket-name-here
 ```
@@ -226,8 +163,6 @@ The script should only load new images that aren't in the bucket already (new pr
 #### Backup and difference reporting
 
 Whenever the data load script is run in force reload mode, the old data set is backed up and a report of any differences is sent to the team via Slack. Differences in data are calculated using the [data-diff](https://github.com/datafold/data-diff) package. See [issue 520](https://github.com/CodeForPhilly/clean-and-green-philly/issues/520) in Github.
-
-Backups are done in PostgreSQL in the vacantlotsdb database by copying the whole public schema to a backup schema named backup\_{timestamp}. Besides the original tables, the backup schema includes a '{table_name}\_diff' table with details of the differences from data-diff for each table.
 
 Backup schemas are only kept for one year by default. Backup schemas older than a year are deleted at the end of the load script.
 

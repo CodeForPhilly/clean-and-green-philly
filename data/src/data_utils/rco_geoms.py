@@ -1,46 +1,80 @@
-from classes.featurelayer import FeatureLayer
-from constants.services import RCOS_LAYERS_TO_LOAD
+from typing import Tuple
+
+import geopandas as gpd
 import pandas as pd
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.rco_geoms import RCOGeomsOutputValidator
+
+from ..classes.loaders import EsriLoader
+from ..constants.services import RCOS_LAYERS_TO_LOAD
+from ..utilities import spatial_join
 
 pd.set_option("future.no_silent_downcasting", True)
 
 
-def rco_geoms(primary_featurelayer):
-    rco_geoms = FeatureLayer(name="RCOs", esri_rest_urls=RCOS_LAYERS_TO_LOAD)
+@validate_output(RCOGeomsOutputValidator)
+def rco_geoms(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
+    """
+    Adds Registered Community Organization (RCO) information to the primary feature layer
+    by performing a spatial join and aggregating RCO data.
+
+    Args:
+        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+
+    Returns:
+        FeatureLayer: The input feature layer with added RCO-related columns,
+        including aggregated RCO information and names.
+
+    Tagline:
+        Assigns Community Org Info
+
+    Columns added:
+        rco_names (str): Names of RCOs associated with the property.
+        rco_info (str): Additional RCO-related information.
+
+    Source:
+        "https://services.arcgis.com/fLeGjb7u4uXqeF9q/ArcGIS/rest/services/Zoning_RCO/FeatureServer/0/"
+
+    Notes:
+        Modifies various columns. Fillna and infer_objects is applied to most columns.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
+    """
+    loader = EsriLoader(name="RCOs", esri_urls=RCOS_LAYERS_TO_LOAD)
+    rco_geoms, input_validation = loader.load_or_fetch()
 
     rco_aggregate_cols = [
-        "ORGANIZATION_NAME",
-        "ORGANIZATION_ADDRESS",
-        "PRIMARY_EMAIL",
-        "PRIMARY_PHONE",
+        "organization_name",
+        "organization_address",
+        "primary_email",
+        "primary_phone",
     ]
 
     rco_use_cols = ["rco_info", "rco_names", "geometry"]
 
-    rco_geoms.gdf.loc[:, "rco_info"] = rco_geoms.gdf[rco_aggregate_cols].apply(
+    # Aggregate RCO information into a single column
+    rco_geoms["rco_info"] = rco_geoms[rco_aggregate_cols].apply(
         lambda x: "; ".join(map(str, x)), axis=1
     )
 
-    rco_geoms.gdf.loc[:, "rco_names"] = rco_geoms.gdf["ORGANIZATION_NAME"]
+    rco_geoms["rco_names"] = rco_geoms["organization_name"]
 
-    rco_geoms.gdf = rco_geoms.gdf.loc[:, rco_use_cols].copy()
-    rco_geoms.rebuild_gdf()
+    rco_geoms = rco_geoms[rco_use_cols].copy()
 
-    primary_featurelayer.spatial_join(rco_geoms)
+    # Perform spatial join
+    merged_gdf = spatial_join(input_gdf, rco_geoms)
 
-    # Collapse columns and aggregate rco_info
-    group_columns = [
-        col for col in primary_featurelayer.gdf.columns if col not in rco_use_cols
-    ]
+    group_columns = [col for col in merged_gdf.columns if col not in rco_use_cols]
 
+    # Ensure columns are appropriately filled and cast
     for col in group_columns:
-        # Use .infer_objects() after fillna() to fix the warning
-        primary_featurelayer.gdf.loc[:, col] = (
-            primary_featurelayer.gdf[col].fillna("").infer_objects(copy=False)
-        )
+        merged_gdf[col] = merged_gdf[col].fillna("").infer_objects(copy=False)
 
-    primary_featurelayer.gdf = (
-        primary_featurelayer.gdf.groupby(group_columns)
+    # Group by non-RCO columns and aggregate RCO data
+    merged_gdf = (
+        merged_gdf.groupby(group_columns)
         .agg(
             {
                 "rco_info": lambda x: "|".join(map(str, x)),
@@ -51,7 +85,7 @@ def rco_geoms(primary_featurelayer):
         .reset_index()
     )
 
-    primary_featurelayer.gdf.drop_duplicates(inplace=True)
-    primary_featurelayer.rebuild_gdf()
+    merged_gdf = gpd.GeoDataFrame(merged_gdf, geometry="geometry", crs=input_gdf.crs)
+    merged_gdf.drop_duplicates(inplace=True)
 
-    return primary_featurelayer
+    return merged_gdf, input_validation

@@ -1,10 +1,58 @@
+[project]
+name = "clean-and-green-philly"
+version = "0.0.1"
+requires-python = "==3.11.4"
+dependencies = [
+    "awkde",
+    "esridump~=1.13.0",
+    "fiona~=1.10.1",
+    "future~=1.0.0",
+    "geopandas==1.0.1",
+    "google-cloud-storage~=2.19.0",
+    "jenkspy~=0.4.1",
+    "jupyter~=1.1.1",
+    "libpysal~=4.12.1",
+    "mapbox~=0.18.1",
+    "mapclassify~=2.8.1",
+    "matplotlib~=3.9.3",
+    "networkx~=3.4.2",
+    "pandas==2.2.2",
+    "pandera~=0.24.0",
+    "pyarrow~=18.1.0",
+    "pydantic==2.8.2",
+    "rasterio~=1.4.3",
+    "requests~=2.32.3",
+    "scikit-learn~=1.6.0",
+    "shapely~=2.0.6",
+    "slack-sdk~=3.33.5",
+    "tqdm~=4.67.1",
+]
+
 [tool.vulture]
 make_whitelist = true
 # min_confidence = 80
 sort_by_size = true
 
+[dependency-groups]
+dev = [
+    "pytest~=8.3.4",
+    "vulture~=2.14",
+    "radon~=6.0.1",
+    "ruff~=0.8.2",
+]
+
 [tool.mypy]
 ignore_missing_imports = true
+
+[tool.uv]
+package = false
+
+[[tool.uv.index]]
+name = "pypi"
+url = "https://pypi.org/simple"
+
+[tool.uv.sources]
+awkde = { git = "https://github.com/mennthor/awkde.git", rev = "5b601fe4d92229d5deb8737fd121dce193bac552" }
 
 [tool.ruff]
 # Exclude a variety of commonly ignored directories, plus our own

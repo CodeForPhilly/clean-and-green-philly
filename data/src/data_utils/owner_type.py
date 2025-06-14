@@ -1,8 +1,16 @@
+from typing import Tuple
+
+import geopandas as gpd
 import pandas as pd
-from classes.featurelayer import FeatureLayer
+
+from src.validation.base import ValidationResult, validate_output
+from src.validation.owner_type import OwnerTypeOutputValidator
 
 
-def owner_type(primary_featurelayer: FeatureLayer) -> FeatureLayer:
+@validate_output(OwnerTypeOutputValidator)
+def owner_type(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Determines the ownership type for each property in the primary feature layer based on
     the 'owner_1', 'owner_2', and 'city_owner_agency' columns. The ownership type is set as:
@@ -15,10 +23,19 @@ def owner_type(primary_featurelayer: FeatureLayer) -> FeatureLayer:
 
     Returns:
         FeatureLayer: The updated feature layer with the 'owner_type' column added.
+
+    Tagline:
+        Assigns ownership types
+
+    Columns added:
+        owner_type (str): The ownership type of the property: Public, Business (LLC) or Individual.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, owner_1, owner_2, city_owner_agency
     """
     owner_types = []
 
-    for _, row in primary_featurelayer.gdf.iterrows():
+    for _, row in input_gdf.iterrows():
         # Extract owner1, owner2, and city_owner_agency
         owner1 = str(row["owner_1"]).lower()
         owner2 = str(row["owner_2"]).lower()
@@ -33,6 +50,6 @@ def owner_type(primary_featurelayer: FeatureLayer) -> FeatureLayer:
             owner_types.append("Individual")
 
     # Add the 'owner_type' column to the GeoDataFrame
-    primary_featurelayer.gdf["owner_type"] = owner_types
+    input_gdf["owner_type"] = owner_types
 
-    return primary_featurelayer
+    return input_gdf, ValidationResult(True)
