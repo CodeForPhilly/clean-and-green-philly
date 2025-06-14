@@ -1,57 +1,56 @@
 'use client';
-import '../components/components-css/PropertyMap.css';
-import {
-  FC,
-  useEffect,
-  useState,
-  // useRef,
-  Dispatch,
-  SetStateAction,
-  ReactElement,
-} from 'react';
-import {
-  maptilerApiKey,
-  useStagingTiles,
-  googleCloudBucketName,
-} from '../config/config';
-import { subZoning } from './Filters/filterOptions';
 import { useFilter } from '@/context/FilterContext';
-import Map, {
-  Source,
-  Layer,
-  Popup,
-  NavigationControl,
-  GeolocateControl,
-  ViewState,
-} from 'react-map-gl/maplibre';
-import { Feature } from 'maplibre-gl';
-import maplibregl, {
-  Map as MaplibreMap,
-  IControl,
-  PointLike,
-  MapGeoJSONFeature,
-  ColorSpecification,
-  FillLayerSpecification,
-  CircleLayerSpecification,
-  DataDrivenPropertyValueSpecification,
-  // IControl,
-  LngLatLike,
-  MapMouseEvent,
-  LngLat,
-} from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
-import { Protocol } from 'pmtiles';
-import { GeocodingControl } from '@maptiler/geocoding-control/react';
 import { createMapLibreGlMapController } from '@maptiler/geocoding-control/maplibregl-controller';
+import { GeocodingControl } from '@maptiler/geocoding-control/react';
 import '@maptiler/geocoding-control/style.css';
-import { MapLegendControl } from './MapLegendControl';
-import { createPortal } from 'react-dom';
 import { Tooltip } from '@nextui-org/react';
 import { Info, X } from '@phosphor-icons/react';
 import { centroid } from '@turf/centroid';
 import { Position } from 'geojson';
-import { toTitleCase } from '../utilities/toTitleCase';
+import maplibregl, {
+  CircleLayerSpecification,
+  ColorSpecification,
+  DataDrivenPropertyValueSpecification,
+  FillLayerSpecification,
+  IControl,
+  LngLat,
+  // IControl,
+  LngLatLike,
+  MapGeoJSONFeature,
+  Map as MaplibreMap,
+  MapMouseEvent,
+  PointLike,
+} from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import { Protocol } from 'pmtiles';
+import {
+  // useRef,
+  Dispatch,
+  FC,
+  ReactElement,
+  SetStateAction,
+  useEffect,
+  useState,
+} from 'react';
+import { createPortal } from 'react-dom';
+import Map, {
+  GeolocateControl,
+  Layer,
+  NavigationControl,
+  Popup,
+  Source,
+  ViewState,
+} from 'react-map-gl/maplibre';
+import '../components/components-css/PropertyMap.css';
 import { ThemeButton } from '../components/ThemeButton';
+import {
+  googleCloudBucketName,
+  maptilerApiKey,
+  useStagingTiles,
+} from '../config/config';
+import { toTitleCase } from '../utilities/toTitleCase';
+import { subZoning } from './Filters/filterOptions';
+import { MapLegendControl } from './MapLegendControl';
 import MapStyleSwitcher from './MapStyleSwitcher';
 
 type MapStyle = {
@@ -418,7 +417,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
     }
   }, [map, appFilter, currentStyle]);
 
-  const changeCursor = (e: any, cursorType: 'pointer' | 'default') => {
+  const changeCursor = (
+    e: any,
+    cursorType: 'pointer' | 'grab' | 'grabbing'
+  ) => {
     e.target.getCanvas().style.cursor = cursorType;
   };
 
@@ -436,7 +438,9 @@ const PropertyMap: FC<PropertyMapProps> = ({
         initialViewState={initialViewState}
         mapStyle={mapStyles[currentStyle]?.url}
         onMouseEnter={(e) => changeCursor(e, 'pointer')}
-        onMouseLeave={(e) => changeCursor(e, 'default')}
+        onMouseLeave={(e) => changeCursor(e, 'grab')}
+        onMouseDown={(e) => changeCursor(e, 'grabbing')}
+        onMouseUp={(e) => changeCursor(e, 'grab')}
         onClick={onMapClick}
         minZoom={MIN_MAP_ZOOM}
         maxZoom={MAX_MAP_ZOOM}
