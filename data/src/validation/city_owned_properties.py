@@ -1,5 +1,5 @@
 import geopandas as gpd
-import pandera.pandera as pa
+import pandera.pandas as pa
 from typing import Optional, Literal
 from .base import BaseValidator
 
