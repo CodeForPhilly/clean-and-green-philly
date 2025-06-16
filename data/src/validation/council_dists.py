@@ -2,6 +2,7 @@ import geopandas as gpd
 import pandera as pa
 from .base import BaseValidator
 
+
 class CouncilDistrictsSchema(pa.DataFrameModel):
     OBJECTID_1: pa.typing.Series[int]
     OBJECTID: pa.typing.Series[int]
@@ -25,14 +26,13 @@ class CouncilDistrictsInputValidator(BaseValidator):
 
 class CouncilDistrictsOutputValidator(BaseValidator):
     """Validator for council districts service output."""
+
     schema = CouncilDistrictsSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         # Check there are exactly 10 rows
         if len(gdf) != 10:
-            self.errors.append(
-                f"Expected 10 council district records, got {len(gdf)}"
-            )
+            self.errors.append(f"Expected 10 council district records, got {len(gdf)}")
 
         # Check "district" values are exactly "1" through "10"
         expected = {str(i) for i in range(1, 11)}
