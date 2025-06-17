@@ -1,4 +1,5 @@
 import geopandas as gpd
+from pandera import DataFrameModel
 
 from .base import BaseValidator
 
@@ -12,10 +13,16 @@ class CommunityGardensInputValidator(BaseValidator):
         pass
 
 
+class CommunityGardensOutputSchema(DataFrameModel):
+    pass
+
+    # Check for vacant column updates in custom check?
+
+
 class CommunityGardensOutputValidator(BaseValidator):
     """Validator for community gardens service output."""
 
-    schema = None
+    schema = CommunityGardensOutputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass
