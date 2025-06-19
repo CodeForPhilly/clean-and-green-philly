@@ -32,13 +32,10 @@ repos:
     hooks:
       - id: vulture
         name: vulture (Dead code detection)
-        entry: vulture data/
+        entry: bash -c 'vulture data/ || true'
         language: python
         types: [python]
-        files: ^data/
         pass_filenames: false
-        always_run: true
-        fail_return_code: 0
 
   # JavaScript hooks
   - repo: local
