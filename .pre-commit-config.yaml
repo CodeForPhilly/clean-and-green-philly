@@ -32,7 +32,8 @@ repos:
     hooks:
       - id: vulture
         name: vulture (Dead code detection)
-        entry: bash -c 'vulture data/ || true'
+        entry: bash -c "vulture data/ || true"
+        verbose: true
         language: python
         types: [python]
         pass_filenames: false
