@@ -96,9 +96,9 @@ class BaseValidator(ABC):
         self.opa_validation(gdf)
         if self.schema:
             try:
-                self.schema.validate(gdf, lazy_validation=True)
+                self.schema.validate(gdf, lazy=True)
             except pa.errors.SchemaErrors as err:
-                self.errors.append(err.failure_case)
+                self.errors.append(err.failure_cases)
         self._custom_validation(gdf)
 
         return ValidationResult(success=not self.errors, errors=self.errors)
