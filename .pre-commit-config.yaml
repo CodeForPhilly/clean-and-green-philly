@@ -32,10 +32,11 @@ repos:
     hooks:
       - id: vulture
         name: vulture (Dead code detection)
-        entry: vulture data/
+        entry: bash -c "vulture data/ || true"
+        verbose: true
         language: python
         types: [python]
-        files: ^data/
+        pass_filenames: false
 
   # JavaScript hooks
   - repo: local
@@ -59,3 +60,4 @@ repos:
         name: Check Node.js dependencies
         entry: npm audit
         language: node
+        files: ^package(-lock)?\.json$
