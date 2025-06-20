@@ -4,7 +4,7 @@ import geopandas as gpd
 import pandas as pd
 
 from src.validation.base import ValidationResult, validate_output
-from src.validation.council_dists import CouncilDistrictsOutputValidator
+from src.validation.council_dists import CouncilDistrictsOutputValidator, CouncilDistrictsInputValidator
 
 from ..classes.loaders import EsriLoader
 from ..constants.services import COUNCIL_DISTRICTS_TO_LOAD
@@ -39,10 +39,14 @@ def council_dists(
     """
 
     loader = EsriLoader(
-        name="Council Districts", esri_urls=COUNCIL_DISTRICTS_TO_LOAD, cols=["district"]
+        name="Council Districts", esri_urls=COUNCIL_DISTRICTS_TO_LOAD, 
+        cols=["district"], validator = CouncilDistrictsInputValidator()
     )
 
     council_dists, input_validation = loader.load_or_fetch()
+    print("Council Districts Input:")
+    print(council_dists.columns)
+    print(council_dists.head())
 
     # Check that the required columns exist in the DataFrame
     required_columns = ["district", "geometry"]
@@ -63,4 +67,7 @@ def council_dists(
     # Drop duplicates in the primary feature layer
     merged_gdf.drop_duplicates(inplace=True)
 
+    print("Council Districts Output:")
+    print(merged_gdf.columns)
+    print(merged_gdf.head())
     return merged_gdf, input_validation
