@@ -56,9 +56,9 @@ def standardize_street(street: str) -> str:
     return street
 
 
-def create_standardized_address(row: pd.Series) -> str:
+def create_standardized_mailing_address(row: pd.Series) -> str:
     """
-    Creates a standardized address from multiple address-related columns in a row.
+    Creates a standardized mailing address from multiple address-related columns in a row.
 
     Args:
         row (pd.Series): A row of a DataFrame containing address-related fields.
@@ -79,8 +79,8 @@ def create_standardized_address(row: pd.Series) -> str:
         else "",
         row["mailing_zip"].strip() if pd.notnull(row["mailing_zip"]) else "",
     ]
-    standardized_address = ", ".join([part for part in parts if part])
-    return standardized_address.lower()
+    standardized_mailing_address = ", ".join([part for part in parts if part])
+    return standardized_mailing_address.lower()
 
 
 def standardize_street_vectorized(street_series: pd.Series) -> pd.Series:
@@ -105,15 +105,15 @@ def standardize_street_vectorized(street_series: pd.Series) -> pd.Series:
     return street_series
 
 
-def create_standardized_address_vectorized(gdf: gpd.GeoDataFrame) -> pd.Series:
+def create_standardized_mailing_address_vectorized(gdf: gpd.GeoDataFrame) -> pd.Series:
     """
-    Vectorized address standardization using pandas string operations.
+    Vectorized mailing address standardization using pandas string operations.
 
     Args:
         gdf (gpd.GeoDataFrame): GeoDataFrame containing address-related columns.
 
     Returns:
-        pd.Series: Series of standardized addresses.
+        pd.Series: Series of standardized mailing addresses.
     """
     # Get address columns and handle nulls
     address_1 = gdf["mailing_address_1"].fillna("").astype(str).str.strip()
@@ -158,7 +158,7 @@ def opa_properties(
         owner_1 (str): The first owner of the property
         owner_2 (str): The second owner of the property
         building_code_description (str): The building code description
-        standardized_address (str): A standardized mailing address
+        standardized_mailing_address (str): A standardized mailing address
         geometry (geometry): The geometry of the property
 
     Source:
@@ -233,7 +233,9 @@ def opa_properties(
     # Create standardized address column
     address_start = time.time()
     print("[OPA_PROPERTIES] Creating standardized address column (vectorized)")
-    opa["standardized_address"] = create_standardized_address_vectorized(opa)
+    opa["standardized_mailing_address"] = (
+        create_standardized_mailing_address_vectorized(opa)
+    )
     address_time = time.time() - address_start
     print(f"[OPA_PROPERTIES] Address standardization: {address_time:.3f}s")
 
