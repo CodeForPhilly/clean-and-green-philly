@@ -3,19 +3,18 @@ import pandera.pandas as pa
 from .base import BaseValidator
 
 CouncilDistrictsInputSchema = pa.DataFrameSchema(
-    columns = {
-        "district": pa.Column(str),
-        "geometry": pa.Column("geometry")
-    },
+    columns={"district": pa.Column(str), "geometry": pa.Column("geometry")},
     # district should contain 10 records of strings 1-10
-    checks=pa.Check(lambda df: set(df["district"].dropna().unique()) \
-                                    == {str(i) for i in range(1, 11)}),
-    strict=True
+    checks=pa.Check(
+        lambda df: set(df["district"].dropna().unique())
+        == {str(i) for i in range(1, 11)}
+    ),
+    strict=True,
 )
 
 CouncilDistrictsOutputSchema = pa.DataFrameSchema(
     columns={
-        "opa_id": pa.Column(pa.String),  # Assuming it may include leading zeros
+        "opa_id": pa.Column(pa.String),
         "market_value": pa.Column(pa.Int),
         "sale_date": pa.Column(pa.DateTime),
         "sale_price": pa.Column(pa.Int),
@@ -29,9 +28,10 @@ CouncilDistrictsOutputSchema = pa.DataFrameSchema(
         "standardized_address": pa.Column(pa.String, nullable=True),
         "vacant": pa.Column(pa.Bool),
         "district": pa.Column(
-            str,checks=pa.Check.isin([str(i) for i in range(1, 11)])),
+            str, checks=pa.Check.isin([str(i) for i in range(1, 11)])
+        ),
     },
-    strict=True
+    strict=True,
 )
 
 
@@ -50,4 +50,4 @@ class CouncilDistrictsOutputValidator(BaseValidator):
     schema = CouncilDistrictsOutputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
-        pass        
+        pass
