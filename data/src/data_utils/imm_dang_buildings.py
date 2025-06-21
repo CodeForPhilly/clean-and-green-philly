@@ -29,7 +29,7 @@ def imm_dang_buildings(
         Identify imminently dangerous buildings
 
     Columns Added:
-        imm_dang_building (str): Indicates whether each property is categorized as imminently dangerous ("Y" or "N").
+        imm_dang_building (bool): Indicates whether each property is categorized as imminently dangerous (True or False).
 
     Primary Feature Layer Columns Referenced:
         opa_id
@@ -46,13 +46,15 @@ def imm_dang_buildings(
 
     imm_dang_buildings, input_validation = loader.load_or_fetch()
 
-    imm_dang_buildings.loc[:, "imm_dang_building"] = "Y"
+    imm_dang_buildings.loc[:, "imm_dang_building"] = True
 
     merged_gdf = opa_join(
         input_gdf,
         imm_dang_buildings,
     )
 
-    merged_gdf.loc[:, "imm_dang_building"] = merged_gdf["imm_dang_building"].fillna("N")
+    merged_gdf.loc[:, "imm_dang_building"] = (
+        merged_gdf["imm_dang_building"].fillna(False).astype(bool)
+    )
 
     return merged_gdf, input_validation

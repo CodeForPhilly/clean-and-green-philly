@@ -36,9 +36,9 @@ def delinquencies(
         total_due (float): Total amount owed.
         most_recent_year_owed (str): Most recent year owed.
         num_years_owed (int): Number of years owed.
-        payment_agreement (str): Indicates if there is a payment agreement.
-        is_actionable (str): Flag for actionable tax delinquency.
-        sheriff_sale (str): Indicates if the property is at risk of sheriff sale.
+        payment_agreement (bool): Indicates if there is a payment agreement.
+        is_actionable (bool): Flag for actionable tax delinquency.
+        sheriff_sale (bool): Indicates if the property is at risk of sheriff sale.
         total_assessment (float): Total property assessment.
 
     Primary Feature Layer Columns Referenced:
@@ -79,9 +79,32 @@ def delinquencies(
         merged_gdf["total_assessment"], errors="coerce"
     )
 
-    # Convert most_recent_year_owed to datetime
+    # Convert boolean fields from string to boolean
+    merged_gdf["is_actionable"] = (
+        merged_gdf["is_actionable"]
+        .map({"Y": True, "N": False, "NA": False})
+        .fillna(False)
+    )
+    merged_gdf["sheriff_sale"] = (
+        merged_gdf["sheriff_sale"]
+        .map({"Y": True, "N": False, "NA": False})
+        .fillna(False)
+    )
+    merged_gdf["payment_agreement"] = (
+        merged_gdf["payment_agreement"]
+        .map({"Y": True, "N": False, "NA": False})
+        .fillna(False)
+    )
+
+    # Convert most_recent_year_owed to datetime, handling invalid values
+    # First, replace invalid values with NaN
+    merged_gdf["most_recent_year_owed"] = merged_gdf["most_recent_year_owed"].replace(
+        ["nan", "None", ""], pd.NaT
+    )
+
+    # Convert valid values to datetime
     merged_gdf["most_recent_year_owed"] = pd.to_datetime(
-        merged_gdf["most_recent_year_owed"].astype(str) + "-12-31"
+        merged_gdf["most_recent_year_owed"].astype(str) + "-12-31", errors="coerce"
     )
 
     # Fill missing values with "NA" for string columns

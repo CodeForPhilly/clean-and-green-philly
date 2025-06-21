@@ -25,7 +25,7 @@ def conservatorship(
         primary_featurelayer (FeatureLayer): A feature layer containing property data in a GeoDataFrame (`gdf`).
 
     Columns Added:
-        conservatorship (str): Indicates whether each property qualifies for conservatorship ("Yes" or "No").
+        conservatorship (bool): Indicates whether each property qualifies for conservatorship (True or False).
 
     Primary Feature Layer Columns Referenced:
         city_owner_agency, sheriff_sale, market_value, all_violations_past_year, sale_date
@@ -35,13 +35,13 @@ def conservatorship(
 
     Returns:
         FeatureLayer: The input feature layer with an added "conservatorship" column indicating
-        whether each property qualifies for conservatorship ("Yes" or "No").
+        whether each property qualifies for conservatorship (True or False).
     """
     conservatorships = []
 
     for idx, row in input_gdf.iterrows():
         city_owner_agency = row["city_owner_agency"]
-        sheriff_sale = row["sheriff_sale"] == "Y"
+        sheriff_sale = row["sheriff_sale"]  # Now boolean
         market_value_over_1000 = (
             row["market_value"] and float(row["market_value"]) > 1000
         )
@@ -57,11 +57,11 @@ def conservatorship(
         if city_owner_agency == "Land Bank (PHDC)" or (
             not sale_date_6_months_ago and market_value_over_1000
         ):
-            conservatorship = "No"
+            conservatorship = False
         elif violations_exist and not sheriff_sale and sale_date_6_months_ago:
-            conservatorship = "Yes"
+            conservatorship = True
         else:
-            conservatorship = "No"
+            conservatorship = False
 
         conservatorships.append(conservatorship)
 
