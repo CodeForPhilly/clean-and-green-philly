@@ -41,36 +41,20 @@ class CouncilDistrictsOutputValidator(BaseValidator):
 
     schema = CouncilDistrictsSchema
 
-    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
-        """
-        Custom validation beyond the basic schema constraints.
-
-        Args:
-            gdf: GeoDataFrame to validate
-            check_stats: Whether to run statistical checks (skip for unit tests with small data)
-        """
-        # District count validation - should be exactly 10 unique values
-        if check_stats and "district" in gdf.columns:
-            unique_district_count = gdf["district"].nunique()
-            if unique_district_count != 10:
-                self.errors.append(
-                    f"District unique count ({unique_district_count}) should be exactly 10"
-                )
-
-        # Only run statistical checks if requested and data is large enough
-        if check_stats and len(gdf) > 100:
-            self._statistical_validation(gdf)
-            self._print_statistical_summary(gdf)
-
-    def _statistical_validation(self, gdf: gpd.GeoDataFrame):
-        """Statistical validation that requires larger datasets."""
-        # No additional statistical validation needed - district count is handled in _custom_validation
+    def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
+        """Row-level validation that works with any dataset size."""
+        # No specific row-level validation needed for council districts
         pass
+
+    def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
+        """Statistical validation that requires larger datasets."""
+        # District count validation - should be exactly 10 unique values
+        if "district" in gdf.columns:
+            self._validate_unique_count(gdf, "district", errors, expected_count=10)
 
     def _print_statistical_summary(self, gdf: gpd.GeoDataFrame):
         """Print statistical summary of the council districts data."""
-        print("\n=== Council Districts Statistical Summary ===")
-        print(f"Total properties: {len(gdf):,}")
+        self._print_summary_header("Council Districts Statistical Summary", gdf)
 
         # District distribution
         if "district" in gdf.columns:
@@ -88,4 +72,4 @@ class CouncilDistrictsOutputValidator(BaseValidator):
             unique_districts = gdf["district"].dropna().unique()
             print(f"District values: {sorted(unique_districts)}")
 
-        print("=" * 50)
+        self._print_summary_footer()

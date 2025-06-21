@@ -1,11 +1,10 @@
-import time
 from datetime import datetime
 
 import geopandas as gpd
 import pandas as pd
 import pandera.pandas as pa
 
-from .base import BaseValidator, ValidationResult
+from .base import BaseValidator
 
 # Define the OPA Properties DataFrame Schema
 OPAPropertiesSchema = pa.DataFrameSchema(
@@ -78,73 +77,6 @@ class OPAPropertiesOutputValidator(BaseValidator):
     """Validator for opa properties service output with comprehensive statistical validation."""
 
     schema = OPAPropertiesSchema
-
-    def validate(
-        self, gdf: gpd.GeoDataFrame, check_stats: bool = True
-    ) -> ValidationResult:
-        """
-        Validate the data after a service runs.
-
-        Args:
-            gdf: The GeoDataFrame to validate
-            check_stats: Whether to run statistical checks (skip for unit tests with small data)
-
-        Returns:
-            ValidationResult: A boolean success together with a list of collected errors from validation
-        """
-        validate_start = time.time()
-
-        # Geometry validation
-        geometry_start = time.time()
-        self.geometry_validation(gdf)
-        geometry_time = time.time() - geometry_start
-
-        # OPA validation
-        opa_start = time.time()
-        self.opa_validation(gdf)
-        opa_time = time.time() - opa_start
-
-        # Schema validation
-        schema_start = time.time()
-        if self.schema:
-            try:
-                self.schema.validate(gdf, lazy=True)
-            except pa.errors.SchemaErrors as err:
-                self.errors.append(err.failure_cases)
-        schema_time = time.time() - schema_start
-
-        # Custom validation with check_stats parameter
-        custom_start = time.time()
-        self._custom_validation(gdf, check_stats=check_stats)
-        custom_time = time.time() - custom_start
-
-        total_validate_time = time.time() - validate_start
-        print(
-            f"  [VALIDATE] {total_validate_time:.3f}s (geometry: {geometry_time:.3f}s, opa: {opa_time:.3f}s, schema: {schema_time:.3f}s, custom: {custom_time:.3f}s)"
-        )
-
-        return ValidationResult(success=not self.errors, errors=self.errors)
-
-    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
-        """
-        Custom validation beyond the basic schema constraints.
-
-        Args:
-            gdf: GeoDataFrame to validate
-            check_stats: Whether to run statistical checks (skip for unit tests with small data)
-        """
-        errors = []
-
-        # Always run row-level checks
-        self._row_level_validation(gdf, errors)
-
-        # Only run statistical checks if requested and data is large enough
-        if check_stats and len(gdf) > 100:
-            self._statistical_validation(gdf, errors)
-            self._print_statistical_summary(gdf)
-
-        # Add all errors to the validator's error list
-        self.errors.extend(errors)
 
     def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Row-level validation that works with any dataset size."""
@@ -289,8 +221,7 @@ class OPAPropertiesOutputValidator(BaseValidator):
 
     def _print_statistical_summary(self, gdf: gpd.GeoDataFrame):
         """Print comprehensive statistical summary of the OPA properties data."""
-        print("\n=== OPA Properties Statistical Summary ===")
-        print(f"Total properties: {len(gdf):,}")
+        self._print_summary_header("OPA Properties Statistical Summary", gdf)
 
         # Parcel type distribution
         if "parcel_type" in gdf.columns:
@@ -340,4 +271,4 @@ class OPAPropertiesOutputValidator(BaseValidator):
             unique_addresses = gdf["standardized_street_address"].nunique()
             print(f"\nUnique standardized addresses: {unique_addresses:,}")
 
-        print("=" * 50)
+        self._print_summary_footer()

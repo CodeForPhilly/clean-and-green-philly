@@ -24,6 +24,7 @@ class BaseValidator(ABC):
     """Base class for service-specific data validation."""
 
     schema = None  # Can be DataFrameSchema or None
+    min_stats_threshold = 100  # Can be overridden by subclasses
 
     def __init_subclass__(cls):
         schema = getattr(cls, "schema", None)
@@ -40,7 +41,7 @@ class BaseValidator(ABC):
     def geometry_validation(self, gdf: gpd.GeoDataFrame):
         """
         Validate the geometry column in a geodataframe if it exists, including checks for coordinate system and
-        location being with Philadelphi city bounds.
+        location being with Philadelphia city bounds.
 
         Args:
             gdf (GeoDataFrame): The GeoDataFrame input to validate.
@@ -216,7 +217,96 @@ class BaseValidator(ABC):
         return ValidationResult(success=not self.errors, errors=self.errors)
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
+        """
+        Template method for custom validation that follows a consistent pattern.
+
+        Args:
+            gdf: GeoDataFrame to validate
+            check_stats: Whether to run statistical checks (skip for unit tests with small data)
+        """
+        errors = []
+
+        # Always run row-level checks
+        self._row_level_validation(gdf, errors)
+
+        # Only run statistical checks if requested and data is large enough
+        if check_stats and len(gdf) >= self.min_stats_threshold:
+            self._statistical_validation(gdf, errors)
+            self._print_statistical_summary(gdf)
+
+        # Add all errors to the validator's error list
+        self.errors.extend(errors)
+
+    def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
+        """Row-level validation that works on any dataset size. Override in subclasses."""
         pass
+
+    def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
+        """Statistical validation that requires larger datasets. Override in subclasses."""
+        pass
+
+    def _print_statistical_summary(self, gdf: gpd.GeoDataFrame):
+        """Print domain-specific statistics. Override in subclasses."""
+        pass
+
+    def _validate_required_columns(
+        self, gdf: gpd.GeoDataFrame, required_columns: list, errors: list
+    ):
+        """Check for missing required columns using pandera."""
+        missing_columns = [col for col in required_columns if col not in gdf.columns]
+        if missing_columns:
+            errors.append(f"Missing required columns: {missing_columns}")
+
+    def _validate_column_schema(
+        self, gdf: gpd.GeoDataFrame, column_schemas: dict, errors: list
+    ):
+        """Validate multiple columns against pandera column definitions."""
+        # Create temporary schema with just the columns to validate
+        temp_schema = pa.DataFrameSchema(column_schemas, strict=False)
+        try:
+            temp_schema.validate(gdf, lazy=True)
+        except pa.errors.SchemaErrors as err:
+            errors.append(err.failure_cases)
+
+    def _validate_unique_count(
+        self,
+        gdf: gpd.GeoDataFrame,
+        column: str,
+        errors: list,
+        expected_count=None,
+        min_count=None,
+        max_count=None,
+    ):
+        """Check if column has expected number of unique values."""
+        if column not in gdf.columns:
+            errors.append(f"Column '{column}' not found for unique count validation")
+            return
+
+        unique_count = gdf[column].nunique()
+
+        if expected_count is not None and unique_count != expected_count:
+            errors.append(
+                f"Column '{column}' has {unique_count} unique values, expected {expected_count}"
+            )
+
+        if min_count is not None and unique_count < min_count:
+            errors.append(
+                f"Column '{column}' has {unique_count} unique values, minimum expected {min_count}"
+            )
+
+        if max_count is not None and unique_count > max_count:
+            errors.append(
+                f"Column '{column}' has {unique_count} unique values, maximum expected {max_count}"
+            )
+
+    def _print_summary_header(self, title: str, gdf: gpd.GeoDataFrame):
+        """Print standard header with title and total count."""
+        print(f"\n=== {title} ===")
+        print(f"Total records: {len(gdf):,}")
+
+    def _print_summary_footer(self):
+        """Print standard footer separator."""
+        print("=" * 50)
 
 
 def validate_output(
