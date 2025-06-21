@@ -77,6 +77,12 @@ def merge_pwd_parcels_gdf(
     merged_gdf = merged_gdf_indexed.reset_index()
 
     print("Number of observations retaining point geometry:", no_geometry_count)
+
+    # Calculate the area of the parcel in square feet
+    merged_gdf["parcel_area_sqft"] = merged_gdf.geometry.area
+    # Fill NaN values (from point geometries) with "NA" string
+    merged_gdf["parcel_area_sqft"] = merged_gdf["parcel_area_sqft"].fillna("NA")
+
     return merged_gdf
 
 
@@ -100,6 +106,8 @@ def pwd_parcels(
         is_condo_unit (bool): Flag indicating if the property is a condominium unit.
                              Condo units are identified by duplicate geometries (multiple units at same site)
                              and retain their point geometries.
+        parcel_area_sqft (str): The area of the parcel in square feet.
+                                 Polygons will have an area value; points will have "NA".
 
     Columns Updated:
         geometry: The geometry column is updated with validated geometries from PWD parcels.
