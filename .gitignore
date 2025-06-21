@@ -65,3 +65,6 @@ data/src/app/service-account-key.json
 
 # Cached and temporary data files from pipeline
 storage/
+
+# cursor
+.cursor/
