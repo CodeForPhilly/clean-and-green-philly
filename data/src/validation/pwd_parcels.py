@@ -83,6 +83,9 @@ class PWDParcelsOutputValidator(BaseValidator):
     def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Row-level validation that works with any dataset size."""
 
+        # Call parent class method to get empty dataframe check
+        super()._row_level_validation(gdf, errors)
+
         # Check for required columns using helper method
         required_columns = ["is_condo_unit", "parcel_area_sqft", "opa_id"]
         self._validate_required_columns(gdf, required_columns, errors)

@@ -81,6 +81,9 @@ class OPAPropertiesOutputValidator(BaseValidator):
     def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Row-level validation that works with any dataset size."""
 
+        # Call parent class method to get empty dataframe check
+        super()._row_level_validation(gdf, errors)
+
         # Check for future sale dates (row-level check)
         if "sale_date" in gdf.columns:
             sale_dates = gdf["sale_date"].dropna()

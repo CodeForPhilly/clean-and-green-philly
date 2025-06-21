@@ -43,8 +43,9 @@ class CouncilDistrictsOutputValidator(BaseValidator):
 
     def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Row-level validation that works with any dataset size."""
-        # No specific row-level validation needed for council districts
-        pass
+        # Call parent class method to get empty dataframe check
+        super()._row_level_validation(gdf, errors)
+        # No additional row-level validation needed for council districts
 
     def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Statistical validation that requires larger datasets."""

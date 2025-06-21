@@ -239,7 +239,10 @@ class BaseValidator(ABC):
 
     def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Row-level validation that works on any dataset size. Override in subclasses."""
-        pass
+        # Check for empty dataframes
+        if len(gdf) == 0:
+            errors.append("DataFrame is empty - no data to validate")
+            return
 
     def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Statistical validation that requires larger datasets. Override in subclasses."""
