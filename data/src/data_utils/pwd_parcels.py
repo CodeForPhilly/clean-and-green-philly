@@ -1,6 +1,8 @@
+from typing import Tuple
+
 import geopandas as gpd
 
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.pwd_parcels import PWDParcelsOutputValidator
 
 from ..classes.loaders import CartoLoader
@@ -50,7 +52,9 @@ def merge_pwd_parcels_gdf(
 
 
 @validate_output(PWDParcelsOutputValidator)
-def pwd_parcels(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def pwd_parcels(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Updates the primary feature layer by replacing its geometry column with validated
     geometries from PWD parcels data. Retains point geometry for rows with no polygon

@@ -1,169 +1,120 @@
-import os
-import re
-from io import BytesIO
-from typing import List, Union
+import time
+from typing import Tuple
 
-import fiona
 import geopandas as gpd
-import requests
-from bs4 import BeautifulSoup
-from tqdm import tqdm
 
-from src.config.config import USE_CRS
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.park_priority import ParkPriorityOutputValidator
 
-from ..classes.file_manager import FileManager, FileType, LoadType
+from ..classes.loaders import EsriLoader
+from ..constants.services import PARK_PRIORITY_AREAS_URBAN_PHL
 from ..utilities import spatial_join
-
-file_manager = FileManager()
-
-
-def get_latest_shapefile_url() -> str:
-    """
-    Scrapes the TPL website to get the URL of the latest shapefile.
-
-    Returns:from ..classes.featurelayer import FeatureLayer
-
-        str: The URL of the latest shapefile.
-
-    Raises:
-        ValueError: If the shapefile link is not found on the page.
-    """
-    url: str = "https://www.tpl.org/park-data-downloads"
-    response: requests.Response = requests.get(url)
-    soup: BeautifulSoup = BeautifulSoup(response.content, "html.parser")
-    shapefile_link: Union[BeautifulSoup, None] = soup.find(
-        "a", string=re.compile(r"Shapefile")
-    )
-    if shapefile_link:
-        return str(shapefile_link["href"])
-    else:
-        raise ValueError("Shapefile link not found on the page")
-
-
-def download_and_process_shapefile(
-    geojson_filename: str, park_url: str, target_files: List[str], file_name_prefix: str
-) -> gpd.GeoDataFrame:
-    """
-    Downloads and processes the shapefile to create a GeoDataFrame for Philadelphia parks.
-
-    Args:
-        geojson_path (str): Path to save the GeoJSON file.
-        park_url (str): URL to download the shapefile.
-        target_files (List[str]): List of files to extract from the shapefile.
-        file_name_prefix (str): Prefix for the file names to be extracted.
-
-    Returns:
-        gpd.GeoDataFrame: GeoDataFrame containing the processed park data.
-    """
-    target_files_paths = [
-        file_manager.get_file_path(filename, LoadType.TEMP) for filename in target_files
-    ]
-    if any([not os.path.exists(file_path) for file_path in target_files_paths]):
-        print("Downloading and processing park priority data...")
-        response: requests.Response = requests.get(park_url, stream=True)
-        total_size: int = int(response.headers.get("content-length", 0))
-
-        with tqdm(
-            total=total_size, unit="iB", unit_scale=True, desc="Downloading"
-        ) as progress_bar:
-            buffer: BytesIO = BytesIO()
-            for data in response.iter_content(1024):
-                size: int = buffer.write(data)
-                progress_bar.update(size)
-
-        print("Extracting files from the downloaded zip...")
-        file_manager.extract_files(buffer, target_files)
-
-    else:
-        print("Parks data already located in filesystem - proceeding")
-
-    print("Processing shapefile...")
-
-    def filter_shapefile_generator():
-        file_path = file_manager.get_file_path(
-            file_name_prefix + "_ParkPriorityAreas.shp", LoadType.TEMP
-        )
-
-        with fiona.open(file_path) as source:
-            for feature in source:
-                if not feature["properties"]["ID"].startswith("42101"):
-                    continue
-                filtered_feature = feature
-                filtered_feature["properties"] = {
-                    column: value
-                    for column, value in feature["properties"].items()
-                    if column in ["ParkNeed"]
-                }
-                yield filtered_feature
-
-    phl_parks: gpd.GeoDataFrame = gpd.GeoDataFrame.from_features(
-        filter_shapefile_generator()
-    )
-
-    # ISSUE Check this CRS
-    phl_parks.crs = USE_CRS
-    phl_parks = phl_parks.to_crs(USE_CRS)
-
-    if isinstance(phl_parks, gpd.GeoDataFrame):
-        phl_parks.rename(columns={"ParkNeed": "park_priority"}, inplace=True)
-    else:
-        raise TypeError("Expected a GeoDataFrame, got Series or another type instead")
-
-    print(f"Writing filtered data to GeoJSON: {geojson_filename}")
-    file_manager.save_gdf(phl_parks, geojson_filename, LoadType.TEMP, FileType.GEOJSON)
-
-    return phl_parks
 
 
 @validate_output(ParkPriorityOutputValidator)
-def park_priority(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def park_priority(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Downloads and processes park priority data, then joins it with the primary feature layer.
+    Associates properties with park priority areas for Philadelphia using TPL's FeatureServer.
+
+    This function loads park priority data from TPL's ESRI FeatureServer and performs
+    a spatial join with the input GeoDataFrame to associate properties with their
+    park priority scores.
 
     Args:
-        primary_featurelayer (FeatureLayer): The primary feature layer to join with park priority data.
+        input_gdf (gpd.GeoDataFrame): The input GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The primary feature layer with park priority data joined.
+        Tuple[gpd.GeoDataFrame, ValidationResult]: The input GeoDataFrame with park
+        priority data joined and the validation result.
 
     Tagline:
         Labels high-priority park areas.
 
     Columns Added:
-        park_priority (int): The park priority score.
+        park_priority (float): The park priority score from TPL's analysis.
 
     Primary Feature Layer Columns Referenced:
         opa_id, geometry
 
     Source:
-        https://www.tpl.org/park-data-downloads
+        https://server7.tplgis.org/arcgis7/rest/services/ParkServe/ParkServe_ProdNew/FeatureServer/6/
     """
-    park_url: str = get_latest_shapefile_url()
-    print(f"Downloading park priority data from: {park_url}")
+    start_time = time.time()
+    print(f"Starting park_priority function at {time.strftime('%H:%M:%S')}")
 
-    file_name_prefix: str = "Parkserve"
-    target_files: List[str] = [
-        file_name_prefix + "_ParkPriorityAreas.shp",
-        file_name_prefix + "_ParkPriorityAreas.dbf",
-        file_name_prefix + "_ParkPriorityAreas.shx",
-        file_name_prefix + "_ParkPriorityAreas.prj",
-        file_name_prefix + "_ParkPriorityAreas.CPG",
-        file_name_prefix + "_ParkPriorityAreas.sbn",
-        file_name_prefix + "_ParkPriorityAreas.sbx",
-    ]
-    geojson_filename = "phl_parks"
+    # Initialize the ESRI loader with Pennsylvania filter
+    loader_start = time.time()
+    print("Initializing EsriLoader for Park Priority Areas...")
 
-    try:
-        phl_parks = file_manager.load_gdf(
-            geojson_filename, FileType.GEOJSON, LoadType.TEMP
+    loader = EsriLoader(
+        name="Park Priority Areas - Philadelphia",
+        esri_urls=PARK_PRIORITY_AREAS_URBAN_PHL,
+        cols=["id", "parkneed", "rg_abbrev"],  # Include rg_abbrev for filtering
+        extra_query_args={"where": "rg_abbrev = 'PA'"},
+    )
+
+    loader_init_time = time.time() - loader_start
+    print(f"EsriLoader initialization took {loader_init_time:.2f}s")
+
+    # Load or fetch the park priority data
+    load_start = time.time()
+    print("Loading park priority data from ESRI FeatureServer...")
+
+    park_priority_gdf, input_validation = loader.load_or_fetch()
+
+    load_time = time.time() - load_start
+    print(f"Data loading took {load_time:.2f}s")
+    print(f"Loaded {len(park_priority_gdf)} park priority areas")
+
+    # Log data quality information
+    if not park_priority_gdf.empty:
+        print(f"Columns in park priority data: {list(park_priority_gdf.columns)}")
+        print(f"CRS: {park_priority_gdf.crs}")
+        print(
+            f"Geometry types: {park_priority_gdf.geometry.geom_type.value_counts().to_dict()}"
         )
-    except FileNotFoundError as e:
-        print(f"Error loading GeoJSON: {e}. Re-downloading and processing shapefile.")
-        phl_parks = download_and_process_shapefile(
-            geojson_filename, park_url, target_files, file_name_prefix
+
+        # Check for null values in key columns
+        null_counts = park_priority_gdf[["parkneed", "id"]].isnull().sum()
+        print(f"Null values in key columns: {null_counts.to_dict()}")
+
+    # Rename columns as needed
+    rename_start = time.time()
+    if "parkneed" in park_priority_gdf.columns:
+        park_priority_gdf.rename(columns={"parkneed": "park_priority"}, inplace=True)
+        print("Renamed 'parkneed' column to 'park_priority'")
+
+    rename_time = time.time() - rename_start
+    print(f"Column renaming took {rename_time:.2f}s")
+
+    # Perform spatial join
+    join_start = time.time()
+    print("Performing spatial join between input data and park priority areas...")
+
+    merged_gdf = spatial_join(input_gdf, park_priority_gdf)
+
+    join_time = time.time() - join_start
+    print(f"Spatial join took {join_time:.2f}s")
+
+    # Log join results
+    if "park_priority" in merged_gdf.columns:
+        matched_count = merged_gdf["park_priority"].notna().sum()
+        total_count = len(merged_gdf)
+        match_rate = (matched_count / total_count) * 100 if total_count > 0 else 0
+        print(
+            f"Spatial join results: {matched_count}/{total_count} properties matched ({match_rate:.1f}%)"
         )
 
-    merged_gdf = spatial_join(input_gdf, phl_parks)
-    return merged_gdf
+        if matched_count > 0:
+            priority_stats = merged_gdf["park_priority"].describe()
+            print(
+                f"Park priority statistics: min={priority_stats['min']:.2f}, max={priority_stats['max']:.2f}, mean={priority_stats['mean']:.2f}"
+            )
+
+    total_time = time.time() - start_time
+    print(f"Total park_priority function execution time: {total_time:.2f}s")
+    print(f"Function completed at {time.strftime('%H:%M:%S')}")
+
+    return merged_gdf, input_validation

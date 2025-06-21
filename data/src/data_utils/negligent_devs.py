@@ -50,4 +50,4 @@ def negligent_devs(
         input_gdf["city_owner_agency"].isna() | (input_gdf["city_owner_agency"] == "")
     )
 
-    return input_gdf
+    return input_gdf, ValidationResult(True)
