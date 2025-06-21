@@ -13,14 +13,14 @@ def tactical_urbanism(
     """
     Assigns a 'tactical_urbanism' value to each row in the primary feature layer based on specific conditions.
 
-    Tactical urbanism is marked as "Yes" if the property is a parcel of type 'Land',
-    and does not have any unsafe or immediately dangerous buildings. Otherwise, it is "No".
+    Tactical urbanism is marked as True if the property is a parcel of type 'Land',
+    and does not have any unsafe or immediately dangerous buildings. Otherwise, it is False.
 
     Args:
         primary_featurelayer: A FeatureLayer object containing a GeoDataFrame (`gdf`) as an attribute.
 
     Columns Added:
-        tactical_urbanism (str): Indicates whether each property qualifies for tactical urbanism ("Yes" or "No").
+        tactical_urbanism (bool): Indicates whether each property qualifies for tactical urbanism (True or False).
 
     Primary Feature Layer Columns Referenced:
         parcel_type, unsafe_building, imm_dang_building
@@ -36,12 +36,12 @@ def tactical_urbanism(
     for idx, row in input_gdf.iterrows():
         if (
             row["parcel_type"] == "Land"
-            and row["unsafe_building"] == "N"
-            and row["imm_dang_building"] == "N"
+            and not row["unsafe_building"]
+            and not row["imm_dang_building"]
         ):
-            tactical_urbanism = "Yes"
+            tactical_urbanism = True
         else:
-            tactical_urbanism = "No"
+            tactical_urbanism = False
 
         tactical_urbanism_values.append(tactical_urbanism)
 

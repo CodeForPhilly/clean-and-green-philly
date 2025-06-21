@@ -35,6 +35,8 @@ class DiffReport:
             print(
                 f"Table {self.table_name} has less than two separate files with different timestamps. Cannot perform comparison"
             )
+            self.summary_text = f"Table {self.table_name} has less than two separate files with different timestamps. Cannot perform comparison"
+            return self
 
         def extract_date(str) -> datetime:
             pattern = "\b\d{4}_\d{1,2}_\d{1,2}\b"

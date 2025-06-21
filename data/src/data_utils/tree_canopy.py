@@ -1,4 +1,5 @@
 import io
+import os
 import zipfile
 from typing import Tuple
 
@@ -46,17 +47,53 @@ def tree_canopy(
         "https://national-tes-data-share.s3.amazonaws.com/national_tes_share/pa.zip.zip"
     )
 
-    # Download and extract tree canopy data
-    tree_response = requests.get(tree_url)
+    print(f"[TREE_CANOPY] FileManager temp directory: {file_manager.temp_directory}")
+    print(f"[TREE_CANOPY] Current working directory: {os.getcwd()}")
 
-    with io.BytesIO(tree_response.content) as f:
-        with zipfile.ZipFile(f, "r") as zip_ref:
-            zip_ref.extractall("storage/temp")
-
-    # Load and process the tree canopy shapefile
+    # Check if pa.shp already exists
     shapefile_file_path = file_manager.get_file_path(
         file_name="pa.shp", load_type=LoadType.TEMP
     )
+    print(f"[TREE_CANOPY] Expected shapefile path: {shapefile_file_path}")
+    print(f"[TREE_CANOPY] Shapefile exists: {os.path.exists(shapefile_file_path)}")
+
+    # List contents of temp directory before extraction
+    print("[TREE_CANOPY] Contents of temp directory before extraction:")
+    if os.path.exists(file_manager.temp_directory):
+        for file in os.listdir(file_manager.temp_directory):
+            print(f"  - {file}")
+    else:
+        print("  Temp directory does not exist!")
+
+    # Download and extract tree canopy data
+    print(f"[TREE_CANOPY] Downloading from: {tree_url}")
+    tree_response = requests.get(tree_url)
+    print(
+        f"[TREE_CANOPY] Download completed, content length: {len(tree_response.content)}"
+    )
+
+    with io.BytesIO(tree_response.content) as f:
+        with zipfile.ZipFile(f, "r") as zip_ref:
+            print("[TREE_CANOPY] Zip file contents:")
+            for file_info in zip_ref.filelist:
+                print(f"  - {file_info.filename}")
+            print(f"[TREE_CANOPY] Extracting to: {file_manager.temp_directory}")
+            zip_ref.extractall(file_manager.temp_directory)
+
+    # List contents of temp directory after extraction
+    print("[TREE_CANOPY] Contents of temp directory after extraction:")
+    if os.path.exists(file_manager.temp_directory):
+        for file in os.listdir(file_manager.temp_directory):
+            print(f"  - {file}")
+    else:
+        print("  Temp directory does not exist!")
+
+    # Check if pa.shp exists after extraction
+    print(
+        f"[TREE_CANOPY] Shapefile exists after extraction: {os.path.exists(shapefile_file_path)}"
+    )
+
+    # Load and process the tree canopy shapefile
     loader = GdfLoader(
         name="Tree Canopy", input=shapefile_file_path, cols=["county", "tc_gap"]
     )

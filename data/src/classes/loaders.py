@@ -1,6 +1,7 @@
 import logging as log
 import os
 import subprocess
+import time
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import List, Tuple
@@ -28,13 +29,14 @@ log.basicConfig(level=log_level)
 
 
 # Esri data loader
-def load_esri_data(esri_urls: List[str], input_crs: str):
+def load_esri_data(esri_urls: List[str], input_crs: str, extra_query_args: dict = None):
     """
     Load data from Esri REST URLs and add a parcel_type column based on the URL.
 
     Args:
         esri_rest_urls (list[str]): List of Esri REST URLs to fetch data from.
         input_crs (str): CRS of the source data.
+        extra_query_args (dict): Additional query parameters to pass to the ESRI service.
     Returns:
         GeoDataFrame: Combined GeoDataFrame with data from all URLs.
     """
@@ -49,7 +51,19 @@ def load_esri_data(esri_urls: List[str], input_crs: str):
             else None
         )
 
-        dumper = EsriDumper(url)
+        # Create dumper with query parameters if provided
+        dumper_kwargs = {
+            "url": url,
+            "pause_seconds": 1,
+            "requests_to_pause": 10,
+            "max_page_size": 2000,
+        }
+
+        # Pass extra_query_args as the extra_query_args parameter, not as direct kwargs
+        if extra_query_args:
+            dumper_kwargs["extra_query_args"] = extra_query_args
+
+        dumper = EsriDumper(**dumper_kwargs)
         features = [feature for feature in dumper]
 
         if not features:
@@ -167,29 +181,82 @@ class BaseLoader(ABC):
             log.info("No data to cache")
             return
 
+        start_time = time.time()
+        print(f"  Starting cache operation for {self.name}...")
+
         # Save sourced data to a local parquet file in the storage/source_cache directory
         file_label = self.file_manager.generate_file_label(self.table_name)
+        print(f"  Generated file label: {file_label}")
+
+        cache_start = time.time()
         self.file_manager.save_gdf(
             gdf, file_label, LoadType.SOURCE_CACHE, FileType.PARQUET
         )
+        cache_time = time.time() - cache_start
+
+        total_time = time.time() - start_time
+        print(
+            f"  Cache operation completed in {total_time:.2f}s (save: {cache_time:.2f}s)"
+        )
 
     def load_or_fetch(self) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
-        if not FORCE_RELOAD and self.file_manager.check_source_cache_file_exists(
-            self.table_name, LoadType.SOURCE_CACHE
-        ):
-            print(f"Loading data for {self.name} from cache...")
-            gdf = self.file_manager.get_most_recent_cache(self.table_name)
-        else:
-            print("Loading fresh data now...")
-            gdf = self.load_data()
-            print("Caching fresh data now...")
-            self.cache_data(gdf)
+        print(f"\n=== Starting load_or_fetch for: {self.name} ===")
+        total_start_time = time.time()
 
+        # Check if we should use cached data
+        cache_check_start = time.time()
+        use_cache = (
+            not FORCE_RELOAD
+            and self.file_manager.check_source_cache_file_exists(
+                self.table_name, LoadType.SOURCE_CACHE
+            )
+        )
+        cache_check_time = time.time() - cache_check_start
+        print(f"  Cache check took: {cache_check_time:.2f}s")
+
+        if use_cache:
+            print(f"  Loading data for {self.name} from cache...")
+            cache_load_start = time.time()
+            gdf = self.file_manager.get_most_recent_cache(self.table_name)
+            cache_load_time = time.time() - cache_load_start
+            print(f"  Cache load took: {cache_load_time:.2f}s")
+
+            if gdf is not None:
+                print(f"  Successfully loaded from cache ({len(gdf)} rows)")
+            else:
+                print("  Cache file not found, loading fresh data...")
+                gdf = self._load_fresh_data()
+        else:
+            print("  Loading fresh data now...")
+            gdf = self._load_fresh_data()
+
+        # Validation
+        validation_start = time.time()
         validation_result = (
             self.validator.validate(gdf) if self.validator else ValidationResult(True)
         )
+        validation_time = time.time() - validation_start
+        print(f"  Validation took: {validation_time:.2f}s")
+
+        total_time = time.time() - total_start_time
+        print(f"=== Completed {self.name} in {total_time:.2f}s ===\n")
 
         return gdf, validation_result
+
+    def _load_fresh_data(self) -> gpd.GeoDataFrame:
+        """Helper method to load fresh data with timing"""
+        load_start = time.time()
+        print(f"  Starting load_data() for {self.name}...")
+
+        gdf = self.load_data()
+
+        load_time = time.time() - load_start
+        print(f"  load_data() completed in {load_time:.2f}s ({len(gdf)} rows)")
+
+        print("  Caching fresh data now...")
+        self.cache_data(gdf)
+
+        return gdf
 
     def standardize_opa(self, gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """
@@ -249,30 +316,85 @@ class GdfLoader(BaseLoader):
         self.input = input
 
     def load_data(self):
+        print(f"    GdfLoader.load_data: Starting for {self.name} from {self.input}")
+        start_time = time.time()
+
+        read_start = time.time()
         gdf = gpd.read_file(self.input)
+        read_time = time.time() - read_start
+        print(
+            f"    GdfLoader.load_data: gpd.read_file took {read_time:.2f}s ({len(gdf)} rows)"
+        )
+
+        normalize_start = time.time()
         gdf = self.normalize_columns(gdf, self.cols)
+        normalize_time = time.time() - normalize_start
+        print(f"    GdfLoader.load_data: normalize_columns took {normalize_time:.2f}s")
 
         if not gdf.crs:
             raise AttributeError("Input data doesn't have an original CRS set")
 
+        crs_start = time.time()
         gdf = gdf.to_crs(USE_CRS)
+        crs_time = time.time() - crs_start
+        print(f"    GdfLoader.load_data: CRS conversion took {crs_time:.2f}s")
+
+        geometry_start = time.time()
         gdf["geometry"] = gdf.geometry.make_valid()
+        geometry_time = time.time() - geometry_start
+        print(f"    GdfLoader.load_data: Geometry validation took {geometry_time:.2f}s")
+
+        total_time = time.time() - start_time
+        print(f"    GdfLoader.load_data: Total load_data took {total_time:.2f}s")
 
         return gdf
 
 
 class EsriLoader(BaseLoader):
-    def __init__(self, esri_urls: List[str], *args, **kwargs):
+    def __init__(
+        self, esri_urls: List[str], extra_query_args: dict = None, *args, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         self.esri_urls = esri_urls
+        self.extra_query_args = extra_query_args
 
     def load_data(self):
-        gdf = load_esri_data(self.esri_urls, self.input_crs)
-        gdf = self.normalize_columns(gdf, self.cols)
+        print(
+            f"    EsriLoader.load_data: Starting for {self.name} with {len(self.esri_urls)} URLs"
+        )
+        start_time = time.time()
 
+        esri_start = time.time()
+        gdf = load_esri_data(self.esri_urls, self.input_crs, self.extra_query_args)
+        esri_time = time.time() - esri_start
+        print(
+            f"    EsriLoader.load_data: load_esri_data took {esri_time:.2f}s ({len(gdf)} rows)"
+        )
+
+        normalize_start = time.time()
+        gdf = self.normalize_columns(gdf, self.cols)
+        normalize_time = time.time() - normalize_start
+        print(f"    EsriLoader.load_data: normalize_columns took {normalize_time:.2f}s")
+
+        crs_start = time.time()
         gdf = gdf.to_crs(USE_CRS)
+        crs_time = time.time() - crs_start
+        print(f"    EsriLoader.load_data: CRS conversion took {crs_time:.2f}s")
+
+        opa_start = time.time()
         gdf = self.standardize_opa(gdf)
+        opa_time = time.time() - opa_start
+        print(f"    EsriLoader.load_data: OPA standardization took {opa_time:.2f}s")
+
+        geometry_start = time.time()
         gdf["geometry"] = gdf.geometry.make_valid()
+        geometry_time = time.time() - geometry_start
+        print(
+            f"    EsriLoader.load_data: Geometry validation took {geometry_time:.2f}s"
+        )
+
+        total_time = time.time() - start_time
+        print(f"    EsriLoader.load_data: Total load_data took {total_time:.2f}s")
 
         return gdf
 
@@ -290,12 +412,44 @@ class CartoLoader(BaseLoader):
         self.wkb_geom_field = wkb_geom_field
 
     def load_data(self):
-        gdf = load_carto_data(self.carto_queries, self.input_crs, self.wkb_geom_field)
-        gdf = self.normalize_columns(gdf, self.cols)
+        print(
+            f"    CartoLoader.load_data: Starting for {self.name} with {len(self.carto_queries)} queries"
+        )
+        start_time = time.time()
 
+        carto_start = time.time()
+        gdf = load_carto_data(self.carto_queries, self.input_crs, self.wkb_geom_field)
+        carto_time = time.time() - carto_start
+        print(
+            f"    CartoLoader.load_data: load_carto_data took {carto_time:.2f}s ({len(gdf)} rows)"
+        )
+
+        normalize_start = time.time()
+        gdf = self.normalize_columns(gdf, self.cols)
+        normalize_time = time.time() - normalize_start
+        print(
+            f"    CartoLoader.load_data: normalize_columns took {normalize_time:.2f}s"
+        )
+
+        crs_start = time.time()
         gdf = gdf.to_crs(USE_CRS)
+        crs_time = time.time() - crs_start
+        print(f"    CartoLoader.load_data: CRS conversion took {crs_time:.2f}s")
+
+        opa_start = time.time()
         gdf = self.standardize_opa(gdf)
+        opa_time = time.time() - opa_start
+        print(f"    CartoLoader.load_data: OPA standardization took {opa_time:.2f}s")
+
+        geometry_start = time.time()
         gdf["geometry"] = gdf.geometry.make_valid()
+        geometry_time = time.time() - geometry_start
+        print(
+            f"    CartoLoader.load_data: Geometry validation took {geometry_time:.2f}s"
+        )
+
+        total_time = time.time() - start_time
+        print(f"    CartoLoader.load_data: Total load_data took {total_time:.2f}s")
 
         return gdf
 

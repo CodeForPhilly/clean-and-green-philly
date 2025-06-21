@@ -62,7 +62,7 @@ DRUGCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, the_geom, point
 
 DELINQUENCIES_QUERY = "SELECT * FROM real_estate_tax_delinquencies"
 
-OPA_PROPERTIES_QUERY = "SELECT building_code_description, market_value, sale_date, sale_price, parcel_number, owner_1, owner_2, mailing_address_1, mailing_address_2, mailing_care_of, mailing_street, mailing_zip, mailing_city_state, zip_code, zoning, the_geom FROM opa_properties_public"
+OPA_PROPERTIES_QUERY = "SELECT building_code_description, market_value, sale_date, sale_price, parcel_number, location as street_address,owner_1, owner_2, mailing_address_1, mailing_address_2, mailing_care_of, mailing_street, mailing_zip, mailing_city_state, unit, zip_code, zoning, the_geom FROM opa_properties_public"
 
 PWD_PARCELS_QUERY = "SELECT *, the_geom FROM pwd_parcels"
 
@@ -98,3 +98,7 @@ CENSUS_BGS_URL = (
 DOR_PARCELS_URL = (
     "https://opendata.arcgis.com/datasets/1c57dd1b3ff84449a4b0e3fb29d3cafd_0.geojson"
 )
+
+PARK_PRIORITY_AREAS_URBAN_PHL = [
+    "https://server7.tplgis.org/arcgis7/rest/services/ParkServe/ParkServe_ProdNew/FeatureServer/6/"
+]
