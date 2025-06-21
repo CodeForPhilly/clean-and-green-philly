@@ -1,10 +1,11 @@
+import time
 from datetime import datetime
 
 import geopandas as gpd
 import pandas as pd
 import pandera.pandas as pa
 
-from .base import BaseValidator
+from .base import BaseValidator, ValidationResult
 
 # Define the OPA Properties DataFrame Schema
 OPAPropertiesSchema = pa.DataFrameSchema(
@@ -54,8 +55,10 @@ OPAPropertiesSchema = pa.DataFrameSchema(
         "building_code_description": pa.Column(
             str, nullable=True, description="Building code description"
         ),
-        # Geometry field
-        "geometry": pa.Column(object, nullable=False, description="Property geometry"),
+        # Geometry field - using Pandera's GeoPandas integration
+        "geometry": pa.Column(
+            "geometry", nullable=False, description="Property geometry"
+        ),
     },
     strict=False,
     coerce=True,
@@ -76,11 +79,94 @@ class OPAPropertiesOutputValidator(BaseValidator):
 
     schema = OPAPropertiesSchema
 
-    def _custom_validation(self, gdf: gpd.GeoDataFrame):
+    def validate(
+        self, gdf: gpd.GeoDataFrame, check_stats: bool = True
+    ) -> ValidationResult:
         """
-        Custom statistical validation beyond the basic schema constraints.
+        Validate the data after a service runs.
+
+        Args:
+            gdf: The GeoDataFrame to validate
+            check_stats: Whether to run statistical checks (skip for unit tests with small data)
+
+        Returns:
+            ValidationResult: A boolean success together with a list of collected errors from validation
+        """
+        validate_start = time.time()
+
+        # Geometry validation
+        geometry_start = time.time()
+        self.geometry_validation(gdf)
+        geometry_time = time.time() - geometry_start
+
+        # OPA validation
+        opa_start = time.time()
+        self.opa_validation(gdf)
+        opa_time = time.time() - opa_start
+
+        # Schema validation
+        schema_start = time.time()
+        if self.schema:
+            try:
+                self.schema.validate(gdf, lazy=True)
+            except pa.errors.SchemaErrors as err:
+                self.errors.append(err.failure_cases)
+        schema_time = time.time() - schema_start
+
+        # Custom validation with check_stats parameter
+        custom_start = time.time()
+        self._custom_validation(gdf, check_stats=check_stats)
+        custom_time = time.time() - custom_start
+
+        total_validate_time = time.time() - validate_start
+        print(
+            f"  [VALIDATE] {total_validate_time:.3f}s (geometry: {geometry_time:.3f}s, opa: {opa_time:.3f}s, schema: {schema_time:.3f}s, custom: {custom_time:.3f}s)"
+        )
+
+        return ValidationResult(success=not self.errors, errors=self.errors)
+
+    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
+        """
+        Custom validation beyond the basic schema constraints.
+
+        Args:
+            gdf: GeoDataFrame to validate
+            check_stats: Whether to run statistical checks (skip for unit tests with small data)
         """
         errors = []
+
+        # Always run row-level checks
+        self._row_level_validation(gdf, errors)
+
+        # Only run statistical checks if requested and data is large enough
+        if check_stats and len(gdf) > 100:
+            self._statistical_validation(gdf, errors)
+            self._print_statistical_summary(gdf)
+
+        # Add all errors to the validator's error list
+        self.errors.extend(errors)
+
+    def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
+        """Row-level validation that works with any dataset size."""
+
+        # Check for future sale dates (row-level check)
+        if "sale_date" in gdf.columns:
+            sale_dates = gdf["sale_date"].dropna()
+            if len(sale_dates) > 0:
+                # Convert to timezone-naive for comparison if needed
+                if sale_dates.dt.tz is not None:
+                    sale_dates = sale_dates.dt.tz_localize(None)
+
+                # Check for future dates
+                future_dates = sale_dates > pd.Timestamp.now()
+                future_count = future_dates.sum()
+                if future_count > 0:
+                    errors.append(
+                        f"Found {future_count} properties with sale dates in the future"
+                    )
+
+    def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
+        """Statistical validation that requires larger datasets."""
 
         # 1. ZIP code validation - between 50 and 60 unique values
         if "zip_code" in gdf.columns:
@@ -200,20 +286,6 @@ class OPAPropertiesOutputValidator(BaseValidator):
                     print(
                         f"Warning: Found {historic_count} properties with sale dates before 1700 (historic properties)"
                     )
-
-                # Check for future dates
-                future_dates = sale_dates > pd.Timestamp.now()
-                future_count = future_dates.sum()
-                if future_count > 0:
-                    errors.append(
-                        f"Found {future_count} properties with sale dates in the future"
-                    )
-
-        # 8. Print statistical summary
-        self._print_statistical_summary(gdf)
-
-        # Add all errors to the validator's error list
-        self.errors.extend(errors)
 
     def _print_statistical_summary(self, gdf: gpd.GeoDataFrame):
         """Print comprehensive statistical summary of the OPA properties data."""
