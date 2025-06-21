@@ -23,15 +23,13 @@ class ValidationResult:
 class BaseValidator(ABC):
     """Base class for service-specific data validation."""
 
-    schema: pa.DataFrameModel = None
+    schema = None  # Can be DataFrameSchema or None
 
     def __init_subclass__(cls):
         schema = getattr(cls, "schema", None)
-        if schema is not None and (
-            not isinstance(schema, type) or not isinstance(schema, pa.DataFrameModel)
-        ):
+        if schema is not None and not isinstance(schema, pa.DataFrameSchema):
             raise TypeError(
-                f"{cls.__name__} must define a 'schema' class variable that is a subclass of pandera.SchemaModel."
+                f"{cls.__name__} must define a 'schema' class variable that is a pandera.pandas.DataFrameSchema instance."
             )
         return super().__init_subclass__()
 
@@ -197,9 +195,9 @@ class BaseValidator(ABC):
         schema_start = time.time()
         if self.schema:
             try:
-                self.schema.validate(gdf, lazy_validation=True)
+                self.schema.validate(gdf, lazy=True)
             except pa.errors.SchemaErrors as err:
-                self.errors.append(err.failure_case)
+                self.errors.append(err.failure_cases)
         schema_time = time.time() - schema_start
 
         # Custom validation
