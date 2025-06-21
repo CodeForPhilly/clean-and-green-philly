@@ -1,7 +1,7 @@
 import logging
 from pathlib import Path
 
-FORCE_RELOAD = True
+FORCE_RELOAD = False
 """ During the data load, whether to query the various GIS API services for the data to load. If True, will query the
 API services and report on data differences.  If false will read the cached data."""
 
@@ -14,7 +14,7 @@ ROOT_DIRECTORY = Path(__file__).resolve().parent.parent
 CACHE_FRACTION = 0.05
 """The fraction used to cache portions of the pipeline's transformed data in each step of the pipeline."""
 
-log_level: int = logging.WARN
+log_level: int = logging.INFO
 """ overall log level for the project """
 
 report_to_slack_channel: str = ""

@@ -11,16 +11,19 @@ from ..constants.services import PARK_PRIORITY_AREAS_URBAN_PHL
 from ..utilities import spatial_join
 
 
-@validate_output(ParkPriorityOutputValidator)
-def park_priority(
+def _park_priority_logic(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Associates properties with park priority areas for Philadelphia using TPL's FeatureServer.
+    Core business logic for park priority processing.
 
-    This function loads park priority data from TPL's ESRI FeatureServer and performs
-    a spatial join with the input GeoDataFrame to associate properties with their
-    park priority scores.
+    This function contains the actual logic for:
+    - Loading park priority data from ESRI
+    - Renaming columns
+    - Performing spatial joins
+    - Returning results
+
+    This function can be tested independently without the validation decorator.
 
     Args:
         input_gdf (gpd.GeoDataFrame): The input GeoDataFrame containing property data.
@@ -28,18 +31,6 @@ def park_priority(
     Returns:
         Tuple[gpd.GeoDataFrame, ValidationResult]: The input GeoDataFrame with park
         priority data joined and the validation result.
-
-    Tagline:
-        Labels high-priority park areas.
-
-    Columns Added:
-        park_priority (float): The park priority score from TPL's analysis.
-
-    Primary Feature Layer Columns Referenced:
-        opa_id, geometry
-
-    Source:
-        https://server7.tplgis.org/arcgis7/rest/services/ParkServe/ParkServe_ProdNew/FeatureServer/6/
     """
     start_time = time.time()
     print(f"Starting park_priority function at {time.strftime('%H:%M:%S')}")
@@ -118,3 +109,36 @@ def park_priority(
     print(f"Function completed at {time.strftime('%H:%M:%S')}")
 
     return merged_gdf, input_validation
+
+
+@validate_output(ParkPriorityOutputValidator)
+def park_priority(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
+    """
+    Associates properties with park priority areas for Philadelphia using TPL's FeatureServer.
+
+    This function loads park priority data from TPL's ESRI FeatureServer and performs
+    a spatial join with the input GeoDataFrame to associate properties with their
+    park priority scores.
+
+    Args:
+        input_gdf (gpd.GeoDataFrame): The input GeoDataFrame containing property data.
+
+    Returns:
+        Tuple[gpd.GeoDataFrame, ValidationResult]: The input GeoDataFrame with park
+        priority data joined and the validation result.
+
+    Tagline:
+        Labels high-priority park areas.
+
+    Columns Added:
+        park_priority (float): The park priority score from TPL's analysis.
+
+    Primary Feature Layer Columns Referenced:
+        opa_id, geometry
+
+    Source:
+        https://server7.tplgis.org/arcgis7/rest/services/ParkServe/ParkServe_ProdNew/FeatureServer/6/
+    """
+    return _park_priority_logic(input_gdf)

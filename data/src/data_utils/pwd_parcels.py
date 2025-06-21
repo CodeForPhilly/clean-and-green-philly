@@ -80,8 +80,7 @@ def merge_pwd_parcels_gdf(
 
     # Calculate the area of the parcel in square feet
     merged_gdf["parcel_area_sqft"] = merged_gdf.geometry.area
-    # Fill NaN values (from point geometries) with "NA" string
-    merged_gdf["parcel_area_sqft"] = merged_gdf["parcel_area_sqft"].fillna("NA")
+    # Note: Point geometries return 0.0 from .area, not NaN, so no fillna needed
 
     return merged_gdf
 
@@ -106,8 +105,8 @@ def pwd_parcels(
         is_condo_unit (bool): Flag indicating if the property is a condominium unit.
                              Condo units are identified by duplicate geometries (multiple units at same site)
                              and retain their point geometries.
-        parcel_area_sqft (str): The area of the parcel in square feet.
-                                 Polygons will have an area value; points will have "NA".
+        parcel_area_sqft (float): The area of the parcel in square feet.
+                                 Polygons will have an area value; points will have 0.0.
 
     Columns Updated:
         geometry: The geometry column is updated with validated geometries from PWD parcels.
