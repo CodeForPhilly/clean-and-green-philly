@@ -282,7 +282,8 @@ def label_percentile(value: float) -> str:
     Returns:
         str: The formatted percentile string (e.g., '1st Percentile').
     """
-    if 10 <= value % 100 <= 13:
+    # Handle special cases: 11th, 12th, 13th (and 111th, 112th, 113th, etc.)
+    if value % 100 in [11, 12, 13]:
         return f"{value}th Percentile"
     elif value % 10 == 1:
         return f"{value}st Percentile"
