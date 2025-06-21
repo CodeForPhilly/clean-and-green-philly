@@ -1,4 +1,6 @@
+import glob
 import os
+import time
 import zipfile
 from datetime import datetime
 from enum import Enum
@@ -118,12 +120,30 @@ class FileManager:
             table_name (str): The name of the table of source data.
             load_type (LoadType): The destination type of the file (either SOURCE_CACHE or PIPELINE_CACHE).
         """
+        start_time = time.time()
+        print(
+            f"    FileManager.check_source_cache_file_exists: Checking for {table_name}"
+        )
+
         directory = (
             self.source_cache_directory
             if load_type == LoadType.SOURCE_CACHE
             else self.pipeline_cache_directory
         )
-        return len([file for file in os.listdir(directory) if table_name in file]) > 0
+        # Use glob pattern matching for more efficient file searching
+        pattern = os.path.join(directory, f"*{table_name}*.parquet")
+
+        glob_start = time.time()
+        files = glob.glob(pattern)
+        glob_time = time.time() - glob_start
+
+        result = len(files) > 0
+        total_time = time.time() - start_time
+
+        print(
+            f"    FileManager.check_source_cache_file_exists: Found {len(files)} files in {glob_time:.2f}s (total: {total_time:.2f}s)"
+        )
+        return result
 
     def get_most_recent_cache(self, table_name: str) -> gpd.GeoDataFrame | None:
         """
@@ -134,25 +154,45 @@ class FileManager:
             GeoDataFrame: The dataframe loaded from the most recent cached file.
             None: If no files exist for the given table name.
         """
-        cached_files = [
-            file
-            for file in os.listdir(self.source_cache_directory)
-            if table_name in file
-        ]
+        start_time = time.time()
+        print(
+            f"    FileManager.get_most_recent_cache: Loading most recent cache for {table_name}"
+        )
+
+        # Use glob pattern matching for more efficient file searching
+        pattern = os.path.join(self.source_cache_directory, f"*{table_name}*.parquet")
+
+        glob_start = time.time()
+        cached_files = glob.glob(pattern)
+        glob_time = time.time() - glob_start
 
         if not cached_files:
+            print("    FileManager.get_most_recent_cache: No cached files found")
             return None
 
-        cached_files.sort(
-            key=lambda x: os.path.getmtime(
-                os.path.join(self.source_cache_directory, x)
-            ),
-            reverse=True,
-        )
-        most_recent_file = cached_files[0]
-        file_path = self.get_file_path(most_recent_file, LoadType.SOURCE_CACHE)
+        # Get the most recent file by modification time
+        mtime_start = time.time()
+        most_recent_file = max(cached_files, key=os.path.getmtime)
+        mtime_time = time.time() - mtime_start
 
-        return gpd.read_parquet(file_path)
+        print(
+            f"    FileManager.get_most_recent_cache: Found {len(cached_files)} files, most recent: {os.path.basename(most_recent_file)}"
+        )
+        print(
+            f"    FileManager.get_most_recent_cache: Glob took {glob_time:.2f}s, mtime check took {mtime_time:.2f}s"
+        )
+
+        # Load the parquet file
+        load_start = time.time()
+        gdf = gpd.read_parquet(most_recent_file)
+        load_time = time.time() - load_start
+
+        total_time = time.time() - start_time
+        print(
+            f"    FileManager.get_most_recent_cache: Parquet load took {load_time:.2f}s (total: {total_time:.2f}s)"
+        )
+
+        return gdf
 
     def load_gdf(
         self, file_name: str, load_type: LoadType, file_type: FileType | None = None
@@ -194,15 +234,37 @@ class FileManager:
             file_type (FileType): The type of the file (GEOJSON or PARQUET).
             load_type (LoadType): The destination type of the file (TEMP or CACHE).
         """
+        start_time = time.time()
+        print(f"    FileManager.save_gdf: Starting save for {file_name}")
+
         file_path = self.get_file_path(file_name, load_type, file_type)
+        print(f"    FileManager.save_gdf: Target path: {file_path}")
+
         if file_type == FileType.PARQUET:
+            print(
+                f"    FileManager.save_gdf: Writing parquet file ({len(gdf)} rows, {len(gdf.columns)} columns)"
+            )
+            parquet_start = time.time()
             gdf.to_parquet(file_path, index=False)
+            parquet_time = time.time() - parquet_start
+            print(f"    FileManager.save_gdf: Parquet write took {parquet_time:.2f}s")
         elif file_type == FileType.GEOJSON:
+            print("    FileManager.save_gdf: Writing GeoJSON file")
+            geojson_start = time.time()
             gdf.to_file(file_path, driver="GeoJSON")
+            geojson_time = time.time() - geojson_start
+            print(f"    FileManager.save_gdf: GeoJSON write took {geojson_time:.2f}s")
         elif file_type == FileType.CSV:
+            print("    FileManager.save_gdf: Writing CSV file")
+            csv_start = time.time()
             gdf.to_csv(file_path)
+            csv_time = time.time() - csv_start
+            print(f"    FileManager.save_gdf: CSV write took {csv_time:.2f}s")
         else:
             raise ValueError(f"Unsupported file type: {file_type}")
+
+        total_time = time.time() - start_time
+        print(f"    FileManager.save_gdf: Total save operation took {total_time:.2f}s")
 
     def save_fractional_gdf(
         self,

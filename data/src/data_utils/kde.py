@@ -45,7 +45,7 @@ def profile_section(section_name: str):
             self.start_time = time.time()
             return self
 
-        def __exit__(self, exc_type, exc_val, exc_tb):
+        def __exit__(self, _exc_type, _exc_val, _exc_tb):
             end_time = time.time()
             duration = end_time - self.start_time
             print(f"⏱️  {self.name}: {duration:.4f} seconds")

@@ -29,7 +29,7 @@ repos:
     hooks:
       - id: vulture
         name: vulture (Dead code detection)
-        files: ^data/.*\.py$
+        args: [--min-confidence, '80', data/src]
   # JavaScript hooks
   - repo: local
     hooks:
