@@ -26,7 +26,36 @@ def transform_pwd_parcels_gdf(pwd_parcels_gdf: gpd.GeoDataFrame):
 def merge_pwd_parcels_gdf(
     primary_gdf: gpd.GeoDataFrame, pwd_parcels_gdf: gpd.GeoDataFrame
 ) -> gpd.GeoDataFrame:
-    # Join geometries from PWD parcels
+    """
+    Merge geometries from PWD parcels into the primary feature layer.
+    Identifies condominium units by finding duplicate geometries in the primary layer
+    and flags them while keeping their point geometries intact.
+
+    Args:
+        primary_gdf (GeoDataFrame): The primary feature layer
+        pwd_parcels_gdf (GeoDataFrame): The PWD parcels GeoDataFrame
+
+    Returns:
+        GeoDataFrame: The merged GeoDataFrame with updated geometries and condo flags
+
+    Note:
+        Condo units are identified by duplicate geometries (multiple units at the same site).
+        Point geometries are preserved for condo units to maintain their individual locations.
+        Only non-condo units get their geometries updated from PWD parcels where available.
+    """
+    # Add condo flag column
+    primary_gdf["is_condo_unit"] = False
+
+    # Find duplicate geometries in primary layer (indicating condo units)
+    duplicate_geoms = primary_gdf.groupby(primary_gdf.geometry.astype(str)).filter(
+        lambda x: len(x) > 1
+    )
+
+    # Flag condo units (keep their point geometries)
+    for geom_str, group in duplicate_geoms.groupby(primary_gdf.geometry.astype(str)):
+        primary_gdf.loc[group.index, "is_condo_unit"] = True
+
+    # Join geometries from PWD parcels for non-condo units only
     # Temporarily drop geometry from the primary feature layer
 
     # Filter PWD parcels to just the opa_ids in primary
@@ -58,7 +87,7 @@ def pwd_parcels(
     """
     Updates the primary feature layer by replacing its geometry column with validated
     geometries from PWD parcels data. Retains point geometry for rows with no polygon
-    geometry available.
+    geometry available. Identifies and flags condominium units.
 
     Args:
         primary_featurelayer (FeatureLayer): The primary feature layer to update.
@@ -67,8 +96,14 @@ def pwd_parcels(
         FeatureLayer: The updated primary feature layer with geometries replaced
                       by those from PWD parcels or retained from the original layer if no match.
 
+    Columns Added:
+        is_condo_unit (bool): Flag indicating if the property is a condominium unit.
+                             Condo units are identified by duplicate geometries (multiple units at same site)
+                             and retain their point geometries.
+
     Columns Updated:
         geometry: The geometry column is updated with validated geometries from PWD parcels.
+                 Condo units retain their original point geometries.
 
     Primary Feature Layer Columns Referenced:
         opa_id, geometry
