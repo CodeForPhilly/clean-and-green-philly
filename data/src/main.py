@@ -79,6 +79,24 @@ try:
     dataset, opa_validation = opa_properties()
     print("[PIPELINE] OPA properties loaded.")
 
+    # Check for missing zoning values after OPA properties
+    if "zoning" in dataset.columns:
+        missing_zoning = dataset["zoning"].isna().sum()
+        total_properties = len(dataset)
+        zoning_coverage = ((total_properties - missing_zoning) / total_properties) * 100
+        print(
+            f"[OPA_PROPERTIES] Zoning coverage: {zoning_coverage:.2f}% ({missing_zoning}/{total_properties} missing)"
+        )
+    else:
+        print("[OPA_PROPERTIES] Warning: 'zoning' column not found in dataset")
+
+    # Check opa_id type after OPA properties
+    if "opa_id" in dataset.columns:
+        opa_id_type = dataset["opa_id"].dtype
+        print(f"[OPA_PROPERTIES] opa_id type: {opa_id_type}")
+    else:
+        print("[OPA_PROPERTIES] Warning: 'opa_id' column not found in dataset")
+
     if not opa_validation["input"] or not opa_validation["output"]:
         pipeline_errors["opa_properties"] = opa_validation
 
@@ -92,6 +110,15 @@ try:
         dataset, validation = service(dataset)
         print(f"[SERVICE] {service_name} completed.")
         print(f"[SERVICE] Dataset shape: {dataset.shape}")
+
+        # Check opa_id type after each service
+        if "opa_id" in dataset.columns:
+            opa_id_type = dataset["opa_id"].dtype
+            print(f"[SERVICE] {service_name} - opa_id type: {opa_id_type}")
+        else:
+            print(
+                f"[SERVICE] {service_name} - Warning: 'opa_id' column not found in dataset"
+            )
 
         # Error checking - all services should return dict with input/output keys
         if not validation["input"] or not validation["output"]:

@@ -145,7 +145,7 @@ def opa_properties(
     Loads and processes OPA property data, standardizing addresses and cleaning geometries.
 
     Returns:
-        FeatureLayer: A feature layer containing processed OPA property data.
+        Tuple[GeoDataFrame, ValidationResult]: A tuple containing the processed GeoDataFrame and validation result.
 
     Columns Added:
         opa_id (int): the OPA ID of the property
@@ -158,7 +158,8 @@ def opa_properties(
         owner_1 (str): The first owner of the property
         owner_2 (str): The second owner of the property
         building_code_description (str): The building code description
-        standardized_mailing_address (str): A standardized mailing address
+        standardized_street_address (str): A standardized street address for the property
+        standardized_mailing_address (str): A standardized mailing address for the property owner
         geometry (geometry): The geometry of the property
 
     Source:
@@ -189,6 +190,8 @@ def opa_properties(
             "mailing_city_state",
             "mailing_street",
             "mailing_zip",
+            "unit",
+            "street_address",
             "building_code_description",
             "zip_code",
             "zoning",
@@ -212,6 +215,13 @@ def opa_properties(
     numeric_time = time.time() - numeric_start
     print(f"[OPA_PROPERTIES] Numeric conversion: {numeric_time:.3f}s")
 
+    # Convert sale_date to datetime
+    date_start = time.time()
+    print("[OPA_PROPERTIES] Converting sale_date to datetime")
+    opa["sale_date"] = pd.to_datetime(opa["sale_date"])
+    date_time = time.time() - date_start
+    print(f"[OPA_PROPERTIES] Date conversion: {date_time:.3f}s")
+
     # Add parcel_type
     parcel_type_start = time.time()
     print("[OPA_PROPERTIES] Adding parcel_type column")
@@ -223,21 +233,49 @@ def opa_properties(
     parcel_type_time = time.time() - parcel_type_start
     print(f"[OPA_PROPERTIES] Parcel type addition: {parcel_type_time:.3f}s")
 
-    # Standardize mailing street addresses
+    # Combine street_address and unit into a single column, if unit is not empty
+    street_combine_start = time.time()
+    print("[OPA_PROPERTIES] Combining street_address and unit")
+    opa["street_address"] = opa.apply(
+        lambda row: f"{row['street_address']} {row['unit']}"
+        if pd.notnull(row["unit"]) and str(row["unit"]).strip() != ""
+        else row["street_address"],
+        axis=1,
+    )
+    street_combine_time = time.time() - street_combine_start
+    print(f"[OPA_PROPERTIES] Street combine: {street_combine_time:.3f}s")
+
+    # Standardize street addresses
     street_start = time.time()
-    print("[OPA_PROPERTIES] Standardizing mailing street addresses (vectorized)")
-    opa["mailing_street"] = standardize_street_vectorized(opa["mailing_street"])
+    print("[OPA_PROPERTIES] Standardizing street addresses")
+    opa["street_address"] = opa["street_address"].astype(str).apply(standardize_street)
     street_time = time.time() - street_start
     print(f"[OPA_PROPERTIES] Street standardization: {street_time:.3f}s")
 
-    # Create standardized address column
+    # Create standardized street address column
+    street_std_start = time.time()
+    print("[OPA_PROPERTIES] Creating standardized street address column")
+    opa["standardized_street_address"] = opa["street_address"].str.lower()
+    street_std_time = time.time() - street_std_start
+    print(f"[OPA_PROPERTIES] Street address standardization: {street_std_time:.3f}s")
+
+    # Standardize mailing street addresses
+    mailing_street_start = time.time()
+    print("[OPA_PROPERTIES] Standardizing mailing street addresses (vectorized)")
+    opa["mailing_street"] = standardize_street_vectorized(opa["mailing_street"])
+    mailing_street_time = time.time() - mailing_street_start
+    print(
+        f"[OPA_PROPERTIES] Mailing street standardization: {mailing_street_time:.3f}s"
+    )
+
+    # Create standardized mailing address column
     address_start = time.time()
-    print("[OPA_PROPERTIES] Creating standardized address column (vectorized)")
+    print("[OPA_PROPERTIES] Creating standardized mailing address column (vectorized)")
     opa["standardized_mailing_address"] = (
         create_standardized_mailing_address_vectorized(opa)
     )
     address_time = time.time() - address_start
-    print(f"[OPA_PROPERTIES] Address standardization: {address_time:.3f}s")
+    print(f"[OPA_PROPERTIES] Mailing address standardization: {address_time:.3f}s")
 
     # Drop columns starting with "mailing_"
     drop_start = time.time()
@@ -245,6 +283,13 @@ def opa_properties(
     opa = opa.loc[:, ~opa.columns.str.startswith("mailing_")]
     drop_time = time.time() - drop_start
     print(f"[OPA_PROPERTIES] Column dropping: {drop_time:.3f}s")
+
+    # Drop unit column
+    unit_drop_start = time.time()
+    print("[OPA_PROPERTIES] Dropping unit column")
+    opa = opa.drop(columns=["unit"])
+    unit_drop_time = time.time() - unit_drop_start
+    print(f"[OPA_PROPERTIES] Unit column dropping: {unit_drop_time:.3f}s")
 
     # Drop empty geometries
     geometry_start = time.time()
