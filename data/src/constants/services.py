@@ -98,3 +98,7 @@ CENSUS_BGS_URL = (
 DOR_PARCELS_URL = (
     "https://opendata.arcgis.com/datasets/1c57dd1b3ff84449a4b0e3fb29d3cafd_0.geojson"
 )
+
+PARK_PRIORITY_AREAS_URBAN_PHL = [
+    "https://server7.tplgis.org/arcgis7/rest/services/ParkServe/ParkServe_ProdNew/FeatureServer/6/"
+]
