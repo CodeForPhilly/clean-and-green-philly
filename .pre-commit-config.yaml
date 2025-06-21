@@ -1,61 +1,54 @@
 repos:
   # Python hooks
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    # Ruff version.
+    rev: v0.12.0
+    hooks:
+      # Run the linter.
+      - id: ruff
+        args: [--fix]
+      # Run the formatter.
+      - id: ruff-format
   - repo: local
     hooks:
-      # Ruff for Python linting
-      - id: ruff
-        name: ruff (Python linting)
-        entry: ruff check --fix
-        language: python
-        types_or: [python, pyi, jupyter]
-        files: \.py$
-
-      # Ruff for Python formatting
-      - id: ruff-format
-        name: ruff-format (Python formatting)
-        entry: ruff format
-        language: python
-        types_or: [python, pyi, jupyter]
-        files: \.py$
-
       # Radon MI and Halstead checks
       - id: radon-check
         name: Radon Maintainability and Halstead Checks
         entry: |
-          bash -c 'radon mi -s {} | grep -E " - [CDEF] \(" && echo "Radon MI grade below B detected!" && exit 1 || echo "All MI grades are B or above."
-          radon hal {} -s | awk "/effort/ { if (\$3 > 2000) print FILENAME \": High Halstead effort:\" \$3 }"'
+          bash -c 'for file in "$@"; do 
+            echo "Checking $file"; 
+            radon mi -s "$file" | grep -E " - [CDEF] \(" && echo "Radon MI grade below B detected in $file!" && exit 1; 
+            radon hal "$file" -s | awk -v filename="$file" "/effort/ { if (\$3 > 2000) print filename \": High Halstead effort:\" \$3 }"; 
+          done; 
+          echo "All MI grades are B or above."'
         language: system
         files: \.py$
-
+        pass_filenames: true
   - repo: https://github.com/jendrikseipp/vulture
-    rev: 'v2.3' # or any later Vulture version
+    rev: 'v2.3'
     hooks:
       - id: vulture
         name: vulture (Dead code detection)
-        entry: vulture data/
-        language: python
-        types: [python]
-        files: ^data/
-
+        files: ^data/.*\.py$
   # JavaScript hooks
   - repo: local
     hooks:
-      # Formatting with Prettier
+      # Formatting with Prettier - run directly on files
       - id: prettier
         name: Prettier (Code formatting)
-        entry: npm run format
+        entry: npx prettier --write
         language: node
-        files: \.(js|jsx|ts|tsx)$
-
-      # Linting with ESLint
+        files: \.(js|jsx|ts|tsx|json|css|scss|md|yml|yaml)$
+      # Linting with ESLint - run directly on files
       - id: eslint
         name: ESLint (JavaScript linting)
-        entry: npm run lint
+        entry: npx eslint --fix
         language: node
         files: \.(js|jsx|ts|tsx)$
-
       # Dependency checks for Node.js
       - id: npm-audit
         name: Check Node.js dependencies
         entry: npm audit
         language: node
+        files: ^package(-lock)?\.json$
+        pass_filenames: false
