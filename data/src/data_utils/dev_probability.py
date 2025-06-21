@@ -1,10 +1,12 @@
+from typing import Tuple
+
 import geopandas as gpd
 import jenkspy
 import pandas as pd
 import requests
 
 from src.config.config import USE_CRS
-from src.validation.base import validate_output
+from src.validation.base import ValidationResult, validate_output
 from src.validation.dev_probability import DevProbabilityOutputValidator
 
 from ..classes.loaders import GdfLoader
@@ -13,7 +15,9 @@ from ..utilities import spatial_join
 
 
 @validate_output(DevProbabilityOutputValidator)
-def dev_probability(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+def dev_probability(
+    input_gdf: gpd.GeoDataFrame,
+) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Calculates development probability based on permit counts and assigns
     development ranks to census block groups. The results are joined to the
@@ -54,13 +58,13 @@ def dev_probability(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
             print("GeoDataFrame created successfully.")
         except Exception as e:
             print(f"Failed to convert response to GeoDataFrame: {e}")
-            return input_gdf
+            return input_gdf, ValidationResult(True)
     else:
         truncated_response = response.content[:500]
         print(
             f"Failed to fetch permits data. HTTP status code: {response.status_code}. Response text: {truncated_response}"
         )
-        return input_gdf
+        return input_gdf, ValidationResult(True)
 
     permits_gdf = permits_gdf.to_crs(USE_CRS)
 
@@ -80,4 +84,4 @@ def dev_probability(input_gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
 
     merged_gdf = spatial_join(input_gdf, census_bgs_gdf)
 
-    return merged_gdf
+    return merged_gdf, ValidationResult(True)
