@@ -3,7 +3,7 @@ from typing import Tuple
 import geopandas as gpd
 
 from src.validation.base import ValidationResult, validate_output
-from src.validation.city_owned_properties import CityOwnedPropertiesOutputValidator
+from src.validation.city_owned_properties import CityOwnedPropertiesOutputValidator, CityOwnedPropertiesInputValidator
 
 from ..classes.loaders import EsriLoader
 from ..constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
@@ -46,10 +46,13 @@ def city_owned_properties(
         name="City Owned Properties",
         esri_urls=CITY_OWNED_PROPERTIES_TO_LOAD,
         cols=["OPABRT", "AGENCY", "SIDEYARDELIGIBLE"],
-        opa_col="opabrt",
+        opa_col="opabrt", validator=CityOwnedPropertiesInputValidator()
     )
 
     city_owned_properties, input_validation = loader.load_or_fetch()
+    print("City-Owned Properties Input:")
+    print(city_owned_properties.columns)
+    print(city_owned_properties.head())
 
     merged_gdf = opa_join(input_gdf, city_owned_properties)
 
@@ -151,5 +154,9 @@ def city_owned_properties(
     merged_gdf.loc[merged_gdf["city_owner_agency"] == "PLB", "city_owner_agency"] = (
         "Land Bank (PHDC)"
     )
+
+    print("City-Owned Properties Output:")
+    print(merged_gdf.columns)
+    print(merged_gdf.head())
 
     return merged_gdf, input_validation

@@ -197,13 +197,15 @@ class BaseValidator(ABC):
         schema_start = time.time()
         if self.schema:
             try:
-                self.schema.validate(gdf, lazy_validation=True)
+                self.schema.validate(gdf, lazy=True)
             except pa.errors.SchemaErrors as err:
+
                 self.errors.append(err.failure_case)
         schema_time = time.time() - schema_start
 
         # Custom validation
         custom_start = time.time()
+        
         self._custom_validation(gdf)
         custom_time = time.time() - custom_start
 
