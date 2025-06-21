@@ -1,6 +1,7 @@
 from typing import Tuple
 
 import geopandas as gpd
+import pandas as pd
 
 from src.validation.base import ValidationResult, validate_output
 from src.validation.delinquencies import DelinquenciesOutputValidator
@@ -67,16 +68,29 @@ def delinquencies(
         tax_delinquencies,
     )
 
+    # Convert num_years_owed to integer, allowing NA values
+    merged_gdf["num_years_owed"] = pd.to_numeric(
+        merged_gdf["num_years_owed"], errors="coerce"
+    ).astype("Int64")  # Using Int64 to allow NA values
+
+    # Convert total_due and total_assessment to float, allowing NA values
+    merged_gdf["total_due"] = pd.to_numeric(merged_gdf["total_due"], errors="coerce")
+    merged_gdf["total_assessment"] = pd.to_numeric(
+        merged_gdf["total_assessment"], errors="coerce"
+    )
+
+    # Convert most_recent_year_owed to datetime
+    merged_gdf["most_recent_year_owed"] = pd.to_datetime(
+        merged_gdf["most_recent_year_owed"].astype(str) + "-12-31"
+    )
+
+    # Fill missing values with "NA" for string columns
+    for col in ["total_due", "total_assessment"]:
+        merged_gdf[col] = merged_gdf[col].fillna("NA")
+
     delinquency_cols = [
-        "total_due",
-        "is_actionable",
-        "payment_agreement",
-        "num_years_owed",
         "most_recent_year_owed",
-        "total_assessment",
     ]
     merged_gdf[delinquency_cols] = merged_gdf[delinquency_cols].fillna("NA")
-
-    merged_gdf["sheriff_sale"] = merged_gdf["sheriff_sale"].fillna("N")
 
     return merged_gdf, input_validation
