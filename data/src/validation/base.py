@@ -169,12 +169,15 @@ class BaseValidator(ABC):
                 f"    [OPA] {total_opa_time:.3f}s (string check: {opa_string_time:.3f}s, uniqueness: {unique_time:.3f}s)"
             )
 
-    def validate(self, gdf: gpd.GeoDataFrame) -> ValidationResult:
+    def validate(
+        self, gdf: gpd.GeoDataFrame, check_stats: bool = True
+    ) -> ValidationResult:
         """
         Validate the data after a service runs.
 
         Args:
             gdf: The GeoDataFrame to validate
+            check_stats: Whether to run statistical checks (skip for unit tests with small data)
 
         Returns:
             ValidationResult: A boolean success together with a list of collected errors from validation
@@ -202,7 +205,7 @@ class BaseValidator(ABC):
 
         # Custom validation
         custom_start = time.time()
-        self._custom_validation(gdf)
+        self._custom_validation(gdf, check_stats=check_stats)
         custom_time = time.time() - custom_start
 
         total_validate_time = time.time() - validate_start
@@ -212,7 +215,7 @@ class BaseValidator(ABC):
 
         return ValidationResult(success=not self.errors, errors=self.errors)
 
-    def _custom_validation(self, gdf: gpd.GeoDataFrame):
+    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass
 
 

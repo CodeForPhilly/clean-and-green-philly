@@ -39,7 +39,10 @@ def council_dists(
     """
 
     loader = EsriLoader(
-        name="Council Districts", esri_urls=COUNCIL_DISTRICTS_TO_LOAD, cols=["district"]
+        name="Council Districts",
+        esri_urls=COUNCIL_DISTRICTS_TO_LOAD,
+        cols=["district"],
+        input_crs="EPSG:4326",  # Load in geographic coordinates since the data appears to be lat/lon
     )
 
     council_dists, input_validation = loader.load_or_fetch()
@@ -54,10 +57,17 @@ def council_dists(
             f"Missing required columns in council districts data: {', '.join(missing_columns)}"
         )
 
-    # Use only the required columns
-    # council_dists = council_dists[required_columns].copy()
+    # Check if CRS match before spatial join
+    if input_gdf.crs != council_dists.crs:
+        print(
+            f"CRS MISMATCH: Input properties CRS ({input_gdf.crs}) != Council districts CRS ({council_dists.crs})"
+        )
+        print("Converting council districts to match input properties CRS...")
+        council_dists = council_dists.to_crs(input_gdf.crs)
+        print(f"Council districts CRS after conversion: {council_dists.crs}")
+    else:
+        print("CRS match confirmed")
 
-    # Perform spatial join
     merged_gdf = spatial_join(input_gdf, council_dists)
 
     # Drop duplicates in the primary feature layer

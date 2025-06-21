@@ -370,16 +370,20 @@ class EsriLoader(BaseLoader):
         print(
             f"    EsriLoader.load_data: load_esri_data took {esri_time:.2f}s ({len(gdf)} rows)"
         )
+        print(f"    EsriLoader.load_data: After load_esri_data CRS: {gdf.crs}")
 
         normalize_start = time.time()
         gdf = self.normalize_columns(gdf, self.cols)
         normalize_time = time.time() - normalize_start
         print(f"    EsriLoader.load_data: normalize_columns took {normalize_time:.2f}s")
+        print(f"    EsriLoader.load_data: After normalize_columns CRS: {gdf.crs}")
 
         crs_start = time.time()
+        print(f"    EsriLoader.load_data: Converting from {gdf.crs} to {USE_CRS}")
         gdf = gdf.to_crs(USE_CRS)
         crs_time = time.time() - crs_start
         print(f"    EsriLoader.load_data: CRS conversion took {crs_time:.2f}s")
+        print(f"    EsriLoader.load_data: After CRS conversion CRS: {gdf.crs}")
 
         opa_start = time.time()
         gdf = self.standardize_opa(gdf)
