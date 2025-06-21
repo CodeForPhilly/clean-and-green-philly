@@ -79,6 +79,7 @@ def merge_pwd_parcels_gdf(
     print("Number of observations retaining point geometry:", no_geometry_count)
 
     # Calculate the area of the parcel in square feet
+    # Data should already be in USE_CRS (EPSG:2272) from the loaders
     merged_gdf["parcel_area_sqft"] = merged_gdf.geometry.area
     # Note: Point geometries return 0.0 from .area, not NaN, so no fillna needed
 

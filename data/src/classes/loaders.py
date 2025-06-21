@@ -407,6 +407,8 @@ class CartoLoader(BaseLoader):
         wkb_geom_field: str | None = "the_geom",
         **kwargs,
     ):
+        # Carto data comes in EPSG:4326 (geographic coordinates)
+        kwargs["input_crs"] = kwargs.get("input_crs", "EPSG:4326")
         super().__init__(*args, **kwargs)
         self.carto_queries = BaseLoader.string_to_list(carto_queries)
         self.wkb_geom_field = wkb_geom_field
