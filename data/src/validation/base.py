@@ -214,6 +214,9 @@ class BaseValidator(ABC):
             f"  [VALIDATE] {total_validate_time:.3f}s (geometry: {geometry_time:.3f}s, opa: {opa_time:.3f}s, schema: {schema_time:.3f}s, custom: {custom_time:.3f}s)"
         )
 
+        if self.errors:
+            print(f"DEBUG: FINAL ERRORS before ValidationResult: {self.errors}")
+
         return ValidationResult(success=not self.errors, errors=self.errors)
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
