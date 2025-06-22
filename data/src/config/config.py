@@ -1,4 +1,6 @@
 import logging
+import threading
+from contextlib import contextmanager
 from pathlib import Path
 
 FORCE_RELOAD = False
@@ -16,6 +18,17 @@ CACHE_FRACTION = 0.05
 
 log_level: int = logging.INFO
 """ overall log level for the project """
+
+# Centralized logger configuration
+ENABLED_LOGGERS = {"pipeline", "data_quality"}
+""" Set of enabled logger types. Add/remove logger types to control what logging is active.
+Available types: "cache", "performance", "pipeline", "geometry_debug", "data_quality"
+Examples:
+- {"cache", "performance"} - Enable only cache and performance logging
+- {"pipeline", "data_quality"} - Enable only pipeline and data quality logging  
+- set() - Disable all specialized logging
+- {"cache", "performance", "pipeline", "geometry_debug", "data_quality"} - Enable all logging
+"""
 
 report_to_slack_channel: str = ""
 """ if this is not blank, send the data-diff summary report to this Slack channel.
@@ -55,3 +68,73 @@ def is_docker() -> bool:
         or cgroup.is_file()
         and "docker" in cgroup.read_text(encoding="utf-8")
     )
+
+
+def get_logger(logger_type: str) -> logging.Logger:
+    """
+    Get a logger for the specified logger type.
+    Returns a logger that respects the ENABLED_LOGGERS configuration.
+
+    Args:
+        logger_type: The type of logger to get (e.g., "cache", "performance", "pipeline", etc.)
+
+    Returns:
+        A configured logger instance
+
+    Example:
+        logger = get_logger("cache")  # Gets cache logger if "cache" is in ENABLED_LOGGERS
+    """
+    logger = logging.getLogger(f"cagp.{logger_type}")
+
+    # If this logger type is not enabled, set level to CRITICAL (effectively disables all messages)
+    if logger_type not in ENABLED_LOGGERS:
+        logger.setLevel(logging.CRITICAL)
+    else:
+        logger.setLevel(logging.INFO)
+
+    # Only add handler if it doesn't already exist
+    if not logger.handlers:
+        handler = logging.StreamHandler()
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s", datefmt="%H:%M:%S"
+        )
+        handler.setFormatter(formatter)
+        logger.addHandler(handler)
+        logger.propagate = False  # Prevent duplicate messages
+
+    return logger
+
+
+# Thread-local storage for statistical summary control
+_stats_context = threading.local()
+
+
+def is_statistical_summaries_enabled() -> bool:
+    """
+    Check if statistical summaries should be printed for the current thread.
+    Returns True if enabled via context manager, False otherwise.
+    """
+    return getattr(_stats_context, "enabled", False)
+
+
+@contextmanager
+def enable_statistical_summaries():
+    """
+    Context manager to enable statistical summary printing for functions within the context.
+
+    Usage:
+        with enable_statistical_summaries():
+            result = some_function(data)  # Will print statistical summaries
+        # Outside context - no statistical summaries printed
+    """
+    # Store previous state
+    previous_state = getattr(_stats_context, "enabled", False)
+
+    # Enable statistical summaries for this context
+    _stats_context.enabled = True
+
+    try:
+        yield
+    finally:
+        # Restore previous state
+        _stats_context.enabled = previous_state

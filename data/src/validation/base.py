@@ -8,7 +8,11 @@ import geopandas as gpd
 import pandas as pd
 import pandera.pandas as pa
 
-from src.config.config import USE_CRS
+from src.config.config import (
+    USE_CRS,
+    get_logger,
+    is_statistical_summaries_enabled,
+)
 from src.constants.city_limits import PHL_GEOMETRY
 
 
@@ -140,27 +144,23 @@ class BaseValidator(ABC):
             print(f"\n... and {total_duplicates - max_samples} more duplicate groups")
         print("=" * 60)
 
-    def geometry_validation(self, gdf: gpd.GeoDataFrame):
+    def validate_geometry(self, gdf: gpd.GeoDataFrame) -> ValidationResult:
         """
-        Validate the geometry column in a geodataframe if it exists, including checks for coordinate system and
-        location being with Philadelphia city bounds.
-
-        Args:
-            gdf (GeoDataFrame): The GeoDataFrame input to validate.
-
-        Appends errors to the class instance errors
+        Validate geometry data in the GeoDataFrame.
         """
+        geometry_debug_logger = get_logger("geometry_debug")
+        geometry_debug_logger.info("Starting geometry validation...")
         correct_crs = gdf.crs == USE_CRS
 
         # Debug: Print CRS information
-        print(f"    [GEOMETRY DEBUG] Input CRS: {gdf.crs}")
-        print(f"    [GEOMETRY DEBUG] Expected CRS: {USE_CRS}")
-        print(f"    [GEOMETRY DEBUG] CRS match: {correct_crs}")
+        geometry_debug_logger.info(f"Input CRS: {gdf.crs}")
+        geometry_debug_logger.info(f"Expected CRS: {USE_CRS}")
+        geometry_debug_logger.info(f"CRS match: {correct_crs}")
 
         # Step 1: Get Philadelphia's bounding box
         phl_start = time.time()
         phl_bounds = PHL_GEOMETRY.bounds  # (minx, miny, maxx, maxy)
-        print(f"    [GEOMETRY DEBUG] Philadelphia bounds: {phl_bounds}")
+        geometry_debug_logger.info(f"Philadelphia bounds: {phl_bounds}")
         time.time() - phl_start
 
         # Step 2: Get all geometry bounding boxes at once
@@ -171,10 +171,10 @@ class BaseValidator(ABC):
         time.time() - bbox_start
 
         # Debug: Print sample of geometry bounds
-        print("    [GEOMETRY DEBUG] Sample geometry bounds (first 3):")
+        geometry_debug_logger.info("Sample geometry bounds (first 3):")
         for i in range(min(3, len(geometry_bounds))):
             bounds = geometry_bounds.iloc[i]
-            print(f"      Row {i}: {bounds.to_dict()}")
+            geometry_debug_logger.info(f"  Row {i}: {bounds.to_dict()}")
 
         # Step 3: Create three categories using coordinate logic
         category_start = time.time()
@@ -214,10 +214,10 @@ class BaseValidator(ABC):
         cat3_count = boundary_cases.sum()
 
         # Debug: Print category breakdown
-        print("    [GEOMETRY DEBUG] Category breakdown:")
-        print(f"      Definitely outside: {cat1_count:,}")
-        print(f"      Definitely inside: {cat2_count:,}")
-        print(f"      Boundary cases: {cat3_count:,}")
+        geometry_debug_logger.info("Category breakdown:")
+        geometry_debug_logger.info(f"  Definitely outside: {cat1_count:,}")
+        geometry_debug_logger.info(f"  Definitely inside: {cat2_count:,}")
+        geometry_debug_logger.info(f"  Boundary cases: {cat3_count:,}")
 
         # Step 4: Apply validation logic
         validation_start = time.time()
@@ -264,6 +264,8 @@ class BaseValidator(ABC):
             self.errors.append(
                 f"Dataframe for {self.__class__.__name__} contains observations outside Philadelphia limits."
             )
+
+        return ValidationResult(success=True, errors=[])
 
     def opa_validation(self, gdf: gpd.GeoDataFrame):
         """
@@ -325,7 +327,7 @@ class BaseValidator(ABC):
 
         # Geometry validation
         geometry_start = time.time()
-        self.geometry_validation(gdf)
+        self.validate_geometry(gdf)
         geometry_time = time.time() - geometry_start
         if self.errors:
             print("\n[GEOMETRY VALIDATION ERROR]")
@@ -388,7 +390,9 @@ class BaseValidator(ABC):
         # Only run statistical checks if requested and data is large enough
         if check_stats and len(gdf) >= self.min_stats_threshold:
             self._statistical_validation(gdf, errors)
-            self._print_statistical_summary(gdf)
+            # Only print statistical summary if explicitly enabled via context manager
+            if is_statistical_summaries_enabled():
+                self._print_statistical_summary(gdf)
 
         # Add all errors to the validator's error list
         self.errors.extend(errors)
