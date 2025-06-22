@@ -29,7 +29,7 @@ def city_owned_properties(
 
     Columns added:
         city_owner_agency (str): The agency that owns the city property.
-        side_yard_eligible (str): Indicates if the property is eligible for the side yard program.
+        side_yard_eligible (bool): Indicates if the property is eligible for the side yard program.
 
     Primary Feature Layer Columns Referenced:
         opa_id, owner_1, owner2
@@ -58,6 +58,44 @@ def city_owned_properties(
         "sideyardeligible": "side_yard_eligible",
     }
     merged_gdf.rename(columns=rename_columns, inplace=True)
+
+    # Include additional properties as city-owned based on owner names and addresses
+    # Add properties with specific owner names and addresses to city-owned category
+    include_mask = (
+        merged_gdf["owner_1"].isin(["CITY OF PHILA", "CITY OF PHILADELPHIA"])
+        | merged_gdf["owner_1"].isin(["PHILADELPHIA HOUSING"])
+        | merged_gdf["owner_1"].isin(["REDEVELOPMENT AUTHORITY"])
+        | merged_gdf["standardized_mailing_address"].str.contains(
+            "municipal services bldg", case=False, na=False
+        )
+        | merged_gdf["standardized_mailing_address"].str.contains(
+            "1234 market st", case=False, na=False
+        )
+        | merged_gdf["standardized_mailing_address"].str.contains(
+            "office of general counsel", case=False, na=False
+        )
+        | merged_gdf["standardized_mailing_address"].str.contains(
+            "1401 john f. kennedy blvd", case=False, na=False
+        )
+        | merged_gdf["standardized_mailing_address"].str.contains(
+            "1600 arch st", case=False, na=False
+        )
+        | merged_gdf["standardized_mailing_address"].str.contains(
+            "12 s 23rd st",
+            case=False,
+            na=False,  # Philadelphia Housing Authority
+        )
+        | merged_gdf["standardized_mailing_address"].str.contains(
+            "440 n broad st",
+            case=False,
+            na=False,  # school district of philadelphia
+        )
+    )
+
+    # Set city_owner_agency for included properties that don't already have it
+    merged_gdf.loc[
+        include_mask & merged_gdf["city_owner_agency"].isna(), "city_owner_agency"
+    ] = "City of Philadelphia"
 
     merged_gdf.loc[
         merged_gdf["owner_1"].isin(
@@ -90,8 +128,23 @@ def city_owned_properties(
         "city_owner_agency",
     ] = "City of Philadelphia"
 
-    merged_gdf.loc[:, "side_yard_eligible"] = merged_gdf["side_yard_eligible"].fillna(
-        "No"
+    # Assign specific agencies based on addresses
+    merged_gdf.loc[
+        merged_gdf["standardized_mailing_address"].str.contains(
+            "12 s 23rd st", case=False, na=False
+        ),
+        "city_owner_agency",
+    ] = "PHA"
+
+    merged_gdf.loc[
+        merged_gdf["standardized_mailing_address"].str.contains(
+            "440 n broad st", case=False, na=False
+        ),
+        "city_owner_agency",
+    ] = "School District of Philadelphia"
+
+    merged_gdf.loc[:, "side_yard_eligible"] = (
+        merged_gdf["side_yard_eligible"].map({"Yes": True, "No": False}).fillna(False)
     )
 
     # Update all instances where city_owner_agency is "PLB" to "Land Bank (PHDC)"

@@ -1,4 +1,5 @@
 from typing import Tuple
+
 import geopandas as gpd
 
 from src.data_utils.kde import apply_kde_to_input
@@ -36,4 +37,6 @@ def gun_crimes(
     Source:
         https://phl.carto.com/api/v2/sql
     """
-    return apply_kde_to_input(input_gdf, "Gun Crimes", GUNCRIME_SQL_QUERY)
+    return apply_kde_to_input(
+        input_gdf, "Gun Crimes", GUNCRIME_SQL_QUERY, batch_size=250000
+    )

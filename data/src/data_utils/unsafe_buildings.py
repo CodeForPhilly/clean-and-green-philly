@@ -29,7 +29,7 @@ def unsafe_buildings(
         Identify unsafe buildings
 
     Columns Added:
-        unsafe_building (str): Indicates whether each property is categorized as an unsafe building ("Y" or "N").
+        unsafe_building (bool): Indicates whether each property is categorized as an unsafe building (True or False).
 
     Primary Feature Layer Columns Referenced:
         opa_id
@@ -46,12 +46,14 @@ def unsafe_buildings(
     unsafe_buildings, input_validation = loader.load_or_fetch()
 
     # Mark unsafe buildings
-    unsafe_buildings.loc[:, "unsafe_building"] = "Y"
+    unsafe_buildings.loc[:, "unsafe_building"] = True
 
     # Join unsafe buildings data with primary feature layer
     merged_gdf = opa_join(input_gdf, unsafe_buildings)
 
-    # Fill missing values with "N" for non-unsafe buildings
-    merged_gdf.loc[:, "unsafe_building"] = merged_gdf["unsafe_building"].fillna("N")
+    # Fill missing values with False for non-unsafe buildings and convert to boolean
+    merged_gdf.loc[:, "unsafe_building"] = (
+        merged_gdf["unsafe_building"].fillna(False).astype(bool)
+    )
 
     return merged_gdf, input_validation
