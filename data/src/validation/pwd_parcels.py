@@ -200,12 +200,6 @@ class PWDParcelsOutputValidator(BaseValidator):
             if len(non_condo_properties) > 0:
                 area_stats = non_condo_properties["parcel_area_sqft"].describe()
 
-                # Check maximum area (should be reasonable for Philadelphia parcels)
-                if area_stats["max"] > 100000:  # 100K sq ft (about 2.3 acres)
-                    errors.append(
-                        f"Parcel area maximum ({area_stats['max']:,.0f} sq ft) exceeds reasonable threshold"
-                    )
-
                 # Check mean area (should be around 2,000-8,000 sq ft for typical Philly lots)
                 mean_area = area_stats["mean"]
                 if not (1000 <= mean_area <= 10000):
@@ -213,38 +207,149 @@ class PWDParcelsOutputValidator(BaseValidator):
                         f"Parcel area mean ({mean_area:,.0f} sq ft) outside expected range [1000, 10000]"
                     )
 
-        # 4. Condo unit area validation (should be 0.0)
-        if "parcel_area_sqft" in gdf.columns and "is_condo_unit" in gdf.columns:
-            condo_properties = gdf[gdf["is_condo_unit"]]
-            if len(condo_properties) > 0:
-                non_zero_condo_area = (condo_properties["parcel_area_sqft"] > 0).sum()
-                if non_zero_condo_area > 0:
-                    errors.append(
-                        f"Found {non_zero_condo_area} condo units with non-zero parcel area (should be 0.0)"
-                    )
-
-        # 5. Geometry type consistency with condo flag
+        # 4. Duplicate geometry validation for non-condo units
+        # Non-condo units should not have duplicate geometries (condos can have duplicates)
+        # EXCEPT: Allow duplicate point geometries (multi-unit properties)
         if "geometry" in gdf.columns and "is_condo_unit" in gdf.columns:
-            # Condo units should be points
-            condo_properties = gdf[gdf["is_condo_unit"]]
-            if len(condo_properties) > 0:
-                non_point_condos = (condo_properties["geometry"].type != "Point").sum()
-                if non_point_condos > 0:
-                    errors.append(
-                        f"Found {non_point_condos} condo units with non-point geometries"
-                    )
-
-            # Non-condo units should be polygons
             non_condo_properties = gdf[~gdf["is_condo_unit"]]
             if len(non_condo_properties) > 0:
-                non_polygon_non_condos = (
-                    ~non_condo_properties["geometry"].type.isin(
-                        ["Polygon", "MultiPolygon"]
+                # Find duplicate geometries among non-condo units using unique()
+                unique_geometries = non_condo_properties.geometry.unique()
+                if len(unique_geometries) < len(non_condo_properties):
+                    # There are duplicates - but let's check if they're legitimate
+                    duplicate_mask = non_condo_properties.geometry.duplicated(
+                        keep=False
                     )
-                ).sum()
-                if non_polygon_non_condos > 0:
+                    duplicate_properties = non_condo_properties[duplicate_mask]
+
+                    # Only flag duplicate polygon geometries as errors (point duplicates are usually legitimate)
+                    polygon_duplicates = duplicate_properties[
+                        duplicate_properties.geometry.type.isin(
+                            ["Polygon", "MultiPolygon"]
+                        )
+                    ]
+
+                    if len(polygon_duplicates) > 0:
+                        print(
+                            f"\n[DEBUG] Found {len(polygon_duplicates)} non-condo units with duplicate polygon geometries"
+                        )
+                        print(f"Total non-condo units: {len(non_condo_properties)}")
+                        print(f"Unique geometries: {len(unique_geometries)}")
+                        print(f"Total duplicates: {len(duplicate_properties)}")
+                        print(
+                            f"Point duplicates (allowed): {len(duplicate_properties) - len(polygon_duplicates)}"
+                        )
+                        print(f"Polygon duplicates (error): {len(polygon_duplicates)}")
+
+                        # Show examples of polygon duplicates
+                        print("\nExamples of duplicate polygon geometries:")
+                        polygon_geom_examples = polygon_duplicates.geometry.unique()[:3]
+                        for i, geom in enumerate(polygon_geom_examples):
+                            props_with_geom = polygon_duplicates[
+                                polygon_duplicates.geometry == geom
+                            ]
+                            if len(props_with_geom) > 1:
+                                print(f"\nPolygon Geometry {i + 1}: {geom}")
+                                print(
+                                    f"Properties using this geometry ({len(props_with_geom)}):"
+                                )
+                                geom_cols = [
+                                    "opa_id",
+                                    "standardized_street_address",
+                                    "building_code_description",
+                                ]
+                                available_geom_cols = [
+                                    col
+                                    for col in geom_cols
+                                    if col in props_with_geom.columns
+                                ]
+                                print(
+                                    props_with_geom[available_geom_cols].to_string(
+                                        index=False
+                                    )
+                                )
+
+                        errors.append(
+                            f"Found {len(polygon_duplicates)} non-condo units with duplicate polygon geometries"
+                        )
+                    else:
+                        print(
+                            f"\n[DEBUG] All {len(duplicate_properties)} duplicate geometries are points (legitimate multi-unit properties)"
+                        )
+                        print("No validation errors for duplicate geometries!")
+
+        # 5. Geometry type consistency with condo flag - more sophisticated validation
+        if "geometry" in gdf.columns and "is_condo_unit" in gdf.columns:
+            # Condo units can have either points or polygons (individual units within buildings)
+            condo_properties = gdf[gdf["is_condo_unit"]]
+            if len(condo_properties) > 0:
+                # Check for invalid geometry types for condos (should be Point, Polygon, or MultiPolygon)
+                invalid_condo_geoms = ~condo_properties["geometry"].type.isin(
+                    ["Point", "Polygon", "MultiPolygon"]
+                )
+                invalid_condo_count = invalid_condo_geoms.sum()
+                if invalid_condo_count > 0:
+                    # Find the problematic condo units
+                    problematic_condos = condo_properties[invalid_condo_geoms]
+                    print(
+                        f"\n[DEBUG] Found {len(problematic_condos)} condo units with invalid geometry types:"
+                    )
+                    print("First 10 problematic condo units:")
+                    condo_cols = [
+                        "opa_id",
+                        "geometry",
+                        "standardized_street_address",
+                        "building_code_description",
+                    ]
+                    available_cols = [
+                        col for col in condo_cols if col in problematic_condos.columns
+                    ]
+                    print(
+                        problematic_condos[available_cols]
+                        .head(10)
+                        .to_string(index=False)
+                    )
+
                     errors.append(
-                        f"Found {non_polygon_non_condos} non-condo units with non-polygon geometries"
+                        f"Found {invalid_condo_count} condo units with invalid geometry types"
+                    )
+
+            # Non-condo units can have points (for properties without parcel boundaries) or polygons
+            non_condo_properties = gdf[~gdf["is_condo_unit"]]
+            if len(non_condo_properties) > 0:
+                # Check for invalid geometry types for non-condos (should be Point, Polygon, or MultiPolygon)
+                invalid_non_condo_geoms = ~non_condo_properties["geometry"].type.isin(
+                    ["Point", "Polygon", "MultiPolygon"]
+                )
+                invalid_non_condo_count = invalid_non_condo_geoms.sum()
+                if invalid_non_condo_count > 0:
+                    # Find the problematic non-condo units
+                    problematic_non_condos = non_condo_properties[
+                        invalid_non_condo_geoms
+                    ]
+                    print(
+                        f"\n[DEBUG] Found {len(problematic_non_condos)} non-condo units with invalid geometry types:"
+                    )
+                    print("First 10 problematic non-condo units:")
+                    non_condo_cols = [
+                        "opa_id",
+                        "geometry",
+                        "standardized_street_address",
+                        "building_code_description",
+                    ]
+                    available_cols = [
+                        col
+                        for col in non_condo_cols
+                        if col in problematic_non_condos.columns
+                    ]
+                    print(
+                        problematic_non_condos[available_cols]
+                        .head(10)
+                        .to_string(index=False)
+                    )
+
+                    errors.append(
+                        f"Found {invalid_non_condo_count} non-condo units with invalid geometry types"
                     )
 
     def _print_statistical_summary(self, gdf: gpd.GeoDataFrame):

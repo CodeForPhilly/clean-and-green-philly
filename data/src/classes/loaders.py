@@ -70,7 +70,18 @@ def load_esri_data(esri_urls: List[str], input_crs: str, extra_query_args: dict 
             continue  # Skip if no features were found
 
         geojson_features = {"type": "FeatureCollection", "features": features}
-        gdf = gpd.GeoDataFrame.from_features(geojson_features, crs=input_crs)
+        # Let the service determine its own CRS first
+        gdf = gpd.GeoDataFrame.from_features(geojson_features)
+
+        # If no CRS is set, assume EPSG:4326 (most ESRI services use this)
+        if gdf.crs is None:
+            print("    No CRS detected, assuming EPSG:4326")
+            gdf.set_crs("EPSG:4326", inplace=True)
+
+        # Now convert to the target CRS
+        if gdf.crs and gdf.crs != input_crs:
+            print(f"    Converting from {gdf.crs} to {input_crs}")
+            gdf = gdf.to_crs(input_crs)
 
         if parcel_type:
             gdf["parcel_type"] = parcel_type  # Add the parcel_type column
@@ -380,7 +391,52 @@ class EsriLoader(BaseLoader):
 
         crs_start = time.time()
         print(f"    EsriLoader.load_data: Converting from {gdf.crs} to {USE_CRS}")
+        print(
+            f"    EsriLoader.load_data: Before CRS conversion - bounds: {gdf.total_bounds}"
+        )
+        print("    EsriLoader.load_data: Before CRS conversion - sample coordinates:")
+        for i in range(min(3, len(gdf))):
+            geom = gdf.iloc[i].geometry
+            print(f"      Row {i} geometry type: {type(geom).__name__}")
+
+            if geom.geom_type == "Point":
+                coords = list(geom.coords)[0]
+            elif geom.geom_type in ["Polygon", "MultiPolygon"]:
+                if hasattr(geom, "exterior"):
+                    coords = list(geom.exterior.coords)[0]
+                else:
+                    # For MultiPolygon or complex polygons, get first coordinate
+                    coords = list(geom.boundary.coords)[0]
+            elif geom.geom_type in ["LineString", "MultiLineString"]:
+                coords = list(geom.coords)[0]
+            else:
+                coords = "unknown geometry type"
+            print(f"      Row {i}: {coords}")
+
         gdf = gdf.to_crs(USE_CRS)
+
+        print(
+            f"    EsriLoader.load_data: After CRS conversion - bounds: {gdf.total_bounds}"
+        )
+        print("    EsriLoader.load_data: After CRS conversion - sample coordinates:")
+        for i in range(min(3, len(gdf))):
+            geom = gdf.iloc[i].geometry
+            print(f"      Row {i} geometry type: {type(geom).__name__}")
+
+            if geom.geom_type == "Point":
+                coords = list(geom.coords)[0]
+            elif geom.geom_type in ["Polygon", "MultiPolygon"]:
+                if hasattr(geom, "exterior"):
+                    coords = list(geom.exterior.coords)[0]
+                else:
+                    # For MultiPolygon or complex polygons, get first coordinate
+                    coords = list(geom.boundary.coords)[0]
+            elif geom.geom_type in ["LineString", "MultiLineString"]:
+                coords = list(geom.coords)[0]
+            else:
+                coords = "unknown geometry type"
+            print(f"      Row {i}: {coords}")
+
         crs_time = time.time() - crs_start
         print(f"    EsriLoader.load_data: CRS conversion took {crs_time:.2f}s")
         print(f"    EsriLoader.load_data: After CRS conversion CRS: {gdf.crs}")

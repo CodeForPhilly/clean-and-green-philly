@@ -111,6 +111,21 @@ try:
         print(f"[SERVICE] {service_name} completed.")
         print(f"[SERVICE] Dataset shape: {dataset.shape}")
 
+        # Special logging for owner_type service
+        if service_name == "owner_type" and "owner_type" in dataset.columns:
+            print("\n[OWNER_TYPE] Distribution analysis:")
+            owner_type_counts = dataset["owner_type"].value_counts()
+            total_records = len(dataset)
+            for owner_type, count in owner_type_counts.items():
+                percentage = (count / total_records) * 100
+                print(f"  {owner_type}: {count:,} ({percentage:.1f}%)")
+            print(f"  Total records: {total_records:,}")
+            print(f"  Records with owner_type: {dataset['owner_type'].notna().sum():,}")
+            print(
+                f"  Records missing owner_type: {dataset['owner_type'].isna().sum():,}"
+            )
+            print("[OWNER_TYPE] End distribution analysis\n")
+
         # Check opa_id type after each service
         if "opa_id" in dataset.columns:
             opa_id_type = dataset["opa_id"].dtype

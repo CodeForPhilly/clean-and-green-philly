@@ -5,6 +5,7 @@ from abc import ABC
 from typing import Callable, List
 
 import geopandas as gpd
+import pandas as pd
 import pandera.pandas as pa
 
 from src.config.config import USE_CRS
@@ -38,6 +39,107 @@ class BaseValidator(ABC):
         self.logger = logging.getLogger(self.__class__.__name__)
         self.errors = []
 
+    def _print_sample_problematic_data(
+        self,
+        gdf: gpd.GeoDataFrame,
+        mask: pd.Series,
+        error_type: str,
+        max_samples: int = 10,
+    ):
+        """
+        Print a sample of problematic data for debugging.
+
+        Args:
+            gdf: The GeoDataFrame containing the data
+            mask: Boolean mask identifying problematic rows
+            error_type: Description of the error type
+            max_samples: Maximum number of samples to print
+        """
+        if not mask.any():
+            return
+
+        problematic_data = gdf[mask]
+        sample_size = min(len(problematic_data), max_samples)
+
+        print(
+            f"\n=== Sample of {error_type} ({sample_size} of {len(problematic_data)} total) ==="
+        )
+
+        # Print sample data with key columns
+        sample_data = problematic_data.head(sample_size)
+
+        # Include opa_id if available, plus geometry info
+        columns_to_show = []
+        if "opa_id" in sample_data.columns:
+            columns_to_show.append("opa_id")
+
+        # Add a few other common columns if they exist
+        for col in ["public_name", "owner_type", "parcel_type", "zoning"]:
+            if col in sample_data.columns:
+                columns_to_show.append(col)
+                break
+
+        # Always include geometry info
+        if len(columns_to_show) > 0:
+            print(sample_data[columns_to_show].to_string(index=False))
+
+        # Print geometry bounds for each sample
+        print("\nGeometry bounds (minx, miny, maxx, maxy):")
+        for i, (idx, row) in enumerate(sample_data.iterrows()):
+            bounds = row.geometry.bounds
+            opa_info = f"OPA: {row['opa_id']}" if "opa_id" in row else f"Row {i + 1}"
+            print(f"  {opa_info}: {bounds}")
+
+        if len(problematic_data) > max_samples:
+            print(f"  ... and {len(problematic_data) - max_samples} more")
+        print("=" * 60)
+
+    def _print_sample_duplicate_opa_ids(
+        self, gdf: gpd.GeoDataFrame, max_samples: int = 10
+    ):
+        """
+        Print a sample of duplicate OPA IDs for debugging.
+
+        Args:
+            gdf: The GeoDataFrame containing the data
+            max_samples: Maximum number of duplicate groups to show
+        """
+        if "opa_id" not in gdf.columns:
+            return
+
+        # Find duplicates
+        duplicates = gdf[gdf.duplicated(subset="opa_id", keep=False)]
+        if len(duplicates) == 0:
+            return
+
+        # Group by opa_id and get counts
+        duplicate_counts = duplicates["opa_id"].value_counts()
+        total_duplicates = len(duplicate_counts)
+
+        print(
+            f"\n=== Sample of Duplicate OPA IDs ({min(max_samples, total_duplicates)} of {total_duplicates} duplicate groups) ==="
+        )
+
+        # Show first few duplicate groups
+        for i, (opa_id, count) in enumerate(duplicate_counts.head(max_samples).items()):
+            print(f"\nOPA ID '{opa_id}' appears {count} times:")
+
+            # Get all rows with this OPA ID
+            duplicate_rows = gdf[gdf["opa_id"] == opa_id]
+
+            # Show key columns for these rows
+            columns_to_show = ["opa_id"]
+            for col in ["public_name", "owner_type", "parcel_type", "zoning"]:
+                if col in duplicate_rows.columns:
+                    columns_to_show.append(col)
+                    break
+
+            print(duplicate_rows[columns_to_show].to_string(index=False))
+
+        if total_duplicates > max_samples:
+            print(f"\n... and {total_duplicates - max_samples} more duplicate groups")
+        print("=" * 60)
+
     def geometry_validation(self, gdf: gpd.GeoDataFrame):
         """
         Validate the geometry column in a geodataframe if it exists, including checks for coordinate system and
@@ -50,9 +152,15 @@ class BaseValidator(ABC):
         """
         correct_crs = gdf.crs == USE_CRS
 
+        # Debug: Print CRS information
+        print(f"    [GEOMETRY DEBUG] Input CRS: {gdf.crs}")
+        print(f"    [GEOMETRY DEBUG] Expected CRS: {USE_CRS}")
+        print(f"    [GEOMETRY DEBUG] CRS match: {correct_crs}")
+
         # Step 1: Get Philadelphia's bounding box
         phl_start = time.time()
         phl_bounds = PHL_GEOMETRY.bounds  # (minx, miny, maxx, maxy)
+        print(f"    [GEOMETRY DEBUG] Philadelphia bounds: {phl_bounds}")
         time.time() - phl_start
 
         # Step 2: Get all geometry bounding boxes at once
@@ -61,6 +169,12 @@ class BaseValidator(ABC):
             gdf.geometry.bounds
         )  # DataFrame with minx, miny, maxx, maxy for each geometry
         time.time() - bbox_start
+
+        # Debug: Print sample of geometry bounds
+        print("    [GEOMETRY DEBUG] Sample geometry bounds (first 3):")
+        for i in range(min(3, len(geometry_bounds))):
+            bounds = geometry_bounds.iloc[i]
+            print(f"      Row {i}: {bounds.to_dict()}")
 
         # Step 3: Create three categories using coordinate logic
         category_start = time.time()
@@ -99,20 +213,38 @@ class BaseValidator(ABC):
         cat2_count = definitely_inside.sum()
         cat3_count = boundary_cases.sum()
 
+        # Debug: Print category breakdown
+        print("    [GEOMETRY DEBUG] Category breakdown:")
+        print(f"      Definitely outside: {cat1_count:,}")
+        print(f"      Definitely inside: {cat2_count:,}")
+        print(f"      Boundary cases: {cat3_count:,}")
+
         # Step 4: Apply validation logic
         validation_start = time.time()
 
         # Mark Category 1 as invalid (outside Philadelphia)
         if cat1_count > 0:
             outside_phl = True
+            # Print sample of definitely outside geometries
+            self._print_sample_problematic_data(
+                gdf, definitely_outside, "Definitely Outside Philadelphia"
+            )
         else:
             # Only run expensive intersection test on Category 3 geometries
             if cat3_count > 0:
                 boundary_gdf = gdf[boundary_cases]
-                boundary_outside = (
-                    ~boundary_gdf.geometry.intersects(PHL_GEOMETRY)
-                ).any()
-                outside_phl = boundary_outside
+                boundary_outside = ~boundary_gdf.geometry.intersects(PHL_GEOMETRY)
+                outside_phl = boundary_outside.any()
+
+                if outside_phl:
+                    # Print sample of boundary cases that don't intersect
+                    boundary_outside_mask = boundary_cases.copy()
+                    boundary_outside_mask[boundary_cases] = boundary_outside
+                    self._print_sample_problematic_data(
+                        gdf,
+                        boundary_outside_mask,
+                        "Boundary Cases Outside Philadelphia",
+                    )
             else:
                 outside_phl = False
 
@@ -147,12 +279,16 @@ class BaseValidator(ABC):
 
             # Profile the expensive .apply() call
             opa_string_start = time.time()
-            opa_string = gdf["opa_id"].apply(lambda x: isinstance(x, str)).all()
+            non_string_mask = ~gdf["opa_id"].apply(lambda x: isinstance(x, str))
             opa_string_time = time.time() - opa_string_start
 
-            if not opa_string:
+            if non_string_mask.any():
                 self.errors.append(
                     f"OPA ids are not all typed as strings for {self.__class__.__name__}"
+                )
+                # Print sample of non-string OPA IDs
+                self._print_sample_problematic_data(
+                    gdf, non_string_mask, "Non-String OPA IDs"
                 )
 
             # Profile the uniqueness check
@@ -164,6 +300,8 @@ class BaseValidator(ABC):
                 self.errors.append(
                     f"OPA ids contain some duplicates for {self.__class__.__name__}"
                 )
+                # Print sample of duplicate OPA IDs
+                self._print_sample_duplicate_opa_ids(gdf)
 
             total_opa_time = time.time() - opa_validation_start
             print(
@@ -189,11 +327,21 @@ class BaseValidator(ABC):
         geometry_start = time.time()
         self.geometry_validation(gdf)
         geometry_time = time.time() - geometry_start
+        if self.errors:
+            print("\n[GEOMETRY VALIDATION ERROR]")
+            for error in self.errors:
+                print(error)
+            raise RuntimeError("Geometry validation failed. See above for details.")
 
         # OPA validation
         opa_start = time.time()
         self.opa_validation(gdf)
         opa_time = time.time() - opa_start
+        if self.errors:
+            print("\n[OPA VALIDATION ERROR]")
+            for error in self.errors:
+                print(error)
+            raise RuntimeError("OPA validation failed. See above for details.")
 
         # Schema validation
         schema_start = time.time()
@@ -201,23 +349,28 @@ class BaseValidator(ABC):
             try:
                 self.schema.validate(gdf, lazy=True)
             except pa.errors.SchemaErrors as err:
-                self.errors.append(err.failure_cases)
+                print("\n[SCHEMA VALIDATION ERROR]")
+                print("First 10 failure cases:")
+                print(err.failure_cases.head(10).to_string(index=False))
+                raise RuntimeError("Schema validation failed. See above for details.")
         schema_time = time.time() - schema_start
 
         # Custom validation
         custom_start = time.time()
         self._custom_validation(gdf, check_stats=check_stats)
         custom_time = time.time() - custom_start
+        if self.errors:
+            print("\n[CUSTOM VALIDATION ERROR]")
+            for error in self.errors:
+                print(error)
+            raise RuntimeError("Custom validation failed. See above for details.")
 
         total_validate_time = time.time() - validate_start
         print(
             f"  [VALIDATE] {total_validate_time:.3f}s (geometry: {geometry_time:.3f}s, opa: {opa_time:.3f}s, schema: {schema_time:.3f}s, custom: {custom_time:.3f}s)"
         )
 
-        if self.errors:
-            print(f"DEBUG: FINAL ERRORS before ValidationResult: {self.errors}")
-
-        return ValidationResult(success=not self.errors, errors=self.errors)
+        return ValidationResult(success=True, errors=[])
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         """

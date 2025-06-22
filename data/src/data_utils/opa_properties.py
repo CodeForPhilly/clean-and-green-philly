@@ -215,6 +215,19 @@ def opa_properties(
     numeric_time = time.time() - numeric_start
     print(f"[OPA_PROPERTIES] Numeric conversion: {numeric_time:.3f}s")
 
+    # Filter out extreme sale prices (over $1 billion) - convert to NA
+    extreme_price_start = time.time()
+    print("[OPA_PROPERTIES] Filtering extreme sale prices")
+    extreme_sales_mask = opa["sale_price"] > 1000000000  # $1 billion
+    extreme_count = extreme_sales_mask.sum()
+    if extreme_count > 0:
+        print(
+            f"[OPA_PROPERTIES] Found {extreme_count} properties with sale prices > $1B, converting to NA"
+        )
+        opa.loc[extreme_sales_mask, "sale_price"] = pd.NA
+    extreme_price_time = time.time() - extreme_price_start
+    print(f"[OPA_PROPERTIES] Extreme price filtering: {extreme_price_time:.3f}s")
+
     # Convert sale_date to datetime
     date_start = time.time()
     print("[OPA_PROPERTIES] Converting sale_date to datetime")

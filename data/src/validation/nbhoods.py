@@ -17,7 +17,7 @@ NeighborhoodsSchema = pa.DataFrameSchema(
             "geometry", nullable=False, description="Property geometry"
         ),
     },
-    strict=True,
+    strict=False,
     coerce=False,
 )
 

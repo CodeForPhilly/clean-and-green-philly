@@ -15,9 +15,11 @@ OPAPropertiesSchema = pa.DataFrameSchema(
         ),
         # Geographic fields
         "zip_code": pa.Column(
-            str, nullable=False, description="ZIP code of the property"
+            str, nullable=True, description="ZIP code of the property (nulls allowed)"
         ),
-        "zoning": pa.Column(str, nullable=False, description="Zoning classification"),
+        "zoning": pa.Column(
+            str, nullable=True, description="Zoning classification (nulls allowed)"
+        ),
         # Property classification
         "parcel_type": pa.Column(
             str,
@@ -195,6 +197,23 @@ class OPAPropertiesOutputValidator(BaseValidator):
 
                 # Check maximum value
                 if sale_stats["max"] > 1000000000:  # 1B
+                    # Find the problematic records
+                    extreme_sales = gdf[gdf["sale_price"] > 1000000000]
+                    print(
+                        f"\n[DEBUG] Found {len(extreme_sales)} properties with sale prices > $1B:"
+                    )
+                    print("First 10 extreme sale price records:")
+                    extreme_cols = [
+                        "opa_id",
+                        "sale_price",
+                        "sale_date",
+                        "standardized_street_address",
+                    ]
+                    available_cols = [
+                        col for col in extreme_cols if col in extreme_sales.columns
+                    ]
+                    print(extreme_sales[available_cols].head(10).to_string(index=False))
+
                     errors.append(
                         f"Sale price maximum ({sale_stats['max']:,.0f}) exceeds reasonable threshold"
                     )

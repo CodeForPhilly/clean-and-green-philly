@@ -29,7 +29,7 @@ class CommunityGardensInputValidator(BaseValidator):
 
     schema = None  # No schema validation for input
 
-    def _custom_validation(self, gdf: gpd.GeoDataFrame):
+    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass
 
 
