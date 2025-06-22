@@ -6,14 +6,38 @@ from src.config.config import USE_CRS
 from src.validation.council_dists import CouncilDistrictsOutputValidator
 
 
-def test_council_dists_validator_invalid_district_values():
+def _create_council_dists_test_data(base_test_data):
+    """Create test data with only the columns expected by the council districts validator."""
+    return pd.DataFrame(
+        {
+            "opa_id": base_test_data["opa_id"],
+            "district": ["1", "2", "3"],
+            "geometry": base_test_data["geometry"],
+        }
+    )
+
+
+def test_council_dists_validator_schema_valid_data(base_test_data):
+    """Test that the validator accepts valid data."""
+    test_data = _create_council_dists_test_data(base_test_data)
+    gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
+
+    validator = CouncilDistrictsOutputValidator()
+    result = validator.validate(gdf, check_stats=False)
+
+    # Should pass with valid data
+    assert result.success
+    assert len(result.errors) == 0
+
+
+def test_council_dists_validator_invalid_district_values(base_test_data):
     """Test that the validator catches invalid district values."""
     # Create data with invalid district values
     test_data = pd.DataFrame(
         {
-            "opa_id": ["test_1", "test_2", "test_3"],
+            "opa_id": base_test_data["opa_id"],
             "district": ["1", "2", "11"],  # Invalid district value (11)
-            "geometry": [Point(-75.089, 40.033) for _ in range(3)],
+            "geometry": base_test_data["geometry"],
         }
     )
 
