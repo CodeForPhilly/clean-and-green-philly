@@ -1,15 +1,15 @@
 from typing import Literal, Optional
-import geopandas as gpd
-from shapely.geometry.base import BaseGeometry
-from pandera.pandas import Series, Field, DataFrameModel
 
+import geopandas as gpd
+from pandera.pandas import DataFrameModel, Field, Series
+from shapely.geometry.base import BaseGeometry
 
 from .base import (
     BaseValidator,
     DistributionParams,
     distribution_check,
-    unique_value_check,
     unique_check,
+    unique_value_check,
 )
 
 
@@ -39,26 +39,26 @@ class OPAPropertiesOutputSchema(DataFrameModel):
     market_value: Series[float] = Field(
         checks=[*distribution_check(market_value_params)]
     )
-    sale_date: Series[str] = Field()
+    sale_date: Series[str]
     sale_price: Series[Optional[float]] = Field(
         checks=[*distribution_check(sales_params)]
     )
-    parcel_type: Series[Literal["Land", "Building"]] = Field()
+    parcel_type: Series[Literal["Land", "Building"]]
     zip_code: Series[str] = Field(checks=[unique_value_check(50, 60)])
     zoning: Series[str] = Field(checks=[unique_value_check(40, 50)])
-    owner_1: Series[Optional[str]] = Field()
-    owner_2: Series[Optional[str]] = Field()
-    building_code_description: Series[Optional[str]] = Field()
+    owner_1: Series[Optional[str]]
+    owner_2: Series[Optional[str]]
+    building_code_description: Series[Optional[str]]
     standardized_address: Series[str] = Field(
         checks=[unique_value_check(450000, 800000)]
     )
-    geometry: Series[BaseGeometry] = Field()
+    geometry: Series[BaseGeometry]
 
 
 class OPAPropertiesOutputValidator(BaseValidator):
     """Validator for opa properties service output."""
 
-    schema = None
+    schema = OPAPropertiesOutputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass

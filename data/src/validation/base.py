@@ -1,12 +1,13 @@
-from dataclasses import dataclass
 import functools
 import logging
 from abc import ABC
+from dataclasses import dataclass
 from typing import Callable, List, Optional
 
 import geopandas as gpd
-from pandera import Check
+import pandas as pd
 import pandera.pandas as pa
+from pandera import Check
 
 from src.config.config import USE_CRS
 from src.constants.city_limits import PHL_GEOMETRY
@@ -137,7 +138,7 @@ unique_check = Check(lambda s: s.is_unique, error="Should have all unique values
 
 def unique_value_check(lower: int, upper: int) -> Check:
     return Check(
-        lambda s: s.nunique() >= lower and s.unique < upper,
+        lambda s: s.nunique() >= lower and s.nunique() < upper,
         f"Number of unique values is roughly between {lower} and {upper}",
     )
 
@@ -165,45 +166,54 @@ def distribution_check(params: DistributionParams) -> List[Check]:
     res = []
 
     if params.min_value:
-        res.append(Check.ge(params.min_value))
+        res.append(
+            Check(lambda s: pd.to_numeric(s, errors="coerce").min() >= params.min_value)
+        )
     if params.max_value:
-        res.append(Check.le(params.max_value))
+        res.append(
+            Check(lambda s: pd.to_numeric(s, errors="coerce").max() <= params.max_value)
+        )
     if params.mean:
         res.append(
             Check(
-                lambda s: s.mean() >= 0.8 * params.mean
-                and s.mean() <= 1.2 * params.mean,
+                lambda s: pd.to_numeric(s, errors="coerce").mean() >= 0.8 * params.mean
+                and pd.to_numeric(s, errors="coerce").mean() <= 1.2 * params.mean,
                 error=f"Column mean should be roughly {params.mean}",
             )
         )
     if params.median:
         res.append(
             Check(
-                lambda s: s.quantile(0.5) >= 0.8 * params.median
-                and s.quantile(0.5) <= 1.2 * params.median,
+                lambda s: pd.to_numeric(s, errors="coerce").quantile(0.5)
+                >= 0.8 * params.median
+                and pd.to_numeric(s, errors="coerce").quantile(0.5)
+                <= 1.2 * params.median,
                 error=f"Column median should be roughly {params.median}",
             )
         )
     if params.std:
         res.append(
             Check(
-                lambda s: s.std() >= 0.8 * params.std and s.std() <= 1.2 * params.std,
+                lambda s: pd.to_numeric(s, errors="coerce").std() >= 0.8 * params.std
+                and pd.to_numeric(s, errors="coerce").std() <= 1.2 * params.std,
                 error=f"Column standard deviation should be roughly {params.std}",
             )
         )
     if params.q1:
         res.append(
             Check(
-                lambda s: s.quantile(0.25) >= 0.8 * params.q1
-                and s.quantile(0.25) <= 1.2 * params.q1,
+                lambda s: pd.to_numeric(s, errors="coerce").quantile(0.25)
+                >= 0.8 * params.q1
+                and pd.to_numeric(s, errors="coerce").quantile(0.25) <= 1.2 * params.q1,
                 error=f"Column first quantile should be roughly {params.q1}",
             )
         )
     if params.q3:
         res.append(
             Check(
-                lambda s: s.quantile(0.75) >= 0.8 * params.q3
-                and s.quantile(0.75) <= 1.2 * params.q3,
+                lambda s: pd.to_numeric(s, errors="coerce").quantile(0.75)
+                >= 0.8 * params.q3
+                and pd.to_numeric(s, errors="coerce").quantile(0.75) <= 1.2 * params.q3,
                 error=f"Column third quantile should be roughly {params.q3}",
             )
         )

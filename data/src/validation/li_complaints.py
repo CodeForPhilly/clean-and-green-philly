@@ -30,7 +30,7 @@ class LIComplaintsOutputSchema(DataFrameModel):
     l_and_i_complaints_density_zscore: Series[float] = Field(
         checks=[*distribution_check(zscore_params)]
     )
-    l_and_i_complaints_density_label: Series[str] = Field()
+    l_and_i_complaints_density_label: Series[str]
     l_and_i_complaints_density_percentile: Series[float] = Field(
         checks=[*distribution_check(percentile_params)]
     )

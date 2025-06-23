@@ -1,4 +1,5 @@
 from typing import Literal
+
 import geopandas as gpd
 from pandas import Series
 from pandera import DataFrameModel, Field
@@ -10,8 +11,6 @@ class OwnerTypeOutputSchema(DataFrameModel):
     owner_type: Series[Literal["Individual", "Business (LLC)", "Public"]] = Field(
         checks=[no_na_check]
     )
-
-    # Additional check for number in each category?
 
 
 class OwnerTypeOutputValidator(BaseValidator):

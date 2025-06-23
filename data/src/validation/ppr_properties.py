@@ -1,4 +1,5 @@
 import geopandas as gpd
+from pandas import Series
 from pandera import DataFrameModel
 
 from .base import BaseValidator
@@ -14,9 +15,7 @@ class PPRPropertiesInputValidator(BaseValidator):
 
 
 class PPRPropertiesOutputSchema(DataFrameModel):
-    pass
-
-    # Check for vacant column updates in custom check?
+    vacant: Series[bool]
 
 
 class PPRPropertiesOutputValidator(BaseValidator):

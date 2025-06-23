@@ -1,7 +1,8 @@
 from typing import Literal
+
 import geopandas as gpd
 from pandas import Series
-from pandera import DataFrameModel, Field
+from pandera import DataFrameModel
 
 from .base import BaseValidator
 

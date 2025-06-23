@@ -30,7 +30,7 @@ class GunCrimesOutputSchema(DataFrameModel):
     gun_crimes_density_zscore: Series[float] = Field(
         checks=[*distribution_check(zscore_params)]
     )
-    gun_crimes_density_label: Series[str] = Field()
+    gun_crimes_density_label: Series[str]
     gun_crimes_density_percentile: Series[float] = Field(
         checks=[*distribution_check(percentile_params)]
     )
