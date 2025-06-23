@@ -1,4 +1,5 @@
 from typing import Tuple
+
 import geopandas as gpd
 
 from src.validation.base import ValidationResult, validate_output
@@ -38,4 +39,6 @@ def li_complaints(
         https://phl.carto.com/api/v2/sql
 
     """
-    return apply_kde_to_input(input_gdf, "L and I Complaints", COMPLAINTS_SQL_QUERY)
+    return apply_kde_to_input(
+        input_gdf, "L and I Complaints", COMPLAINTS_SQL_QUERY, batch_size=20000
+    )

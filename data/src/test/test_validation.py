@@ -22,7 +22,7 @@ class TestValidation(unittest.TestCase):
             validator.errors,
             [
                 "Geodataframe for BaseValidator is not using the correct coordinate system pegged to Philadelphia",
-                "Dataframe for BaseValidator not contained within Philadelphia limits.",
+                "Dataframe for BaseValidator contains observations outside Philadelphia limits.",
             ],
         )
 
