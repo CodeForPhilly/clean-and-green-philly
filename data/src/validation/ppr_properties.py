@@ -1,4 +1,5 @@
 import geopandas as gpd
+from pandera.pandas import Column, DataFrameSchema
 
 from .base import BaseValidator
 
@@ -12,10 +13,13 @@ class PPRPropertiesInputValidator(BaseValidator):
         pass
 
 
+output_schema = DataFrameSchema({"vacant": Column(bool)})
+
+
 class PPRPropertiesOutputValidator(BaseValidator):
     """Validator for PPR properties service output."""
 
-    schema = None
+    schema = output_schema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass

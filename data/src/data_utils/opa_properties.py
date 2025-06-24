@@ -207,6 +207,9 @@ def opa_properties(
     print(f"[OPA_PROPERTIES] load_or_fetch completed: {load_time:.3f}s")
     print(f"[OPA_PROPERTIES] Loaded {len(opa)} rows")
 
+    print(opa.columns)
+    print(opa.head())
+
     # Convert 'sale_price' and 'market_value' to numeric values
     numeric_start = time.time()
     print("[OPA_PROPERTIES] Converting sale_price and market_value to numeric")
@@ -238,7 +241,7 @@ def opa_properties(
     print("[OPA_PROPERTIES] Combining street_address and unit")
     opa["street_address"] = opa.apply(
         lambda row: f"{row['street_address']} {row['unit']}"
-        if pd.notnull(row["unit"]) and str(row["unit"]).strip() != ""
+        if pd.notnull(row.get("unit")) and str(row["unit"]).strip() != ""
         else row["street_address"],
         axis=1,
     )

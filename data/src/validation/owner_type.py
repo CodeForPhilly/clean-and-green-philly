@@ -1,12 +1,25 @@
 import geopandas as gpd
+from pandera.pandas import Check, Column, DataFrameSchema
 
-from .base import BaseValidator
+from .base import BaseValidator, no_na_check
+
+output_schema = DataFrameSchema(
+    {
+        "owner_type": Column(
+            str,
+            checks=[
+                Check.isin(["Individual", "Business (LLC)", "Public"]),
+                no_na_check,
+            ],
+        )
+    }
+)
 
 
 class OwnerTypeOutputValidator(BaseValidator):
     """Validator for owner type service output."""
 
-    schema = None
+    schema = output_schema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass
