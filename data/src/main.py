@@ -134,6 +134,8 @@ try:
         except ImportError:
             pass
 
+    print(pipeline_errors)
+
     # Save metadata
     try:
         # Initialize collected_metadata if it doesn't exist (since services return GeoDataFrame, not FeatureLayer)

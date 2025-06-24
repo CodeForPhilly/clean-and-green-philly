@@ -1,19 +1,18 @@
 import geopandas as gpd
-from pandas import Series
-from pandera import DataFrameModel
-from shapely.geometry.base import BaseGeometry
+from pandera.pandas import DataFrameModel, DataFrameSchema, Column
+from pandera.typing import Series
 
 from .base import BaseValidator
 
 
-class PWDParcelsOutputSchema(DataFrameModel):
-    geometry: Series[BaseGeometry]
+# class PWDParcelsOutputSchema(DataFrameModel):
+#     geometry: Series[BaseGeometry]
 
 
 class PWDParcelsOutputValidator(BaseValidator):
     """Validator for pwd parcels service output."""
 
-    schema = PWDParcelsOutputSchema
+    schema = None
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass

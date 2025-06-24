@@ -1,19 +1,23 @@
-from typing import Literal
 import geopandas as gpd
-from pandas import Series
-from pandera import DataFrameModel
+from pandera.pandas import Column, DataFrameModel, DataFrameSchema, Check
+from pandera.typing import Series
 
 from .base import BaseValidator
 
 
-class ConservatorshipOutputSchema(DataFrameModel):
-    tactical_urbanism = Series[Literal["Y", "N"]]
+output_schema = DataFrameSchema(
+    {"tactical_urbanism": Column(str, checks=Check.isin(["Y", "N"]))}
+)
+
+
+# class ConservatorshipOutputSchema(DataFrameModel):
+#     tactical_urbanism: Series[Literal["Y", "N"]]
 
 
 class ConservatorshipOutputValidator(BaseValidator):
     """Validator for conservatorship service output."""
 
-    schema = ConservatorshipOutputSchema
+    schema = output_schema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass

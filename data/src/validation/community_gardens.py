@@ -1,6 +1,6 @@
 import geopandas as gpd
-from pandas import Series
-from pandera import DataFrameModel
+from pandera.pandas import Column, DataFrameModel, DataFrameSchema
+from pandera.typing import Series
 
 from .base import BaseValidator
 
@@ -14,14 +14,17 @@ class CommunityGardensInputValidator(BaseValidator):
         pass
 
 
-class CommunityGardensOutputSchema(DataFrameModel):
-    vacant: Series[bool]
+output_schema = DataFrameSchema({"vacant": Column(bool)})
+
+
+# class CommunityGardensOutputSchema(DataFrameModel):
+#     vacant: Series[bool]
 
 
 class CommunityGardensOutputValidator(BaseValidator):
     """Validator for community gardens service output."""
 
-    schema = CommunityGardensOutputSchema
+    schema = output_schema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass

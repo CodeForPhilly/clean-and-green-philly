@@ -26,15 +26,16 @@ class ValidationResult:
 class BaseValidator(ABC):
     """Base class for service-specific data validation."""
 
-    schema: pa.DataFrameModel = None
+    schema: pa.DataFrameSchema = None
 
     def __init_subclass__(cls):
         schema = getattr(cls, "schema", None)
-        if schema is not None and (
-            not isinstance(schema, type) or not isinstance(schema, pa.DataFrameModel)
-        ):
+        if schema is not None and not isinstance(schema, pa.DataFrameSchema):
+            print(type(schema))
+            print(isinstance(schema, type))
+            print(isinstance(schema, pa.DataFrameSchema))
             raise TypeError(
-                f"{cls.__name__} must define a 'schema' class variable that is a subclass of pandera.SchemaModel."
+                f"{cls.__name__} must define a 'schema' class variable that is an instance of pandera.DataFrameSchema."
             )
         return super().__init_subclass__()
 
@@ -200,9 +201,9 @@ class BaseValidator(ABC):
         schema_start = time.time()
         if self.schema:
             try:
-                self.schema.validate(gdf, lazy_validation=True)
+                self.schema.validate(gdf, lazy=True)
             except pa.errors.SchemaErrors as err:
-                self.errors.append(err.failure_case)
+                self.errors.append(err.failure_cases)
         schema_time = time.time() - schema_start
 
         # Custom validation
@@ -271,7 +272,7 @@ unique_check = Check(lambda s: s.is_unique, error="Should have all unique values
 def unique_value_check(lower: int, upper: int) -> Check:
     return Check(
         lambda s: s.nunique() >= lower and s.nunique() < upper,
-        f"Number of unique values is roughly between {lower} and {upper}",
+        error=f"Number of unique values is roughly between {lower} and {upper}",
     )
 
 
@@ -285,13 +286,13 @@ def null_percentage_check(null_percent: float) -> Check:
 
 @dataclass
 class DistributionParams:
-    min_value: Optional[int | float]
-    max_value: Optional[int | float]
-    mean: Optional[int | float]
-    median: Optional[int | float]
-    std: Optional[int | float]
-    q1: Optional[int | float]
-    q3: Optional[int | float]
+    min_value: Optional[int | float] = None
+    max_value: Optional[int | float] = None
+    mean: Optional[int | float] = None
+    median: Optional[int | float] = None
+    std: Optional[int | float] = None
+    q1: Optional[int | float] = None
+    q3: Optional[int | float] = None
 
 
 def distribution_check(params: DistributionParams) -> List[Check]:

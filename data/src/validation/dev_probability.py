@@ -1,8 +1,6 @@
-from typing import Literal
-
 import geopandas as gpd
-from pandas import Series
-from pandera import DataFrameModel, Field
+from pandera.pandas import DataFrameModel, Field, DataFrameSchema, Column, Check
+from pandera.typing import Series
 
 from .base import BaseValidator, DistributionParams, distribution_check
 
@@ -16,21 +14,32 @@ class DevProbabilityInputValidator(BaseValidator):
         pass
 
 
-class DevProbabilityOuputSchema(DataFrameModel):
-    permit_counts_params = DistributionParams(
-        mean=42.129, std=44.789, max_value=413.000, q1=18.000, q3=46.000
-    )
+# class DevProbabilityOuputSchema(DataFrameModel):
+#     permit_counts_params = DistributionParams(
+#         mean=42.129, std=44.789, max_value=413.000, q1=18.000, q3=46.000
+#     )
 
-    permit_count: Series[int] = Field(
-        checks=[*distribution_check(permit_counts_params)]
-    )
-    dev_rank: Series[Literal["Low", "Medium", "High"]]
+#     permit_count: Series[int] = Field(
+#         checks=[*distribution_check(permit_counts_params)]
+#     )
+#     dev_rank: Series[Literal["Low", "Medium", "High"]]
+
+permit_counts_params = DistributionParams(
+    mean=42.129, std=44.789, max_value=413.000, q1=18.000, q3=46.000
+)
+
+output_schema = DataFrameSchema(
+    {
+        "permit_count": Column(int, checks=[*distribution_check(permit_counts_params)]),
+        "dev_rank": Column(str, checks=Check.isin(["Low", "Medium", "High"])),
+    }
+)
 
 
 class DevProbabilityOutputValidator(BaseValidator):
     """Validator for dev probability service output."""
 
-    schema = DevProbabilityOuputSchema
+    schema = output_schema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass
