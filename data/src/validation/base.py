@@ -340,7 +340,7 @@ class BaseValidator(ABC):
             print("\n[GEOMETRY VALIDATION ERROR]")
             for error in self.errors:
                 print(error)
-            raise RuntimeError("Geometry validation failed. See above for details.")
+            return ValidationResult(success=False, errors=self.errors.copy())
 
         # OPA validation
         opa_start = time.time()
@@ -350,7 +350,7 @@ class BaseValidator(ABC):
             print("\n[OPA VALIDATION ERROR]")
             for error in self.errors:
                 print(error)
-            raise RuntimeError("OPA validation failed. See above for details.")
+            return ValidationResult(success=False, errors=self.errors.copy())
 
         # Schema validation
         schema_start = time.time()
@@ -361,7 +361,12 @@ class BaseValidator(ABC):
                 print("\n[SCHEMA VALIDATION ERROR]")
                 print("First 10 failure cases:")
                 print(err.failure_cases.head(10).to_string(index=False))
-                raise RuntimeError("Schema validation failed. See above for details.")
+                # Add each failure as a separate error
+                for _, row in err.failure_cases.iterrows():
+                    self.errors.append(
+                        f"Schema validation failed for {row['column']}: {row['failure_case']}"
+                    )
+                return ValidationResult(success=False, errors=self.errors.copy())
         schema_time = time.time() - schema_start
 
         # Custom validation
@@ -372,7 +377,7 @@ class BaseValidator(ABC):
             print("\n[CUSTOM VALIDATION ERROR]")
             for error in self.errors:
                 print(error)
-            raise RuntimeError("Custom validation failed. See above for details.")
+            return ValidationResult(success=False, errors=self.errors.copy())
 
         total_validate_time = time.time() - validate_start
         print(

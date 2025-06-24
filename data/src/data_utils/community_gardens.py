@@ -2,8 +2,12 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.constants.city_limits import PHL_GEOMETRY
 from src.validation.base import ValidationResult, validate_output
-from src.validation.community_gardens import CommunityGardensOutputValidator
+from src.validation.community_gardens import (
+    CommunityGardensInputValidator,
+    CommunityGardensOutputValidator,
+)
 
 from ..classes.loaders import EsriLoader
 from ..constants.services import COMMUNITY_GARDENS_TO_LOAD
@@ -46,6 +50,14 @@ def community_gardens(
     )
 
     community_gardens, input_validation = loader.load_or_fetch()
+
+    # PHS works with properties outside Philadelphia, so we need to spatially filter
+    # to only include community gardens within Philadelphia city limits before validation
+    community_gardens = community_gardens.clip(PHL_GEOMETRY)
+
+    # Validate the filtered community gardens data
+    input_validator = CommunityGardensInputValidator()
+    input_validator.validate(community_gardens)
 
     # Convert any non-point geometries to points using centroid
     community_gardens.loc[

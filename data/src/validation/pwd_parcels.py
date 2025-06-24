@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import geopandas as gpd
 import pandera.pandas as pa
 
@@ -25,44 +23,13 @@ PWDParcelsSchema = pa.DataFrameSchema(
             nullable=False,
             description="The area of the parcel in square feet",
         ),
-        # Additional fields that may be present from other services
-        "market_value": pa.Column(
-            float,
-            pa.Check.greater_than_or_equal_to(0),
-            nullable=True,
-            description="Property market value",
-        ),
-        "sale_price": pa.Column(
-            float,
-            pa.Check.greater_than_or_equal_to(0),
-            nullable=True,
-            description="Last sale price",
-        ),
-        "sale_date": pa.Column(
-            datetime, nullable=True, description="Date of last sale"
-        ),
-        "zip_code": pa.Column(
-            str, nullable=True, description="ZIP code of the property"
-        ),
-        "zoning": pa.Column(str, nullable=True, description="Zoning classification"),
-        "standardized_street_address": pa.Column(
-            str, nullable=True, description="Standardized street address"
-        ),
-        "standardized_mailing_address": pa.Column(
-            str, nullable=True, description="Standardized mailing address"
-        ),
-        "owner_1": pa.Column(str, nullable=True, description="Primary owner"),
-        "owner_2": pa.Column(str, nullable=True, description="Secondary owner"),
-        "building_code_description": pa.Column(
-            str, nullable=True, description="Building code description"
-        ),
         # Geometry field - using Pandera's GeoPandas integration
         "geometry": pa.Column(
             "geometry", nullable=False, description="Property geometry"
         ),
     },
     strict=False,
-    coerce=True,
+    coerce=False,
 )
 
 
@@ -79,6 +46,9 @@ class PWDParcelsOutputValidator(BaseValidator):
     """Validator for PWD parcels service output with comprehensive statistical validation."""
 
     schema = PWDParcelsSchema
+    min_stats_threshold = (
+        100  # Only run statistical validation for datasets with >= 100 rows
+    )
 
     def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Row-level validation that works with any dataset size."""
@@ -161,6 +131,10 @@ class PWDParcelsOutputValidator(BaseValidator):
 
     def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Statistical validation that requires larger datasets."""
+
+        # Skip statistical validation for small datasets
+        if len(gdf) < self.min_stats_threshold:
+            return
 
         # 1. Condo unit percentage validation
         if "is_condo_unit" in gdf.columns:

@@ -161,9 +161,11 @@ def test_phs_validator_missing_phs_care_program_column(base_test_data):
     assert not result.success
     assert len(result.errors) > 0
 
+    print("PHS VALIDATOR ERRORS:", result.errors)
+
     # Check that it caught the missing column
     error_messages = [str(error) for error in result.errors]
-    assert any("missing required columns" in msg.lower() for msg in error_messages)
+    assert any("schema validation failed" in msg.lower() for msg in error_messages)
     assert any("phs_care_program" in msg.lower() for msg in error_messages)
 
 

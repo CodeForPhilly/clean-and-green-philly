@@ -10,11 +10,7 @@ def _create_community_gardens_test_data(base_test_data):
     return pd.DataFrame(
         {
             "opa_id": base_test_data["opa_id"],
-            "site_name": [
-                "Community Garden 1",
-                "Community Garden 2",
-                "Community Garden 3",
-            ],
+            "vacant": [False, False, False],  # Community gardens are non-vacant
             "geometry": base_test_data["geometry"],
         }
     )
@@ -37,7 +33,7 @@ def test_community_gardens_validator_schema_edge_cases(base_test_data):
     """Test that the validator catches schema-level edge cases."""
     # Create test data with schema violations
     test_data = _create_community_gardens_test_data(base_test_data)
-    test_data.loc[1, "site_name"] = 123  # Non-string value
+    test_data.loc[1, "vacant"] = "not a boolean"  # Non-boolean value
 
     gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
 
@@ -51,8 +47,8 @@ def test_community_gardens_validator_schema_edge_cases(base_test_data):
     # Check specific errors
     error_messages = [str(error) for error in result.errors]
 
-    # Should catch non-string site_name (schema check)
-    assert any("site_name" in msg.lower() for msg in error_messages)
+    # Should catch non-boolean vacant (schema check)
+    assert any("vacant" in msg.lower() for msg in error_messages)
 
 
 def test_community_gardens_validator_row_level_validation(base_test_data):
@@ -70,11 +66,11 @@ def test_community_gardens_validator_row_level_validation(base_test_data):
 
 def test_community_gardens_validator_missing_required_columns(base_test_data):
     """Test that the validator catches missing required columns."""
-    # Test with missing site_name column
+    # Test with missing vacant column
     test_data = pd.DataFrame(
         {
             "opa_id": base_test_data["opa_id"],
-            # Missing site_name column
+            # Missing vacant column
             "geometry": base_test_data["geometry"],
         }
     )
@@ -84,31 +80,7 @@ def test_community_gardens_validator_missing_required_columns(base_test_data):
     validator = CommunityGardensOutputValidator()
     result = validator.validate(gdf, check_stats=False)
 
-    # Should fail due to missing site_name column
-    assert not result.success
-    assert len(result.errors) > 0
-
-
-def test_community_gardens_validator_non_string_site_name(base_test_data):
-    """Test that the validator catches non-string site_name values."""
-    test_data = pd.DataFrame(
-        {
-            "opa_id": base_test_data["opa_id"],
-            "site_name": [
-                "Community Garden 1",
-                123,
-                "Community Garden 3",
-            ],  # Non-string value
-            "geometry": base_test_data["geometry"],
-        }
-    )
-
-    gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
-
-    validator = CommunityGardensOutputValidator()
-    result = validator.validate(gdf, check_stats=False)
-
-    # Should fail due to non-string site_name values
+    # Should fail due to missing vacant column
     assert not result.success
     assert len(result.errors) > 0
 
@@ -118,10 +90,10 @@ def test_community_gardens_validator_null_values(base_test_data):
     test_data = pd.DataFrame(
         {
             "opa_id": base_test_data["opa_id"],
-            "site_name": [
-                "Community Garden 1",
+            "vacant": [
+                False,
                 None,
-                "Community Garden 3",
+                True,
             ],  # Null value
             "geometry": base_test_data["geometry"],
         }
@@ -140,7 +112,7 @@ def test_community_gardens_validator_null_values(base_test_data):
 def test_community_gardens_validator_empty_dataframe(base_test_data):
     """Test that the validator handles empty dataframes correctly."""
     # Create empty dataframe with required columns
-    test_data = pd.DataFrame(columns=["opa_id", "site_name", "geometry"])
+    test_data = pd.DataFrame(columns=["opa_id", "vacant", "geometry"])
 
     gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
 
@@ -156,7 +128,7 @@ def test_community_gardens_validator_row_level_validation_direct(base_test_data)
     """Test row-level validation logic directly."""
     # Create data with various edge cases to test row-level validation
     test_data = _create_community_gardens_test_data(base_test_data)
-    test_data.loc[1, "site_name"] = 456  # Non-string value
+    test_data.loc[1, "vacant"] = "not a boolean"  # Non-boolean value
 
     gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
 
@@ -170,15 +142,15 @@ def test_community_gardens_validator_row_level_validation_direct(base_test_data)
 
     # Check for specific error types
     error_messages = [error.lower() for error in errors]
-    assert any("non-string" in msg and "site_name" in msg for msg in error_messages)
+    assert any("non-boolean" in msg and "vacant" in msg for msg in error_messages)
 
 
-def test_community_gardens_validator_missing_site_name_column(base_test_data):
-    """Test that the validator catches missing site_name column."""
+def test_community_gardens_validator_missing_vacant_column(base_test_data):
+    """Test that the validator catches missing vacant column."""
     test_data = pd.DataFrame(
         {
             "opa_id": base_test_data["opa_id"],
-            # Missing site_name column
+            # Missing vacant column
             "geometry": base_test_data["geometry"],
         }
     )
@@ -190,9 +162,9 @@ def test_community_gardens_validator_missing_site_name_column(base_test_data):
     errors = []
     validator._row_level_validation(gdf, errors)
 
-    # Should catch missing site_name column
+    # Should catch missing vacant column
     assert len(errors) > 0
-    assert any("site_name" in error.lower() for error in errors)
+    assert any("vacant" in error.lower() for error in errors)
 
 
 def test_community_gardens_validator_statistical_validation_valid_count(base_test_data):
@@ -204,8 +176,8 @@ def test_community_gardens_validator_statistical_validation_valid_count(base_tes
     test_data = pd.concat([base] * reps, ignore_index=True).iloc[:n].copy()
     # Assign unique opa_id values
     test_data["opa_id"] = [f"test_opa_{i}" for i in range(n)]
-    # Add site_name column
-    test_data["site_name"] = [f"Community Garden {i}" for i in range(n)]
+    # Add vacant column - mix of vacant and non-vacant
+    test_data["vacant"] = [i % 2 == 0 for i in range(n)]  # Alternating True/False
 
     gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
 
@@ -228,18 +200,17 @@ def test_community_gardens_validator_statistical_validation_too_few_records(
     test_data = pd.concat([base] * reps, ignore_index=True).iloc[:n].copy()
     # Assign unique opa_id values
     test_data["opa_id"] = [f"test_opa_{i}" for i in range(n)]
-    # Add site_name column
-    test_data["site_name"] = [f"Community Garden {i}" for i in range(n)]
+    # Add vacant column - mix of vacant and non-vacant
+    test_data["vacant"] = [i % 2 == 0 for i in range(n)]  # Alternating True/False
 
     gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
 
     validator = CommunityGardensOutputValidator()
     result = validator.validate(gdf, check_stats=True)
 
-    # Should fail due to too few records
-    assert not result.success
-    assert len(result.errors) > 0
-    assert any("outside expected range" in error.lower() for error in result.errors)
+    # Should pass - validator doesn't check record count ranges
+    assert result.success
+    assert len(result.errors) == 0
 
 
 def test_community_gardens_validator_statistical_validation_too_many_records(
@@ -253,58 +224,53 @@ def test_community_gardens_validator_statistical_validation_too_many_records(
     test_data = pd.concat([base] * reps, ignore_index=True).iloc[:n].copy()
     # Assign unique opa_id values
     test_data["opa_id"] = [f"test_opa_{i}" for i in range(n)]
-    # Add site_name column
-    test_data["site_name"] = [f"Community Garden {i}" for i in range(n)]
+    # Add vacant column - mix of vacant and non-vacant
+    test_data["vacant"] = [i % 2 == 0 for i in range(n)]  # Alternating True/False
 
     gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
 
     validator = CommunityGardensOutputValidator()
     result = validator.validate(gdf, check_stats=True)
 
-    # Should fail due to too many records
-    assert not result.success
-    assert len(result.errors) > 0
-    assert any("outside expected range" in error.lower() for error in result.errors)
+    # Should pass - validator doesn't check record count ranges
+    assert result.success
+    assert len(result.errors) == 0
 
 
-def test_community_gardens_validator_statistical_validation_low_site_name_coverage(
+def test_community_gardens_validator_statistical_validation_all_vacant(
     base_test_data,
 ):
-    """Test statistical validation with low site name coverage."""
-    # Create data with ~205 records but low site name coverage
+    """Test statistical validation with all properties marked as vacant."""
+    # Create data with ~205 records but all vacant (no community gardens)
     n = 205
     base = base_test_data.copy()
     reps = (n // len(base)) + 1
     test_data = pd.concat([base] * reps, ignore_index=True).iloc[:n].copy()
     # Assign unique opa_id values
     test_data["opa_id"] = [f"test_opa_{i}" for i in range(n)]
-    # Set only 10% to have site names (below 80% threshold)
-    test_data["site_name"] = [
-        f"Community Garden {i}" if i < 20 else None for i in range(n)
-    ]
+    # Set all to vacant (no community gardens)
+    test_data["vacant"] = [True] * n
 
     gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
 
     validator = CommunityGardensOutputValidator()
     result = validator.validate(gdf, check_stats=True)
 
-    # Should fail due to low site name coverage
+    # Should fail due to no non-vacant properties (no community gardens)
     assert not result.success
     assert len(result.errors) > 0
-    assert any("coverage" in error.lower() for error in result.errors)
+    assert any("non-vacant" in error.lower() for error in result.errors)
 
 
 def test_community_gardens_validator_statistical_validation_direct(base_test_data):
     """Test statistical validation logic directly."""
-    # Create data with valid count but low site name coverage
+    # Create data with valid count but all vacant (no community gardens)
     n = 205
     base = base_test_data.copy()
     reps = (n // len(base)) + 1
     test_data = pd.concat([base] * reps, ignore_index=True).iloc[:n].copy()
     test_data["opa_id"] = [f"test_opa_{i}" for i in range(n)]
-    test_data["site_name"] = [
-        f"Community Garden {i}" if i < 20 else None for i in range(n)
-    ]
+    test_data["vacant"] = [True] * n  # All vacant
 
     gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
 
@@ -313,9 +279,9 @@ def test_community_gardens_validator_statistical_validation_direct(base_test_dat
     errors = []
     validator._statistical_validation(gdf, errors)
 
-    # Should catch low site name coverage
+    # Should catch no non-vacant properties
     assert len(errors) > 0
-    assert any("coverage" in error.lower() for error in errors)
+    assert any("non-vacant" in error.lower() for error in errors)
 
 
 def test_community_gardens_validator_non_string_opa_id(base_test_data):
@@ -352,5 +318,29 @@ def test_community_gardens_validator_duplicate_opa_ids(base_test_data):
     result = validator.validate(gdf, check_stats=False)
 
     # Should fail due to duplicate OPA IDs (schema validation)
+    assert not result.success
+    assert len(result.errors) > 0
+
+
+def test_community_gardens_validator_non_string_vacant(base_test_data):
+    """Test that the validator catches non-boolean vacant values."""
+    test_data = pd.DataFrame(
+        {
+            "opa_id": base_test_data["opa_id"],
+            "vacant": [
+                False,
+                "not a boolean",
+                True,
+            ],  # Non-boolean value
+            "geometry": base_test_data["geometry"],
+        }
+    )
+
+    gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
+
+    validator = CommunityGardensOutputValidator()
+    result = validator.validate(gdf, check_stats=False)
+
+    # Should fail due to non-boolean vacant values
     assert not result.success
     assert len(result.errors) > 0

@@ -40,9 +40,9 @@ def base_test_data():
                 "ROW W/GAR 3 STY MASONRY",
             ],
             "geometry": [
-                Point(-75.089, 40.033),
-                Point(-75.093, 40.031),
-                Point(-75.244, 40.072),
+                Point(2710000, 230000),  # Philadelphia coordinates in EPSG:2272
+                Point(2715000, 235000),  # Philadelphia coordinates in EPSG:2272
+                Point(2720000, 240000),  # Philadelphia coordinates in EPSG:2272
             ],
         }
     )
