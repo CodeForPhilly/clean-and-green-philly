@@ -149,13 +149,26 @@ class BaseValidator(ABC):
         Validate geometry data in the GeoDataFrame.
         """
         geometry_debug_logger = get_logger("geometry_debug")
-        geometry_debug_logger.info("Starting geometry validation...")
+
+        # Extract EPSG code from input CRS
+        gdf.crs.to_epsg() if gdf.crs else None
+        USE_CRS.split(":")[1] if ":" in USE_CRS else USE_CRS
         correct_crs = gdf.crs == USE_CRS
 
-        # Debug: Print CRS information
-        geometry_debug_logger.info(f"Input CRS: {gdf.crs}")
-        geometry_debug_logger.info(f"Expected CRS: {USE_CRS}")
-        geometry_debug_logger.info(f"CRS match: {correct_crs}")
+        # Debug: Print simplified CRS information on single line
+        geometry_debug_logger.info(
+            f"CRS: {gdf.crs} (expected: {USE_CRS}) - Match: {correct_crs}"
+        )
+
+        # Debug: Print sample geometry coordinates
+        geometry_debug_logger.info("Sample geometry coordinates (first 3):")
+        for i in range(min(3, len(gdf))):
+            geom = gdf.iloc[i].geometry
+            if geom.geom_type == "Point":
+                coords = (geom.x, geom.y)
+            else:
+                coords = geom.bounds  # (minx, miny, maxx, maxy)
+            geometry_debug_logger.info(f"  Row {i}: {coords}")
 
         # Step 1: Get Philadelphia's bounding box
         phl_start = time.time()
@@ -212,12 +225,6 @@ class BaseValidator(ABC):
         cat1_count = definitely_outside.sum()
         cat2_count = definitely_inside.sum()
         cat3_count = boundary_cases.sum()
-
-        # Debug: Print category breakdown
-        geometry_debug_logger.info("Category breakdown:")
-        geometry_debug_logger.info(f"  Definitely outside: {cat1_count:,}")
-        geometry_debug_logger.info(f"  Definitely inside: {cat2_count:,}")
-        geometry_debug_logger.info(f"  Boundary cases: {cat3_count:,}")
 
         # Step 4: Apply validation logic
         validation_start = time.time()

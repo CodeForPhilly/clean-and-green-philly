@@ -37,8 +37,12 @@ def load_esri_data(esri_urls: List[str], input_crs: str, extra_query_args: dict 
     Returns:
         GeoDataFrame: Combined GeoDataFrame with data from all URLs.
     """
+    geometry_logger = get_logger("geometry_debug")
     gdfs = []
+
     for url in esri_urls:
+        geometry_logger.info(f"Processing ESRI URL: {url}")
+
         # Determine parcel_type based on URL patterns
         parcel_type = (
             "Land"
@@ -60,32 +64,156 @@ def load_esri_data(esri_urls: List[str], input_crs: str, extra_query_args: dict 
         if extra_query_args:
             dumper_kwargs["extra_query_args"] = extra_query_args
 
+        geometry_logger.info("Creating EsriDumper...")
         dumper = EsriDumper(**dumper_kwargs)
+
+        geometry_logger.info("Fetching features from ESRI service...")
         features = [feature for feature in dumper]
+        geometry_logger.info(f"Fetched {len(features)} features from ESRI service")
 
         if not features:
+            geometry_logger.warning("No features found, skipping this URL")
             continue  # Skip if no features were found
 
         geojson_features = {"type": "FeatureCollection", "features": features}
+
+        geometry_logger.info("Creating GeoDataFrame from features...")
         # Let the service determine its own CRS first
         gdf = gpd.GeoDataFrame.from_features(geojson_features)
 
+        geometry_logger.info(
+            f"Initial GeoDataFrame CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+        )
+        geometry_logger.info(f"Initial GeoDataFrame shape: {gdf.shape}")
+
+        if not gdf.empty:
+            geometry_logger.info(
+                f"Initial geometry types: {gdf.geometry.geom_type.value_counts().to_dict()}"
+            )
+            geometry_logger.info(f"Initial bounds: {gdf.total_bounds}")
+
+            # Sample coordinates to check if they look like lat/lon or projected
+            geometry_logger.info("Sample coordinates from first 3 features:")
+            for i in range(min(3, len(gdf))):
+                geom = gdf.iloc[i].geometry
+                if geom.geom_type == "Point":
+                    coords = list(geom.coords)[0]
+                elif geom.geom_type in ["Polygon", "MultiPolygon"]:
+                    if hasattr(geom, "exterior"):
+                        coords = list(geom.exterior.coords)[0]
+                    else:
+                        coords = list(geom.boundary.coords)[0]
+                elif geom.geom_type in ["LineString", "MultiLineString"]:
+                    coords = list(geom.coords)[0]
+                else:
+                    coords = "unknown geometry type"
+                geometry_logger.info(f"  Feature {i}: {coords}")
+
+                # Check if coordinates look like lat/lon (should be roughly -180 to 180 for x, -90 to 90 for y)
+                if isinstance(coords, tuple) and len(coords) >= 2:
+                    x, y = coords[0], coords[1]
+                    looks_like_latlon = (-180 <= x <= 180) and (-90 <= y <= 90)
+                    geometry_logger.info(
+                        f"    Coordinates look like lat/lon: {looks_like_latlon} (x: {x}, y: {y})"
+                    )
+
         # If no CRS is set, assume EPSG:4326 (most ESRI services use this)
         if gdf.crs is None:
-            print("    No CRS detected, assuming EPSG:4326")
+            geometry_logger.warning("No CRS detected, assuming EPSG:4326")
             gdf.set_crs("EPSG:4326", inplace=True)
+            geometry_logger.info(
+                f"Set CRS to EPSG:4326, new CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+            )
+
+        # Check if coordinates are in lat/lon range but labeled as a projected CRS
+        # This handles the case where data comes in with lat/lon coordinates but is incorrectly labeled
+        if not gdf.empty and gdf.crs and gdf.crs != "EPSG:4326":
+            bounds = gdf.total_bounds
+            x_in_latlon_range = -180 <= bounds[0] <= 180 and -180 <= bounds[2] <= 180
+            y_in_latlon_range = -90 <= bounds[1] <= 90 and -90 <= bounds[3] <= 90
+
+            if x_in_latlon_range and y_in_latlon_range:
+                geometry_logger.warning(
+                    f"Coordinates are in lat/lon range but labeled as {gdf.crs}. "
+                    f"Bounds: {bounds}. Fixing CRS label to EPSG:4326."
+                )
+                gdf.set_crs("EPSG:4326", inplace=True, allow_override=True)
+                geometry_logger.info(
+                    f"Fixed CRS label to EPSG:4326, new CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+                )
 
         # Now convert to the target CRS
         if gdf.crs and gdf.crs != input_crs:
-            print(f"    Converting from {gdf.crs} to {input_crs}")
+            geometry_logger.info(
+                f"Converting from EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'} to {input_crs}"
+            )
+            geometry_logger.info(f"Before conversion - bounds: {gdf.total_bounds}")
+
+            # Sample coordinates before conversion
+            geometry_logger.info("Sample coordinates before CRS conversion:")
+            for i in range(min(3, len(gdf))):
+                geom = gdf.iloc[i].geometry
+                if geom.geom_type == "Point":
+                    coords = list(geom.coords)[0]
+                elif geom.geom_type in ["Polygon", "MultiPolygon"]:
+                    if hasattr(geom, "exterior"):
+                        coords = list(geom.exterior.coords)[0]
+                    else:
+                        coords = list(geom.boundary.coords)[0]
+                elif geom.geom_type in ["LineString", "MultiLineString"]:
+                    coords = list(geom.coords)[0]
+                else:
+                    coords = "unknown geometry type"
+                geometry_logger.info(f"  Feature {i}: {coords}")
+
             gdf = gdf.to_crs(input_crs)
+            geometry_logger.info(
+                f"After conversion - CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+            )
+            geometry_logger.info(f"After conversion - bounds: {gdf.total_bounds}")
+
+            # Sample coordinates after conversion
+            geometry_logger.info("Sample coordinates after CRS conversion:")
+            for i in range(min(3, len(gdf))):
+                geom = gdf.iloc[i].geometry
+                if geom.geom_type == "Point":
+                    coords = list(geom.coords)[0]
+                elif geom.geom_type in ["Polygon", "MultiPolygon"]:
+                    if hasattr(geom, "exterior"):
+                        coords = list(geom.exterior.coords)[0]
+                    else:
+                        coords = list(geom.boundary.coords)[0]
+                elif geom.geom_type in ["LineString", "MultiLineString"]:
+                    coords = list(geom.coords)[0]
+                else:
+                    coords = "unknown geometry type"
+                geometry_logger.info(f"  Feature {i}: {coords}")
+        else:
+            geometry_logger.info(
+                f"CRS already matches target ({input_crs}), no conversion needed"
+            )
 
         if parcel_type:
             gdf["parcel_type"] = parcel_type  # Add the parcel_type column
+            geometry_logger.info(f"Added parcel_type: {parcel_type}")
 
         gdfs.append(gdf)
+        geometry_logger.info(f"Completed processing URL, final shape: {gdf.shape}")
 
-    return pd.concat(gdfs, ignore_index=True)
+    geometry_logger.info(f"Combining {len(gdfs)} GeoDataFrames...")
+    combined_gdf = pd.concat(gdfs, ignore_index=True)
+    geometry_logger.info(f"Combined GeoDataFrame shape: {combined_gdf.shape}")
+    geometry_logger.info(
+        f"Combined GeoDataFrame CRS: EPSG:{combined_gdf.crs.to_epsg() if combined_gdf.crs else 'None'}"
+    )
+
+    if not combined_gdf.empty:
+        geometry_logger.info(
+            f"Combined geometry types: {combined_gdf.geometry.geom_type.value_counts().to_dict()}"
+        )
+        geometry_logger.info(f"Combined bounds: {combined_gdf.total_bounds}")
+
+    return combined_gdf
 
 
 # Carto data loader
@@ -348,8 +476,41 @@ class GdfLoader(BaseLoader):
         if not gdf.crs:
             raise AttributeError("Input data doesn't have an original CRS set")
 
+        # Add CRS detection logic similar to EsriLoader
+        geometry_logger = get_logger("geometry_debug")
+        geometry_logger.info(f"GdfLoader: Original CRS: {gdf.crs}")
+        geometry_logger.info(f"GdfLoader: Original bounds: {gdf.total_bounds}")
+
+        # Check if coordinates are in lat/lon range but labeled as a projected CRS
+        # This handles the case where data comes in with lat/lon coordinates but is incorrectly labeled
+        if not gdf.empty and gdf.crs and gdf.crs != "EPSG:4326":
+            bounds = gdf.total_bounds
+            x_in_latlon_range = -180 <= bounds[0] <= 180 and -180 <= bounds[2] <= 180
+            y_in_latlon_range = -90 <= bounds[1] <= 90 and -90 <= bounds[3] <= 90
+
+            if x_in_latlon_range and y_in_latlon_range:
+                geometry_logger.warning(
+                    f"GdfLoader: Coordinates are in lat/lon range but labeled as {gdf.crs}. "
+                    f"Bounds: {bounds}. Fixing CRS label to EPSG:4326."
+                )
+                gdf.set_crs("EPSG:4326", inplace=True, allow_override=True)
+                geometry_logger.info(
+                    f"GdfLoader: Fixed CRS label to EPSG:4326, new CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+                )
+
         crs_start = time.time()
+        geometry_logger.info(f"GdfLoader: Converting from {gdf.crs} to {USE_CRS}")
+        geometry_logger.info(
+            f"GdfLoader: Before CRS conversion - bounds: {gdf.total_bounds}"
+        )
+
         gdf = gdf.to_crs(USE_CRS)
+
+        geometry_logger.info(f"GdfLoader: After CRS conversion - CRS: {gdf.crs}")
+        geometry_logger.info(
+            f"GdfLoader: After CRS conversion - bounds: {gdf.total_bounds}"
+        )
+
         crs_time = time.time() - crs_start
         performance_logger.info(f"CRS conversion took {crs_time:.2f}s")
 
@@ -385,23 +546,23 @@ class EsriLoader(BaseLoader):
         performance_logger.info(
             f"load_esri_data took {esri_time:.2f}s ({len(gdf)} rows)"
         )
-        print(f"    EsriLoader.load_data: After load_esri_data CRS: {gdf.crs}")
+        geometry_logger = get_logger("geometry_debug")
+        geometry_logger.info(f"After load_esri_data CRS: {gdf.crs}")
 
         normalize_start = time.time()
         gdf = self.normalize_columns(gdf, self.cols)
         normalize_time = time.time() - normalize_start
         performance_logger.info(f"normalize_columns took {normalize_time:.2f}s")
-        print(f"    EsriLoader.load_data: After normalize_columns CRS: {gdf.crs}")
+        geometry_logger.info(f"After normalize_columns CRS: {gdf.crs}")
 
         crs_start = time.time()
-        print(f"    EsriLoader.load_data: Converting from {gdf.crs} to {USE_CRS}")
-        print(
-            f"    EsriLoader.load_data: Before CRS conversion - bounds: {gdf.total_bounds}"
-        )
-        print("    EsriLoader.load_data: Before CRS conversion - sample coordinates:")
+        geometry_logger = get_logger("geometry_debug")
+        geometry_logger.info(f"Converting from {gdf.crs} to {USE_CRS}")
+        geometry_logger.info(f"Before CRS conversion - bounds: {gdf.total_bounds}")
+        geometry_logger.info("Before CRS conversion - sample coordinates:")
         for i in range(min(3, len(gdf))):
             geom = gdf.iloc[i].geometry
-            print(f"      Row {i} geometry type: {type(geom).__name__}")
+            geometry_logger.info(f"  Row {i} geometry type: {type(geom).__name__}")
 
             if geom.geom_type == "Point":
                 coords = list(geom.coords)[0]
@@ -415,17 +576,40 @@ class EsriLoader(BaseLoader):
                 coords = list(geom.coords)[0]
             else:
                 coords = "unknown geometry type"
-            print(f"      Row {i}: {coords}")
+            geometry_logger.info(f"  Row {i}: {coords}")
 
-        gdf = gdf.to_crs(USE_CRS)
+        # Check if coordinates are in lat/lon range but labeled as a projected CRS
+        # This handles the case where data comes in with lat/lon coordinates but is incorrectly labeled
+        if not gdf.empty and gdf.crs and gdf.crs != "EPSG:4326":
+            bounds = gdf.total_bounds
+            x_in_latlon_range = -180 <= bounds[0] <= 180 and -180 <= bounds[2] <= 180
+            y_in_latlon_range = -90 <= bounds[1] <= 90 and -90 <= bounds[3] <= 90
 
-        print(
-            f"    EsriLoader.load_data: After CRS conversion - bounds: {gdf.total_bounds}"
-        )
-        print("    EsriLoader.load_data: After CRS conversion - sample coordinates:")
+            if x_in_latlon_range and y_in_latlon_range:
+                geometry_logger.warning(
+                    f"Coordinates are in lat/lon range but labeled as {gdf.crs}. "
+                    f"Bounds: {bounds}. Fixing CRS label to EPSG:4326."
+                )
+                gdf.set_crs("EPSG:4326", inplace=True, allow_override=True)
+                geometry_logger.info(
+                    f"Fixed CRS label to EPSG:4326, new CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+                )
+
+        # Debug: Check if CRS conversion is actually needed
+        if gdf.crs == USE_CRS:
+            geometry_logger.info(f"CRS already matches {USE_CRS}, skipping conversion")
+        else:
+            geometry_logger.info(
+                f"Performing CRS conversion from {gdf.crs} to {USE_CRS}"
+            )
+            gdf = gdf.to_crs(USE_CRS)
+            geometry_logger.info(f"CRS conversion completed, new CRS: {gdf.crs}")
+
+        geometry_logger.info(f"After CRS conversion - bounds: {gdf.total_bounds}")
+        geometry_logger.info("After CRS conversion - sample coordinates:")
         for i in range(min(3, len(gdf))):
             geom = gdf.iloc[i].geometry
-            print(f"      Row {i} geometry type: {type(geom).__name__}")
+            geometry_logger.info(f"  Row {i} geometry type: {type(geom).__name__}")
 
             if geom.geom_type == "Point":
                 coords = list(geom.coords)[0]
@@ -439,11 +623,11 @@ class EsriLoader(BaseLoader):
                 coords = list(geom.coords)[0]
             else:
                 coords = "unknown geometry type"
-            print(f"      Row {i}: {coords}")
+            geometry_logger.info(f"  Row {i}: {coords}")
 
         crs_time = time.time() - crs_start
         performance_logger.info(f"CRS conversion took {crs_time:.2f}s")
-        print(f"    EsriLoader.load_data: After CRS conversion CRS: {gdf.crs}")
+        geometry_logger.info(f"After CRS conversion CRS: {gdf.crs}")
 
         opa_start = time.time()
         gdf = self.standardize_opa(gdf)
