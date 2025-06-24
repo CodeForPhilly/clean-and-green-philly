@@ -1,6 +1,5 @@
 import geopandas as gpd
-from pandera.pandas import DataFrameModel, Field, DataFrameSchema, Column, Check
-from pandera.typing import Series
+from pandera.pandas import Check, Column, DataFrameSchema
 
 from .base import BaseValidator, DistributionParams, distribution_check
 
@@ -49,22 +48,6 @@ output_schema = DataFrameSchema(
         ),
     }
 )
-
-
-# class DelinquenciesOutputSchema(DataFrameModel):
-#     total_due: Series[float | Literal["NA"]] = Field(
-#         checks=[*distribution_check(total_due_params)]
-#     )
-#     most_recent_year_owed: Series[str]
-#     num_years_owed: Series[int | Literal["NA"]] = Field(
-#         checks=[*distribution_check(num_year_owed_params)]
-#     )
-#     payment_agreement: Series[bool | Literal["NA"]]
-#     is_actionable: Series[bool]
-#     sheriff_sale: Series[Literal["Y", "N"]]
-#     total_assessment: Series[float | Literal["NA"]] = Field(
-#         checks=[*distribution_check(total_assessment_params)]
-#     )
 
 
 class DelinquenciesOutputValidator(BaseValidator):

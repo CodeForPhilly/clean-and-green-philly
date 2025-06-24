@@ -1,15 +1,7 @@
 import geopandas as gpd
-from pandera.pandas import DataFrameModel, Field, DataFrameSchema, Column, Check
-from pandera.typing import Series
+from pandera.pandas import Check, Column, DataFrameSchema
 
 from .base import BaseValidator, no_na_check
-
-
-# class OwnerTypeOutputSchema(DataFrameModel):
-#     owner_type: Series[Literal["Individual", "Business (LLC)", "Public"]] = Field(
-#         checks=[no_na_check]
-#     )
-
 
 output_schema = DataFrameSchema(
     {

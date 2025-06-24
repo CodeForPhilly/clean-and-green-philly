@@ -1,6 +1,5 @@
 import geopandas as gpd
-from pandera.pandas import Column, DataFrameModel, DataFrameSchema, Check
-from pandera.typing import Series
+from pandera.pandas import Check, Column, DataFrameSchema
 
 from .base import BaseValidator
 
@@ -20,18 +19,6 @@ output_schema = DataFrameSchema(
         )
     }
 )
-
-
-# class AccessProcessOutputSchema(DataFrameModel):
-#     access_process: Series[
-#         Literal[
-#             "Private Land Use Agreement",
-#             "Go through Land Bank",
-#             "PRA",
-#             "Do Nothing",
-#             "Buy Property",
-#         ]
-#     ]
 
 
 class AccessProcessOutputValidator(BaseValidator):

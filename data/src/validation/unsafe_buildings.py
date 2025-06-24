@@ -1,6 +1,5 @@
 import geopandas as gpd
-from pandera.pandas import Column, DataFrameModel, DataFrameSchema, Check
-from pandera.typing import Series
+from pandera.pandas import Check, Column, DataFrameSchema
 
 from .base import BaseValidator
 
@@ -12,10 +11,6 @@ class UnsafeBuildingsInputValidator(BaseValidator):
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass
-
-
-# class UnsafeBuildingsOutputSchema(DataFrameModel):
-#     unsafe_building: Series[Literal["Y", "N"]]
 
 
 output_schema = DataFrameSchema(

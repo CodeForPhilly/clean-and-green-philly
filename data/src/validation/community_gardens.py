@@ -1,6 +1,5 @@
 import geopandas as gpd
-from pandera.pandas import Column, DataFrameModel, DataFrameSchema
-from pandera.typing import Series
+from pandera.pandas import Column, DataFrameSchema
 
 from .base import BaseValidator
 
@@ -15,10 +14,6 @@ class CommunityGardensInputValidator(BaseValidator):
 
 
 output_schema = DataFrameSchema({"vacant": Column(bool)})
-
-
-# class CommunityGardensOutputSchema(DataFrameModel):
-#     vacant: Series[bool]
 
 
 class CommunityGardensOutputValidator(BaseValidator):

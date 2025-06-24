@@ -1,8 +1,5 @@
-from typing import Optional
-
 import geopandas as gpd
-from pandera.pandas import DataFrameModel, Field, DataFrameSchema, Column
-from pandera.typing import Series
+from pandera.pandas import Column, DataFrameSchema
 
 from .base import (
     BaseValidator,
@@ -19,20 +16,6 @@ class TreeCanopyInputValidator(BaseValidator):
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass
-
-
-# class TreeCanopyOutputSchema(DataFrameModel):
-#     tree_params = DistributionParams(
-#         max_value=0.4565896114,
-#         mean=0.1688201897,
-#         std=0.08536259767,
-#         q1=0.1155013519,
-#         q3=0.228886177,
-#     )
-
-#     tree_canopy_gap: Series[Optional[float]] = Field(
-#         checks=[null_percentage_check(0.9986), *distribution_check(tree_params)]
-#     )
 
 
 tree_params = DistributionParams(
