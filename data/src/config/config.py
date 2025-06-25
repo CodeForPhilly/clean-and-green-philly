@@ -3,7 +3,7 @@ import threading
 from contextlib import contextmanager
 from pathlib import Path
 
-FORCE_RELOAD = False
+FORCE_RELOAD = True
 """ During the data load, whether to query the various GIS API services for the data to load. If True, will query the
 API services and report on data differences.  If false will read the cached data."""
 
