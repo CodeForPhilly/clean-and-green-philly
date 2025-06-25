@@ -66,7 +66,7 @@ OPA_PROPERTIES_QUERY = "SELECT building_code_description, market_value, sale_dat
 
 PWD_PARCELS_QUERY = "SELECT *, the_geom FROM pwd_parcels"
 
-UNSAFE_BUILDINGS_QUERY = "SELECT * FROM unsafe"
+UNSAFE_BUILDINGS_QUERY = "SELECT opa_account_num, the_geom FROM unsafe"
 
 IMMINENT_DANGER_BUILDINGS_QUERY = "SELECT * FROM imm_dang"
 
