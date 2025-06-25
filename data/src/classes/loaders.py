@@ -96,26 +96,32 @@ def load_esri_data(esri_urls: List[str], input_crs: str, extra_query_args: dict 
             geometry_logger.info("Sample coordinates from first 3 features:")
             for i in range(min(3, len(gdf))):
                 geom = gdf.iloc[i].geometry
-                if geom.geom_type == "Point":
-                    coords = list(geom.coords)[0]
-                elif geom.geom_type in ["Polygon", "MultiPolygon"]:
-                    if hasattr(geom, "exterior"):
+                try:
+                    if geom.geom_type == "Point":
+                        coords = list(geom.coords)[0]
+                    elif geom.geom_type == "Polygon":
                         coords = list(geom.exterior.coords)[0]
+                    elif geom.geom_type == "MultiPolygon":
+                        # For MultiPolygon, get first coordinate of first polygon's exterior
+                        coords = list(geom.geoms[0].exterior.coords)[0]
+                    elif geom.geom_type in ["LineString", "MultiLineString"]:
+                        coords = list(geom.coords)[0]
                     else:
-                        coords = list(geom.boundary.coords)[0]
-                elif geom.geom_type in ["LineString", "MultiLineString"]:
-                    coords = list(geom.coords)[0]
-                else:
-                    coords = "unknown geometry type"
-                geometry_logger.info(f"  Feature {i}: {coords}")
+                        coords = "unknown geometry type"
+                    geometry_logger.info(f"  Feature {i}: {coords}")
 
-                # Check if coordinates look like lat/lon (should be roughly -180 to 180 for x, -90 to 90 for y)
-                if isinstance(coords, tuple) and len(coords) >= 2:
-                    x, y = coords[0], coords[1]
-                    looks_like_latlon = (-180 <= x <= 180) and (-90 <= y <= 90)
-                    geometry_logger.info(
-                        f"    Coordinates look like lat/lon: {looks_like_latlon} (x: {x}, y: {y})"
+                    # Check if coordinates look like lat/lon (should be roughly -180 to 180 for x, -90 to 90 for y)
+                    if isinstance(coords, tuple) and len(coords) >= 2:
+                        x, y = coords[0], coords[1]
+                        looks_like_latlon = (-180 <= x <= 180) and (-90 <= y <= 90)
+                        geometry_logger.info(
+                            f"    Coordinates look like lat/lon: {looks_like_latlon} (x: {x}, y: {y})"
+                        )
+                except Exception as e:
+                    geometry_logger.warning(
+                        f"  Feature {i}: Error sampling coordinates: {e}"
                     )
+                    coords = "error sampling coordinates"
 
         # If no CRS is set, assume EPSG:4326 (most ESRI services use this)
         if gdf.crs is None:
@@ -153,18 +159,24 @@ def load_esri_data(esri_urls: List[str], input_crs: str, extra_query_args: dict 
             geometry_logger.info("Sample coordinates before CRS conversion:")
             for i in range(min(3, len(gdf))):
                 geom = gdf.iloc[i].geometry
-                if geom.geom_type == "Point":
-                    coords = list(geom.coords)[0]
-                elif geom.geom_type in ["Polygon", "MultiPolygon"]:
-                    if hasattr(geom, "exterior"):
+                try:
+                    if geom.geom_type == "Point":
+                        coords = list(geom.coords)[0]
+                    elif geom.geom_type == "Polygon":
                         coords = list(geom.exterior.coords)[0]
+                    elif geom.geom_type == "MultiPolygon":
+                        # For MultiPolygon, get first coordinate of first polygon's exterior
+                        coords = list(geom.geoms[0].exterior.coords)[0]
+                    elif geom.geom_type in ["LineString", "MultiLineString"]:
+                        coords = list(geom.coords)[0]
                     else:
-                        coords = list(geom.boundary.coords)[0]
-                elif geom.geom_type in ["LineString", "MultiLineString"]:
-                    coords = list(geom.coords)[0]
-                else:
-                    coords = "unknown geometry type"
-                geometry_logger.info(f"  Feature {i}: {coords}")
+                        coords = "unknown geometry type"
+                    geometry_logger.info(f"  Feature {i}: {coords}")
+                except Exception as e:
+                    geometry_logger.warning(
+                        f"  Feature {i}: Error sampling coordinates: {e}"
+                    )
+                    coords = "error sampling coordinates"
 
             gdf = gdf.to_crs(input_crs)
             geometry_logger.info(
@@ -176,18 +188,24 @@ def load_esri_data(esri_urls: List[str], input_crs: str, extra_query_args: dict 
             geometry_logger.info("Sample coordinates after CRS conversion:")
             for i in range(min(3, len(gdf))):
                 geom = gdf.iloc[i].geometry
-                if geom.geom_type == "Point":
-                    coords = list(geom.coords)[0]
-                elif geom.geom_type in ["Polygon", "MultiPolygon"]:
-                    if hasattr(geom, "exterior"):
+                try:
+                    if geom.geom_type == "Point":
+                        coords = list(geom.coords)[0]
+                    elif geom.geom_type == "Polygon":
                         coords = list(geom.exterior.coords)[0]
+                    elif geom.geom_type == "MultiPolygon":
+                        # For MultiPolygon, get first coordinate of first polygon's exterior
+                        coords = list(geom.geoms[0].exterior.coords)[0]
+                    elif geom.geom_type in ["LineString", "MultiLineString"]:
+                        coords = list(geom.coords)[0]
                     else:
-                        coords = list(geom.boundary.coords)[0]
-                elif geom.geom_type in ["LineString", "MultiLineString"]:
-                    coords = list(geom.coords)[0]
-                else:
-                    coords = "unknown geometry type"
-                geometry_logger.info(f"  Feature {i}: {coords}")
+                        coords = "unknown geometry type"
+                    geometry_logger.info(f"  Feature {i}: {coords}")
+                except Exception as e:
+                    geometry_logger.warning(
+                        f"  Feature {i}: Error sampling coordinates: {e}"
+                    )
+                    coords = "error sampling coordinates"
         else:
             geometry_logger.info(
                 f"CRS already matches target ({input_crs}), no conversion needed"
@@ -564,19 +582,22 @@ class EsriLoader(BaseLoader):
             geom = gdf.iloc[i].geometry
             geometry_logger.info(f"  Row {i} geometry type: {type(geom).__name__}")
 
-            if geom.geom_type == "Point":
-                coords = list(geom.coords)[0]
-            elif geom.geom_type in ["Polygon", "MultiPolygon"]:
-                if hasattr(geom, "exterior"):
+            try:
+                if geom.geom_type == "Point":
+                    coords = list(geom.coords)[0]
+                elif geom.geom_type == "Polygon":
                     coords = list(geom.exterior.coords)[0]
+                elif geom.geom_type == "MultiPolygon":
+                    # For MultiPolygon, get first coordinate of first polygon's exterior
+                    coords = list(geom.geoms[0].exterior.coords)[0]
+                elif geom.geom_type in ["LineString", "MultiLineString"]:
+                    coords = list(geom.coords)[0]
                 else:
-                    # For MultiPolygon or complex polygons, get first coordinate
-                    coords = list(geom.boundary.coords)[0]
-            elif geom.geom_type in ["LineString", "MultiLineString"]:
-                coords = list(geom.coords)[0]
-            else:
-                coords = "unknown geometry type"
-            geometry_logger.info(f"  Row {i}: {coords}")
+                    coords = "unknown geometry type"
+                geometry_logger.info(f"  Row {i}: {coords}")
+            except Exception as e:
+                geometry_logger.warning(f"  Row {i}: Error sampling coordinates: {e}")
+                coords = "error sampling coordinates"
 
         # Check if coordinates are in lat/lon range but labeled as a projected CRS
         # This handles the case where data comes in with lat/lon coordinates but is incorrectly labeled
@@ -611,19 +632,22 @@ class EsriLoader(BaseLoader):
             geom = gdf.iloc[i].geometry
             geometry_logger.info(f"  Row {i} geometry type: {type(geom).__name__}")
 
-            if geom.geom_type == "Point":
-                coords = list(geom.coords)[0]
-            elif geom.geom_type in ["Polygon", "MultiPolygon"]:
-                if hasattr(geom, "exterior"):
+            try:
+                if geom.geom_type == "Point":
+                    coords = list(geom.coords)[0]
+                elif geom.geom_type == "Polygon":
                     coords = list(geom.exterior.coords)[0]
+                elif geom.geom_type == "MultiPolygon":
+                    # For MultiPolygon, get first coordinate of first polygon's exterior
+                    coords = list(geom.geoms[0].exterior.coords)[0]
+                elif geom.geom_type in ["LineString", "MultiLineString"]:
+                    coords = list(geom.coords)[0]
                 else:
-                    # For MultiPolygon or complex polygons, get first coordinate
-                    coords = list(geom.boundary.coords)[0]
-            elif geom.geom_type in ["LineString", "MultiLineString"]:
-                coords = list(geom.coords)[0]
-            else:
-                coords = "unknown geometry type"
-            geometry_logger.info(f"  Row {i}: {coords}")
+                    coords = "unknown geometry type"
+                geometry_logger.info(f"  Row {i}: {coords}")
+            except Exception as e:
+                geometry_logger.warning(f"  Row {i}: Error sampling coordinates: {e}")
+                coords = "error sampling coordinates"
 
         crs_time = time.time() - crs_start
         performance_logger.info(f"CRS conversion took {crs_time:.2f}s")
