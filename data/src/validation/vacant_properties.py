@@ -1,5 +1,3 @@
-from datetime import datetime
-
 import geopandas as gpd
 import pandera.pandas as pa
 
@@ -22,37 +20,6 @@ VacantPropertiesSchema = pa.DataFrameSchema(
             pa.Check.isin(["Land", "Building"]),
             nullable=False,
             description="Property type classification",
-        ),
-        # Additional fields that may be present from other services
-        "market_value": pa.Column(
-            float,
-            pa.Check.greater_than_or_equal_to(0),
-            nullable=True,
-            description="Property market value",
-        ),
-        "sale_price": pa.Column(
-            float,
-            pa.Check.greater_than_or_equal_to(0),
-            nullable=True,
-            description="Last sale price",
-        ),
-        "sale_date": pa.Column(
-            datetime, nullable=True, description="Date of last sale"
-        ),
-        "zip_code": pa.Column(
-            str, nullable=True, description="ZIP code of the property"
-        ),
-        "zoning": pa.Column(str, nullable=True, description="Zoning classification"),
-        "standardized_street_address": pa.Column(
-            str, nullable=True, description="Standardized street address"
-        ),
-        "standardized_mailing_address": pa.Column(
-            str, nullable=True, description="Standardized mailing address"
-        ),
-        "owner_1": pa.Column(str, nullable=True, description="Primary owner"),
-        "owner_2": pa.Column(str, nullable=True, description="Secondary owner"),
-        "building_code_description": pa.Column(
-            str, nullable=True, description="Building code description"
         ),
         # Geometry field - using Pandera's GeoPandas integration
         "geometry": pa.Column(
@@ -198,54 +165,6 @@ class VacantPropertiesOutputValidator(BaseValidator):
         #                     f"Vacant building percentage ({vacant_building_percentage:.2f}%) outside expected range [70.0, 90.0]"
         #                 )
 
-        # 4. ZIP code validation for vacant properties
-        if "vacant" in gdf.columns and "zip_code" in gdf.columns:
-            vacant_properties = gdf[gdf["vacant"]]
-            if len(vacant_properties) > 0:
-                unique_zip_count = vacant_properties["zip_code"].nunique()
-                # Vacant properties should be distributed across most ZIP codes
-                if not (40 <= unique_zip_count <= 60):
-                    errors.append(
-                        f"Vacant properties ZIP code unique count ({unique_zip_count}) outside expected range [40, 60]"
-                    )
-
-        # 5. Market value validation for vacant vs non-vacant properties
-        if "vacant" in gdf.columns and "market_value" in gdf.columns:
-            vacant_properties = gdf[gdf["vacant"]]
-            non_vacant_properties = gdf[~gdf["vacant"]]
-
-            if len(vacant_properties) > 0 and len(non_vacant_properties) > 0:
-                vacant_mv_mean = vacant_properties["market_value"].mean()
-                non_vacant_mv_mean = non_vacant_properties["market_value"].mean()
-
-                # Vacant properties should generally have lower market values
-                if vacant_mv_mean > non_vacant_mv_mean:
-                    errors.append(
-                        f"Vacant properties have higher average market value ({vacant_mv_mean:,.0f}) than non-vacant properties ({non_vacant_mv_mean:,.0f})"
-                    )
-
-        # 6. Zoning validation for vacant properties
-        if "vacant" in gdf.columns and "zoning" in gdf.columns:
-            vacant_properties = gdf[gdf["vacant"]]
-            if len(vacant_properties) > 0:
-                # Count non-empty zoning values
-                non_empty_zoning = vacant_properties["zoning"].str.strip().ne("")
-                unique_zoning_count = vacant_properties.loc[
-                    non_empty_zoning, "zoning"
-                ].nunique()
-
-                if not (30 <= unique_zoning_count <= 50):
-                    errors.append(
-                        f"Vacant properties zoning unique count ({unique_zoning_count}) outside expected range [30, 50]"
-                    )
-
-                # Report empty zoning strings
-                empty_zoning_count = (~non_empty_zoning).sum()
-                if empty_zoning_count > 0:
-                    print(
-                        f"Warning: Found {empty_zoning_count} vacant properties with empty zoning values"
-                    )
-
     def _print_statistical_summary(self, gdf: gpd.GeoDataFrame):
         """Print comprehensive statistical summary of the vacant properties data."""
         self._print_summary_header("Vacant Properties Statistical Summary", gdf)
@@ -278,82 +197,5 @@ class VacantPropertiesOutputValidator(BaseValidator):
                 for ptype, count in vacant_parcel_dist.items():
                     pct = (count / len(vacant_properties)) * 100
                     print(f"  {ptype}: {count:,} ({pct:.1f}%)")
-
-        # ZIP code and zoning counts
-        if "zip_code" in gdf.columns:
-            print(f"\nUnique ZIP codes: {gdf['zip_code'].nunique()}")
-            if "vacant" in gdf.columns:
-                vacant_properties = gdf[gdf["vacant"]]
-                if len(vacant_properties) > 0:
-                    print(
-                        f"Unique ZIP codes (vacant properties): {vacant_properties['zip_code'].nunique()}"
-                    )
-
-        if "zoning" in gdf.columns:
-            non_empty_zoning = gdf["zoning"].str.strip().ne("")
-            print(
-                f"Unique zoning classifications: {gdf.loc[non_empty_zoning, 'zoning'].nunique()}"
-            )
-            print(f"Properties with empty zoning: {(~non_empty_zoning).sum():,}")
-
-            if "vacant" in gdf.columns:
-                vacant_properties = gdf[gdf["vacant"]]
-                if len(vacant_properties) > 0:
-                    vacant_non_empty_zoning = (
-                        vacant_properties["zoning"].str.strip().ne("")
-                    )
-                    print(
-                        f"Vacant properties with empty zoning: {(~vacant_non_empty_zoning).sum():,}"
-                    )
-
-        # Financial statistics
-        if "market_value" in gdf.columns:
-            mv_stats = gdf["market_value"].describe()
-            print("\nMarket Value Statistics (All Properties):")
-            print(f"  Mean: ${mv_stats['mean']:,.0f}")
-            print(f"  Median: ${mv_stats['50%']:,.0f}")
-            print(f"  Std Dev: ${mv_stats['std']:,.0f}")
-            print(f"  Q1: ${mv_stats['25%']:,.0f}")
-            print(f"  Q3: ${mv_stats['75%']:,.0f}")
-            print(f"  Max: ${mv_stats['max']:,.0f}")
-
-            # Compare vacant vs non-vacant
-            if "vacant" in gdf.columns:
-                vacant_properties = gdf[gdf["vacant"]]
-                non_vacant_properties = gdf[~gdf["vacant"]]
-
-                if len(vacant_properties) > 0:
-                    vacant_mv_stats = vacant_properties["market_value"].describe()
-                    print("\nMarket Value Statistics (Vacant Properties):")
-                    print(f"  Mean: ${vacant_mv_stats['mean']:,.0f}")
-                    print(f"  Median: ${vacant_mv_stats['50%']:,.0f}")
-                    print(f"  Std Dev: ${vacant_mv_stats['std']:,.0f}")
-
-                if len(non_vacant_properties) > 0:
-                    non_vacant_mv_stats = non_vacant_properties[
-                        "market_value"
-                    ].describe()
-                    print("\nMarket Value Statistics (Non-Vacant Properties):")
-                    print(f"  Mean: ${non_vacant_mv_stats['mean']:,.0f}")
-                    print(f"  Median: ${non_vacant_mv_stats['50%']:,.0f}")
-                    print(f"  Std Dev: ${non_vacant_mv_stats['std']:,.0f}")
-
-        if "sale_price" in gdf.columns:
-            sale_non_null = gdf["sale_price"].dropna()
-            if len(sale_non_null) > 0:
-                sale_stats = sale_non_null.describe()
-                non_null_pct = (len(sale_non_null) / len(gdf)) * 100
-                print(f"\nSale Price Statistics (non-null: {non_null_pct:.2f}%):")
-                print(f"  Mean: ${sale_stats['mean']:,.0f}")
-                print(f"  Median: ${sale_stats['50%']:,.0f}")
-                print(f"  Std Dev: ${sale_stats['std']:,.0f}")
-                print(f"  Q1: ${sale_stats['25%']:,.0f}")
-                print(f"  Q3: ${sale_stats['75%']:,.0f}")
-                print(f"  Max: ${sale_stats['max']:,.0f}")
-
-        # Address uniqueness
-        if "standardized_street_address" in gdf.columns:
-            unique_addresses = gdf["standardized_street_address"].nunique()
-            print(f"\nUnique standardized addresses: {unique_addresses:,}")
 
         self._print_summary_footer()

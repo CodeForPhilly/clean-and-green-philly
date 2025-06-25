@@ -12,11 +12,6 @@ def test_vacant_validator_schema_edge_cases(base_test_data):
     test_data = base_test_data.copy()
     test_data["vacant"] = [True, False, "maybe"]  # Invalid: non-boolean value
     test_data["parcel_type"] = ["Building", "Land", "Invalid"]  # Invalid parcel type
-    test_data.loc[2, "market_value"] = -1000  # Invalid: negative value
-    test_data.loc[2, "sale_price"] = -500.0  # Invalid: negative value
-    test_data.loc[2, "sale_date"] = pd.Timestamp(
-        "2026-01-01 00:00:00+0000", tz="UTC"
-    )  # Future date
 
     gdf = gpd.GeoDataFrame(test_data, geometry="geometry", crs=USE_CRS)
 
@@ -35,11 +30,14 @@ def test_vacant_validator_schema_edge_cases(base_test_data):
     # Should catch invalid parcel type (schema check)
     assert any("parcel_type" in msg.lower() for msg in error_messages)
 
-    # Should catch negative market value (schema check)
-    assert any("market_value" in msg.lower() for msg in error_messages)
+    # Test row-level validation directly to catch non-boolean values in vacant column
+    errors = []
+    validator._row_level_validation(gdf, errors)
 
-    # Should catch negative sale price (schema check)
-    assert any("sale_price" in msg.lower() for msg in error_messages)
+    # Should catch non-boolean values in vacant column (row-level check)
+    assert any(
+        "non-boolean" in msg.lower() and "vacant" in msg.lower() for msg in errors
+    )
 
 
 def test_vacant_validator_schema_valid_data(base_test_data):
@@ -100,10 +98,6 @@ def test_vacant_validator_missing_required_columns():
     # Create data missing required columns
     test_data = pd.DataFrame(
         {
-            "market_value": [144800, 158800, 382000],
-            "sale_price": [37000.0, 79900.0, 1.0],
-            "zip_code": ["19124", "19124", "19128"],
-            "zoning": ["RSA5", "RSA5", "RMX1"],
             "geometry": [
                 Point(-75.089, 40.033),
                 Point(-75.093, 40.031),
