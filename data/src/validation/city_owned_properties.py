@@ -9,24 +9,19 @@ lower = int(expected * 0.8)
 upper = int(expected * 1.2)
 
 CityOwnedPropertiesInputSchema = pa.DataFrameSchema(
-    columns = {
+    columns={
         "opa_id": pa.Column(int, checks=pa.Check(lambda s: s.dropna() != "")),
         "agency": pa.Column(str),
-        "sideyardeligible": pa.Column(
-            pa.Category,
-            checks=pa.Check.isin(["Yes", "No"])
-        ),
-        "geometry": pa.Column("geometry")
-    }, 
-    checks=pa.Check(
-        lambda df: lower <= df.shape[0] <= upper
-    ),
-    strict=True
+        "sideyardeligible": pa.Column(pa.Category, checks=pa.Check.isin(["Yes", "No"])),
+        "geometry": pa.Column("geometry"),
+    },
+    checks=pa.Check(lambda df: lower <= df.shape[0] <= upper),
+    strict=True,
 )
 
 CityOwnedPropertiesOutputSchema = pa.DataFrameSchema(
-    #TODO: confirm what's nullable and what isn't
-    columns = {
+    # TODO: confirm what's nullable and what isn't
+    columns={
         "opa_id": pa.Column(int, checks=pa.Check(lambda s: s.dropna() != "")),
         "market_value": pa.Column(int),
         "sale_date": pa.Column(pa.DateTime, nullable=True),
@@ -46,11 +41,10 @@ CityOwnedPropertiesOutputSchema = pa.DataFrameSchema(
         "geometry": pa.Column("geometry"),
         "city_owner_agency": pa.Column(str),
         "side_yard_eligible": pa.Column(
-            pa.Category,
-            checks=pa.Check.isin(["Yes", "No"])
+            pa.Category, checks=pa.Check.isin(["Yes", "No"])
         ),
     },
-    strict=True
+    strict=True,
 )
 
 
@@ -59,6 +53,7 @@ class CityOwnedPropertiesInputValidator(BaseValidator):
     Validator for the city-owned properties dataset input.
     schema and _custom_validation() are used by validate() in the parent class.
     """
+
     schema = CityOwnedPropertiesInputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):

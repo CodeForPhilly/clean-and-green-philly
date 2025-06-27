@@ -4,7 +4,10 @@ import geopandas as gpd
 import pandas as pd
 
 from src.validation.base import ValidationResult, validate_output
-from src.validation.council_dists import CouncilDistrictsOutputValidator, CouncilDistrictsInputValidator
+from src.validation.council_dists import (
+    CouncilDistrictsOutputValidator,
+    CouncilDistrictsInputValidator,
+)
 
 from ..classes.loaders import EsriLoader
 from ..constants.services import COUNCIL_DISTRICTS_TO_LOAD
@@ -39,8 +42,10 @@ def council_dists(
     """
 
     loader = EsriLoader(
-        name="Council Districts", esri_urls=COUNCIL_DISTRICTS_TO_LOAD, 
-        cols=["district"], validator = CouncilDistrictsInputValidator()
+        name="Council Districts",
+        esri_urls=COUNCIL_DISTRICTS_TO_LOAD,
+        cols=["district"],
+        validator=CouncilDistrictsInputValidator(),
     )
 
     council_dists, input_validation = loader.load_or_fetch()
