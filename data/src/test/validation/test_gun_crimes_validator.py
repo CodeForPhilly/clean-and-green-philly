@@ -39,10 +39,10 @@ def large_sample_gdf(large_test_data):
         i * 0.2 - 2.9 for i in range(len(gdf))
     ]  # Mean ~0, std ~1
     gdf["gun_crimes_density_percentile"] = [
-        i * 3.45 for i in range(len(gdf))
-    ]  # 0, 3.45, 6.9, ..., 100
+        int(i * 100 / len(gdf)) for i in range(len(gdf))
+    ]  # 0, 1, 2, ..., 100 (integers)
     gdf["gun_crimes_density_label"] = [
-        f"{int(i * 3.45)}th Percentile" for i in range(len(gdf))
+        f"{int(i * 100 / len(gdf))}th Percentile" for i in range(len(gdf))
     ]
 
     return gdf
@@ -229,8 +229,8 @@ def test_realistic_gun_crime_ranges(validator, large_sample_gdf):
         i * 0.1 - 1.45 for i in range(len(gdf_realistic))
     ]  # Realistic z-score range with mean ~0, std ~1
     gdf_realistic["gun_crimes_density_percentile"] = [
-        i * 3.33 for i in range(len(gdf_realistic))
-    ]  # Realistic percentiles (0, 3.33, 6.66, ..., 96.66)
+        int(i * 100 / len(gdf_realistic)) for i in range(len(gdf_realistic))
+    ]  # Integer percentiles (0, 3, 6, ..., 96)
 
     result = validator.validate(gdf_realistic)
 

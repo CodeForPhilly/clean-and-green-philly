@@ -1,9 +1,9 @@
 import geopandas as gpd
 
-from .base import BaseValidator
+from .base import BaseKDEValidator
 
 
-class DrugCrimesOutputValidator(BaseValidator):
+class DrugCrimesOutputValidator(BaseKDEValidator):
     """
     Validator for Drug Crime KDE outputs.
 
@@ -13,49 +13,21 @@ class DrugCrimesOutputValidator(BaseValidator):
     - drug_crimes_density_percentile: 0-100 range (validated by base class)
     """
 
-    def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
-        """Row-level validation for drug crime KDE outputs."""
-        # Call parent class method to get empty dataframe check
-        super()._row_level_validation(gdf, errors)
+    @property
+    def density_label_column(self) -> str:
+        return "drug_crimes_density_label"
 
-        # Check for required KDE columns with actual names
-        required_columns = [
-            "drug_crimes_density_label",
-            "drug_crimes_density",
-            "drug_crimes_density_zscore",
-            "drug_crimes_density_percentile",
-        ]
-        self._validate_required_columns(gdf, required_columns, errors)
+    @property
+    def density_column(self) -> str:
+        return "drug_crimes_density"
 
-        # Validate density ranges (application-specific)
-        self._validate_density_ranges(gdf, errors)
+    @property
+    def density_zscore_column(self) -> str:
+        return "drug_crimes_density_zscore"
 
-        # Validate application-specific requirements
-        self._validate_application_specific(gdf, errors)
-
-    def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
-        """Statistical validation for drug crime KDE outputs."""
-        # Check percentile distribution (should be roughly uniform 0-100)
-        if "drug_crimes_density_percentile" in gdf.columns:
-            percentiles = gdf["drug_crimes_density_percentile"]
-
-            # Check that percentiles span a reasonable range
-            min_percentile = percentiles.min()
-            max_percentile = percentiles.max()
-
-            if min_percentile < 0 or max_percentile > 100:
-                errors.append(
-                    f"Percentile values outside expected range [0, 100]: "
-                    f"min={min_percentile:.2f}, max={max_percentile:.2f}"
-                )
-
-            # Check that we have a reasonable distribution (not all same value)
-            unique_percentiles = percentiles.nunique()
-            if unique_percentiles < 10:  # Arbitrary threshold
-                errors.append(
-                    f"Percentile distribution appears too narrow: "
-                    f"only {unique_percentiles} unique values"
-                )
+    @property
+    def density_percentile_column(self) -> str:
+        return "drug_crimes_density_percentile"
 
     def _validate_density_ranges(self, gdf: gpd.GeoDataFrame, errors: list):
         """
@@ -66,8 +38,8 @@ class DrugCrimesOutputValidator(BaseValidator):
         - zscore: max ~43.51, mean ~0, std ~1
         """
         # Validate density values (drug crime densities can be larger than gun crimes)
-        if "drug_crimes_density" in gdf.columns:
-            density = gdf["drug_crimes_density"]
+        if self.density_column in gdf.columns:
+            density = gdf[self.density_column]
 
             # Check for reasonable upper bound (allowing flexibility based on actual data)
             max_density = density.max()
@@ -93,8 +65,8 @@ class DrugCrimesOutputValidator(BaseValidator):
                 )
 
         # Validate z-score values (should be roughly normal distribution)
-        if "drug_crimes_density_zscore" in gdf.columns:
-            zscore = gdf["drug_crimes_density_zscore"]
+        if self.density_zscore_column in gdf.columns:
+            zscore = gdf[self.density_zscore_column]
 
             # Check z-score mean (should be close to 0)
             mean_zscore = zscore.mean()
@@ -125,8 +97,8 @@ class DrugCrimesOutputValidator(BaseValidator):
         Validate drug crime-specific requirements.
         """
         # Check that we have a reasonable number of high-density areas
-        if "drug_crimes_density_percentile" in gdf.columns:
-            high_density_count = len(gdf[gdf["drug_crimes_density_percentile"] >= 90])
+        if self.density_percentile_column in gdf.columns:
+            high_density_count = len(gdf[gdf[self.density_percentile_column] >= 90])
             total_count = len(gdf)
 
             # Expect roughly 10% of areas to be in top 10% (with some flexibility)
@@ -145,24 +117,24 @@ class DrugCrimesOutputValidator(BaseValidator):
         """Print drug crime KDE-specific statistical summary."""
         self._print_summary_header("Drug Crime KDE Output Statistics", gdf)
 
-        if "drug_crimes_density" in gdf.columns:
-            density_stats = gdf["drug_crimes_density"].describe()
+        if self.density_column in gdf.columns:
+            density_stats = gdf[self.density_column].describe()
             print("Drug Crime Density statistics:")
             print(f"  Mean: {density_stats['mean']:.4e}")
             print(f"  Std:  {density_stats['std']:.4e}")
             print(f"  Min:  {density_stats['min']:.4e}")
             print(f"  Max:  {density_stats['max']:.4e}")
 
-        if "drug_crimes_density_zscore" in gdf.columns:
-            zscore_stats = gdf["drug_crimes_density_zscore"].describe()
+        if self.density_zscore_column in gdf.columns:
+            zscore_stats = gdf[self.density_zscore_column].describe()
             print("Drug Crime Z-score statistics:")
             print(f"  Mean: {zscore_stats['mean']:.4f}")
             print(f"  Std:  {zscore_stats['std']:.4f}")
             print(f"  Min:  {zscore_stats['min']:.4f}")
             print(f"  Max:  {zscore_stats['max']:.4f}")
 
-        if "drug_crimes_density_percentile" in gdf.columns:
-            percentile_stats = gdf["drug_crimes_density_percentile"].describe()
+        if self.density_percentile_column in gdf.columns:
+            percentile_stats = gdf[self.density_percentile_column].describe()
             print("Drug Crime Percentile statistics:")
             print(f"  Mean: {percentile_stats['mean']:.2f}")
             print(f"  Std:  {percentile_stats['std']:.2f}")

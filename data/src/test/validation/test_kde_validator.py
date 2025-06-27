@@ -1,6 +1,8 @@
 import geopandas as gpd
 import pandas as pd
+import pandera.pandas as pa
 import pytest
+from pandera import Check
 
 from src.validation.base import BaseKDEValidator
 
@@ -12,6 +14,22 @@ class MockKDEValidator(BaseKDEValidator):
     schema = None
     # Override stats threshold for testing with small datasets
     min_stats_threshold = 1
+
+    @property
+    def density_label_column(self) -> str:
+        return "density_label"
+
+    @property
+    def density_column(self) -> str:
+        return "density"
+
+    @property
+    def density_zscore_column(self) -> str:
+        return "density_zscore"
+
+    @property
+    def density_percentile_column(self) -> str:
+        return "density_percentile"
 
     def _validate_density_ranges(self, gdf: gpd.GeoDataFrame, errors: list):
         """Simple validation for testing - just check non-negative values."""
@@ -51,6 +69,36 @@ class SchemaTestKDEValidator(BaseKDEValidator):
 
     # Override stats threshold for testing with small datasets
     min_stats_threshold = 1
+
+    # Override schema to use static schema for testing
+    schema = pa.DataFrameSchema(
+        {
+            "density_label": pa.Column(str, nullable=False),
+            "density": pa.Column(float, nullable=False),
+            "density_zscore": pa.Column(float, nullable=False),
+            "density_percentile": pa.Column(
+                int,
+                nullable=False,
+                checks=Check.in_range(0, 100, include_min=True, include_max=True),
+            ),
+        }
+    )
+
+    @property
+    def density_label_column(self) -> str:
+        return "density_label"
+
+    @property
+    def density_column(self) -> str:
+        return "density"
+
+    @property
+    def density_zscore_column(self) -> str:
+        return "density_zscore"
+
+    @property
+    def density_percentile_column(self) -> str:
+        return "density_percentile"
 
     def _validate_density_ranges(self, gdf: gpd.GeoDataFrame, errors: list):
         """Empty implementation for schema testing."""

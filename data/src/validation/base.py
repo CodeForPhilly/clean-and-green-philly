@@ -34,10 +34,15 @@ class BaseValidator(ABC):
 
     def __init_subclass__(cls):
         schema = getattr(cls, "schema", None)
-        if schema is not None and not isinstance(schema, pa.DataFrameSchema):
-            raise TypeError(
-                f"{cls.__name__} must define a 'schema' class variable that is a pandera.pandas.DataFrameSchema instance."
-            )
+        if schema is not None:
+            # Check if it's a property (has getter/setter)
+            if hasattr(schema, "__get__"):
+                # It's a property, so we can't check the type at class definition time
+                pass
+            elif not isinstance(schema, pa.DataFrameSchema):
+                raise TypeError(
+                    f"{cls.__name__} must define a 'schema' class variable that is a pandera.pandas.DataFrameSchema instance."
+                )
         return super().__init_subclass__()
 
     def __init__(self):
@@ -497,30 +502,57 @@ class BaseKDEValidator(BaseValidator):
     - density_percentile (numeric, non-null, range 0-100)
     """
 
-    # Define the common schema for all KDE outputs
-    schema = pa.DataFrameSchema(
-        {
-            "density_label": pa.Column(str, nullable=False),
-            "density": pa.Column(float, nullable=False),
-            "density_zscore": pa.Column(float, nullable=False),
-            "density_percentile": pa.Column(
-                int,
-                nullable=False,
-                checks=Check.in_range(0, 100, include_min=True, include_max=True),
-            ),
-        }
-    )
+    # Abstract properties that subclasses must define
+    @property
+    @abstractmethod
+    def density_label_column(self) -> str:
+        """Return the name of the density label column."""
+        pass
+
+    @property
+    @abstractmethod
+    def density_column(self) -> str:
+        """Return the name of the density column."""
+        pass
+
+    @property
+    @abstractmethod
+    def density_zscore_column(self) -> str:
+        """Return the name of the density zscore column."""
+        pass
+
+    @property
+    @abstractmethod
+    def density_percentile_column(self) -> str:
+        """Return the name of the density percentile column."""
+        pass
+
+    @property
+    def schema(self):
+        """Dynamic schema based on column names."""
+        return pa.DataFrameSchema(
+            {
+                self.density_label_column: pa.Column(str, nullable=False),
+                self.density_column: pa.Column(float, nullable=False),
+                self.density_zscore_column: pa.Column(float, nullable=False),
+                self.density_percentile_column: pa.Column(
+                    int,
+                    nullable=False,
+                    checks=Check.in_range(0, 100, include_min=True, include_max=True),
+                ),
+            }
+        )
 
     def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Row-level validation for KDE outputs."""
         super()._row_level_validation(gdf, errors)
 
-        # Check for required KDE columns
+        # Check for required KDE columns using dynamic column names
         required_columns = [
-            "density_label",
-            "density",
-            "density_zscore",
-            "density_percentile",
+            self.density_label_column,
+            self.density_column,
+            self.density_zscore_column,
+            self.density_percentile_column,
         ]
         self._validate_required_columns(gdf, required_columns, errors)
 
@@ -533,8 +565,8 @@ class BaseKDEValidator(BaseValidator):
     def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Statistical validation for KDE outputs."""
         # Check percentile distribution (should be roughly uniform 0-100)
-        if "density_percentile" in gdf.columns:
-            percentiles = gdf["density_percentile"]
+        if self.density_percentile_column in gdf.columns:
+            percentiles = gdf[self.density_percentile_column]
 
             # Check that percentiles span a reasonable range
             min_percentile = percentiles.min()
@@ -558,24 +590,24 @@ class BaseKDEValidator(BaseValidator):
         """Print KDE-specific statistical summary."""
         self._print_summary_header("KDE Output Statistics", gdf)
 
-        if "density" in gdf.columns:
-            density_stats = gdf["density"].describe()
+        if self.density_column in gdf.columns:
+            density_stats = gdf[self.density_column].describe()
             print("Density statistics:")
-            print(f"  Mean: {density_stats['mean']:.4f}")
-            print(f"  Std:  {density_stats['std']:.4f}")
-            print(f"  Min:  {density_stats['min']:.4f}")
-            print(f"  Max:  {density_stats['max']:.4f}")
+            print(f"  Mean: {density_stats['mean']:.4e}")
+            print(f"  Std:  {density_stats['std']:.4e}")
+            print(f"  Min:  {density_stats['min']:.4e}")
+            print(f"  Max:  {density_stats['max']:.4e}")
 
-        if "density_zscore" in gdf.columns:
-            zscore_stats = gdf["density_zscore"].describe()
+        if self.density_zscore_column in gdf.columns:
+            zscore_stats = gdf[self.density_zscore_column].describe()
             print("Z-score statistics:")
             print(f"  Mean: {zscore_stats['mean']:.4f}")
             print(f"  Std:  {zscore_stats['std']:.4f}")
             print(f"  Min:  {zscore_stats['min']:.4f}")
             print(f"  Max:  {zscore_stats['max']:.4f}")
 
-        if "density_percentile" in gdf.columns:
-            percentile_stats = gdf["density_percentile"].describe()
+        if self.density_percentile_column in gdf.columns:
+            percentile_stats = gdf[self.density_percentile_column].describe()
             print("Percentile statistics:")
             print(f"  Mean: {percentile_stats['mean']:.2f}")
             print(f"  Std:  {percentile_stats['std']:.2f}")
