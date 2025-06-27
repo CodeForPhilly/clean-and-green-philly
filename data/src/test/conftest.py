@@ -61,3 +61,34 @@ def empty_dataframe():
             "geometry",
         ]
     )
+
+
+@pytest.fixture
+def large_test_data():
+    """Larger test dataset with realistic distributions for statistical validation tests."""
+    return pd.DataFrame(
+        {
+            "opa_id": [f"35124320{i:02d}" for i in range(30)],  # 30 unique OPA IDs
+            "market_value": [150000 + i * 5000 for i in range(30)],
+            "sale_price": [80000 + i * 2000 for i in range(30)],
+            "sale_date": [
+                pd.Timestamp("2012-06-01 00:00:00+0000", tz="UTC")
+                + pd.Timedelta(days=i)
+                for i in range(30)
+            ],
+            "zip_code": ["19124", "19125", "19126"]
+            * 10,  # Cycle through a few zip codes
+            "zoning": ["RSA5", "RMX1", "RSA3"] * 10,  # Cycle through zoning types
+            "standardized_street_address": [f"{1000 + i} test st" for i in range(30)],
+            "standardized_mailing_address": [
+                f"{1000 + i} test st, philadelphia pa, 19124" for i in range(30)
+            ],
+            "owner_1": [f"TEST OWNER {i}" for i in range(30)],
+            "owner_2": [None] * 30,
+            "building_code_description": ["ROW B/GAR 2 STY MASONRY"] * 30,
+            "geometry": [
+                Point(2710000 + i * 1000, 230000 + i * 1000)
+                for i in range(30)  # Spread out in Philadelphia
+            ],
+        }
+    )
