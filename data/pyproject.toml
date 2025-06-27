@@ -20,6 +20,7 @@ dependencies = [
     "pandera~=0.24.0",
     "pyarrow~=18.1.0",
     "pydantic==2.8.2",
+    "pylint>=3.3.7",
     "rasterio~=1.4.3",
     "requests~=2.32.3",
     "scikit-learn~=1.6.0",
