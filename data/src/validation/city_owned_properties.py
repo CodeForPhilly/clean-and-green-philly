@@ -11,8 +11,10 @@ upper = int(expected * 1.2)
 CityOwnedPropertiesInputSchema = pa.DataFrameSchema(
     columns={
         "opa_id": pa.Column(int, checks=pa.Check(lambda s: s.dropna() != "")),
-        "agency": pa.Column(str),
-        "sideyardeligible": pa.Column(pa.Category, checks=pa.Check.isin(["Yes", "No"])),
+        "agency": pa.Column(str, nullable=True),
+        "sideyardeligible": pa.Column(
+            pa.Category, nullable=True, checks=pa.Check.isin(["Yes", "No"])
+        ),
         "geometry": pa.Column("geometry"),
     },
     checks=pa.Check(lambda df: lower <= df.shape[0] <= upper),
@@ -20,10 +22,9 @@ CityOwnedPropertiesInputSchema = pa.DataFrameSchema(
 )
 
 CityOwnedPropertiesOutputSchema = pa.DataFrameSchema(
-    # TODO: confirm what's nullable and what isn't
     columns={
         "opa_id": pa.Column(int, checks=pa.Check(lambda s: s.dropna() != "")),
-        "market_value": pa.Column(int),
+        "market_value": pa.Column(int, nullable=True),
         "sale_date": pa.Column(pa.DateTime, nullable=True),
         "sale_price": pa.Column(int, nullable=True),
         "owner_1": pa.Column(str, nullable=True),
@@ -38,11 +39,11 @@ CityOwnedPropertiesOutputSchema = pa.DataFrameSchema(
         "neighborhood": pa.Column(str, nullable=True),
         "rco_info": pa.Column(str, nullable=True),
         "rco_names": pa.Column(str, nullable=True),
-        "geometry": pa.Column("geometry"),
-        "city_owner_agency": pa.Column(str),
+        "city_owner_agency": pa.Column(str, nullable=True),
         "side_yard_eligible": pa.Column(
-            pa.Category, checks=pa.Check.isin(["Yes", "No"])
+            pa.Category, nullable=True, checks=pa.Check.isin(["Yes", "No"])
         ),
+        "geometry": pa.Column("geometry"),
     },
     strict=True,
 )
