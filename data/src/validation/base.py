@@ -1,12 +1,13 @@
 import functools
 import logging
 import time
-from abc import ABC
+from abc import ABC, abstractmethod
 from typing import Callable, List
 
 import geopandas as gpd
 import pandas as pd
 import pandera.pandas as pa
+from pandera import Check
 
 from src.config.config import (
     USE_CRS,
@@ -482,6 +483,134 @@ class BaseValidator(ABC):
     def _print_summary_footer(self):
         """Print standard footer separator."""
         print("=" * 50)
+
+
+class BaseKDEValidator(BaseValidator):
+    """
+    Base validator for KDE (Kernel Density Estimation) outputs.
+
+    Validates common KDE output columns and provides hooks for application-specific
+    range validation. All KDE outputs should have:
+    - density_label (string, non-null)
+    - density (numeric, non-null, application-specific ranges)
+    - density_zscore (numeric, non-null, application-specific ranges)
+    - density_percentile (numeric, non-null, range 0-100)
+    """
+
+    # Define the common schema for all KDE outputs
+    schema = pa.DataFrameSchema(
+        {
+            "density_label": pa.Column(str, nullable=False),
+            "density": pa.Column(float, nullable=False),
+            "density_zscore": pa.Column(float, nullable=False),
+            "density_percentile": pa.Column(
+                int,
+                nullable=False,
+                checks=Check.in_range(0, 100, include_min=True, include_max=True),
+            ),
+        }
+    )
+
+    def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
+        """Row-level validation for KDE outputs."""
+        super()._row_level_validation(gdf, errors)
+
+        # Check for required KDE columns
+        required_columns = [
+            "density_label",
+            "density",
+            "density_zscore",
+            "density_percentile",
+        ]
+        self._validate_required_columns(gdf, required_columns, errors)
+
+        # Validate density ranges (application-specific)
+        self._validate_density_ranges(gdf, errors)
+
+        # Validate application-specific requirements
+        self._validate_application_specific(gdf, errors)
+
+    def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
+        """Statistical validation for KDE outputs."""
+        # Check percentile distribution (should be roughly uniform 0-100)
+        if "density_percentile" in gdf.columns:
+            percentiles = gdf["density_percentile"]
+
+            # Check that percentiles span a reasonable range
+            min_percentile = percentiles.min()
+            max_percentile = percentiles.max()
+
+            if min_percentile < 0 or max_percentile > 100:
+                errors.append(
+                    f"Percentile values outside expected range [0, 100]: "
+                    f"min={min_percentile:.2f}, max={max_percentile:.2f}"
+                )
+
+            # Check that we have a reasonable distribution (not all same value)
+            unique_percentiles = percentiles.nunique()
+            if unique_percentiles < 10:  # Arbitrary threshold
+                errors.append(
+                    f"Percentile distribution appears too narrow: "
+                    f"only {unique_percentiles} unique values"
+                )
+
+    def _print_statistical_summary(self, gdf: gpd.GeoDataFrame):
+        """Print KDE-specific statistical summary."""
+        self._print_summary_header("KDE Output Statistics", gdf)
+
+        if "density" in gdf.columns:
+            density_stats = gdf["density"].describe()
+            print("Density statistics:")
+            print(f"  Mean: {density_stats['mean']:.4f}")
+            print(f"  Std:  {density_stats['std']:.4f}")
+            print(f"  Min:  {density_stats['min']:.4f}")
+            print(f"  Max:  {density_stats['max']:.4f}")
+
+        if "density_zscore" in gdf.columns:
+            zscore_stats = gdf["density_zscore"].describe()
+            print("Z-score statistics:")
+            print(f"  Mean: {zscore_stats['mean']:.4f}")
+            print(f"  Std:  {zscore_stats['std']:.4f}")
+            print(f"  Min:  {zscore_stats['min']:.4f}")
+            print(f"  Max:  {zscore_stats['max']:.4f}")
+
+        if "density_percentile" in gdf.columns:
+            percentile_stats = gdf["density_percentile"].describe()
+            print("Percentile statistics:")
+            print(f"  Mean: {percentile_stats['mean']:.2f}")
+            print(f"  Std:  {percentile_stats['std']:.2f}")
+            print(f"  Min:  {percentile_stats['min']:.2f}")
+            print(f"  Max:  {percentile_stats['max']:.2f}")
+
+        self._print_summary_footer()
+
+    @abstractmethod
+    def _validate_density_ranges(self, gdf: gpd.GeoDataFrame, errors: list):
+        """
+        Validate density and zscore ranges for the specific application.
+
+        Override in subclasses to implement application-specific range validation.
+        This method should check that density and density_zscore values are within
+        expected ranges for the particular use case.
+
+        Args:
+            gdf: The GeoDataFrame to validate
+            errors: List to append validation errors to
+        """
+        pass
+
+    def _validate_application_specific(self, gdf: gpd.GeoDataFrame, errors: list):
+        """
+        Validate application-specific requirements beyond standard KDE validation.
+
+        Override in subclasses to add domain-specific validation logic.
+        Default implementation does nothing.
+
+        Args:
+            gdf: The GeoDataFrame to validate
+            errors: List to append validation errors to
+        """
+        pass
 
 
 def validate_output(

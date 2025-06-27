@@ -20,7 +20,7 @@ log_level: int = logging.INFO
 """ overall log level for the project """
 
 # Centralized logger configuration
-ENABLED_LOGGERS = {"pipeline", "data_quality", "geometry_debug"}
+ENABLED_LOGGERS = {"pipeline", "data_quality"}
 """ Set of enabled logger types. Add/remove logger types to control what logging is active.
 Available types: "cache", "performance", "pipeline", "geometry_debug", "data_quality"
 Examples:

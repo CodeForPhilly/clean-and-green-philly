@@ -12,10 +12,13 @@ from rasterio.transform import Affine
 from tqdm import tqdm
 
 from src.classes.file_manager import FileManager, LoadType
-from src.config.config import USE_CRS
+from src.config.config import USE_CRS, get_logger
 from src.validation.base import ValidationResult
 
 from ..classes.loaders import CartoLoader
+
+# Get performance logger
+performance_logger = get_logger("performance")
 
 
 # Profiling utilities
@@ -27,7 +30,9 @@ def timer(func):
         start_time = time.time()
         result = func(*args, **kwargs)
         end_time = time.time()
-        print(f"⏱️  {func.__name__} took {end_time - start_time:.4f} seconds")
+        performance_logger.info(
+            f"{func.__name__} took {end_time - start_time:.4f} seconds"
+        )
         return result
 
     return wrapper
@@ -48,7 +53,7 @@ def profile_section(section_name: str):
         def __exit__(self, _exc_type, _exc_val, _exc_tb):
             end_time = time.time()
             duration = end_time - self.start_time
-            print(f"⏱️  {self.name}: {duration:.4f} seconds")
+            performance_logger.info(f"{self.name}: {duration:.4f} seconds")
 
     return Profiler(section_name)
 
@@ -89,7 +94,7 @@ def generic_kde(
     Returns:
         Tuple[str, np.ndarray]: The raster filename and the array of input points.
     """
-    print(f"Initializing FeatureLayer for {name}")
+    performance_logger.info(f"Initializing FeatureLayer for {name}")
 
     # Profile data loading
     with profile_section("Data Loading"):
@@ -117,11 +122,13 @@ def generic_kde(
 
     # Profile KDE fitting
     with profile_section("KDE Fitting"):
-        print(f"Fitting KDE for {name} data")
+        performance_logger.info(f"Fitting KDE for {name} data")
         kde = GaussianKDE(glob_bw=0.1, alpha=0.999, diag_cov=True)
         kde.fit(X)
 
-    print(f"Predicting KDE values for grid of size {grid_points.shape}")
+    performance_logger.info(
+        f"Predicting KDE values for grid of size {grid_points.shape}"
+    )
 
     # Profile the entire prediction loop
     with profile_section("Entire Prediction Loop"):
@@ -131,8 +138,8 @@ def generic_kde(
                 grid_points[i : i + batch_size]
                 for i in range(0, len(grid_points), batch_size)
             ]
-            print(
-                f"📊 Created {len(chunks)} chunks of size {batch_size} (total grid points: {len(grid_points)})"
+            performance_logger.info(
+                f"Created {len(chunks)} chunks of size {batch_size} (total grid points: {len(grid_points)})"
             )
 
         z = np.zeros(len(grid_points))
@@ -161,7 +168,7 @@ def generic_kde(
 
     raster_filename = f"{name.lower().replace(' ', '_')}.tif"
     raster_file_path = file_manager.get_file_path(raster_filename, LoadType.TEMP)
-    print(f"Saving raster to {raster_filename}")
+    performance_logger.info(f"Saving raster to {raster_filename}")
 
     # Profile raster saving
     with profile_section("Raster Saving"):
@@ -262,13 +269,13 @@ def apply_kde_to_input(
             input_gdf[density_column], pct=percentile_breaks
         )
         percentile_column = f"{density_column}_percentile"
-        input_gdf[percentile_column] = classifier.yb.astype(float)
+        input_gdf[percentile_column] = classifier.yb.astype(int)
 
         # Assign percentile labels
         label_column = f"{density_column}_label"
         input_gdf[label_column] = input_gdf[percentile_column].apply(label_percentile)
 
-    print(f"Finished processing {name}")
+    performance_logger.info(f"Finished processing {name}")
     return input_gdf, input_validation
 
 
