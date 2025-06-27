@@ -127,6 +127,36 @@ def test_service(service_name: str):
                     f"Warning: Vacant properties validation failed: {vacant_validation}"
                 )
 
+        # Run city_owned_properties first if the service depends on city ownership data
+        services_that_need_city_owned = ["access_process"]
+        if service_name in services_that_need_city_owned:
+            print("\nRunning city_owned_properties first (dependency)...")
+            dataset, city_owned_validation = city_owned_properties(dataset)
+            print(f"Dataset after city_owned_properties shape: {dataset.shape}")
+            print(
+                f"Dataset after city_owned_properties columns: {list(dataset.columns)}"
+            )
+
+            if (
+                not city_owned_validation["input"]
+                or not city_owned_validation["output"]
+            ):
+                print(
+                    f"Warning: City owned properties validation failed: {city_owned_validation}"
+                )
+
+        # Run vacant_properties for access_process (it also needs the vacant column)
+        if service_name == "access_process":
+            print("\nRunning vacant_properties (dependency for access_process)...")
+            dataset, vacant_validation = vacant_properties(dataset)
+            print(f"Dataset after vacant_properties shape: {dataset.shape}")
+            print(f"Dataset after vacant_properties columns: {list(dataset.columns)}")
+
+            if not vacant_validation["input"] or not vacant_validation["output"]:
+                print(
+                    f"Warning: Vacant properties validation failed: {vacant_validation}"
+                )
+
         # Run the service
         service_func = SERVICES[service_name]
         print(f"\nRunning {service_name}...")
