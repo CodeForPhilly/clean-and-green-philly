@@ -1,9 +1,9 @@
 import geopandas as gpd
 
-from .base import BaseKDEValidator
+from .base import BaseValidator
 
 
-class GunCrimesOutputValidator(BaseKDEValidator):
+class GunCrimesOutputValidator(BaseValidator):
     """
     Validator for Gun Crime KDE outputs.
 
@@ -13,13 +13,10 @@ class GunCrimesOutputValidator(BaseKDEValidator):
     - gun_crimes_density_percentile: 0-100 range (validated by base class)
     """
 
-    # Override schema to use actual column names
-    schema = None  # We'll handle column validation in _row_level_validation
-
     def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
         """Row-level validation for gun crime KDE outputs."""
-        # Call the grandparent's _row_level_validation (BaseValidator, not BaseKDEValidator)
-        super(BaseKDEValidator, self)._row_level_validation(gdf, errors)
+        # Call parent class method to get empty dataframe check
+        super()._row_level_validation(gdf, errors)
 
         # Check for required KDE columns with actual names
         required_columns = [
@@ -35,6 +32,30 @@ class GunCrimesOutputValidator(BaseKDEValidator):
 
         # Validate application-specific requirements
         self._validate_application_specific(gdf, errors)
+
+    def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
+        """Statistical validation for gun crime KDE outputs."""
+        # Check percentile distribution (should be roughly uniform 0-100)
+        if "gun_crimes_density_percentile" in gdf.columns:
+            percentiles = gdf["gun_crimes_density_percentile"]
+
+            # Check that percentiles span a reasonable range
+            min_percentile = percentiles.min()
+            max_percentile = percentiles.max()
+
+            if min_percentile < 0 or max_percentile > 100:
+                errors.append(
+                    f"Percentile values outside expected range [0, 100]: "
+                    f"min={min_percentile:.2f}, max={max_percentile:.2f}"
+                )
+
+            # Check that we have a reasonable distribution (not all same value)
+            unique_percentiles = percentiles.nunique()
+            if unique_percentiles < 10:  # Arbitrary threshold
+                errors.append(
+                    f"Percentile distribution appears too narrow: "
+                    f"only {unique_percentiles} unique values"
+                )
 
     def _validate_density_ranges(self, gdf: gpd.GeoDataFrame, errors: list):
         """
