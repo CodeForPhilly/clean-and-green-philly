@@ -3,13 +3,18 @@ import pandera.pandas as pa
 from .base import BaseValidator
 
 CouncilDistrictsInputSchema = pa.DataFrameSchema(
-    columns={"district": pa.Column(str), "geometry": pa.Column("geometry")},
+    columns={
+        "district": pa.Column(
+            str,
+            nullable=True,
+        ),
+        "geometry": pa.Column("geometry"),
+    },
     # district should contain 10 records of strings 1-10
     checks=pa.Check(
         lambda df: set(df["district"].dropna().unique())
         == {str(i) for i in range(1, 11)}
     ),
-    nullable=True,
     strict=True,
 )
 
