@@ -54,9 +54,6 @@ def city_owned_properties(
     )
 
     city_owned_properties, input_validation = loader.load_or_fetch()
-    print("City-Owned Properties Input:")
-    print(city_owned_properties.columns)
-    print(city_owned_properties.head())
 
     merged_gdf = opa_join(input_gdf, city_owned_properties)
 
@@ -158,9 +155,5 @@ def city_owned_properties(
     merged_gdf.loc[merged_gdf["city_owner_agency"] == "PLB", "city_owner_agency"] = (
         "Land Bank (PHDC)"
     )
-
-    print("City-Owned Properties Output:")
-    print(merged_gdf.columns)
-    print(merged_gdf.head())
 
     return merged_gdf, input_validation
