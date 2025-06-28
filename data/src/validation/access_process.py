@@ -2,7 +2,9 @@ import geopandas as gpd
 import pandas as pd
 import pandera.pandas as pa
 
-from .base import BaseValidator
+from .base import (
+    BaseValidator,
+)
 
 # Define the Access Process DataFrame Schema
 AccessProcessSchema = pa.DataFrameSchema(
@@ -50,7 +52,7 @@ class AccessProcessOutputValidator(BaseValidator):
         required_columns = ["access_process"]
         self._validate_required_columns(gdf, required_columns, errors)
 
-        # Validate access_process column
+        # Validate access_process column using utility functions
         if "access_process" in gdf.columns:
             # Check for non-string values (excluding NAs)
             non_string_access_processes = (
@@ -91,10 +93,8 @@ class AccessProcessOutputValidator(BaseValidator):
                 f"Access process count ({total_records}) below expected minimum ({min_records:,})"
             )
 
-        # 2. Access process distribution validation
+        # 2. Access process distribution validation using utility functions
         if "access_process" in gdf.columns:
-            total_records = len(gdf)
-
             # Check that we have some NAs (non-vacant properties)
             na_count = gdf["access_process"].isna().sum()
             na_pct = (na_count / total_records) * 100

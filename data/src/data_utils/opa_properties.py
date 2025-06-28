@@ -209,6 +209,9 @@ def opa_properties(
     performance_logger.info(f"load_or_fetch completed: {load_time:.3f}s")
     performance_logger.info(f"Loaded {len(opa)} rows")
 
+    print(opa.columns)
+    print(opa.head())
+
     # Convert 'sale_price' and 'market_value' to numeric values
     numeric_start = time.time()
     performance_logger.info("Converting sale_price and market_value to numeric")
@@ -253,7 +256,7 @@ def opa_properties(
     performance_logger.info("Combining street_address and unit")
     opa["street_address"] = opa.apply(
         lambda row: f"{row['street_address']} {row['unit']}"
-        if pd.notnull(row["unit"]) and str(row["unit"]).strip() != ""
+        if pd.notnull(row.get("unit")) and str(row["unit"]).strip() != ""
         else row["street_address"],
         axis=1,
     )

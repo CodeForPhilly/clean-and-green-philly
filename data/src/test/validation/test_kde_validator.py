@@ -193,6 +193,7 @@ def test_schema_missing_columns(schema_validator, sample_gdf):
 
     result = schema_validator.validate(gdf_missing)
 
+    print("[DEBUG] result.errors:", result.errors)
     assert not result.success
     # Check for schema validation error (pandera generates different error format)
     assert any("Schema validation failed" in error for error in result.errors)

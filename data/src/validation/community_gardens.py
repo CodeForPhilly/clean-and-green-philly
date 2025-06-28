@@ -1,7 +1,9 @@
 import geopandas as gpd
 import pandera.pandas as pa
 
-from .base import BaseValidator
+from .base import (
+    BaseValidator,
+)
 
 # Define the Community Gardens DataFrame Schema
 CommunityGardensSchema = pa.DataFrameSchema(
@@ -49,7 +51,7 @@ class CommunityGardensInputValidator(BaseValidator):
             )
             print(f"Site names missing: {total_records - non_null_site_names:,}")
 
-        # Unique site names
+        # Unique site names using utility function
         if "site_name" in gdf.columns:
             unique_site_names = gdf["site_name"].nunique()
             print(f"Unique site names: {unique_site_names:,}")
@@ -72,7 +74,7 @@ class CommunityGardensOutputValidator(BaseValidator):
         required_columns = ["opa_id", "vacant", "geometry"]
         self._validate_required_columns(gdf, required_columns, errors)
 
-        # Validate vacant column is boolean
+        # Validate vacant column is boolean using utility functions
         if "vacant" in gdf.columns:
             non_null_vacant = gdf["vacant"].dropna()
             if len(non_null_vacant) > 0:
@@ -92,7 +94,7 @@ class CommunityGardensOutputValidator(BaseValidator):
         if total_records == 0:
             errors.append("Output dataset is empty")
 
-        # 2. Vacant column validation - check that some parcels are marked as non-vacant
+        # 2. Vacant column validation using utility functions
         if "vacant" in gdf.columns:
             non_vacant_count = (~gdf["vacant"]).sum()
             vacant_count = gdf["vacant"].sum()
@@ -108,6 +110,10 @@ class CommunityGardensOutputValidator(BaseValidator):
                 errors.append(
                     "No vacant parcels found - this seems unlikely for a full property dataset"
                 )
+
+            # Use utility function to validate boolean distribution
+            # Expect roughly 2 unique values (True/False) for vacant column
+            self._validate_unique_count(gdf, "vacant", errors, min_count=1, max_count=2)
 
     def _print_statistical_summary(self, gdf: gpd.GeoDataFrame):
         """Print comprehensive statistical summary of the community gardens data."""

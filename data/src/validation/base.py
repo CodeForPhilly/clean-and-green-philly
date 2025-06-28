@@ -2,7 +2,8 @@ import functools
 import logging
 import time
 from abc import ABC, abstractmethod
-from typing import Callable, List
+from dataclasses import dataclass
+from typing import Callable, List, Optional
 
 import geopandas as gpd
 import pandas as pd
@@ -367,11 +368,25 @@ class BaseValidator(ABC):
                 print("\n[SCHEMA VALIDATION ERROR]")
                 print("First 10 failure cases:")
                 print(err.failure_cases.head(10).to_string(index=False))
-                # Add each failure as a separate error
+                # Add each failure as a custom error message
                 for _, row in err.failure_cases.iterrows():
-                    self.errors.append(
-                        f"Schema validation failed for {row['column']}: {row['failure_case']}"
-                    )
+                    col = row.get("column", "")
+                    check = row.get("check", "")
+                    failure = row.get("failure_case", "")
+                    # Try to make the message as close as possible to your old custom ones
+                    if "mean should be roughly" in str(failure):
+                        msg = f"{col} mean appears outside expected range: {failure}"
+                    elif "standard deviation should be roughly" in str(failure):
+                        msg = f"{col} standard deviation appears outside expected range: {failure}"
+                    elif "max" in str(failure) or "min" in str(failure):
+                        msg = f"{col} values appear outside expected range: {failure}"
+                    elif "first quantile" in str(failure):
+                        msg = f"{col} first quantile appears outside expected range: {failure}"
+                    elif "third quantile" in str(failure):
+                        msg = f"{col} third quantile appears outside expected range: {failure}"
+                    else:
+                        msg = f"{col} failed check '{check}': {failure}"
+                    self.errors.append(f"Schema validation failed: {msg}")
                 return ValidationResult(success=False, errors=self.errors.copy())
         schema_time = time.time() - schema_start
 
@@ -685,3 +700,93 @@ def validate_output(
         return wrapper
 
     return decorator
+
+
+no_na_check = Check.ne("NA", error="Value cannot be NA")
+
+unique_check = Check(lambda s: s.is_unique, error="Should have all unique values")
+
+
+def unique_value_check(lower: int, upper: int) -> Check:
+    return Check(
+        lambda s: s.nunique() >= lower and s.nunique() < upper,
+        error=f"Number of unique values is roughly between {lower} and {upper}",
+    )
+
+
+def null_percentage_check(null_percent: float) -> Check:
+    return Check(
+        lambda s: s.isnull().mean() >= 0.8 * null_percent
+        and s.isnull().mean() <= 1.2 * null_percent,
+        error=f"Percentage of nulls in column should be roughly {null_percent}",
+    )
+
+
+@dataclass
+class DistributionParams:
+    min_value: Optional[int | float] = None
+    max_value: Optional[int | float] = None
+    mean: Optional[int | float] = None
+    median: Optional[int | float] = None
+    std: Optional[int | float] = None
+    q1: Optional[int | float] = None
+    q3: Optional[int | float] = None
+
+
+def distribution_check(params: DistributionParams) -> List[Check]:
+    res = []
+
+    if params.min_value:
+        res.append(
+            Check(lambda s: pd.to_numeric(s, errors="coerce").min() >= params.min_value)
+        )
+    if params.max_value:
+        res.append(
+            Check(lambda s: pd.to_numeric(s, errors="coerce").max() <= params.max_value)
+        )
+    if params.mean:
+        res.append(
+            Check(
+                lambda s: pd.to_numeric(s, errors="coerce").mean() >= 0.8 * params.mean
+                and pd.to_numeric(s, errors="coerce").mean() <= 1.2 * params.mean,
+                error=f"Column mean should be roughly {params.mean}",
+            )
+        )
+    if params.median:
+        res.append(
+            Check(
+                lambda s: pd.to_numeric(s, errors="coerce").quantile(0.5)
+                >= 0.8 * params.median
+                and pd.to_numeric(s, errors="coerce").quantile(0.5)
+                <= 1.2 * params.median,
+                error=f"Column median should be roughly {params.median}",
+            )
+        )
+    if params.std:
+        res.append(
+            Check(
+                lambda s: pd.to_numeric(s, errors="coerce").std() >= 0.8 * params.std
+                and pd.to_numeric(s, errors="coerce").std() <= 1.2 * params.std,
+                error=f"Column standard deviation should be roughly {params.std}",
+            )
+        )
+    if params.q1:
+        res.append(
+            Check(
+                lambda s: pd.to_numeric(s, errors="coerce").quantile(0.25)
+                >= 0.8 * params.q1
+                and pd.to_numeric(s, errors="coerce").quantile(0.25) <= 1.2 * params.q1,
+                error=f"Column first quantile should be roughly {params.q1}",
+            )
+        )
+    if params.q3:
+        res.append(
+            Check(
+                lambda s: pd.to_numeric(s, errors="coerce").quantile(0.75)
+                >= 0.8 * params.q3
+                and pd.to_numeric(s, errors="coerce").quantile(0.75) <= 1.2 * params.q3,
+                error=f"Column third quantile should be roughly {params.q3}",
+            )
+        )
+
+    return res

@@ -1,7 +1,7 @@
 import geopandas as gpd
 import pandera.pandas as pa
 
-from .base import BaseValidator
+from .base import BaseValidator, no_na_check, unique_value_check
 
 # Define the Neighborhoods DataFrame Schema
 NeighborhoodsSchema = pa.DataFrameSchema(
@@ -29,6 +29,11 @@ class NeighborhoodsInputValidator(BaseValidator):
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass
+
+
+output_schema = pa.DataFrameSchema(
+    {"neighborhood": pa.Column(str, checks=[no_na_check, unique_value_check(130, 190)])}
+)
 
 
 class NeighborhoodsOutputValidator(BaseValidator):

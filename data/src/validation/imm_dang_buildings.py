@@ -35,6 +35,11 @@ class ImmDangerInputValidator(BaseValidator):
         pass
 
 
+output_schema = pa.DataFrameSchema(
+    {"unsafe_building": pa.Column(str, checks=pa.Check.isin(["Y", "N"]))}
+)
+
+
 class ImmDangerOutputValidator(BaseValidator):
     """Validator for imminent danger buildings service output."""
 
