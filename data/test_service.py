@@ -71,6 +71,36 @@ SERVICES = {
     "access_process": access_process,
 }
 
+# Service dependencies - defines which services need to be run before each target service
+SERVICE_DEPENDENCIES = {
+    "conservatorship": [
+        "opa_properties",
+        "vacant_properties",
+        "city_owned_properties",
+        "delinquencies",
+        "li_violations",
+    ],
+    "contig_neighbors": ["opa_properties", "vacant_properties"],
+    "negligent_devs": ["opa_properties", "vacant_properties", "li_violations"],
+    "priority_level": [
+        "opa_properties",
+        "vacant_properties",
+        "phs_properties",
+        "li_violations",
+        "li_complaints",
+        "tree_canopy",
+    ],
+    "tactical_urbanism": [
+        "opa_properties",
+        "vacant_properties",
+        "unsafe_buildings",
+        "imm_dang_buildings",
+    ],
+    # Keep existing special cases
+    "community_gardens": ["opa_properties", "vacant_properties"],
+    "access_process": ["opa_properties", "vacant_properties", "city_owned_properties"],
+}
+
 
 def disable_caching():
     """Temporarily disable caching for testing"""
@@ -87,6 +117,41 @@ def disable_caching():
 def restore_caching(original_method):
     """Restore the original caching method"""
     BaseLoader.cache_data = original_method
+
+
+def run_dependencies(dataset, dependencies):
+    """Run all required dependencies for a service."""
+    if not dependencies:
+        return dataset
+
+    print(f"\nRunning dependencies: {', '.join(dependencies)}")
+    print("-" * 30)
+
+    for dep in dependencies:
+        if dep == "opa_properties":
+            # opa_properties is the base dataset, already loaded
+            continue
+
+        print(f"Running {dep}...")
+        service_func = SERVICES[dep]
+
+        # Special handling for services that need statistical summaries
+        if dep == "phs_properties":
+            with enable_statistical_summaries():
+                dataset, validation = service_func(dataset)
+        elif dep == "delinquencies":
+            with enable_statistical_summaries():
+                dataset, validation = service_func(dataset)
+        else:
+            dataset, validation = service_func(dataset)
+
+        print(f"  Dataset shape after {dep}: {dataset.shape}")
+        print(f"  Validation: {validation}")
+
+        if not validation["input"] or not validation["output"]:
+            print(f"  Warning: {dep} validation failed: {validation}")
+
+    return dataset
 
 
 def test_service(service_name: str):
@@ -114,48 +179,14 @@ def test_service(service_name: str):
         if not opa_validation["input"] or not opa_validation["output"]:
             print(f"Warning: OPA properties validation failed: {opa_validation}")
 
-        # Run vacant_properties first if the service depends on the vacant column
-        services_that_need_vacant = ["community_gardens"]
-        if service_name in services_that_need_vacant:
-            print("\nRunning vacant_properties first (dependency)...")
-            dataset, vacant_validation = vacant_properties(dataset)
-            print(f"Dataset after vacant_properties shape: {dataset.shape}")
-            print(f"Dataset after vacant_properties columns: {list(dataset.columns)}")
-
-            if not vacant_validation["input"] or not vacant_validation["output"]:
-                print(
-                    f"Warning: Vacant properties validation failed: {vacant_validation}"
-                )
-
-        # Run city_owned_properties first if the service depends on city ownership data
-        services_that_need_city_owned = ["access_process"]
-        if service_name in services_that_need_city_owned:
-            print("\nRunning city_owned_properties first (dependency)...")
-            dataset, city_owned_validation = city_owned_properties(dataset)
-            print(f"Dataset after city_owned_properties shape: {dataset.shape}")
+        # Run dependencies if any
+        dependencies = SERVICE_DEPENDENCIES.get(service_name, [])
+        if dependencies:
+            dataset = run_dependencies(dataset, dependencies)
             print(
-                f"Dataset after city_owned_properties columns: {list(dataset.columns)}"
+                f"\nFinal dataset shape before running {service_name}: {dataset.shape}"
             )
-
-            if (
-                not city_owned_validation["input"]
-                or not city_owned_validation["output"]
-            ):
-                print(
-                    f"Warning: City owned properties validation failed: {city_owned_validation}"
-                )
-
-        # Run vacant_properties for access_process (it also needs the vacant column)
-        if service_name == "access_process":
-            print("\nRunning vacant_properties (dependency for access_process)...")
-            dataset, vacant_validation = vacant_properties(dataset)
-            print(f"Dataset after vacant_properties shape: {dataset.shape}")
-            print(f"Dataset after vacant_properties columns: {list(dataset.columns)}")
-
-            if not vacant_validation["input"] or not vacant_validation["output"]:
-                print(
-                    f"Warning: Vacant properties validation failed: {vacant_validation}"
-                )
+            print(f"Final dataset columns: {list(dataset.columns)}")
 
         # Run the service
         service_func = SERVICES[service_name]
