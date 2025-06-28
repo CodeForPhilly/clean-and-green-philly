@@ -368,27 +368,44 @@ class BaseValidator(ABC):
                 print("\n[SCHEMA VALIDATION ERROR]")
                 print("First 10 failure cases:")
                 print(err.failure_cases.head(10).to_string(index=False))
-                # Add each failure as a custom error message
+
+                # Summarize errors instead of adding each one individually
+                failure_summary = {}
                 for _, row in err.failure_cases.iterrows():
                     col = row.get("column", "")
                     check = row.get("check", "")
                     failure = row.get("failure_case", "")
-                    index = row.get("index", "")
 
-                    # Show the actual data value that failed
-                    if pd.notna(failure):
-                        if isinstance(failure, (int, float)):
-                            msg = f"{col} has value {failure} which failed check '{check}'"
+                    # Create a key for this type of error
+                    error_key = f"{col} - {check}"
+
+                    if error_key not in failure_summary:
+                        failure_summary[error_key] = {"count": 0, "examples": []}
+
+                    failure_summary[error_key]["count"] += 1
+
+                    # Keep track of a few examples
+                    if len(failure_summary[error_key]["examples"]) < 3:
+                        if pd.notna(failure):
+                            if isinstance(failure, (int, float)):
+                                example = f"value {failure}"
+                            else:
+                                example = f"value '{failure}'"
                         else:
-                            msg = f"{col} has value '{failure}' which failed check '{check}'"
+                            example = "null/empty value"
+                        failure_summary[error_key]["examples"].append(example)
+
+                # Add summarized error messages
+                for error_key, details in failure_summary.items():
+                    count = details["count"]
+                    examples = details["examples"]
+                    if count == 1:
+                        msg = f"Schema validation failed: {error_key} (1 failure: {examples[0]})"
                     else:
-                        msg = f"{col} failed check '{check}'"
+                        example_str = ", ".join(examples)
+                        msg = f"Schema validation failed: {error_key} ({count} failures, examples: {example_str})"
+                    self.errors.append(msg)
 
-                    # Add index info if available
-                    if pd.notna(index):
-                        msg += f" at index {index}"
-
-                    self.errors.append(f"Schema validation failed: {msg}")
                 return ValidationResult(success=False, errors=self.errors.copy())
         schema_time = time.time() - schema_start
 

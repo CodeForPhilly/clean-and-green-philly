@@ -80,7 +80,7 @@ SERVICE_DEPENDENCIES = {
         "delinquencies",
         "li_violations",
     ],
-    "contig_neighbors": ["opa_properties", "vacant_properties"],
+    "contig_neighbors": ["opa_properties", "vacant_properties", "pwd_parcels"],
     "negligent_devs": ["opa_properties", "vacant_properties", "li_violations"],
     "priority_level": [
         "opa_properties",
@@ -135,15 +135,8 @@ def run_dependencies(dataset, dependencies):
         print(f"Running {dep}...")
         service_func = SERVICES[dep]
 
-        # Special handling for services that need statistical summaries
-        if dep == "phs_properties":
-            with enable_statistical_summaries():
-                dataset, validation = service_func(dataset)
-        elif dep == "delinquencies":
-            with enable_statistical_summaries():
-                dataset, validation = service_func(dataset)
-        else:
-            dataset, validation = service_func(dataset)
+        # Run dependencies without statistical summaries
+        dataset, validation = service_func(dataset)
 
         print(f"  Dataset shape after {dep}: {dataset.shape}")
         print(f"  Validation: {validation}")
@@ -192,15 +185,8 @@ def test_service(service_name: str):
         service_func = SERVICES[service_name]
         print(f"\nRunning {service_name}...")
 
-        # Special handling for phs_properties (needs statistical summaries)
-        if service_name == "phs_properties":
-            with enable_statistical_summaries():
-                result_dataset, validation = service_func(dataset)
-        # Special handling for delinquencies (needs statistical summaries to see actual ranges)
-        elif service_name == "delinquencies":
-            with enable_statistical_summaries():
-                result_dataset, validation = service_func(dataset)
-        else:
+        # Enable statistical summaries only for the service being tested
+        with enable_statistical_summaries():
             result_dataset, validation = service_func(dataset)
 
         # Show results
