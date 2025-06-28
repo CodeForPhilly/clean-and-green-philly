@@ -373,19 +373,21 @@ class BaseValidator(ABC):
                     col = row.get("column", "")
                     check = row.get("check", "")
                     failure = row.get("failure_case", "")
-                    # Try to make the message as close as possible to your old custom ones
-                    if "mean should be roughly" in str(failure):
-                        msg = f"{col} mean appears outside expected range: {failure}"
-                    elif "standard deviation should be roughly" in str(failure):
-                        msg = f"{col} standard deviation appears outside expected range: {failure}"
-                    elif "max" in str(failure) or "min" in str(failure):
-                        msg = f"{col} values appear outside expected range: {failure}"
-                    elif "first quantile" in str(failure):
-                        msg = f"{col} first quantile appears outside expected range: {failure}"
-                    elif "third quantile" in str(failure):
-                        msg = f"{col} third quantile appears outside expected range: {failure}"
+                    index = row.get("index", "")
+
+                    # Show the actual data value that failed
+                    if pd.notna(failure):
+                        if isinstance(failure, (int, float)):
+                            msg = f"{col} has value {failure} which failed check '{check}'"
+                        else:
+                            msg = f"{col} has value '{failure}' which failed check '{check}'"
                     else:
-                        msg = f"{col} failed check '{check}': {failure}"
+                        msg = f"{col} failed check '{check}'"
+
+                    # Add index info if available
+                    if pd.notna(index):
+                        msg += f" at index {index}"
+
                     self.errors.append(f"Schema validation failed: {msg}")
                 return ValidationResult(success=False, errors=self.errors.copy())
         schema_time = time.time() - schema_start
@@ -682,6 +684,17 @@ def validate_output(
             output_validation_start = time.time()
             output_validation = validator.validate(output_gdf)
             output_validation_time = time.time() - output_validation_start
+
+            # Check if validation failed and raise exception
+            if not output_validation:
+                print(
+                    f"\n[VALIDATION FAILED] Service {func.__name__} failed validation:"
+                )
+                for error in output_validation.errors:
+                    print(f"  - {error}")
+                raise ValueError(
+                    f"Validation failed for {func.__name__}: {output_validation.errors}"
+                )
 
             # Create complete validation result
             validation_merge_start = time.time()

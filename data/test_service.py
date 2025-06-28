@@ -165,6 +165,10 @@ def test_service(service_name: str):
         if service_name == "phs_properties":
             with enable_statistical_summaries():
                 result_dataset, validation = service_func(dataset)
+        # Special handling for delinquencies (needs statistical summaries to see actual ranges)
+        elif service_name == "delinquencies":
+            with enable_statistical_summaries():
+                result_dataset, validation = service_func(dataset)
         else:
             result_dataset, validation = service_func(dataset)
 
