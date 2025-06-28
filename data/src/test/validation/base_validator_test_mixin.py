@@ -66,9 +66,9 @@ class BaseValidatorTestMixin:
             result = validator.validate(gdf, check_stats=False)
 
             # Should fail due to missing column
-            assert (
-                not result.success
-            ), f"Validation should fail when missing {missing_col}"
+            assert not result.success, (
+                f"Validation should fail when missing {missing_col}"
+            )
             assert len(result.errors) > 0
 
     def test_null_values_in_required_columns(
@@ -108,9 +108,9 @@ class BaseValidatorTestMixin:
             result = validator.validate(gdf, check_stats=False)
 
             # Should fail due to null values
-            assert (
-                not result.success
-            ), f"Validation should fail when {col} has null values"
+            assert not result.success, (
+                f"Validation should fail when {col} has null values"
+            )
             assert len(result.errors) > 0
 
     def test_wrong_data_types(
@@ -156,9 +156,9 @@ class BaseValidatorTestMixin:
             result = validator.validate(gdf, check_stats=False)
 
             # Should fail due to wrong data type
-            assert (
-                not result.success
-            ), f"Validation should fail when {col} has wrong type {type(wrong_value)}"
+            assert not result.success, (
+                f"Validation should fail when {col} has wrong type {type(wrong_value)}"
+            )
             assert len(result.errors) > 0
 
     def test_value_ranges(
@@ -183,9 +183,9 @@ class BaseValidatorTestMixin:
                 result = validator.validate(gdf, check_stats=False)
 
                 # Should fail due to value below minimum
-                assert (
-                    not result.success
-                ), f"Validation should fail when {col} is below minimum {min_val}"
+                assert not result.success, (
+                    f"Validation should fail when {col} is below minimum {min_val}"
+                )
                 assert len(result.errors) > 0
 
             if max_val is not None:
@@ -199,9 +199,9 @@ class BaseValidatorTestMixin:
                 result = validator.validate(gdf, check_stats=False)
 
                 # Should fail due to value above maximum
-                assert (
-                    not result.success
-                ), f"Validation should fail when {col} is above maximum {max_val}"
+                assert not result.success, (
+                    f"Validation should fail when {col} is above maximum {max_val}"
+                )
                 assert len(result.errors) > 0
 
     def test_opa_id_validation(
@@ -313,6 +313,12 @@ class BaseValidatorTestMixin:
                 return ["N", "Y", "N"][:length]
             elif col == "payment_agreement":
                 return ["false", "true", "false"][:length]
+        elif col == "conservatorship":
+            # Boolean column for conservatorship
+            return [True, False, True][:length]
+        elif col == "n_contiguous":
+            # Float column for contig neighbors
+            return [0.0, 2.0, 3.0][:length]
 
         # Default fallback for unknown columns
         return [0] * length
