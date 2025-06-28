@@ -1,5 +1,6 @@
 import geopandas as gpd
 import pandera.pandas as pa
+from pandera import Check
 
 from .base import BaseValidator
 
@@ -10,10 +11,16 @@ ImmDangerBuildingsSchema = pa.DataFrameSchema(
         "opa_id": pa.Column(
             str, unique=True, nullable=False, description="OPA property identifier"
         ),
-        # Imminently dangerous building flag - must be boolean with no NAs
+        # Imminently dangerous building flag - can have NaN values from LEFT JOIN, so use object dtype
         "imm_dang_building": pa.Column(
-            bool,
-            nullable=False,
+            object,  # Use object dtype to handle NaN values from LEFT JOIN
+            nullable=True,  # Allow null values from LEFT JOIN
+            checks=[
+                Check(
+                    lambda s: s.dropna().apply(lambda x: isinstance(x, bool)).all(),
+                    error="imm_dang_building column contains non-boolean values",
+                ),
+            ],
             description="Indicates whether the property is categorized as an imminently dangerous building",
         ),
         # Geometry field - using Pandera's GeoPandas integration
@@ -22,7 +29,6 @@ ImmDangerBuildingsSchema = pa.DataFrameSchema(
         ),
     },
     strict=False,
-    coerce=False,
 )
 
 

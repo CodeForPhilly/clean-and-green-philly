@@ -1,5 +1,6 @@
 import geopandas as gpd
 import pandera.pandas as pa
+from pandera import Check
 
 from .base import BaseValidator
 
@@ -10,10 +11,16 @@ UnsafeBuildingsSchema = pa.DataFrameSchema(
         "opa_id": pa.Column(
             str, unique=True, nullable=False, description="OPA property identifier"
         ),
-        # Unsafe building flag - must be boolean with no NAs
+        # Unsafe building flag - can have NaN values from LEFT JOIN, so use object dtype
         "unsafe_building": pa.Column(
-            bool,
-            nullable=False,
+            object,  # Use object dtype to handle NaN values from LEFT JOIN
+            nullable=True,  # Allow null values from LEFT JOIN
+            checks=[
+                Check(
+                    lambda s: s.dropna().apply(lambda x: isinstance(x, bool)).all(),
+                    error="unsafe_building column contains non-boolean values",
+                ),
+            ],
             description="Indicates whether the property is categorized as an unsafe building",
         ),
         # Geometry field - using Pandera's GeoPandas integration
@@ -22,7 +29,6 @@ UnsafeBuildingsSchema = pa.DataFrameSchema(
         ),
     },
     strict=False,
-    coerce=False,
 )
 
 

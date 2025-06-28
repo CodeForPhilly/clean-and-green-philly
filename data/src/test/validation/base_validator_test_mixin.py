@@ -316,6 +316,9 @@ class BaseValidatorTestMixin:
         elif col == "conservatorship":
             # Boolean column for conservatorship
             return [True, False, True][:length]
+        elif col == "tactical_urbanism":
+            # Boolean column for tactical urbanism
+            return [True, False, True][:length]
         elif col == "n_contiguous":
             # Float column for contig neighbors
             return [0.0, 2.0, 3.0][:length]
