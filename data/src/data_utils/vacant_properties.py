@@ -1,14 +1,47 @@
+import os
 from io import BytesIO
 from typing import Tuple
 
 import geopandas as gpd
 import pandas as pd
 
+from src.config.config import ROOT_DIRECTORY
 from src.validation.base import ValidationResult, validate_output
 from src.validation.vacant_properties import VacantPropertiesOutputValidator
 
 from ..classes.loaders import EsriLoader, google_cloud_bucket
 from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
+
+
+def load_backup_data_from_local(file_path: str, parcel_type: str) -> pd.DataFrame:
+    """
+    Loads backup data from local geoparquet file as a DataFrame, ensuring compatibility for matching.
+
+    Args:
+        file_path (str): The path to the local geoparquet file.
+        parcel_type (str): The type of parcel ("Buildings" or "Land") to assign to the data.
+
+    Returns:
+        pd.DataFrame: A DataFrame containing the backup data with only the "opa_id" column.
+    """
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"Backup file {file_path} not found.")
+
+    try:
+        gdf = gpd.read_parquet(file_path)
+    except Exception as e:
+        raise ValueError(f"Error reading geoparquet file: {e}")
+
+    print(f"Loaded backup {parcel_type.lower()} data from local file: {file_path}")
+
+    # Ensure only opa_id is retained and convert to DataFrame (drop geometry)
+    gdf = gdf[["opa_id"]]
+    gdf = gdf.drop(columns=["geometry"], errors="ignore")
+
+    # Add parcel_type column
+    gdf["parcel_type"] = parcel_type
+
+    return gdf
 
 
 def load_backup_data_from_gcs(file_name: str) -> pd.DataFrame | None:
@@ -68,7 +101,7 @@ def vacant_properties(
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds a "vacant" column to the primary feature layer based on vacant property data from
-    ESRI layers and backup data from Google Cloud Storage if necessary.
+    ESRI layers and backup data from local geoparquet files if necessary.
 
     Args:
         primary_featurelayer (FeatureLayer): The feature layer containing property data.
@@ -86,7 +119,8 @@ def vacant_properties(
         opa_id
 
     Known Issues:
-        - The vacant land data is below the threshold, so backup data is loaded from GCS.
+        - The vacant land data is below the threshold, so backup data is loaded from local files.
+        - The vacant buildings data is below the threshold, so backup data is loaded from local files.
     """
     loader = EsriLoader(
         name="Vacant Properties",
@@ -96,39 +130,73 @@ def vacant_properties(
 
     vacant_properties, input_validation = loader.load_or_fetch()
 
-    # Filter for "Land" properties in the dataset
+    # Filter for different property types in the dataset
+    vacant_buildings_gdf = vacant_properties[
+        vacant_properties["parcel_type"] == "Buildings"
+    ]
     vacant_land_gdf = vacant_properties[vacant_properties["parcel_type"] == "Land"]
+
+    print(
+        f"Vacant buildings data size in the default dataset: {len(vacant_buildings_gdf)} rows."
+    )
     print(f"Vacant land data size in the default dataset: {len(vacant_land_gdf)} rows.")
+
+    # Check if the vacant buildings data is below the threshold
+    if len(vacant_buildings_gdf) < 9000:
+        print(
+            "Vacant buildings data is below the threshold. Removing vacant buildings rows and loading backup data from local files."
+        )
+        vacant_properties = vacant_properties[
+            vacant_properties["parcel_type"] != "Buildings"
+        ]
+
+        # Attempt to load backup buildings data from local files
+        try:
+            backup_buildings_gdf = load_backup_data_from_local(
+                ROOT_DIRECTORY / "../backup_data/buildings_backup_2024_06_24.parquet",
+                "Buildings",
+            )
+
+            # Append backup data to the existing dataset
+            print(
+                f"Appending backup buildings data ({len(backup_buildings_gdf)} rows) to the existing data."
+            )
+
+            vacant_properties = pd.concat(
+                [vacant_properties, backup_buildings_gdf], ignore_index=True
+            )
+        except Exception as e:
+            print(
+                f"Unable to load backup buildings data with error {e} - proceeding with pipeline using only available buildings data"
+            )
 
     # Check if the vacant land data is below the threshold
     if len(vacant_land_gdf) < 20000:
         print(
-            "Vacant land data is below the threshold. Removing vacant land rows and loading backup data from GCS."
+            "Vacant land data is below the threshold. Removing vacant land rows and loading backup data from local files."
         )
         vacant_properties = vacant_properties[
             vacant_properties["parcel_type"] != "Land"
         ]
 
-        # Attempt to load backup data from GCS
+        # Attempt to load backup land data from local files
         try:
-            backup_gdf = load_backup_data_from_gcs(
-                "vacant_indicators_land_06_2024.geojson"
+            backup_land_gdf = load_backup_data_from_local(
+                ROOT_DIRECTORY / "../backup_data/land_backup_2024_06_24.parquet",
+                "Land",
             )
-
-            # Add parcel_type column to backup data
-            backup_gdf["parcel_type"] = "Land"
 
             # Append backup data to the existing dataset
             print(
-                f"Appending backup data ({len(backup_gdf)} rows) to the existing data."
+                f"Appending backup land data ({len(backup_land_gdf)} rows) to the existing data."
             )
 
             vacant_properties = pd.concat(
-                [vacant_properties, backup_gdf], ignore_index=True
+                [vacant_properties, backup_land_gdf], ignore_index=True
             )
         except Exception as e:
             print(
-                f"Unable to load backup data for vacancies with error {e} - proceeding with pipeline using only vacant building data"
+                f"Unable to load backup land data with error {e} - proceeding with pipeline using only available land data"
             )
 
     # Convert to a regular DataFrame by dropping geometry
