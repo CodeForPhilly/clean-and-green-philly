@@ -190,9 +190,9 @@ class TestContigNeighborsValidator(BaseValidatorTestMixin):
         result = validator.validate(gdf, check_stats=False)
 
         # Should fail due to mean outside expected range
-        assert (
-            not result.success
-        ), "Validation should fail when mean outside [2.05, 3.08]"
+        assert not result.success, (
+            "Validation should fail when mean outside [2.05, 3.08]"
+        )
         assert len(result.errors) > 0
 
     def test_std_outside_expected_range(self, base_test_data):
@@ -272,9 +272,9 @@ class TestContigNeighborsValidator(BaseValidatorTestMixin):
         if not result.success:
             # If it fails, make sure it's due to statistical constraints, not null values
             error_messages = " ".join(result.errors)
-            assert (
-                "null" not in error_messages.lower()
-            ), f"Unexpected null validation error: {result.errors}"
+            assert "null" not in error_messages.lower(), (
+                f"Unexpected null validation error: {result.errors}"
+            )
         else:
             assert len(result.errors) == 0
 
@@ -298,9 +298,9 @@ class TestContigNeighborsValidator(BaseValidatorTestMixin):
         if not result.success:
             # Check if the error is about dtype rather than statistical constraints
             error_messages = " ".join(result.errors)
-            assert (
-                "dtype" in error_messages.lower() or "float64" in error_messages
-            ), f"Unexpected error with all nulls: {result.errors}"
+            assert "dtype" in error_messages.lower() or "float64" in error_messages, (
+                f"Unexpected error with all nulls: {result.errors}"
+            )
         else:
             assert len(result.errors) == 0
 
@@ -323,9 +323,9 @@ class TestContigNeighborsValidator(BaseValidatorTestMixin):
         if not result.success:
             # If it fails, make sure it's not due to max value constraint
             error_messages = " ".join(result.errors)
-            assert (
-                "max" not in error_messages.lower() or "70" not in error_messages
-            ), f"Unexpected max value error: {result.errors}"
+            assert "max" not in error_messages.lower() or "70" not in error_messages, (
+                f"Unexpected max value error: {result.errors}"
+            )
         else:
             assert len(result.errors) == 0
 

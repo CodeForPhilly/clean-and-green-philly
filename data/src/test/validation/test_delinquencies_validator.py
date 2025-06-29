@@ -192,9 +192,9 @@ class TestDelinquenciesValidator(BaseValidatorTestMixin):
         result = validator.validate(gdf, check_stats=False)
 
         # Should pass with mixed data types (this is expected behavior)
-        assert (
-            result.success
-        ), f"Validation failed with mixed data types: {result.errors}"
+        assert result.success, (
+            f"Validation failed with mixed data types: {result.errors}"
+        )
         assert len(result.errors) == 0
 
     def test_edge_case_values(self, base_test_data):
@@ -233,7 +233,7 @@ class TestDelinquenciesValidator(BaseValidatorTestMixin):
         result = validator.validate(gdf, check_stats=False)
 
         # Should pass with edge case values
-        assert (
-            result.success
-        ), f"Validation failed with edge case values: {result.errors}"
+        assert result.success, (
+            f"Validation failed with edge case values: {result.errors}"
+        )
         assert len(result.errors) == 0
