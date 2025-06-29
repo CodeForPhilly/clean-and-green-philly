@@ -23,13 +23,11 @@ class ValidationResult:
 class BaseValidator(ABC):
     """Base class for service-specific data validation."""
 
-    schema: pa.DataSchemaModel = None
+    schema: pa.DataFrameSchema = None
 
     def __init_subclass__(cls):
         schema = getattr(cls, "schema", None)
-        if schema is not None and (
-            not isinstance(schema, type) or not isinstance(schema, pa.DataFrameModel)
-        ):
+        if schema is not None and not isinstance(schema, pa.DataFrameSchema):
             raise TypeError(
                 f"{cls.__name__} must define a 'schema' class variable that is a subclass of pandera.SchemaModel."
             )
