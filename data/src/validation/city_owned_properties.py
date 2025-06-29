@@ -29,18 +29,43 @@ CityOwnedPropertiesSchema = pa.DataFrameSchema(
     coerce=True,
 )
 
+# Expecting ~7,796 records returned (within ±20% tolerance).
+# This is checked in CityOwnedPropertiesInputSchema
+expected = 7796
+lower = int(expected * 0.8)
+upper = int(expected * 1.2)
+
+CityOwnedPropertiesInputSchema = pa.DataFrameSchema(
+    columns={
+        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "agency": pa.Column(pa.String, nullable=True),
+        "sideyardeligible": pa.Column(
+            pa.Category, nullable=True, checks=pa.Check.isin(["Yes", "No"])
+        ),
+        "geometry": pa.Column("geometry"),
+    },
+    checks=pa.Check(lambda df: lower <= df.shape[0] <= upper),
+    strict=True,
+)
+
 
 class CityOwnedPropertiesInputValidator(BaseValidator):
-    """Validator for city owned properties service input."""
+    """
+    Validator for the city-owned properties dataset input.
+    schema and _custom_validation() are used by validate() in the parent class.
+    """
 
-    schema = None  # No schema validation for input
+    schema = CityOwnedPropertiesInputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass
 
 
 class CityOwnedPropertiesOutputValidator(BaseValidator):
-    """Validator for city owned properties service output."""
+    """
+    Validator for the city-owned properties dataset output.
+    schema and _custom_validation() are used by validate() in the parent class.
+    """
 
     schema = CityOwnedPropertiesSchema
 

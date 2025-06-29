@@ -26,11 +26,27 @@ CouncilDistrictsSchema = pa.DataFrameSchema(
     coerce=True,
 )
 
+CouncilDistrictsInputSchema = pa.DataFrameSchema(
+    columns={
+        "district": pa.Column(
+            str,
+            nullable=True,
+        ),
+        "geometry": pa.Column("geometry"),
+    },
+    # district should contain 10 records of strings 1-10
+    checks=pa.Check(
+        lambda df: set(df["district"].dropna().unique())
+        == {str(i) for i in range(1, 11)}
+    ),
+    strict=True,
+)
+
 
 class CouncilDistrictsInputValidator(BaseValidator):
     """Validator for council districts service input."""
 
-    schema = None  # No schema validation for input
+    schema = CouncilDistrictsInputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass
