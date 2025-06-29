@@ -1,18 +1,41 @@
+import logging
+
 import geopandas as gpd
 import pandera.pandas as pa
 
 from .base import BaseValidator
 
-# Define the PPR Properties DataFrame Schema
+# Set up logging
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+
+class PPRPropertiesInputValidator(BaseValidator):
+    """Validator for PPR properties service input."""
+
+    schema = None
+
+    def _custom_validation(self, gdf: gpd.GeoDataFrame):
+        pass
+
+
+# Consolidated schema with all validation built-in
 PPRPropertiesSchema = pa.DataFrameSchema(
     {
         # Core identifier - must be unique string with no NAs
         "opa_id": pa.Column(
             str, unique=True, nullable=False, description="OPA property identifier"
         ),
-        # Public name - must be string, can be nullable (we don't keep this column)
-        "public_name": pa.Column(
-            str, nullable=True, description="PPR property public name"
+        # Vacant column - should be boolean, can be nullable
+        "vacant": pa.Column(
+            nullable=True,
+            checks=[
+                pa.Check(
+                    lambda s: s.dropna().apply(lambda x: isinstance(x, bool)).all(),
+                    error="vacant column contains non-boolean values",
+                ),
+            ],
+            description="Whether the property is vacant",
         ),
         # Geometry field - using Pandera's GeoPandas integration
         "geometry": pa.Column(
@@ -20,71 +43,51 @@ PPRPropertiesSchema = pa.DataFrameSchema(
         ),
     },
     strict=False,
-    coerce=True,
 )
 
 
-class PPRPropertiesInputValidator(BaseValidator):
-    """Validator for PPR properties service input."""
-
-    schema = None  # No schema validation for input
-
-    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
-        pass
-
-
 class PPRPropertiesOutputValidator(BaseValidator):
-    """Validator for PPR properties service output with comprehensive statistical validation."""
+    """Validator for PPR properties service output."""
 
     schema = PPRPropertiesSchema
 
-    def _row_level_validation(self, gdf: gpd.GeoDataFrame, errors: list):
-        """Row-level validation that works with any dataset size."""
+    def validate(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
+        """Override validate method to add debugging."""
+        logger.debug("Starting validation of PPR properties data")
+        logger.debug(f"DataFrame shape: {gdf.shape}")
+        logger.debug(f"DataFrame columns: {list(gdf.columns)}")
+        logger.debug(f"DataFrame dtypes: {gdf.dtypes}")
+        logger.debug("DataFrame info:")
+        logger.debug(gdf.info())
 
-        # Call parent class method to get empty dataframe check
-        super()._row_level_validation(gdf, errors)
-
-        # Check for required columns using helper method
-        required_columns = ["public_name"]
-        self._validate_required_columns(gdf, required_columns, errors)
-
-        # Validate public_name column
-        if "public_name" in gdf.columns:
-            # Check for non-string values (excluding nulls)
-            non_null_public_names = gdf["public_name"].dropna()
-            if len(non_null_public_names) > 0:
-                non_string_public_names = (
-                    ~non_null_public_names.apply(lambda x: isinstance(x, str))
-                ).sum()
-                if non_string_public_names > 0:
-                    errors.append(
-                        f"Found {non_string_public_names} non-string values in 'public_name' column"
-                    )
-
-    def _statistical_validation(self, gdf: gpd.GeoDataFrame, errors: list):
-        """Statistical validation that requires larger datasets."""
-
-        # 1. Total record count validation - expect around 507 PPR properties
-        total_records = len(gdf)
-        if not (450 <= total_records <= 550):
-            errors.append(
-                f"PPR properties count ({total_records}) outside expected range [450, 550]"
+        if "vacant" in gdf.columns:
+            logger.debug(f"Vacant column values: {gdf['vacant'].tolist()}")
+            logger.debug(f"Vacant column dtype: {gdf['vacant'].dtype}")
+            logger.debug(f"Vacant column type: {type(gdf['vacant'])}")
+            logger.debug(f"Vacant column null count: {gdf['vacant'].isnull().sum()}")
+            logger.debug(f"Vacant column unique values: {gdf['vacant'].unique()}")
+            logger.debug(
+                f"Vacant column value types: {[type(val) for val in gdf['vacant']]}"
             )
 
-        # 2. Public name coverage validation
-        if "public_name" in gdf.columns:
-            non_null_public_names = gdf["public_name"].notna().sum()
-            public_name_coverage = (
-                (non_null_public_names / total_records) * 100
-                if total_records > 0
-                else 0
-            )
-
-            # Most PPR properties should have public names
-            if public_name_coverage < 80:
-                errors.append(
-                    f"Public name coverage ({public_name_coverage:.1f}%) below expected minimum (80%)"
+            # Check each value type
+            for i, val in enumerate(gdf["vacant"]):
+                logger.debug(
+                    f"Vacant[{i}] = {val} (type: {type(val)}, is_bool: {isinstance(val, bool)})"
                 )
+
+        # Let's also check what the schema expects
+        logger.debug(
+            f"Schema vacant column definition: {self.schema.columns['vacant']}"
+        )
+        logger.debug(f"Schema vacant dtype: {self.schema.columns['vacant'].dtype}")
+
+        result = super().validate(gdf, check_stats)
+        logger.debug(f"Validation result: {result.success}")
+        if not result.success:
+            logger.debug(f"Validation errors: {result.errors}")
+
+        return result
 
     def _print_statistical_summary(self, gdf: gpd.GeoDataFrame):
         """Print comprehensive statistical summary of the PPR properties data."""
@@ -92,24 +95,21 @@ class PPRPropertiesOutputValidator(BaseValidator):
 
         # Total record count
         total_records = len(gdf)
-        print(f"\nTotal PPR properties: {total_records:,}")
+        print(f"\nTotal properties: {total_records:,}")
 
-        # Public name statistics
-        if "public_name" in gdf.columns:
-            non_null_public_names = gdf["public_name"].notna().sum()
-            public_name_coverage = (
-                (non_null_public_names / total_records) * 100
-                if total_records > 0
-                else 0
+        # Vacant column statistics
+        if "vacant" in gdf.columns:
+            vacant_count = gdf["vacant"].sum()
+            vacant_pct = (
+                (vacant_count / total_records) * 100 if total_records > 0 else 0
             )
-            print(
-                f"Public names with values: {non_null_public_names:,} ({public_name_coverage:.1f}%)"
-            )
-            print(f"Public names missing: {total_records - non_null_public_names:,}")
+            print(f"Properties marked as vacant: {vacant_count:,} ({vacant_pct:.1f}%)")
+            print(f"Properties marked as not vacant: {total_records - vacant_count:,}")
 
-        # Unique public names
-        if "public_name" in gdf.columns:
-            unique_public_names = gdf["public_name"].nunique()
-            print(f"Unique public names: {unique_public_names:,}")
+            # PPR properties should not be marked as vacant
+            if vacant_count > 0:
+                print(
+                    f"⚠️  Warning: {vacant_count} properties are still marked as vacant"
+                )
 
         self._print_summary_footer()

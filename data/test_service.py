@@ -88,6 +88,7 @@ SERVICE_DEPENDENCIES = {
         "phs_properties",
         "li_violations",
         "li_complaints",
+        "gun_crimes",
         "tree_canopy",
     ],
     "tactical_urbanism": [
