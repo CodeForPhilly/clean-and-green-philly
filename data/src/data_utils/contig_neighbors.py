@@ -104,7 +104,24 @@ def contig_neighbors(
             f"[DEBUG] contig_neighbors: n_contiguous value types: {[type(v) for v in sample_values]}"
         )
 
+    # Debug: Check the mapping issue
+    print(
+        f"[DEBUG] contig_neighbors: vacant_parcels index type: {type(vacant_parcels.index)}"
+    )
+    print(
+        f"[DEBUG] contig_neighbors: vacant_parcels index sample: {list(vacant_parcels.index[:5])}"
+    )
+    print(
+        f"[DEBUG] contig_neighbors: n_contiguous keys type: {type(list(n_contiguous.keys())[0])}"
+    )
+    print(
+        f"[DEBUG] contig_neighbors: n_contiguous keys sample: {list(n_contiguous.keys())[:5]}"
+    )
+
     # Assign the contiguous neighbor count to the filtered vacant parcels
+    vacant_parcels = vacant_parcels.reset_index(
+        drop=True
+    )  # Reset to sequential indices
     vacant_parcels["n_contiguous"] = vacant_parcels.index.map(n_contiguous)
 
     # Debug: Check what's in vacant_parcels after assignment
@@ -142,10 +159,46 @@ def contig_neighbors(
         f"[DEBUG] contig_neighbors: input_gdf opa_id type: {input_gdf['opa_id'].dtype}"
     )
 
+    # Debug: Check for null opa_id values before join
+    print(
+        f"[DEBUG] contig_neighbors: input_gdf null opa_id count before join: {input_gdf['opa_id'].isna().sum()}"
+    )
+    print(
+        f"[DEBUG] contig_neighbors: vacant_parcels null opa_id count before join: {vacant_parcels['opa_id'].isna().sum()}"
+    )
+    print(
+        f"[DEBUG] contig_neighbors: input_gdf total rows before join: {len(input_gdf)}"
+    )
+
+    # Debug: Check for data type issues and duplicates
+    print(
+        f"[DEBUG] contig_neighbors: input_gdf opa_id unique count: {input_gdf['opa_id'].nunique()}"
+    )
+    print(
+        f"[DEBUG] contig_neighbors: vacant_parcels opa_id unique count: {vacant_parcels['opa_id'].nunique()}"
+    )
+    print(
+        f"[DEBUG] contig_neighbors: input_gdf opa_id duplicates: {input_gdf['opa_id'].duplicated().sum()}"
+    )
+    print(
+        f"[DEBUG] contig_neighbors: vacant_parcels opa_id duplicates: {vacant_parcels['opa_id'].duplicated().sum()}"
+    )
+
+    # Debug: Check if opa_ids from vacant_parcels exist in input_gdf
+    vacant_opa_ids = set(vacant_parcels["opa_id"])
+    input_opa_ids = set(input_gdf["opa_id"])
+    matching_opa_ids = vacant_opa_ids.intersection(input_opa_ids)
+    print(
+        f"[DEBUG] contig_neighbors: vacant_parcels opa_ids in input_gdf: {len(matching_opa_ids)} / {len(vacant_opa_ids)}"
+    )
+
     # Merge the results back to the primary feature layer
     input_gdf = opa_join(input_gdf, vacant_parcels[["opa_id", "n_contiguous"]])
 
     # Debug: Check what's in input_gdf after join
+    print(
+        f"[DEBUG] contig_neighbors: input_gdf total rows after join: {len(input_gdf)}"
+    )
     print(
         f"[DEBUG] contig_neighbors: input_gdf n_contiguous column: {input_gdf['n_contiguous'].dtype}"
     )

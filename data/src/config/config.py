@@ -16,11 +16,14 @@ ROOT_DIRECTORY = Path(__file__).resolve().parent.parent
 CACHE_FRACTION = 0.05
 """The fraction used to cache portions of the pipeline's transformed data in each step of the pipeline."""
 
-log_level: int = logging.INFO
+log_level: int = logging.WARN
 """ overall log level for the project """
 
 # Centralized logger configuration
-ENABLED_LOGGERS = {"pipeline", "data_quality", "performance"}
+ENABLED_LOGGERS = {
+    "pipeline",
+    "data_quality",
+}
 """ Set of enabled logger types. Add/remove logger types to control what logging is active.
 Available types: "cache", "performance", "pipeline", "geometry_debug", "data_quality"
 Examples:

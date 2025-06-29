@@ -81,7 +81,12 @@ SERVICE_DEPENDENCIES = {
         "li_violations",
     ],
     "contig_neighbors": ["opa_properties", "vacant_properties", "pwd_parcels"],
-    "negligent_devs": ["opa_properties", "vacant_properties", "li_violations"],
+    "negligent_devs": [
+        "opa_properties",
+        "vacant_properties",
+        "city_owned_properties",
+        "li_violations",
+    ],
     "priority_level": [
         "opa_properties",
         "vacant_properties",

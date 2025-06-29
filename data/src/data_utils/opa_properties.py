@@ -209,8 +209,10 @@ def opa_properties(
     performance_logger.info(f"load_or_fetch completed: {load_time:.3f}s")
     performance_logger.info(f"Loaded {len(opa)} rows")
 
-    print(opa.columns)
-    print(opa.head())
+    # Log data quality information at debug level
+    pipeline_logger = get_logger("pipeline")
+    pipeline_logger.debug(f"OPA properties columns: {list(opa.columns)}")
+    pipeline_logger.debug(f"OPA properties head:\n{opa.head()}")
 
     # Convert 'sale_price' and 'market_value' to numeric values
     numeric_start = time.time()

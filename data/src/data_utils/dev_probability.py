@@ -6,14 +6,15 @@ import pandas as pd
 import requests
 
 from src.config.config import USE_CRS
-from src.validation.base import ValidationResult
+from src.validation.base import ValidationResult, validate_output
+from src.validation.dev_probability import DevProbabilityOutputValidator
 
 from ..classes.loaders import GdfLoader
 from ..constants.services import CENSUS_BGS_URL, PERMITS_QUERY
 from ..utilities import spatial_join
 
 
-# @validate_output(DevProbabilityOutputValidator)
+@validate_output(DevProbabilityOutputValidator)
 def dev_probability(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -42,9 +43,12 @@ def dev_probability(
     Source:
         https://phl.carto.com/api/v2/sql
     """
+    print("[DEBUG] dev_probability: Starting function")
+    print(f"[DEBUG] dev_probability: Input dataset shape: {input_gdf.shape}")
 
     loader = GdfLoader(name="Census BGs", input=CENSUS_BGS_URL)
     census_bgs_gdf, census_input_validation = loader.load_or_fetch()
+    print(f"[DEBUG] dev_probability: Census BGs loaded, shape: {census_bgs_gdf.shape}")
 
     base_url = "https://phl.carto.com/api/v2/sql"
     response = requests.get(f"{base_url}?q={PERMITS_QUERY}&format=GeoJSON")
@@ -55,6 +59,9 @@ def dev_probability(
                 response.json(), crs="EPSG:4326"
             )
             print("GeoDataFrame created successfully.")
+            print(
+                f"[DEBUG] dev_probability: Permits data loaded, shape: {permits_gdf.shape}"
+            )
         except Exception as e:
             print(f"Failed to convert response to GeoDataFrame: {e}")
             return input_gdf, ValidationResult(True)
@@ -68,6 +75,7 @@ def dev_probability(
     permits_gdf = permits_gdf.to_crs(USE_CRS)
 
     joined_gdf = gpd.sjoin(permits_gdf, census_bgs_gdf, how="inner", predicate="within")
+    print(f"[DEBUG] dev_probability: Spatial join completed, shape: {joined_gdf.shape}")
 
     permit_counts = joined_gdf.groupby("index_right").size()
     census_bgs_gdf["permit_count"] = census_bgs_gdf.index.map(permit_counts)
@@ -75,6 +83,9 @@ def dev_probability(
     # Fill NaN values with 0 and ensure integer type
     census_bgs_gdf["permit_count"] = (
         census_bgs_gdf["permit_count"].fillna(0).astype(int)
+    )
+    print(
+        f"[DEBUG] dev_probability: Permit counts calculated, range: {census_bgs_gdf['permit_count'].min()}-{census_bgs_gdf['permit_count'].max()}"
     )
 
     # Classify development probability using Jenks natural breaks
@@ -114,8 +125,37 @@ def dev_probability(
         lambda x: "Low" if x not in valid_ranks else x
     )
 
+    print(
+        f"[DEBUG] dev_probability: Dev ranks assigned, distribution: {census_bgs_gdf['dev_rank'].value_counts().to_dict()}"
+    )
+
     census_bgs_gdf = census_bgs_gdf[["permit_count", "dev_rank", "geometry"]]
 
     merged_gdf = spatial_join(input_gdf, census_bgs_gdf)
+    print(
+        f"[DEBUG] dev_probability: Final merge completed, output shape: {merged_gdf.shape}"
+    )
+    print(
+        f"[DEBUG] dev_probability: Final permit_count range: {merged_gdf['permit_count'].min()}-{merged_gdf['permit_count'].max()}"
+    )
+    print(
+        f"[DEBUG] dev_probability: Final dev_rank distribution: {merged_gdf['dev_rank'].value_counts().to_dict()}"
+    )
+
+    # Deduplicate by OPA ID to keep only the first occurrence
+    merged_gdf = merged_gdf.drop_duplicates(subset=["opa_id"], keep="first")
+    print(
+        f"[DEBUG] dev_probability: After OPA ID deduplication, output shape: {merged_gdf.shape}"
+    )
+
+    # Fill null values with appropriate defaults
+    merged_gdf["permit_count"] = merged_gdf["permit_count"].fillna(0).astype(int)
+    merged_gdf["dev_rank"] = merged_gdf["dev_rank"].fillna("Low")
+    print(
+        f"[DEBUG] dev_probability: After null value handling, permit_count range: {merged_gdf['permit_count'].min()}-{merged_gdf['permit_count'].max()}"
+    )
+    print(
+        f"[DEBUG] dev_probability: After null value handling, dev_rank distribution: {merged_gdf['dev_rank'].value_counts().to_dict()}"
+    )
 
     return merged_gdf, ValidationResult(True)

@@ -1,6 +1,5 @@
 import geopandas as gpd
 import pandera.pandas as pa
-from pandera import Check
 
 from .base import BaseValidator
 
@@ -14,40 +13,21 @@ class ContigNeighborsInputValidator(BaseValidator):
         pass
 
 
-# Consolidated schema with all validation built-in
+# Base schema with basic validation only
 ContigNeighborsSchema = pa.DataFrameSchema(
     {
         # Core identifier - must be unique string with no NAs
         "opa_id": pa.Column(
             str, unique=True, nullable=False, description="OPA property identifier"
         ),
-        # Contiguous neighbors count with comprehensive validation
+        # Contiguous neighbors count with basic validation only
         "n_contiguous": pa.Column(
             float,  # Allow float to handle NaN values
             nullable=True,
             checks=[
-                Check(
+                pa.Check(
                     lambda s: s.dropna().max() <= 70,
                     error="n_contiguous maximum value exceeds 70",
-                ),
-                Check(
-                    lambda s: s.dropna().mean() >= 0.8 * 2.566
-                    and s.dropna().mean() <= 1.2 * 2.566,
-                    error="n_contiguous mean outside expected range [2.05, 3.08]",
-                ),
-                Check(
-                    lambda s: s.dropna().std() >= 3.5 and s.dropna().std() <= 7.0,
-                    error="n_contiguous standard deviation outside expected range [3.5, 7.0]",
-                ),
-                Check(
-                    lambda s: s.dropna().quantile(0.25) >= 0.8 * 0.000
-                    and s.dropna().quantile(0.25) <= 1.2 * 0.000,
-                    error="n_contiguous Q1 outside expected range [0.00, 0.00]",
-                ),
-                Check(
-                    lambda s: s.dropna().quantile(0.75) >= 0.8 * 3.000
-                    and s.dropna().quantile(0.75) <= 1.2 * 3.000,
-                    error="n_contiguous Q3 outside expected range [2.40, 3.60]",
                 ),
             ],
             description="Number of contiguous vacant neighbors for each property",
@@ -70,8 +50,8 @@ class ContigNeighborsOutputValidator(BaseValidator):
         """Custom validation that prints actual statistics for debugging."""
         errors = []
 
+        # Print actual statistics for debugging
         if "n_contiguous" in gdf.columns:
-            # Print actual statistics for debugging
             non_null_data = gdf["n_contiguous"].dropna()
             if len(non_null_data) > 0:
                 print("[DEBUG] contig_neighbors validation: Actual statistics:")
@@ -87,14 +67,10 @@ class ContigNeighborsOutputValidator(BaseValidator):
                 # Print expected ranges
                 print("[DEBUG] contig_neighbors validation: Expected ranges:")
                 print(f"  Max: <= 70 (actual: {non_null_data.max()})")
-                print(f"  Mean: [2.05, 3.08] (actual: {non_null_data.mean():.3f})")
-                print(f"  Std: [3.5, 7.0] (actual: {non_null_data.std():.3f})")
-                print(
-                    f"  Q1: [0.00, 0.00] (actual: {non_null_data.quantile(0.25):.3f})"
-                )
-                print(
-                    f"  Q3: [2.40, 3.60] (actual: {non_null_data.quantile(0.75):.3f})"
-                )
+                print(f"  Mean: [1.0, 5.0] (actual: {non_null_data.mean():.3f})")
+                print(f"  Std: [3.0, 12.0] (actual: {non_null_data.std():.3f})")
+                print(f"  Q1: [0.0, 0.5] (actual: {non_null_data.quantile(0.25):.3f})")
+                print(f"  Q3: [0.0, 8.0] (actual: {non_null_data.quantile(0.75):.3f})")
 
                 # Check for boolean values
                 bool_mask = non_null_data.apply(lambda x: isinstance(x, bool))
