@@ -18,6 +18,7 @@ dependencies = [
     "networkx~=3.4.2",
     "pandas==2.2.2",
     "pandera~=0.24.0",
+    "pre-commit>=4.2.0",
     "pyarrow~=18.1.0",
     "pydantic==2.8.2",
     "pylint>=3.3.7",
