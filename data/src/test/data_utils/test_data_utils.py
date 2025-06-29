@@ -112,11 +112,26 @@ class TestDataUtils(unittest.TestCase):
         self.assertIn("park_priority", second_arg.columns)
         self.assertNotIn("parkneed", second_arg.columns)
 
-        # Check return values - focus on object identity and type, not exact equality
-        self.assertIs(result_gdf, mock_spatial_join.return_value)
+        # Check return values - use data equality instead of object identity
         self.assertIsInstance(result_gdf, gpd.GeoDataFrame)
         self.assertIsInstance(validation_result, ValidationResult)
-        # Use the mock return value instead of comparing objects
+
+        # Check data equality for the GeoDataFrame
+        pd.testing.assert_frame_equal(
+            result_gdf.drop(columns=["geometry"]),
+            expected_result_gdf.drop(columns=["geometry"]),
+            check_dtype=False,
+        )
+
+        # Check geometry column separately
+        for i, (expected_geom, actual_geom) in enumerate(
+            zip(expected_result_gdf.geometry, result_gdf.geometry)
+        ):
+            self.assertTrue(
+                expected_geom.equals(actual_geom), f"Geometry mismatch at index {i}"
+            )
+
+        # Check validation result
         self.assertIs(validation_result, mock_validation_result)
 
     @patch("src.data_utils.park_priority.EsriLoader")
@@ -176,8 +191,25 @@ class TestDataUtils(unittest.TestCase):
         self.assertNotIn("parkneed", second_arg.columns)
         self.assertEqual(second_arg["park_priority"].iloc[0], 5.0)
 
-        # Check return value - focus on object identity
-        self.assertIs(result_gdf, mock_spatial_join.return_value)
+        # Check return value - use data equality instead of object identity
+        self.assertIsInstance(result_gdf, gpd.GeoDataFrame)
+
+        # Check data equality for the GeoDataFrame
+        pd.testing.assert_frame_equal(
+            result_gdf.drop(columns=["geometry"]),
+            expected_result_gdf.drop(columns=["geometry"]),
+            check_dtype=False,
+        )
+
+        # Check geometry column separately
+        for i, (expected_geom, actual_geom) in enumerate(
+            zip(expected_result_gdf.geometry, result_gdf.geometry)
+        ):
+            self.assertTrue(
+                expected_geom.equals(actual_geom), f"Geometry mismatch at index {i}"
+            )
+
+        # Check validation result
         self.assertIs(validation_result, mock_validation_result)
 
     @patch("src.data_utils.park_priority.EsriLoader")
@@ -261,9 +293,25 @@ class TestDataUtils(unittest.TestCase):
         result_gdf, validation_result = _park_priority_logic(input_gdf)
 
         # Check that the function handles empty data gracefully
-        self.assertIs(result_gdf, mock_spatial_join.return_value)
         self.assertIsInstance(result_gdf, gpd.GeoDataFrame)
         self.assertIsInstance(validation_result, ValidationResult)
+
+        # Check data equality for the GeoDataFrame
+        pd.testing.assert_frame_equal(
+            result_gdf.drop(columns=["geometry"]),
+            input_gdf.drop(columns=["geometry"]),
+            check_dtype=False,
+        )
+
+        # Check geometry column separately
+        for i, (expected_geom, actual_geom) in enumerate(
+            zip(input_gdf.geometry, result_gdf.geometry)
+        ):
+            self.assertTrue(
+                expected_geom.equals(actual_geom), f"Geometry mismatch at index {i}"
+            )
+
+        # Check validation result
         self.assertIs(validation_result, mock_validation_result)
 
         # Check that spatial_join was still called (even with empty data)
@@ -324,8 +372,23 @@ class TestDataUtils(unittest.TestCase):
         # Check second element is ValidationResult
         self.assertIsInstance(validation_result, ValidationResult)
 
-        # Check the actual values - focus on object identity
-        self.assertIs(result_gdf, mock_spatial_join.return_value)
+        # Check the actual values - use data equality instead of object identity
+        # Check data equality for the GeoDataFrame
+        pd.testing.assert_frame_equal(
+            result_gdf.drop(columns=["geometry"]),
+            expected_result_gdf.drop(columns=["geometry"]),
+            check_dtype=False,
+        )
+
+        # Check geometry column separately
+        for i, (expected_geom, actual_geom) in enumerate(
+            zip(expected_result_gdf.geometry, result_gdf.geometry)
+        ):
+            self.assertTrue(
+                expected_geom.equals(actual_geom), f"Geometry mismatch at index {i}"
+            )
+
+        # Check validation result
         self.assertIs(validation_result, mock_validation_result)
 
     @pytest.mark.skip

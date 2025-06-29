@@ -1,3 +1,4 @@
+import logging
 from typing import Tuple
 
 import geopandas as gpd
@@ -11,6 +12,8 @@ from src.validation.city_owned_properties import (
 from ..classes.loaders import EsriLoader
 from ..constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
 from ..utilities import opa_join
+
+logger = logging.getLogger(__name__)
 
 
 @validate_output(CityOwnedPropertiesOutputValidator)
@@ -54,6 +57,21 @@ def city_owned_properties(
     )
 
     city_owned_properties, input_validation = loader.load_or_fetch()
+
+    # Filter out records with null/empty OPA IDs
+    original_count = len(city_owned_properties)
+    city_owned_properties = city_owned_properties.dropna(subset=["opa_id"])
+    city_owned_properties = city_owned_properties[city_owned_properties["opa_id"] != ""]
+    filtered_count = len(city_owned_properties)
+    removed_count = original_count - filtered_count
+
+    if removed_count > 0:
+        logger.warning(f"Removed {removed_count} records with null/empty OPA IDs")
+
+    # Deduplicate based on OPA ID only, keeping the first occurrence
+    city_owned_properties = city_owned_properties.drop_duplicates(
+        subset=["opa_id"], keep="first"
+    )
 
     merged_gdf = opa_join(input_gdf, city_owned_properties)
 

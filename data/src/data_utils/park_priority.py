@@ -89,6 +89,10 @@ def _park_priority_logic(
     join_time = time.time() - join_start
     print(f"Spatial join took {join_time:.2f}s")
 
+    # Deduplicate by OPA ID to keep only the first occurrence
+    merged_gdf = merged_gdf.drop_duplicates(subset=["opa_id"], keep="first")
+    print(f"After OPA ID deduplication: {len(merged_gdf)} properties")
+
     # Log join results
     if "park_priority" in merged_gdf.columns:
         matched_count = merged_gdf["park_priority"].notna().sum()

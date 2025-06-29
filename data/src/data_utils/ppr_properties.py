@@ -79,6 +79,16 @@ def ppr_properties(
     # Perform a spatial join with the primary feature layer
     merged_gdf = spatial_join(input_gdf, ppr_properties)
 
+    # Remove duplicate OPA IDs in the main dataset after spatial join
+    before_dedup = len(merged_gdf)
+    merged_gdf = merged_gdf.drop_duplicates(subset=["opa_id"], keep="first")
+    after_dedup = len(merged_gdf)
+    if before_dedup != after_dedup:
+        print(
+            f"Removed {before_dedup - after_dedup} duplicate OPA IDs from main dataset after spatial join"
+        )
+        print(f"Main dataset after deduplication: {len(merged_gdf)} records")
+
     # Ensure the 'vacant' column exists in the primary feature layer
     if "vacant" not in merged_gdf.columns:
         raise ValueError(

@@ -1,10 +1,9 @@
-import logging as log
 import os
 import subprocess
 import time
 from abc import ABC, abstractmethod
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import List, Tuple
+from typing import List, Optional, Tuple
 
 import geopandas as gpd
 import pandas as pd
@@ -19,13 +18,11 @@ from src.classes.file_manager import FileManager, FileType, LoadType
 from src.config.config import (
     FORCE_RELOAD,
     USE_CRS,
-    log_level,
+    get_logger,
     min_tiles_file_size_in_bytes,
     write_production_tiles_file,
 )
 from src.validation.base import BaseValidator, ValidationResult
-
-log.basicConfig(level=log_level)
 
 
 # Esri data loader
@@ -40,8 +37,12 @@ def load_esri_data(esri_urls: List[str], input_crs: str, extra_query_args: dict 
     Returns:
         GeoDataFrame: Combined GeoDataFrame with data from all URLs.
     """
+    geometry_logger = get_logger("geometry_debug")
     gdfs = []
+
     for url in esri_urls:
+        geometry_logger.info(f"Processing ESRI URL: {url}")
+
         # Determine parcel_type based on URL patterns
         parcel_type = (
             "Land"
@@ -63,21 +64,174 @@ def load_esri_data(esri_urls: List[str], input_crs: str, extra_query_args: dict 
         if extra_query_args:
             dumper_kwargs["extra_query_args"] = extra_query_args
 
+        geometry_logger.info("Creating EsriDumper...")
         dumper = EsriDumper(**dumper_kwargs)
+
+        geometry_logger.info("Fetching features from ESRI service...")
         features = [feature for feature in dumper]
+        geometry_logger.info(f"Fetched {len(features)} features from ESRI service")
 
         if not features:
+            geometry_logger.warning("No features found, skipping this URL")
             continue  # Skip if no features were found
 
         geojson_features = {"type": "FeatureCollection", "features": features}
-        gdf = gpd.GeoDataFrame.from_features(geojson_features, crs=input_crs)
+
+        geometry_logger.info("Creating GeoDataFrame from features...")
+        # Let the service determine its own CRS first
+        gdf = gpd.GeoDataFrame.from_features(geojson_features)
+
+        geometry_logger.info(
+            f"Initial GeoDataFrame CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+        )
+        geometry_logger.info(f"Initial GeoDataFrame shape: {gdf.shape}")
+
+        if not gdf.empty:
+            geometry_logger.info(
+                f"Initial geometry types: {gdf.geometry.geom_type.value_counts().to_dict()}"
+            )
+            geometry_logger.info(f"Initial bounds: {gdf.total_bounds}")
+
+            # Sample coordinates to check if they look like lat/lon or projected
+            geometry_logger.info("Sample coordinates from first 3 features:")
+            for i in range(min(3, len(gdf))):
+                geom = gdf.iloc[i].geometry
+                try:
+                    if geom.geom_type == "Point":
+                        coords = list(geom.coords)[0]
+                    elif geom.geom_type == "Polygon":
+                        coords = list(geom.exterior.coords)[0]
+                    elif geom.geom_type == "MultiPolygon":
+                        # For MultiPolygon, get first coordinate of first polygon's exterior
+                        coords = list(geom.geoms[0].exterior.coords)[0]
+                    elif geom.geom_type in ["LineString", "MultiLineString"]:
+                        coords = list(geom.coords)[0]
+                    else:
+                        coords = "unknown geometry type"
+                    geometry_logger.info(f"  Feature {i}: {coords}")
+
+                    # Check if coordinates look like lat/lon (should be roughly -180 to 180 for x, -90 to 90 for y)
+                    if isinstance(coords, tuple) and len(coords) >= 2:
+                        x, y = coords[0], coords[1]
+                        looks_like_latlon = (-180 <= x <= 180) and (-90 <= y <= 90)
+                        geometry_logger.info(
+                            f"    Coordinates look like lat/lon: {looks_like_latlon} (x: {x}, y: {y})"
+                        )
+                except Exception as e:
+                    geometry_logger.warning(
+                        f"  Feature {i}: Error sampling coordinates: {e}"
+                    )
+                    coords = "error sampling coordinates"
+
+        # If no CRS is set, assume EPSG:4326 (most ESRI services use this)
+        if gdf.crs is None:
+            geometry_logger.warning("No CRS detected, assuming EPSG:4326")
+            gdf.set_crs("EPSG:4326", inplace=True)
+            geometry_logger.info(
+                f"Set CRS to EPSG:4326, new CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+            )
+
+        # Check if coordinates are in lat/lon range but labeled as a projected CRS
+        # This handles the case where data comes in with lat/lon coordinates but is incorrectly labeled
+        if not gdf.empty and gdf.crs and gdf.crs != "EPSG:4326":
+            bounds = gdf.total_bounds
+            x_in_latlon_range = -180 <= bounds[0] <= 180 and -180 <= bounds[2] <= 180
+            y_in_latlon_range = -90 <= bounds[1] <= 90 and -90 <= bounds[3] <= 90
+
+            if x_in_latlon_range and y_in_latlon_range:
+                geometry_logger.warning(
+                    f"Coordinates are in lat/lon range but labeled as {gdf.crs}. "
+                    f"Bounds: {bounds}. Fixing CRS label to EPSG:4326."
+                )
+                gdf.set_crs("EPSG:4326", inplace=True, allow_override=True)
+                geometry_logger.info(
+                    f"Fixed CRS label to EPSG:4326, new CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+                )
+
+        # Now convert to the target CRS
+        if gdf.crs and gdf.crs != input_crs:
+            geometry_logger.info(
+                f"Converting from EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'} to {input_crs}"
+            )
+            geometry_logger.info(f"Before conversion - bounds: {gdf.total_bounds}")
+
+            # Sample coordinates before conversion
+            geometry_logger.info("Sample coordinates before CRS conversion:")
+            for i in range(min(3, len(gdf))):
+                geom = gdf.iloc[i].geometry
+                try:
+                    if geom.geom_type == "Point":
+                        coords = list(geom.coords)[0]
+                    elif geom.geom_type == "Polygon":
+                        coords = list(geom.exterior.coords)[0]
+                    elif geom.geom_type == "MultiPolygon":
+                        # For MultiPolygon, get first coordinate of first polygon's exterior
+                        coords = list(geom.geoms[0].exterior.coords)[0]
+                    elif geom.geom_type in ["LineString", "MultiLineString"]:
+                        coords = list(geom.coords)[0]
+                    else:
+                        coords = "unknown geometry type"
+                    geometry_logger.info(f"  Feature {i}: {coords}")
+                except Exception as e:
+                    geometry_logger.warning(
+                        f"  Feature {i}: Error sampling coordinates: {e}"
+                    )
+                    coords = "error sampling coordinates"
+
+            gdf = gdf.to_crs(input_crs)
+            geometry_logger.info(
+                f"After conversion - CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+            )
+            geometry_logger.info(f"After conversion - bounds: {gdf.total_bounds}")
+
+            # Sample coordinates after conversion
+            geometry_logger.info("Sample coordinates after CRS conversion:")
+            for i in range(min(3, len(gdf))):
+                geom = gdf.iloc[i].geometry
+                try:
+                    if geom.geom_type == "Point":
+                        coords = list(geom.coords)[0]
+                    elif geom.geom_type == "Polygon":
+                        coords = list(geom.exterior.coords)[0]
+                    elif geom.geom_type == "MultiPolygon":
+                        # For MultiPolygon, get first coordinate of first polygon's exterior
+                        coords = list(geom.geoms[0].exterior.coords)[0]
+                    elif geom.geom_type in ["LineString", "MultiLineString"]:
+                        coords = list(geom.coords)[0]
+                    else:
+                        coords = "unknown geometry type"
+                    geometry_logger.info(f"  Feature {i}: {coords}")
+                except Exception as e:
+                    geometry_logger.warning(
+                        f"  Feature {i}: Error sampling coordinates: {e}"
+                    )
+                    coords = "error sampling coordinates"
+        else:
+            geometry_logger.info(
+                f"CRS already matches target ({input_crs}), no conversion needed"
+            )
 
         if parcel_type:
             gdf["parcel_type"] = parcel_type  # Add the parcel_type column
+            geometry_logger.info(f"Added parcel_type: {parcel_type}")
 
         gdfs.append(gdf)
+        geometry_logger.info(f"Completed processing URL, final shape: {gdf.shape}")
 
-    return pd.concat(gdfs, ignore_index=True)
+    geometry_logger.info(f"Combining {len(gdfs)} GeoDataFrames...")
+    combined_gdf = pd.concat(gdfs, ignore_index=True)
+    geometry_logger.info(f"Combined GeoDataFrame shape: {combined_gdf.shape}")
+    geometry_logger.info(
+        f"Combined GeoDataFrame CRS: EPSG:{combined_gdf.crs.to_epsg() if combined_gdf.crs else 'None'}"
+    )
+
+    if not combined_gdf.empty:
+        geometry_logger.info(
+            f"Combined geometry types: {combined_gdf.geometry.geom_type.value_counts().to_dict()}"
+        )
+        geometry_logger.info(f"Combined bounds: {combined_gdf.total_bounds}")
+
+    return combined_gdf
 
 
 # Carto data loader
@@ -178,15 +332,16 @@ class BaseLoader(ABC):
 
     def cache_data(self, gdf: gpd.GeoDataFrame) -> None:
         if gdf is None or gdf.empty:
-            log.info("No data to cache")
+            get_logger("cache").info("No data to cache")
             return
 
+        performance_logger = get_logger("performance")
         start_time = time.time()
-        print(f"  Starting cache operation for {self.name}...")
+        performance_logger.info(f"Starting cache operation for {self.name}...")
 
         # Save sourced data to a local parquet file in the storage/source_cache directory
         file_label = self.file_manager.generate_file_label(self.table_name)
-        print(f"  Generated file label: {file_label}")
+        performance_logger.info(f"Generated file label: {file_label}")
 
         cache_start = time.time()
         self.file_manager.save_gdf(
@@ -195,12 +350,13 @@ class BaseLoader(ABC):
         cache_time = time.time() - cache_start
 
         total_time = time.time() - start_time
-        print(
-            f"  Cache operation completed in {total_time:.2f}s (save: {cache_time:.2f}s)"
+        performance_logger.info(
+            f"Cache operation completed in {total_time:.2f}s (save: {cache_time:.2f}s)"
         )
 
     def load_or_fetch(self) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
-        print(f"\n=== Starting load_or_fetch for: {self.name} ===")
+        cache_logger = get_logger("cache")
+        cache_logger.info(f"=== Starting load_or_fetch for: {self.name} ===")
         total_start_time = time.time()
 
         # Check if we should use cached data
@@ -212,22 +368,22 @@ class BaseLoader(ABC):
             )
         )
         cache_check_time = time.time() - cache_check_start
-        print(f"  Cache check took: {cache_check_time:.2f}s")
+        cache_logger.info(f"Cache check took: {cache_check_time:.2f}s")
 
         if use_cache:
-            print(f"  Loading data for {self.name} from cache...")
+            cache_logger.info(f"Loading data for {self.name} from cache...")
             cache_load_start = time.time()
             gdf = self.file_manager.get_most_recent_cache(self.table_name)
             cache_load_time = time.time() - cache_load_start
-            print(f"  Cache load took: {cache_load_time:.2f}s")
+            cache_logger.info(f"Cache load took: {cache_load_time:.2f}s")
 
             if gdf is not None:
-                print(f"  Successfully loaded from cache ({len(gdf)} rows)")
+                cache_logger.info(f"Successfully loaded from cache ({len(gdf)} rows)")
             else:
-                print("  Cache file not found, loading fresh data...")
+                cache_logger.info("Cache file not found, loading fresh data...")
                 gdf = self._load_fresh_data()
         else:
-            print("  Loading fresh data now...")
+            cache_logger.info("Loading fresh data now...")
             gdf = self._load_fresh_data()
 
         # Validation
@@ -236,24 +392,27 @@ class BaseLoader(ABC):
             self.validator.validate(gdf) if self.validator else ValidationResult(True)
         )
         validation_time = time.time() - validation_start
-        print(f"  Validation took: {validation_time:.2f}s")
+        cache_logger.info(f"Validation took: {validation_time:.2f}s")
 
         total_time = time.time() - total_start_time
-        print(f"=== Completed {self.name} in {total_time:.2f}s ===\n")
+        cache_logger.info(f"=== Completed {self.name} in {total_time:.2f}s ===")
 
         return gdf, validation_result
 
     def _load_fresh_data(self) -> gpd.GeoDataFrame:
         """Helper method to load fresh data with timing"""
+        cache_logger = get_logger("cache")
         load_start = time.time()
-        print(f"  Starting load_data() for {self.name}...")
+        cache_logger.info(f"Starting load_data() for {self.name}...")
 
         gdf = self.load_data()
 
         load_time = time.time() - load_start
-        print(f"  load_data() completed in {load_time:.2f}s ({len(gdf)} rows)")
+        cache_logger.info(
+            f"load_data() completed in {load_time:.2f}s ({len(gdf)} rows)"
+        )
 
-        print("  Caching fresh data now...")
+        cache_logger.info("Caching fresh data now...")
         self.cache_data(gdf)
 
         return gdf
@@ -316,36 +475,70 @@ class GdfLoader(BaseLoader):
         self.input = input
 
     def load_data(self):
-        print(f"    GdfLoader.load_data: Starting for {self.name} from {self.input}")
+        performance_logger = get_logger("performance")
+        performance_logger.info(f"Starting for {self.name} from {self.input}")
         start_time = time.time()
 
         read_start = time.time()
         gdf = gpd.read_file(self.input)
         read_time = time.time() - read_start
-        print(
-            f"    GdfLoader.load_data: gpd.read_file took {read_time:.2f}s ({len(gdf)} rows)"
+        performance_logger.info(
+            f"gpd.read_file took {read_time:.2f}s ({len(gdf)} rows)"
         )
 
         normalize_start = time.time()
         gdf = self.normalize_columns(gdf, self.cols)
         normalize_time = time.time() - normalize_start
-        print(f"    GdfLoader.load_data: normalize_columns took {normalize_time:.2f}s")
+        performance_logger.info(f"normalize_columns took {normalize_time:.2f}s")
 
         if not gdf.crs:
             raise AttributeError("Input data doesn't have an original CRS set")
 
+        # Add CRS detection logic similar to EsriLoader
+        geometry_logger = get_logger("geometry_debug")
+        geometry_logger.info(f"GdfLoader: Original CRS: {gdf.crs}")
+        geometry_logger.info(f"GdfLoader: Original bounds: {gdf.total_bounds}")
+
+        # Check if coordinates are in lat/lon range but labeled as a projected CRS
+        # This handles the case where data comes in with lat/lon coordinates but is incorrectly labeled
+        if not gdf.empty and gdf.crs and gdf.crs != "EPSG:4326":
+            bounds = gdf.total_bounds
+            x_in_latlon_range = -180 <= bounds[0] <= 180 and -180 <= bounds[2] <= 180
+            y_in_latlon_range = -90 <= bounds[1] <= 90 and -90 <= bounds[3] <= 90
+
+            if x_in_latlon_range and y_in_latlon_range:
+                geometry_logger.warning(
+                    f"GdfLoader: Coordinates are in lat/lon range but labeled as {gdf.crs}. "
+                    f"Bounds: {bounds}. Fixing CRS label to EPSG:4326."
+                )
+                gdf.set_crs("EPSG:4326", inplace=True, allow_override=True)
+                geometry_logger.info(
+                    f"GdfLoader: Fixed CRS label to EPSG:4326, new CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+                )
+
         crs_start = time.time()
+        geometry_logger.info(f"GdfLoader: Converting from {gdf.crs} to {USE_CRS}")
+        geometry_logger.info(
+            f"GdfLoader: Before CRS conversion - bounds: {gdf.total_bounds}"
+        )
+
         gdf = gdf.to_crs(USE_CRS)
+
+        geometry_logger.info(f"GdfLoader: After CRS conversion - CRS: {gdf.crs}")
+        geometry_logger.info(
+            f"GdfLoader: After CRS conversion - bounds: {gdf.total_bounds}"
+        )
+
         crs_time = time.time() - crs_start
-        print(f"    GdfLoader.load_data: CRS conversion took {crs_time:.2f}s")
+        performance_logger.info(f"CRS conversion took {crs_time:.2f}s")
 
         geometry_start = time.time()
         gdf["geometry"] = gdf.geometry.make_valid()
         geometry_time = time.time() - geometry_start
-        print(f"    GdfLoader.load_data: Geometry validation took {geometry_time:.2f}s")
+        performance_logger.info(f"Geometry validation took {geometry_time:.2f}s")
 
         total_time = time.time() - start_time
-        print(f"    GdfLoader.load_data: Total load_data took {total_time:.2f}s")
+        performance_logger.info(f"Total load_data took {total_time:.2f}s")
 
         return gdf
 
@@ -359,42 +552,119 @@ class EsriLoader(BaseLoader):
         self.extra_query_args = extra_query_args
 
     def load_data(self):
-        print(
-            f"    EsriLoader.load_data: Starting for {self.name} with {len(self.esri_urls)} URLs"
+        performance_logger = get_logger("performance")
+        performance_logger.info(
+            f"Starting for {self.name} with {len(self.esri_urls)} URLs"
         )
         start_time = time.time()
 
         esri_start = time.time()
         gdf = load_esri_data(self.esri_urls, self.input_crs, self.extra_query_args)
         esri_time = time.time() - esri_start
-        print(
-            f"    EsriLoader.load_data: load_esri_data took {esri_time:.2f}s ({len(gdf)} rows)"
+        performance_logger.info(
+            f"load_esri_data took {esri_time:.2f}s ({len(gdf)} rows)"
         )
+        geometry_logger = get_logger("geometry_debug")
+        geometry_logger.info(f"After load_esri_data CRS: {gdf.crs}")
 
         normalize_start = time.time()
         gdf = self.normalize_columns(gdf, self.cols)
         normalize_time = time.time() - normalize_start
-        print(f"    EsriLoader.load_data: normalize_columns took {normalize_time:.2f}s")
+        performance_logger.info(f"normalize_columns took {normalize_time:.2f}s")
+        geometry_logger.info(f"After normalize_columns CRS: {gdf.crs}")
 
         crs_start = time.time()
-        gdf = gdf.to_crs(USE_CRS)
+        geometry_logger = get_logger("geometry_debug")
+        geometry_logger.info(f"Converting from {gdf.crs} to {USE_CRS}")
+        geometry_logger.info(f"Before CRS conversion - bounds: {gdf.total_bounds}")
+        geometry_logger.info("Before CRS conversion - sample coordinates:")
+        for i in range(min(3, len(gdf))):
+            geom = gdf.iloc[i].geometry
+            geometry_logger.info(f"  Row {i} geometry type: {type(geom).__name__}")
+
+            try:
+                if geom.geom_type == "Point":
+                    coords = list(geom.coords)[0]
+                elif geom.geom_type == "Polygon":
+                    coords = list(geom.exterior.coords)[0]
+                elif geom.geom_type == "MultiPolygon":
+                    # For MultiPolygon, get first coordinate of first polygon's exterior
+                    coords = list(geom.geoms[0].exterior.coords)[0]
+                elif geom.geom_type in ["LineString", "MultiLineString"]:
+                    coords = list(geom.coords)[0]
+                else:
+                    coords = "unknown geometry type"
+                geometry_logger.info(f"  Row {i}: {coords}")
+            except Exception as e:
+                geometry_logger.warning(f"  Row {i}: Error sampling coordinates: {e}")
+                coords = "error sampling coordinates"
+
+        # Check if coordinates are in lat/lon range but labeled as a projected CRS
+        # This handles the case where data comes in with lat/lon coordinates but is incorrectly labeled
+        if not gdf.empty and gdf.crs and gdf.crs != "EPSG:4326":
+            bounds = gdf.total_bounds
+            x_in_latlon_range = -180 <= bounds[0] <= 180 and -180 <= bounds[2] <= 180
+            y_in_latlon_range = -90 <= bounds[1] <= 90 and -90 <= bounds[3] <= 90
+
+            if x_in_latlon_range and y_in_latlon_range:
+                geometry_logger.warning(
+                    f"Coordinates are in lat/lon range but labeled as {gdf.crs}. "
+                    f"Bounds: {bounds}. Fixing CRS label to EPSG:4326."
+                )
+                gdf.set_crs("EPSG:4326", inplace=True, allow_override=True)
+                geometry_logger.info(
+                    f"Fixed CRS label to EPSG:4326, new CRS: EPSG:{gdf.crs.to_epsg() if gdf.crs else 'None'}"
+                )
+
+        # Debug: Check if CRS conversion is actually needed
+        if gdf.crs == USE_CRS:
+            geometry_logger.info(f"CRS already matches {USE_CRS}, skipping conversion")
+        else:
+            geometry_logger.info(
+                f"Performing CRS conversion from {gdf.crs} to {USE_CRS}"
+            )
+            gdf = gdf.to_crs(USE_CRS)
+            geometry_logger.info(f"CRS conversion completed, new CRS: {gdf.crs}")
+
+        geometry_logger.info(f"After CRS conversion - bounds: {gdf.total_bounds}")
+        geometry_logger.info("After CRS conversion - sample coordinates:")
+        for i in range(min(3, len(gdf))):
+            geom = gdf.iloc[i].geometry
+            geometry_logger.info(f"  Row {i} geometry type: {type(geom).__name__}")
+
+            try:
+                if geom.geom_type == "Point":
+                    coords = list(geom.coords)[0]
+                elif geom.geom_type == "Polygon":
+                    coords = list(geom.exterior.coords)[0]
+                elif geom.geom_type == "MultiPolygon":
+                    # For MultiPolygon, get first coordinate of first polygon's exterior
+                    coords = list(geom.geoms[0].exterior.coords)[0]
+                elif geom.geom_type in ["LineString", "MultiLineString"]:
+                    coords = list(geom.coords)[0]
+                else:
+                    coords = "unknown geometry type"
+                geometry_logger.info(f"  Row {i}: {coords}")
+            except Exception as e:
+                geometry_logger.warning(f"  Row {i}: Error sampling coordinates: {e}")
+                coords = "error sampling coordinates"
+
         crs_time = time.time() - crs_start
-        print(f"    EsriLoader.load_data: CRS conversion took {crs_time:.2f}s")
+        performance_logger.info(f"CRS conversion took {crs_time:.2f}s")
+        geometry_logger.info(f"After CRS conversion CRS: {gdf.crs}")
 
         opa_start = time.time()
         gdf = self.standardize_opa(gdf)
         opa_time = time.time() - opa_start
-        print(f"    EsriLoader.load_data: OPA standardization took {opa_time:.2f}s")
+        performance_logger.info(f"OPA standardization took {opa_time:.2f}s")
 
         geometry_start = time.time()
         gdf["geometry"] = gdf.geometry.make_valid()
         geometry_time = time.time() - geometry_start
-        print(
-            f"    EsriLoader.load_data: Geometry validation took {geometry_time:.2f}s"
-        )
+        performance_logger.info(f"Geometry validation took {geometry_time:.2f}s")
 
         total_time = time.time() - start_time
-        print(f"    EsriLoader.load_data: Total load_data took {total_time:.2f}s")
+        performance_logger.info(f"Total load_data took {total_time:.2f}s")
 
         return gdf
 
@@ -407,49 +677,48 @@ class CartoLoader(BaseLoader):
         wkb_geom_field: str | None = "the_geom",
         **kwargs,
     ):
+        # Carto data comes in EPSG:4326 (geographic coordinates)
+        kwargs["input_crs"] = kwargs.get("input_crs", "EPSG:4326")
         super().__init__(*args, **kwargs)
         self.carto_queries = BaseLoader.string_to_list(carto_queries)
         self.wkb_geom_field = wkb_geom_field
 
     def load_data(self):
-        print(
-            f"    CartoLoader.load_data: Starting for {self.name} with {len(self.carto_queries)} queries"
+        performance_logger = get_logger("performance")
+        performance_logger.info(
+            f"Starting for {self.name} with {len(self.carto_queries)} queries"
         )
         start_time = time.time()
 
         carto_start = time.time()
         gdf = load_carto_data(self.carto_queries, self.input_crs, self.wkb_geom_field)
         carto_time = time.time() - carto_start
-        print(
-            f"    CartoLoader.load_data: load_carto_data took {carto_time:.2f}s ({len(gdf)} rows)"
+        performance_logger.info(
+            f"load_carto_data took {carto_time:.2f}s ({len(gdf)} rows)"
         )
 
         normalize_start = time.time()
         gdf = self.normalize_columns(gdf, self.cols)
         normalize_time = time.time() - normalize_start
-        print(
-            f"    CartoLoader.load_data: normalize_columns took {normalize_time:.2f}s"
-        )
+        performance_logger.info(f"normalize_columns took {normalize_time:.2f}s")
 
         crs_start = time.time()
         gdf = gdf.to_crs(USE_CRS)
         crs_time = time.time() - crs_start
-        print(f"    CartoLoader.load_data: CRS conversion took {crs_time:.2f}s")
+        performance_logger.info(f"CRS conversion took {crs_time:.2f}s")
 
         opa_start = time.time()
         gdf = self.standardize_opa(gdf)
         opa_time = time.time() - opa_start
-        print(f"    CartoLoader.load_data: OPA standardization took {opa_time:.2f}s")
+        performance_logger.info(f"OPA standardization took {opa_time:.2f}s")
 
         geometry_start = time.time()
         gdf["geometry"] = gdf.geometry.make_valid()
         geometry_time = time.time() - geometry_start
-        print(
-            f"    CartoLoader.load_data: Geometry validation took {geometry_time:.2f}s"
-        )
+        performance_logger.info(f"Geometry validation took {geometry_time:.2f}s")
 
         total_time = time.time() - start_time
-        print(f"    CartoLoader.load_data: Total load_data took {total_time:.2f}s")
+        performance_logger.info(f"Total load_data took {total_time:.2f}s")
 
         return gdf
 
@@ -561,3 +830,81 @@ class CartoLoader(BaseLoader):
                 print(f"PMTiles upload successful for {file}!")
             except Exception as e:
                 print(f"PMTiles upload failed for {file}: {e}")
+
+    def _load_from_cache(self, cache_key: str) -> Optional[gpd.GeoDataFrame]:
+        """
+        Load data from cache if available.
+        """
+        cache_logger = get_logger("cache")
+        cache_file = self.file_manager.get_cache_file_path(cache_key)
+
+        if cache_file.exists():
+            cache_logger.info(f"Loading from cache: {cache_file}")
+            try:
+                return gpd.read_parquet(cache_file)
+            except Exception as e:
+                cache_logger.warning(f"Failed to load cache file {cache_file}: {e}")
+                return None
+        else:
+            cache_logger.info(f"No cache file found: {cache_file}")
+            return None
+
+    def _save_to_cache(self, data: gpd.GeoDataFrame, cache_key: str) -> None:
+        """
+        Save data to cache.
+        """
+        cache_logger = get_logger("cache")
+        cache_file = self.file_manager.get_cache_file_path(cache_key)
+
+        cache_logger.info(f"Saving to cache: {cache_file}")
+        try:
+            data.to_parquet(cache_file)
+            cache_logger.info(f"Successfully saved to cache: {cache_file}")
+        except Exception as e:
+            cache_logger.error(f"Failed to save to cache {cache_file}: {e}")
+
+    def _load_from_arcgis(self, layer_url: str) -> gpd.GeoDataFrame:
+        """
+        Load data from ArcGIS feature layer.
+        """
+        performance_logger = get_logger("performance")
+        time.time()
+        performance_logger.info(f"Loading from ArcGIS: {layer_url}")
+
+        # Implementation of _load_from_arcgis method
+        # This method should return a GeoDataFrame loaded from the ArcGIS feature layer
+        # based on the layer_url
+        # You can use the ArcGIS Python API to load the data
+        # For example, you can use the arcgis.features.FeatureLayer and arcgis.gis.GIS classes
+        # to load the data from the ArcGIS feature layer
+        # This method should return the loaded GeoDataFrame
+
+    def _load_from_arcgis_with_pagination(self, layer_url: str) -> gpd.GeoDataFrame:
+        """
+        Load data from ArcGIS feature layer with pagination for large datasets.
+        """
+        performance_logger = get_logger("performance")
+        time.time()
+        performance_logger.info(f"Loading from ArcGIS with pagination: {layer_url}")
+
+        # Implementation of _load_from_arcgis_with_pagination method
+        # This method should return a GeoDataFrame loaded from the ArcGIS feature layer
+        # based on the layer_url with pagination
+        # You can use the ArcGIS Python API to load the data with pagination
+        # This method should return the loaded GeoDataFrame
+
+    def _load_from_arcgis_with_chunking(
+        self, layer_url: str, chunk_size: int = 1000
+    ) -> gpd.GeoDataFrame:
+        """
+        Load data from ArcGIS feature layer with chunking for very large datasets.
+        """
+        performance_logger = get_logger("performance")
+        time.time()
+        performance_logger.info(f"Loading from ArcGIS with chunking: {layer_url}")
+
+        # Implementation of _load_from_arcgis_with_chunking method
+        # This method should return a GeoDataFrame loaded from the ArcGIS feature layer
+        # based on the layer_url with chunking
+        # You can use the ArcGIS Python API to load the data with chunking
+        # This method should return the loaded GeoDataFrame

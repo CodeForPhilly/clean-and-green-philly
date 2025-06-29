@@ -6,7 +6,7 @@ If you plan to contribute to the data wrangling on this project and need to run 
 
 ## Setup
 
-### Fork the Repository
+### Fork and Clone
 
 1. Navigate to [our GitHub repository](https://github.com/CodeForPhilly/clean-and-green-philly).
 2. Create a fork of the repository by clicking the "Fork" button in the top right corner of the page.
@@ -14,26 +14,34 @@ If you plan to contribute to the data wrangling on this project and need to run 
 
 **Note:** Keep your fork up to date with the original repository by following the instructions [here](https://docs.github.com/en/get-started/quickstart/fork-a-repo#keep-your-fork-synced).
 
-### Precommit hook
+### Install Dependencies and Pre-commit Hooks
 
-We use a precommit hook to help with formatting and linting in our CI/CD pipeline. When setting up the repo, please first [make sure you have `pre-commit` installed](https://pre-commit.com/) using `pip` or another package manager. Once that's done, run `pre-commit install` in the root directory to set up the precommit hooks (configured in `.pre-commit-config.yaml`).
+1. Navigate to the root directory and install the virtual environment and dependencies:
 
-**Important:** After the above step manually copy the commit message hook file to ensure conventional commit format validation:
+   ```sh
+   uv sync
+   ```
 
-**Windows Command Prompt:**
+2. Install pre-commit hooks for code quality and commit message validation:
 
-```cmd
-copy .github\hooks\commit-msg .git\hooks\
-```
+   ```sh
+   uv run pre-commit install
+   ```
 
-**Mac/Linux/Git Bash:**
+3. Copy the commit message hook file to ensure conventional commit format validation:
 
-```bash
-cp .github/hooks/commit-msg .git/hooks/
-chmod +x .git/hooks/commit-msg
-```
+   **Windows Command Prompt:**
 
-This will install both code quality checks and commit message format validation.
+   ```cmd
+   copy .github\hooks\commit-msg .git\hooks\
+   ```
+
+   **Mac/Linux/Git Bash:**
+
+   ```bash
+   cp .github/hooks/commit-msg .git/hooks/
+   chmod +x .git/hooks/commit-msg
+   ```
 
 > **Note:** All commits must follow the Conventional Commits format: `<type>[optional scope]: <description>`
 >
@@ -45,89 +53,83 @@ This will install both code quality checks and commit message format validation.
 > - `feat(FilterView): add new method for conditional filtering`
 > - `docs: update the pull request template`
 
-### Set Environment Variables
+### Environment Variables
 
-The project requires specific and sensitive information to run, which should be stored in the user's development environment rather than in source control. Here are instructions for setting environment variables locally on your machine or using a `.env` file.
+Copy the `data/.env.example` file to `data/.env` and fill in your actual values:
 
-#### Using a .env File
+```sh
+cp data/.env.example data/.env
+```
 
-1. Create a file named `.env` in the `/data` subdirectory of your project.
-2. Add the following environment variables to the `.env` file:
+Then edit `data/.env` with your specific credentials for Google Cloud Platform and Slack integration.
 
-<!-- TODO: What env vars do we need? -->
+All environment variables will be automatically passed through to Docker containers.
 
-All local environment variables will be passed through to docker compose, so if you have them set up in the `.env` file, you should not need to hard-code them elsewhere.
+### Docker Setup
 
-#### Setting Environment Variables Locally
+1. Install [Docker Desktop](https://www.docker.com/products/docker-desktop/) for your operating system.
 
-For Mac and Linux, you can permanently store the environment variables in your command line shell's configuration file, e.g., `~/.bashrc`, `~/.bash_profile`, `~/.zshrc`, or `~/.profile`. Add a line `export VAR_NAME=VALUE` in your file and run `source <file>` to read it in when newly created. Any new shells will automatically have the new environment.
-
-For Windows, you can set environment variables under System -> Advanced or you can download a terminal emulator such as [Git Bash](https://gitforwindows.org/) and follow the instructions for Mac and Linux above. A terminal emulator is recommended.
-
-All of your local environment variables will be passed through to docker compose, so if you have them locally, you should not have to hard-code them.
-
-### Docker Build
-
-Docker is a platform that allows you to containerize and run applications in isolated environments, making it easier to manage dependencies and ensure consistent deployments. Download the [latest version of Docker Desktop for your operating system](https://www.docker.com/products/docker-desktop/).
-
-We use [docker compose](https://docs.docker.com/compose/) to manage the backend Docker services. The `data/docker-compose.yaml` file defines the services.
-
-1. The first time you set up your backend, or any the Docker file changes, build the Docker services by running:
+2. Build the Docker services (run from the `data/` directory):
 
    ```sh
+   cd data
    docker compose build
    ```
 
-For first-time runs, set `FORCE_RELOAD=True` in `config.py` and optionally `log_level: int = logging.DEBUG` to get more verbose output.
+3. Run the main pipeline:
 
-All Docker commands should be run from the `data/` directory.
+   ```sh
+   docker compose run vacant-lots-proj
+   ```
 
-#### Windows
+4. When finished, shut down containers:
+   ```sh
+   docker compose down
+   ```
 
-1. Make sure Docker is running by opening the Docker Desktop app.
-2. Open the command prompt. Navigate to the location of the `clean-and-green-philly` repository. Run `cd data` and then `docker compose run vacant-lots-proj`.
-3. When the script is done running, you’ll get a notification. When you’re done, to shut off the Docker container (which uses memory), run `docker compose down`.
-
-#### Linux
-
-1. In the terminal, navigate to your repository location using `cd path/to/clean-and-green-philly`. Then run `cd data` to move into the `data` directory.
-2. Run `docker compose run vacant-lots-proj`. Enter your password if requested. If you run into an error message related to "KEY_ID" or something similar, you may have to do the following:
-   - Hard-code your `VACANT_LOTS_DB` variable in `docker-compose.yml`.
-
-The backend also works on WSL Ubuntu running Docker for Linux on Windows 10.
-
-3. When you're finished, and you want to shut down the Docker container, run `docker compose down`.
-
-#### macOS
-
-In the terminal, use the `cd` command to navigate to your repository location, and then into the `data` directory. Run `docker compose run vacant-lots-proj`. This command starts Docker Compose and sets up your environment as defined in your `docker-compose.yml` file. When you're finished and want to shut down the Docker containers, run `docker compose down`.
+**Note:** For first-time runs, set `FORCE_RELOAD=True` in `config.py` and optionally `log_level: int = logging.DEBUG` for verbose output.
 
 ## Python Development
 
-You can set up your local Python environment so you can develop and run the backend `script.py` and create and run unit tests outside of Docker. Build your local environment to match what is defined in the `Dockerfile`. Install the same python version as is in the Dockerfile, using `uv` to manage multiple distributions if needed. Use `uv` to create a virtual environment. Install the pip dependencies that are defined in `pyproject.toml` into your virtual environment. Install the executables with `apt-get`. Now you can develop in Python in your terminal and IDE and run unit tests with `pytest`.
+You can develop and run the backend `script.py` and unit tests outside of Docker using your local Python environment:
+
+1. Install the same Python version as defined in the `Dockerfile` (3.11.4)
+2. Use `uv` to create a virtual environment and install dependencies from `pyproject.toml`
+3. Run unit tests with `pytest`
+
+For testing individual services:
+
+```sh
+cd data
+uv run test_service.py [name_of_service]
+# Example: uv run test_service.py opa_properties
+```
+
+The `config.py` file defines several log levels for testing the pipeline, including profiling, geometry debugging, and verbose output.
 
 ## Configuration
 
-There are numerous configuration variables in `data/src/config/config.py`. See the documentation in that file for each variable. You will also have to set up environmental variables as defined throughout this document.
+Configuration variables are defined in `data/src/config/config.py`. See the documentation in that file for each variable.
 
-There are the following secrets that may be securely shared with you by the project leads:
+### Required Secrets
 
-- The password for the project's Google account to access the cloud platform. For development purposes, you can work in your personal cloud account, see the GCP section below.
-- The Slack API key to post diff reports to the project Slack via the messenger bot. See the 'Backup and difference reporting' section below. You can set up your own Slack bot for your personal workspace and use that API key for local testing. See [this link](https://www.datacamp.com/tutorial/how-to-send-slack-messages-with-python) for instructions or do a Google search on how to do it.
+The following secrets may be shared by project leads:
 
-#### Making code changes
+- **Google Cloud credentials** for accessing the cloud platform
+- **Slack API key** for posting diff reports to the project Slack
 
-Changes to our codebase should always address an [issue](https://github.com/CodeForPhilly/vacant-lots-proj/issues) and need to be requested to be merged by submitting a pull request that will be reviewed by at least the team lead or tech lead.
+For development, you can set up your own GCP account and Slack bot for testing.
 
-#### Formatting
+### Code Changes and Formatting
 
-Format all python files by running:
+- Changes should address an [issue](https://github.com/CodeForPhilly/vacant-lots-proj/issues)
+- Submit pull requests for review by team lead or tech lead
+- Format Python files:
+  ```sh
+  docker compose run --rm vacant-lots-proj sh -c "ruff format"
+  ```
 
-```sh
-docker compose run --rm vacant-lots-proj sh -c "ruff format"
-```
-
-#### Google Cloud (GCP)
+## Google Cloud Platform (GCP)
 
 The map data is converted to the [pmtiles](https://docs.protomaps.com/pmtiles/) format and served from Google Cloud. For access to production credentials, contact the project lead.
 
@@ -173,33 +175,3 @@ When a diff is performed, an html file of the contents of the '{table_name}\_dif
 The `CAGP_SLACK_API_TOKEN` environmental variable must be set with the API key for the Slack app that can write messages to the channel as configured in the config.py `report_to_slack_channel` variable.
 
 The report will also be emailed to any emails configured in the config.py `report_to_email` variable.
-
-# Production script execution
-
-The job to reload the backend data has been scheduled in the Google Cloud to run on a weekly basis.
-
-A virtual machine running Debian Linux named `backend` is set up in the compute engine of the CAGP GCP account. The staging branch of the git project has been cloned here into the home directory of the `cleanandgreenphl` user. All required software such as docker and git has been installed on this vm.
-
-To access the Linux terminal of this vm instance via SSH you can use the 'SSH-in-browser' GCP tool on the web. Go to Compute Engine -> VM instances and select SSH next to the `backend` instance, then select 'Open in browser window'.
-
-You can also connect to the vm with the terminal ssh client on your pc. This is recommended for more advanced use cases as the web UI is limited. To set this up, follow the steps below:
-
-- In GCP, go to IAM and Admin -> Service Accounts -> Keys and click on the `1065311260334-compute@developer.gserviceaccount.com	` account.
-- Click 'Add key'. You can only download the service account JSON key file when you create a key so you will have to create a new key. Select 'JSON' and save the .json file to your local machine.
-- Download and install the [Google Cloud Command Line Interface (CLI)](https://cloud.google.com/sdk/docs/install) for your OS.
-- In your terminal, navigate to the folder with your saved .json file. Run the command:
-  `gcloud auth activate-service-account --key-file=your-key.json`
-- Now you can ssh into the vm with:
-  `gcloud compute ssh --zone "us-east1-b" "cleanandgreenphl@backend" --project "clean-and-green-philly"`
-- You will land in the home directory of the `cleanandgreenphl` user. The project has been cloned to this directory.
-
-The job to regenerate and upload the tiles file and street images to the GCP bucket has been scheduled in `cron` to run weekly on Wednesday at 5 AM. You can run `crontab -l` to see the job. Currently it looks like this:
-
-`0 5 * * 3 . /home/cleanandgreenphl/.cagp_env && cd clean-and-green-philly/data && docker compose run vacant-lots-proj && docker compose run streetview`
-
-The specific production environmental variables are stored in `/home/cleanandgreenphl/.cagp_env`. Some variables in the `data/src/config/config.py` project file have been edited locally for the scheduled run. Be careful when running this job in this environment because the production web site could be affected.
-
-The message with the diff report will be sent to the `clean-and-green-philly-back-end` Slack channel.
-
-To troubleshoot any errors you can look at the docker logs of the last run container. e.g.:
-`docker logs data-vacant-lots-proj-run-8c5e7639c386 | grep -i error`

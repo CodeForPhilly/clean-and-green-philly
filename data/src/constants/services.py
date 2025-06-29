@@ -66,7 +66,7 @@ OPA_PROPERTIES_QUERY = "SELECT building_code_description, market_value, sale_dat
 
 PWD_PARCELS_QUERY = "SELECT *, the_geom FROM pwd_parcels"
 
-UNSAFE_BUILDINGS_QUERY = "SELECT * FROM unsafe"
+UNSAFE_BUILDINGS_QUERY = "SELECT opa_account_num, the_geom FROM unsafe"
 
 IMMINENT_DANGER_BUILDINGS_QUERY = "SELECT * FROM imm_dang"
 
@@ -93,10 +93,6 @@ NBHOODS_URL = "https://raw.githubusercontent.com/opendataphilly/open-geo-data/ma
 
 CENSUS_BGS_URL = (
     "https://opendata.arcgis.com/datasets/2f982bada233478ea0100528227febce_0.geojson"
-)
-
-DOR_PARCELS_URL = (
-    "https://opendata.arcgis.com/datasets/1c57dd1b3ff84449a4b0e3fb29d3cafd_0.geojson"
 )
 
 PARK_PRIORITY_AREAS_URBAN_PHL = [

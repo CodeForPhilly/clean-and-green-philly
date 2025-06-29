@@ -107,4 +107,14 @@ def tree_canopy(
     # Perform spatial join
     merged_gdf = spatial_join(input_gdf, phl_trees)
 
+    # Remove duplicate OPA IDs in the main dataset after spatial join
+    before_dedup = len(merged_gdf)
+    merged_gdf = merged_gdf.drop_duplicates(subset=["opa_id"], keep="first")
+    after_dedup = len(merged_gdf)
+    if before_dedup != after_dedup:
+        print(
+            f"Removed {before_dedup - after_dedup} duplicate OPA IDs from main dataset after spatial join"
+        )
+        print(f"Main dataset after deduplication: {len(merged_gdf)} records")
+
     return merged_gdf, input_validation

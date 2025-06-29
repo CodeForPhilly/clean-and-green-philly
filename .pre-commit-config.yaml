@@ -23,7 +23,15 @@ repos:
           echo "All MI grades are B or above."'
         language: system
         files: \.py$
-        pass_filenames: true
+        pass_filenames:
+          true
+          # Code similarity detection
+      - id: pylint-similarities
+        name: Code similarity detection (non-blocking)
+        entry: bash -c 'echo "Checking for code similarities in data/src/..."; pylint --disable=all --enable=similarities --score=no data/src/ || true'
+        language: system
+        files: ^data/src/.*\.py$
+        pass_filenames: false
   - repo: https://github.com/jendrikseipp/vulture
     rev: 'v2.3'
     hooks:

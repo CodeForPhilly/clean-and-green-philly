@@ -102,9 +102,11 @@ def delinquencies(
         ["nan", "None", ""], pd.NaT
     )
 
-    # Convert valid values to datetime
+    # Convert valid values to datetime with explicit format
     merged_gdf["most_recent_year_owed"] = pd.to_datetime(
-        merged_gdf["most_recent_year_owed"].astype(str) + "-12-31", errors="coerce"
+        merged_gdf["most_recent_year_owed"].astype(str) + "-12-31",
+        format="%Y-%m-%d",
+        errors="coerce",
     )
 
     # Fill missing values with "NA" for string columns
