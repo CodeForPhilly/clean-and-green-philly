@@ -26,7 +26,7 @@ class ValidationResult:
 class BaseValidator(ABC):
     """Base class for service-specific data validation."""
 
-    schema: pa.DataFrameSchema = None
+    schema = None
 
     def __init_subclass__(cls):
         schema = getattr(cls, "schema", None)

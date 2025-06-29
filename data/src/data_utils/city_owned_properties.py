@@ -3,7 +3,10 @@ from typing import Tuple
 import geopandas as gpd
 
 from src.validation.base import ValidationResult, validate_output
-from src.validation.city_owned_properties import CityOwnedPropertiesOutputValidator
+from src.validation.city_owned_properties import (
+    CityOwnedPropertiesOutputValidator,
+    CityOwnedPropertiesInputValidator,
+)
 
 from ..classes.loaders import EsriLoader
 from ..constants.services import CITY_OWNED_PROPERTIES_TO_LOAD
@@ -47,6 +50,7 @@ def city_owned_properties(
         esri_urls=CITY_OWNED_PROPERTIES_TO_LOAD,
         cols=["OPABRT", "AGENCY", "SIDEYARDELIGIBLE"],
         opa_col="opabrt",
+        validator=CityOwnedPropertiesInputValidator(),
     )
 
     city_owned_properties, input_validation = loader.load_or_fetch()
