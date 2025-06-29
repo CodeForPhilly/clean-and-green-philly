@@ -62,7 +62,7 @@ DRUGCRIME_SQL_QUERY = f"SELECT text_general_code, dispatch_date, the_geom, point
 
 DELINQUENCIES_QUERY = "SELECT * FROM real_estate_tax_delinquencies"
 
-OPA_PROPERTIES_QUERY = "SELECT building_code_description, market_value, sale_date, sale_price, parcel_number, location AS street_address, owner_1, owner_2, mailing_address_1, mailing_address_2, mailing_care_of, mailing_street, mailing_zip, mailing_city_state, unit, zip_code, zoning, the_geom FROM opa_properties_public"
+OPA_PROPERTIES_QUERY = "SELECT building_code_description, market_value, sale_date, sale_price, parcel_number, location as street_address,owner_1, owner_2, mailing_address_1, mailing_address_2, mailing_care_of, mailing_street, mailing_zip, mailing_city_state, unit, zip_code, zoning, the_geom FROM opa_properties_public"
 
 PWD_PARCELS_QUERY = "SELECT *, the_geom FROM pwd_parcels"
 

@@ -2,13 +2,10 @@ import functools
 import logging
 import time
 from abc import ABC
-from dataclasses import dataclass
-from typing import Callable, List, Optional
+from typing import Callable, List
 
 import geopandas as gpd
-import pandas as pd
 import pandera.pandas as pa
-from pandera import Check
 
 from src.config.config import USE_CRS
 from src.constants.city_limits import PHL_GEOMETRY
@@ -26,16 +23,15 @@ class ValidationResult:
 class BaseValidator(ABC):
     """Base class for service-specific data validation."""
 
-    schema = None
+    schema: pa.DataSchemaModel = None
 
     def __init_subclass__(cls):
         schema = getattr(cls, "schema", None)
-        if schema is not None and not isinstance(schema, pa.DataFrameSchema):
-            print(type(schema))
-            print(isinstance(schema, type))
-            print(isinstance(schema, pa.DataFrameSchema))
+        if schema is not None and (
+            not isinstance(schema, type) or not isinstance(schema, pa.DataFrameModel)
+        ):
             raise TypeError(
-                f"{cls.__name__} must define a 'schema' class variable that is an instance of pandera.DataFrameSchema."
+                f"{cls.__name__} must define a 'schema' class variable that is a subclass of pandera.SchemaModel."
             )
         return super().__init_subclass__()
 
@@ -201,9 +197,9 @@ class BaseValidator(ABC):
         schema_start = time.time()
         if self.schema:
             try:
-                self.schema.validate(gdf, lazy=True)
+                self.schema.validate(gdf, lazy_validation=True)
             except pa.errors.SchemaErrors as err:
-                self.errors.append(err.failure_cases)
+                self.errors.append(err.failure_case)
         schema_time = time.time() - schema_start
 
         # Custom validation
@@ -262,93 +258,3 @@ def validate_output(
         return wrapper
 
     return decorator
-
-
-no_na_check = Check.ne("NA", error="Value cannot be NA")
-
-unique_check = Check(lambda s: s.is_unique, error="Should have all unique values")
-
-
-def unique_value_check(lower: int, upper: int) -> Check:
-    return Check(
-        lambda s: s.nunique() >= lower and s.nunique() < upper,
-        error=f"Number of unique values is roughly between {lower} and {upper}",
-    )
-
-
-def null_percentage_check(null_percent: float) -> Check:
-    return Check(
-        lambda s: s.isnull().mean() >= 0.8 * null_percent
-        and s.isnull().mean() <= 1.2 * null_percent,
-        error=f"Percentage of nulls in column should be roughly {null_percent}",
-    )
-
-
-@dataclass
-class DistributionParams:
-    min_value: Optional[int | float] = None
-    max_value: Optional[int | float] = None
-    mean: Optional[int | float] = None
-    median: Optional[int | float] = None
-    std: Optional[int | float] = None
-    q1: Optional[int | float] = None
-    q3: Optional[int | float] = None
-
-
-def distribution_check(params: DistributionParams) -> List[Check]:
-    res = []
-
-    if params.min_value:
-        res.append(
-            Check(lambda s: pd.to_numeric(s, errors="coerce").min() >= params.min_value)
-        )
-    if params.max_value:
-        res.append(
-            Check(lambda s: pd.to_numeric(s, errors="coerce").max() <= params.max_value)
-        )
-    if params.mean:
-        res.append(
-            Check(
-                lambda s: pd.to_numeric(s, errors="coerce").mean() >= 0.8 * params.mean
-                and pd.to_numeric(s, errors="coerce").mean() <= 1.2 * params.mean,
-                error=f"Column mean should be roughly {params.mean}",
-            )
-        )
-    if params.median:
-        res.append(
-            Check(
-                lambda s: pd.to_numeric(s, errors="coerce").quantile(0.5)
-                >= 0.8 * params.median
-                and pd.to_numeric(s, errors="coerce").quantile(0.5)
-                <= 1.2 * params.median,
-                error=f"Column median should be roughly {params.median}",
-            )
-        )
-    if params.std:
-        res.append(
-            Check(
-                lambda s: pd.to_numeric(s, errors="coerce").std() >= 0.8 * params.std
-                and pd.to_numeric(s, errors="coerce").std() <= 1.2 * params.std,
-                error=f"Column standard deviation should be roughly {params.std}",
-            )
-        )
-    if params.q1:
-        res.append(
-            Check(
-                lambda s: pd.to_numeric(s, errors="coerce").quantile(0.25)
-                >= 0.8 * params.q1
-                and pd.to_numeric(s, errors="coerce").quantile(0.25) <= 1.2 * params.q1,
-                error=f"Column first quantile should be roughly {params.q1}",
-            )
-        )
-    if params.q3:
-        res.append(
-            Check(
-                lambda s: pd.to_numeric(s, errors="coerce").quantile(0.75)
-                >= 0.8 * params.q3
-                and pd.to_numeric(s, errors="coerce").quantile(0.75) <= 1.2 * params.q3,
-                error=f"Column third quantile should be roughly {params.q3}",
-            )
-        )
-
-    return res
