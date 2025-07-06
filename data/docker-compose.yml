@@ -13,6 +13,7 @@ services:
       - CAGP_SLACK_API_TOKEN
     volumes:
       - ./src:/app/src
+      - ./backup_data:/app/backup_data
       - ~/.config/gcloud/application_default_credentials.json:/app/service-account-key.json
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro

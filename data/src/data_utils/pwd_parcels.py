@@ -28,8 +28,7 @@ def merge_pwd_parcels_gdf(
 ) -> gpd.GeoDataFrame:
     """
     Merge geometries from PWD parcels into the primary feature layer.
-    Identifies condominium units by finding duplicate geometries in the primary layer
-    and flags them while keeping their point geometries intact.
+    Identifies condominium units by checking for "CONDO" in building_code_description.
 
     Args:
         primary_gdf (GeoDataFrame): The primary feature layer
@@ -39,21 +38,18 @@ def merge_pwd_parcels_gdf(
         GeoDataFrame: The merged GeoDataFrame with updated geometries and condo flags
 
     Note:
-        Condo units are identified by duplicate geometries (multiple units at the same site).
-        Point geometries are preserved for condo units to maintain their individual locations.
+        Condo units are identified by properties with "CONDO" in building_code_description.
         Only non-condo units get their geometries updated from PWD parcels where available.
     """
     # Add condo flag column
     primary_gdf["is_condo_unit"] = False
 
-    # Find duplicate geometries in primary layer (indicating condo units)
-    duplicate_geoms = primary_gdf.groupby(primary_gdf.geometry.astype(str)).filter(
-        lambda x: len(x) > 1
-    )
-
-    # Flag condo units (keep their point geometries)
-    for geom_str, group in duplicate_geoms.groupby(primary_gdf.geometry.astype(str)):
-        primary_gdf.loc[group.index, "is_condo_unit"] = True
+    # Flag properties with "CONDO" in building_code_description
+    if "building_code_description" in primary_gdf.columns:
+        condo_building_mask = primary_gdf["building_code_description"].str.contains(
+            "CONDO", case=False, na=False
+        )
+        primary_gdf.loc[condo_building_mask, "is_condo_unit"] = True
 
     # Join geometries from PWD parcels for non-condo units only
     # Temporarily drop geometry from the primary feature layer
@@ -79,6 +75,7 @@ def merge_pwd_parcels_gdf(
     print("Number of observations retaining point geometry:", no_geometry_count)
 
     # Calculate the area of the parcel in square feet
+    # Data should already be in USE_CRS (EPSG:2272) from the loaders
     merged_gdf["parcel_area_sqft"] = merged_gdf.geometry.area
     # Note: Point geometries return 0.0 from .area, not NaN, so no fillna needed
 

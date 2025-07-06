@@ -16,7 +16,7 @@ class TestValidation(unittest.TestCase):
         gdf = gpd.GeoDataFrame(data, crs="EPSG:4326")
 
         validator = BaseValidator()
-        validator.geometry_validation(gdf)
+        validator.validate_geometry(gdf)
 
         self.assertListEqual(
             validator.errors,

@@ -18,8 +18,10 @@ dependencies = [
     "networkx~=3.4.2",
     "pandas==2.2.2",
     "pandera~=0.24.0",
+    "pre-commit>=4.2.0",
     "pyarrow~=18.1.0",
     "pydantic==2.8.2",
+    "pylint>=3.3.7",
     "rasterio~=1.4.3",
     "requests~=2.32.3",
     "scikit-learn~=1.6.0",
@@ -38,7 +40,7 @@ dev = [
     "pytest~=8.3.4",
     "vulture~=2.14",
     "radon~=6.0.1",
-    "ruff~=0.8.2",
+    "ruff~=0.12.0",
 ]
 
 [tool.mypy]

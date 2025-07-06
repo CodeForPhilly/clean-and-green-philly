@@ -6,6 +6,7 @@ import geopandas as gpd
 import pandas as pd
 
 from src.classes.loaders import CartoLoader
+from src.config.config import get_logger
 from src.validation.base import ValidationResult, validate_output
 from src.validation.opa_properties import OPAPropertiesOutputValidator
 
@@ -168,11 +169,12 @@ def opa_properties(
     Tagline:
         Load OPA data
     """
-    print("[OPA_PROPERTIES] Starting opa_properties function")
-    function_start = time.time()
+    performance_logger = get_logger("performance")
+    start_time = time.time()
+    performance_logger.info("Starting OPA properties processing...")
 
     loader_start = time.time()
-    print("[OPA_PROPERTIES] Creating CartoLoader")
+    performance_logger.info("Creating CartoLoader")
     loader = CartoLoader(
         carto_queries=OPA_PROPERTIES_QUERY,
         name="OPA Properties",
@@ -198,108 +200,126 @@ def opa_properties(
         ],
     )
     loader_time = time.time() - loader_start
-    print(f"[OPA_PROPERTIES] CartoLoader creation: {loader_time:.3f}s")
+    performance_logger.info(f"CartoLoader creation: {loader_time:.3f}s")
 
     load_start = time.time()
-    print("[OPA_PROPERTIES] About to call load_or_fetch")
+    performance_logger.info("About to call load_or_fetch")
     opa, input_validation = loader.load_or_fetch()
     load_time = time.time() - load_start
-    print(f"[OPA_PROPERTIES] load_or_fetch completed: {load_time:.3f}s")
-    print(f"[OPA_PROPERTIES] Loaded {len(opa)} rows")
+    performance_logger.info(f"load_or_fetch completed: {load_time:.3f}s")
+    performance_logger.info(f"Loaded {len(opa)} rows")
+
+    # Log data quality information at debug level
+    pipeline_logger = get_logger("pipeline")
+    pipeline_logger.debug(f"OPA properties columns: {list(opa.columns)}")
+    pipeline_logger.debug(f"OPA properties head:\n{opa.head()}")
 
     # Convert 'sale_price' and 'market_value' to numeric values
     numeric_start = time.time()
-    print("[OPA_PROPERTIES] Converting sale_price and market_value to numeric")
+    performance_logger.info("Converting sale_price and market_value to numeric")
     opa["sale_price"] = pd.to_numeric(opa["sale_price"], errors="coerce")
     opa["market_value"] = pd.to_numeric(opa["market_value"], errors="coerce")
     numeric_time = time.time() - numeric_start
-    print(f"[OPA_PROPERTIES] Numeric conversion: {numeric_time:.3f}s")
+    performance_logger.info(f"Numeric conversion: {numeric_time:.3f}s")
+
+    # Filter out extreme sale prices (over $1 billion) - convert to NA
+    extreme_price_start = time.time()
+    performance_logger.info("Filtering extreme sale prices")
+    extreme_sales_mask = opa["sale_price"] > 1000000000  # $1 billion
+    extreme_count = extreme_sales_mask.sum()
+    if extreme_count > 0:
+        performance_logger.info(
+            f"Found {extreme_count} properties with sale prices > $1B, converting to NA"
+        )
+        opa.loc[extreme_sales_mask, "sale_price"] = pd.NA
+    extreme_price_time = time.time() - extreme_price_start
+    performance_logger.info(f"Extreme price filtering: {extreme_price_time:.3f}s")
 
     # Convert sale_date to datetime
     date_start = time.time()
-    print("[OPA_PROPERTIES] Converting sale_date to datetime")
+    performance_logger.info("Converting sale_date to datetime")
     opa["sale_date"] = pd.to_datetime(opa["sale_date"])
     date_time = time.time() - date_start
-    print(f"[OPA_PROPERTIES] Date conversion: {date_time:.3f}s")
+    performance_logger.info(f"Date conversion: {date_time:.3f}s")
 
     # Add parcel_type
     parcel_type_start = time.time()
-    print("[OPA_PROPERTIES] Adding parcel_type column")
+    performance_logger.info("Adding parcel_type column")
     opa["parcel_type"] = (
         opa["building_code_description"]
         .str.contains("VACANT LAND", case=False, na=False)
         .map({True: "Land", False: "Building"})
     )
     parcel_type_time = time.time() - parcel_type_start
-    print(f"[OPA_PROPERTIES] Parcel type addition: {parcel_type_time:.3f}s")
+    performance_logger.info(f"Parcel type addition: {parcel_type_time:.3f}s")
 
     # Combine street_address and unit into a single column, if unit is not empty
     street_combine_start = time.time()
-    print("[OPA_PROPERTIES] Combining street_address and unit")
+    performance_logger.info("Combining street_address and unit")
     opa["street_address"] = opa.apply(
         lambda row: f"{row['street_address']} {row['unit']}"
-        if pd.notnull(row["unit"]) and str(row["unit"]).strip() != ""
+        if pd.notnull(row.get("unit")) and str(row["unit"]).strip() != ""
         else row["street_address"],
         axis=1,
     )
     street_combine_time = time.time() - street_combine_start
-    print(f"[OPA_PROPERTIES] Street combine: {street_combine_time:.3f}s")
+    performance_logger.info(f"Street combine: {street_combine_time:.3f}s")
 
     # Standardize street addresses
     street_start = time.time()
-    print("[OPA_PROPERTIES] Standardizing street addresses")
+    performance_logger.info("Standardizing street addresses")
     opa["street_address"] = opa["street_address"].astype(str).apply(standardize_street)
     street_time = time.time() - street_start
-    print(f"[OPA_PROPERTIES] Street standardization: {street_time:.3f}s")
+    performance_logger.info(f"Street standardization: {street_time:.3f}s")
 
     # Create standardized street address column
     street_std_start = time.time()
-    print("[OPA_PROPERTIES] Creating standardized street address column")
+    performance_logger.info("Creating standardized street address column")
     opa["standardized_street_address"] = opa["street_address"].str.lower()
     street_std_time = time.time() - street_std_start
-    print(f"[OPA_PROPERTIES] Street address standardization: {street_std_time:.3f}s")
+    performance_logger.info(f"Street address standardization: {street_std_time:.3f}s")
 
     # Standardize mailing street addresses
     mailing_street_start = time.time()
-    print("[OPA_PROPERTIES] Standardizing mailing street addresses (vectorized)")
+    performance_logger.info("Standardizing mailing street addresses (vectorized)")
     opa["mailing_street"] = standardize_street_vectorized(opa["mailing_street"])
     mailing_street_time = time.time() - mailing_street_start
-    print(
-        f"[OPA_PROPERTIES] Mailing street standardization: {mailing_street_time:.3f}s"
+    performance_logger.info(
+        f"Mailing street standardization: {mailing_street_time:.3f}s"
     )
 
     # Create standardized mailing address column
     address_start = time.time()
-    print("[OPA_PROPERTIES] Creating standardized mailing address column (vectorized)")
+    performance_logger.info("Creating standardized mailing address column (vectorized)")
     opa["standardized_mailing_address"] = (
         create_standardized_mailing_address_vectorized(opa)
     )
     address_time = time.time() - address_start
-    print(f"[OPA_PROPERTIES] Mailing address standardization: {address_time:.3f}s")
+    performance_logger.info(f"Mailing address standardization: {address_time:.3f}s")
 
     # Drop columns starting with "mailing_"
     drop_start = time.time()
-    print("[OPA_PROPERTIES] Dropping mailing_ columns")
+    performance_logger.info("Dropping mailing_ columns")
     opa = opa.loc[:, ~opa.columns.str.startswith("mailing_")]
     drop_time = time.time() - drop_start
-    print(f"[OPA_PROPERTIES] Column dropping: {drop_time:.3f}s")
+    performance_logger.info(f"Column dropping: {drop_time:.3f}s")
 
     # Drop unit column
     unit_drop_start = time.time()
-    print("[OPA_PROPERTIES] Dropping unit column")
+    performance_logger.info("Dropping unit column")
     opa = opa.drop(columns=["unit"])
     unit_drop_time = time.time() - unit_drop_start
-    print(f"[OPA_PROPERTIES] Unit column dropping: {unit_drop_time:.3f}s")
+    performance_logger.info(f"Unit column dropping: {unit_drop_time:.3f}s")
 
     # Drop empty geometries
     geometry_start = time.time()
-    print("[OPA_PROPERTIES] Dropping empty geometries")
+    performance_logger.info("Dropping empty geometries")
     opa = opa[~opa.is_empty]
     geometry_time = time.time() - geometry_start
-    print(f"[OPA_PROPERTIES] Empty geometry removal: {geometry_time:.3f}s")
+    performance_logger.info(f"Empty geometry removal: {geometry_time:.3f}s")
 
-    function_total_time = time.time() - function_start
-    print(f"[OPA_PROPERTIES] Total function time: {function_total_time:.3f}s")
-    print(f"[OPA_PROPERTIES] Returning {len(opa)} rows")
+    function_total_time = time.time() - start_time
+    performance_logger.info(f"Total function time: {function_total_time:.3f}s")
+    performance_logger.info(f"Returning {len(opa)} rows")
 
     return opa, input_validation

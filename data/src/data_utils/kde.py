@@ -1,4 +1,5 @@
 import functools
+import os
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from typing import Tuple
@@ -6,16 +7,62 @@ from typing import Tuple
 import geopandas as gpd
 import mapclassify
 import numpy as np
+import psutil
 import rasterio
 from awkde.awkde import GaussianKDE
 from rasterio.transform import Affine
 from tqdm import tqdm
 
 from src.classes.file_manager import FileManager, LoadType
-from src.config.config import USE_CRS
+from src.config.config import USE_CRS, get_logger
 from src.validation.base import ValidationResult
 
 from ..classes.loaders import CartoLoader
+
+# Get performance logger
+performance_logger = get_logger("performance")
+
+
+def get_memory_usage():
+    """Get current memory usage for the process"""
+    process = psutil.Process(os.getpid())
+    memory_info = process.memory_info()
+    return {
+        "rss": memory_info.rss / 1024 / 1024,  # MB
+        "vms": memory_info.vms / 1024 / 1024,  # MB
+        "percent": process.memory_percent(),
+    }
+
+
+def log_memory_usage(stage: str):
+    """Log memory usage at a specific stage"""
+    memory = get_memory_usage()
+    performance_logger.info(
+        f"Memory usage at {stage}: "
+        f"RSS={memory['rss']:.1f}MB, "
+        f"VMS={memory['vms']:.1f}MB, "
+        f"Percent={memory['percent']:.1f}%"
+    )
+
+
+def check_system_memory():
+    """Check overall system memory availability"""
+    memory = psutil.virtual_memory()
+    performance_logger.info(
+        f"System memory: "
+        f"Available={memory.available / 1024 / 1024 / 1024:.1f}GB, "
+        f"Used={memory.used / 1024 / 1024 / 1024:.1f}GB, "
+        f"Percent={memory.percent:.1f}%"
+    )
+
+    # Warn if memory usage is high
+    if memory.percent > 85:
+        performance_logger.warning(
+            f"High system memory usage detected: {memory.percent:.1f}%. "
+            f"This may cause performance issues."
+        )
+
+    return memory.percent
 
 
 # Profiling utilities
@@ -27,7 +74,9 @@ def timer(func):
         start_time = time.time()
         result = func(*args, **kwargs)
         end_time = time.time()
-        print(f"⏱️  {func.__name__} took {end_time - start_time:.4f} seconds")
+        performance_logger.info(
+            f"{func.__name__} took {end_time - start_time:.4f} seconds"
+        )
         return result
 
     return wrapper
@@ -48,7 +97,7 @@ def profile_section(section_name: str):
         def __exit__(self, _exc_type, _exc_val, _exc_tb):
             end_time = time.time()
             duration = end_time - self.start_time
-            print(f"⏱️  {self.name}: {duration:.4f} seconds")
+            performance_logger.info(f"{self.name}: {duration:.4f} seconds")
 
     return Profiler(section_name)
 
@@ -89,7 +138,7 @@ def generic_kde(
     Returns:
         Tuple[str, np.ndarray]: The raster filename and the array of input points.
     """
-    print(f"Initializing FeatureLayer for {name}")
+    performance_logger.info(f"Initializing FeatureLayer for {name}")
 
     # Profile data loading
     with profile_section("Data Loading"):
@@ -117,11 +166,22 @@ def generic_kde(
 
     # Profile KDE fitting
     with profile_section("KDE Fitting"):
-        print(f"Fitting KDE for {name} data")
+        performance_logger.info(f"Fitting KDE for {name} data")
+
+        # Debug logging for KDE input data
+        performance_logger.info("KDE input data debug:")
+        performance_logger.info(f"  Input data shape: {X.shape}")
+        performance_logger.info(f"  Input X min: {X[:, 0].min()}, max: {X[:, 0].max()}")
+        performance_logger.info(f"  Input Y min: {X[:, 1].min()}, max: {X[:, 1].max()}")
+        performance_logger.info(f"  Input data has NaN: {np.isnan(X).any()}")
+        performance_logger.info(f"  Input data has Inf: {np.isinf(X).any()}")
+
         kde = GaussianKDE(glob_bw=0.1, alpha=0.999, diag_cov=True)
         kde.fit(X)
 
-    print(f"Predicting KDE values for grid of size {grid_points.shape}")
+    performance_logger.info(
+        f"Predicting KDE values for grid of size {grid_points.shape}"
+    )
 
     # Profile the entire prediction loop
     with profile_section("Entire Prediction Loop"):
@@ -131,8 +191,8 @@ def generic_kde(
                 grid_points[i : i + batch_size]
                 for i in range(0, len(grid_points), batch_size)
             ]
-            print(
-                f"📊 Created {len(chunks)} chunks of size {batch_size} (total grid points: {len(grid_points)})"
+            performance_logger.info(
+                f"Created {len(chunks)} chunks of size {batch_size} (total grid points: {len(grid_points)})"
             )
 
         z = np.zeros(len(grid_points))
@@ -161,7 +221,7 @@ def generic_kde(
 
     raster_filename = f"{name.lower().replace(' ', '_')}.tif"
     raster_file_path = file_manager.get_file_path(raster_filename, LoadType.TEMP)
-    print(f"Saving raster to {raster_filename}")
+    performance_logger.info(f"Saving raster to {raster_filename}")
 
     # Profile raster saving
     with profile_section("Raster Saving"):
@@ -225,16 +285,41 @@ def apply_kde_to_input(
             # Load entire raster into memory as numpy array
             raster_array = src.read(1)  # Read the first (and only) band
 
+            # Debug logging for raster data
+            performance_logger.info("Raster sampling debug:")
+            performance_logger.info(f"  Raster shape: {raster_array.shape}")
+            performance_logger.info(
+                f"  Raster min: {raster_array.min()}, max: {raster_array.max()}"
+            )
+            performance_logger.info(f"  Raster has NaN: {np.isnan(raster_array).any()}")
+            performance_logger.info(f"  Raster has Inf: {np.isinf(raster_array).any()}")
+            performance_logger.info(
+                f"  Raster unique values count: {len(np.unique(raster_array))}"
+            )
+
             # Get the transform for coordinate conversion
             transform = src.transform
 
             # Convert coordinates to numpy array for vectorized operations
             coords_array = np.array(coord_list)
 
+            # Debug logging for coordinate conversion
+            performance_logger.info(
+                f"  Input coordinates min: {coords_array.min(axis=0)}, max: {coords_array.max(axis=0)}"
+            )
+
             # Vectorized coordinate conversion to pixel indices
             rows, cols = ~transform * (coords_array[:, 0], coords_array[:, 1])
             rows = rows.astype(int)
             cols = cols.astype(int)
+
+            # Debug logging for pixel indices
+            performance_logger.info(
+                f"  Pixel rows min: {rows.min()}, max: {rows.max()}"
+            )
+            performance_logger.info(
+                f"  Pixel cols min: {cols.min()}, max: {cols.max()}"
+            )
 
             # Clip indices to valid bounds
             rows = np.clip(rows, 0, raster_array.shape[0] - 1)
@@ -242,6 +327,14 @@ def apply_kde_to_input(
 
             # Vectorized array indexing
             sampled_values = raster_array[rows, cols].tolist()
+
+            # Debug logging for sampled values
+            performance_logger.info(
+                f"  Sampled values min: {min(sampled_values)}, max: {max(sampled_values)}"
+            )
+            performance_logger.info(
+                f"  Sampled values unique count: {len(set(sampled_values))}"
+            )
 
     density_column = f"{name.lower().replace(' ', '_')}_density"
     input_gdf[density_column] = sampled_values
@@ -251,24 +344,64 @@ def apply_kde_to_input(
         # Calculate z-scores
         mean_density = input_gdf[density_column].mean()
         std_density = input_gdf[density_column].std()
+
+        # Debug logging for z-score calculation
+        performance_logger.info("Z-score calculation debug:")
+        performance_logger.info(f"  Mean density: {mean_density}")
+        performance_logger.info(f"  Std density: {std_density}")
+        performance_logger.info(f"  Min density: {input_gdf[density_column].min()}")
+        performance_logger.info(f"  Max density: {input_gdf[density_column].max()}")
+        performance_logger.info(
+            f"  Density column has NaN: {input_gdf[density_column].isna().any()}"
+        )
+
         z_score_column = f"{density_column}_zscore"
-        input_gdf[z_score_column] = (
-            input_gdf[density_column] - mean_density
-        ) / std_density
+        z_scores = (input_gdf[density_column] - mean_density) / std_density
+
+        # Debug logging for z-scores
+        performance_logger.info(
+            f"  Z-scores - Min: {z_scores.min()}, Max: {z_scores.max()}"
+        )
+        performance_logger.info(f"  Z-scores has NaN: {z_scores.isna().any()}")
+        performance_logger.info(f"  Z-scores has Inf: {np.isinf(z_scores).any()}")
+
+        input_gdf[z_score_column] = z_scores
 
         # Calculate percentiles
         percentile_breaks = list(range(101))
         classifier = mapclassify.Percentiles(
             input_gdf[density_column], pct=percentile_breaks
         )
+
+        # Debug logging for percentile calculation
+        performance_logger.info("Percentile calculation debug:")
+        performance_logger.info(
+            f"  Percentile breaks: {percentile_breaks[:10]}...{percentile_breaks[-10:]}"
+        )  # Show first and last 10
+        performance_logger.info(f"  Classifier bins: {classifier.bins}")
+        performance_logger.info(
+            f"  Classifier yb min: {classifier.yb.min()}, max: {classifier.yb.max()}"
+        )
+        performance_logger.info(
+            f"  Classifier yb unique values: {np.unique(classifier.yb)}"
+        )
+
         percentile_column = f"{density_column}_percentile"
-        input_gdf[percentile_column] = classifier.yb.astype(float)
+        input_gdf[percentile_column] = classifier.yb.astype(int)
+
+        # Debug logging for final percentile column
+        performance_logger.info(
+            f"  Final percentile column min: {input_gdf[percentile_column].min()}, max: {input_gdf[percentile_column].max()}"
+        )
+        performance_logger.info(
+            f"  Final percentile column unique values: {input_gdf[percentile_column].unique()}"
+        )
 
         # Assign percentile labels
         label_column = f"{density_column}_label"
         input_gdf[label_column] = input_gdf[percentile_column].apply(label_percentile)
 
-    print(f"Finished processing {name}")
+    performance_logger.info(f"Finished processing {name}")
     return input_gdf, input_validation
 
 

@@ -5,12 +5,13 @@ import zipfile
 from datetime import datetime
 from enum import Enum
 from io import BytesIO
+from pathlib import Path
 from typing import List
 
 import geopandas as gpd
 from tqdm import tqdm
 
-from src.config.config import CACHE_FRACTION, ROOT_DIRECTORY
+from src.config.config import CACHE_FRACTION, ROOT_DIRECTORY, get_logger
 
 print(f"Root directory is {ROOT_DIRECTORY}")
 
@@ -120,10 +121,9 @@ class FileManager:
             table_name (str): The name of the table of source data.
             load_type (LoadType): The destination type of the file (either SOURCE_CACHE or PIPELINE_CACHE).
         """
+        cache_logger = get_logger("cache")
         start_time = time.time()
-        print(
-            f"    FileManager.check_source_cache_file_exists: Checking for {table_name}"
-        )
+        cache_logger.info(f"Checking for {table_name}")
 
         directory = (
             self.source_cache_directory
@@ -140,8 +140,8 @@ class FileManager:
         result = len(files) > 0
         total_time = time.time() - start_time
 
-        print(
-            f"    FileManager.check_source_cache_file_exists: Found {len(files)} files in {glob_time:.2f}s (total: {total_time:.2f}s)"
+        cache_logger.info(
+            f"Found {len(files)} files in {glob_time:.2f}s (total: {total_time:.2f}s)"
         )
         return result
 
@@ -154,10 +154,9 @@ class FileManager:
             GeoDataFrame: The dataframe loaded from the most recent cached file.
             None: If no files exist for the given table name.
         """
+        cache_logger = get_logger("cache")
         start_time = time.time()
-        print(
-            f"    FileManager.get_most_recent_cache: Loading most recent cache for {table_name}"
-        )
+        cache_logger.info(f"Loading most recent cache for {table_name}")
 
         # Use glob pattern matching for more efficient file searching
         pattern = os.path.join(self.source_cache_directory, f"*{table_name}*.parquet")
@@ -167,7 +166,7 @@ class FileManager:
         glob_time = time.time() - glob_start
 
         if not cached_files:
-            print("    FileManager.get_most_recent_cache: No cached files found")
+            cache_logger.info("No cached files found")
             return None
 
         # Get the most recent file by modification time
@@ -175,11 +174,11 @@ class FileManager:
         most_recent_file = max(cached_files, key=os.path.getmtime)
         mtime_time = time.time() - mtime_start
 
-        print(
-            f"    FileManager.get_most_recent_cache: Found {len(cached_files)} files, most recent: {os.path.basename(most_recent_file)}"
+        cache_logger.info(
+            f"Found {len(cached_files)} files, most recent: {os.path.basename(most_recent_file)}"
         )
-        print(
-            f"    FileManager.get_most_recent_cache: Glob took {glob_time:.2f}s, mtime check took {mtime_time:.2f}s"
+        cache_logger.info(
+            f"Glob took {glob_time:.2f}s, mtime check took {mtime_time:.2f}s"
         )
 
         # Load the parquet file
@@ -188,8 +187,8 @@ class FileManager:
         load_time = time.time() - load_start
 
         total_time = time.time() - start_time
-        print(
-            f"    FileManager.get_most_recent_cache: Parquet load took {load_time:.2f}s (total: {total_time:.2f}s)"
+        cache_logger.info(
+            f"Parquet load took {load_time:.2f}s (total: {total_time:.2f}s)"
         )
 
         return gdf
@@ -205,7 +204,10 @@ class FileManager:
             file_type (FileType): The type of the file (GEOJSON or PARQUET).
             load_type (LoadType): The destination type of the file (TEMP or CACHE).
         """
+        cache_logger = get_logger("cache")
         file_path = self.get_file_path(file_name, load_type, file_type)
+        cache_logger.info(f"Loading {file_name} from {file_path}")
+
         if os.path.exists(file_path):
             gdf = (
                 gpd.read_parquet(file_path)
@@ -234,37 +236,39 @@ class FileManager:
             file_type (FileType): The type of the file (GEOJSON or PARQUET).
             load_type (LoadType): The destination type of the file (TEMP or CACHE).
         """
+        cache_logger = get_logger("cache")
+        cache_logger.info(f"Saving {file_name} to {load_type.value}/{file_type.value}")
         start_time = time.time()
-        print(f"    FileManager.save_gdf: Starting save for {file_name}")
+        cache_logger.info(f"Starting save for {file_name}")
 
         file_path = self.get_file_path(file_name, load_type, file_type)
-        print(f"    FileManager.save_gdf: Target path: {file_path}")
+        cache_logger.info(f"Target path: {file_path}")
 
         if file_type == FileType.PARQUET:
-            print(
-                f"    FileManager.save_gdf: Writing parquet file ({len(gdf)} rows, {len(gdf.columns)} columns)"
+            cache_logger.info(
+                f"Writing parquet file ({len(gdf)} rows, {len(gdf.columns)} columns)"
             )
             parquet_start = time.time()
             gdf.to_parquet(file_path, index=False)
             parquet_time = time.time() - parquet_start
-            print(f"    FileManager.save_gdf: Parquet write took {parquet_time:.2f}s")
+            cache_logger.info(f"Parquet write took {parquet_time:.2f}s")
         elif file_type == FileType.GEOJSON:
-            print("    FileManager.save_gdf: Writing GeoJSON file")
+            cache_logger.info("Writing GeoJSON file")
             geojson_start = time.time()
             gdf.to_file(file_path, driver="GeoJSON")
             geojson_time = time.time() - geojson_start
-            print(f"    FileManager.save_gdf: GeoJSON write took {geojson_time:.2f}s")
+            cache_logger.info(f"GeoJSON write took {geojson_time:.2f}s")
         elif file_type == FileType.CSV:
-            print("    FileManager.save_gdf: Writing CSV file")
+            cache_logger.info("Writing CSV file")
             csv_start = time.time()
             gdf.to_csv(file_path)
             csv_time = time.time() - csv_start
-            print(f"    FileManager.save_gdf: CSV write took {csv_time:.2f}s")
+            cache_logger.info(f"CSV write took {csv_time:.2f}s")
         else:
             raise ValueError(f"Unsupported file type: {file_type}")
 
         total_time = time.time() - start_time
-        print(f"    FileManager.save_gdf: Total save operation took {total_time:.2f}s")
+        cache_logger.info(f"Total save operation took {total_time:.2f}s")
 
     def save_fractional_gdf(
         self,
@@ -315,3 +319,13 @@ class FileManager:
         destination = self.temp_directory
         with zipfile.ZipFile(buffer) as zip_ref:
             zip_ref.extractall(destination)
+
+    def get_cache_file_path(self, cache_key: str) -> Path:
+        """
+        Get the path for a cache file.
+        """
+        cache_logger = get_logger("cache")
+        cache_dir = ROOT_DIRECTORY / "storage" / "cache"
+        cache_file = cache_dir / f"{cache_key}.parquet"
+        cache_logger.info(f"Cache file path: {cache_file}")
+        return cache_file
