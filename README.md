@@ -28,6 +28,8 @@ Anyone interested in generating new data can simply install the codebase and run
 
 ### 2024
 
+**October 22, 2024:** Nissim and Amanda publish an op ed in _The Philadelphia Citizen_ encouraging the City to [adopt our approach to strategically targeting vacant properties](https://thephiladelphiacitizen.org/guest-commentary-clean-and-green-philly-where-its-most-needed/).
+
 **September 20, 2024:** Clean & Green Philly wins [HopePHL's "Great Idea" pitch competition](https://www.instagram.com/p/DAJg9SZprim/).
 
 **June 2024:** The City of Philadelphia ceases to provide accurate vacancy data via the public API.
