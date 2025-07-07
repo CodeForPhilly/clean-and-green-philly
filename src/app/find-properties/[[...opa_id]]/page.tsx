@@ -128,6 +128,12 @@ const MapPage = ({ params }: MapPageProps) => {
     history.replaceState(null, '', `/find-properties/${opa_id}`);
   }, [selectedProperty]);
 
+  useEffect(() => {
+    if (selectedProperty && currentView === 'filter') {
+      setCurrentView('detail');
+    }
+  }, [selectedProperty, currentView]);
+
   const updateCurrentView = (view: BarClickOptions) => {
     setCurrentView(view === currentView ? 'detail' : view);
     if (
