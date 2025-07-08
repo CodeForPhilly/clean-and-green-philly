@@ -36,7 +36,7 @@ IMM_DANGER_BUILDINGS_REFERENCE_COUNT = 186
 
 ImmDangerBuildingsInputSchema = pa.DataFrameSchema(
     columns={
-        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "opa_id": pa.Column(pa.String, checks=pa.Check(lambda s: s.dropna() != "")),
         "geometry": pa.Column("geometry"),
     },
     checks=row_count_check(IMM_DANGER_BUILDINGS_REFERENCE_COUNT, tolerance=0.1),

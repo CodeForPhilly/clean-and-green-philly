@@ -30,7 +30,7 @@ PHS_REFERENCE_COUNT = 7796
 
 PHSPropertiesInputSchema = pa.DataFrameSchema(
     columns={
-        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "opa_id": pa.Column(pa.String, checks=pa.Check(lambda s: s.dropna() != "")),
         "geometry": pa.Column("geometry"),
         "program": pa.Column(str, nullable=True),
     },

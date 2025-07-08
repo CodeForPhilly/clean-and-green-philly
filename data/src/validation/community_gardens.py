@@ -26,7 +26,7 @@ COMMUNITY_GARDENS_REFERENCE_COUNT = 205
 
 CommunityGardensInputSchema = pa.DataFrameSchema(
     columns={
-        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "opa_id": pa.Column(pa.String, checks=pa.Check(lambda s: s.dropna() != "")),
         "geometry": pa.Column("geometry"),
         "site_name": pa.Column(str, nullable=True),
     },

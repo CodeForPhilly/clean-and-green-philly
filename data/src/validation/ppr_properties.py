@@ -11,11 +11,11 @@ logger = logging.getLogger(__name__)
 
 PPR_REFERENCE_COUNT = 507
 
+# Input schema for PPR properties
 PPRPropertiesInputSchema = pa.DataFrameSchema(
     columns={
-        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "opa_id": pa.Column(pa.String, checks=pa.Check(lambda s: s.dropna() != "")),
         "geometry": pa.Column("geometry"),
-        "public_name": pa.Column(str, nullable=True),
     },
     checks=row_count_check(PPR_REFERENCE_COUNT, tolerance=0.1),
     strict=False,

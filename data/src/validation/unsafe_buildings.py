@@ -36,7 +36,7 @@ UNSAFE_BUILDINGS_REFERENCE_COUNT = 3520
 
 UnsafeBuildingsInputSchema = pa.DataFrameSchema(
     columns={
-        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "opa_id": pa.Column(pa.String, checks=pa.Check(lambda s: s.dropna() != "")),
         "geometry": pa.Column("geometry"),
     },
     checks=row_count_check(UNSAFE_BUILDINGS_REFERENCE_COUNT, tolerance=0.1),
