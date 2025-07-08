@@ -47,14 +47,11 @@ CityOwnedPropertiesInputSchema = pa.DataFrameSchema(
 
 
 class CityOwnedPropertiesInputValidator(BaseValidator):
-    """
-    Validator for the city-owned properties dataset input.
-    schema and _custom_validation() are used by validate() in the parent class.
-    """
+    """Validator for city owned properties service input."""
 
     schema = CityOwnedPropertiesInputSchema
 
-    def _custom_validation(self, gdf: gpd.GeoDataFrame):
+    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass
 
 
