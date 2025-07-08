@@ -9,7 +9,6 @@ from src.metadata.metadata_utils import (
     get_sections_from_docstring,
     normalize_whitespace,
     parse_docstring,
-    provide_metadata,
 )
 
 # Stub functions with actual docstrings used for parsing tests
@@ -150,7 +149,6 @@ def stub_only_args_and_returns(primary_featurelayer):
     pass
 
 
-@provide_metadata()
 @pytest.mark.skip
 def sample_add_columns(primary_featurelayer):
     """

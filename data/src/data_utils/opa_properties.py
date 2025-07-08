@@ -142,7 +142,7 @@ def create_standardized_mailing_address_vectorized(gdf: gpd.GeoDataFrame) -> pd.
 @validate_output(OPAPropertiesOutputValidator)
 @provide_metadata(current_metadata=current_metadata)
 def opa_properties(
-    gdf: gpd.GeoDataFrame = None,
+    gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Loads and processes OPA property data, standardizing addresses and cleaning geometries.
