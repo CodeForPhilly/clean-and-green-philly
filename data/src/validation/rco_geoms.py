@@ -28,12 +28,11 @@ RCO_GEOMS_REFERENCE_COUNT = 257
 
 RCOGeomsInputSchema = pa.DataFrameSchema(
     columns={
-        "opa_id": pa.Column(pa.String, checks=pa.Check(lambda s: s.dropna() != "")),
         "geometry": pa.Column("geometry"),
-        "organization_name": pa.Column(str),
-        "organization_address": pa.Column(str),
-        "primary_email": pa.Column(str),
-        "primary_phone": pa.Column(str),
+        "organization_name": pa.Column(str, nullable=True),
+        "organization_address": pa.Column(str, nullable=True),
+        "primary_email": pa.Column(str, nullable=True),
+        "primary_phone": pa.Column(str, nullable=True),
     },
     checks=row_count_check(RCO_GEOMS_REFERENCE_COUNT, tolerance=0.1),
     strict=False,
