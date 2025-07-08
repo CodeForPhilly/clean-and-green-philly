@@ -2,7 +2,7 @@ import geopandas as gpd
 import pandera.pandas as pa
 from pandera import Check
 
-from .base import BaseValidator
+from .base import BaseValidator, row_count_check
 
 # Define the Imminently Dangerous Buildings DataFrame Schema
 ImmDangerBuildingsSchema = pa.DataFrameSchema(
@@ -31,11 +31,23 @@ ImmDangerBuildingsSchema = pa.DataFrameSchema(
     strict=False,
 )
 
+# Reference count for imminently dangerous buildings
+IMM_DANGER_BUILDINGS_REFERENCE_COUNT = 186
+
+ImmDangerBuildingsInputSchema = pa.DataFrameSchema(
+    columns={
+        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "geometry": pa.Column("geometry"),
+    },
+    checks=row_count_check(IMM_DANGER_BUILDINGS_REFERENCE_COUNT, tolerance=0.1),
+    strict=False,
+)
+
 
 class ImmDangerInputValidator(BaseValidator):
     """Validator for imminent danger buildings service input."""
 
-    schema = None
+    schema = ImmDangerBuildingsInputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass

@@ -1,7 +1,7 @@
 import geopandas as gpd
 import pandera.pandas as pa
 
-from .base import BaseValidator
+from .base import BaseValidator, row_count_check
 
 # Define the City Owned Properties DataFrame Schema
 CityOwnedPropertiesSchema = pa.DataFrameSchema(
@@ -29,11 +29,8 @@ CityOwnedPropertiesSchema = pa.DataFrameSchema(
     coerce=True,
 )
 
-# Expecting ~7,796 records returned (within ±20% tolerance).
-# This is checked in CityOwnedPropertiesInputSchema
-expected = 7796
-lower = int(expected * 0.8)
-upper = int(expected * 1.2)
+# Reference count for city owned properties
+CITY_OWNED_REFERENCE_COUNT = 7796
 
 CityOwnedPropertiesInputSchema = pa.DataFrameSchema(
     columns={
@@ -44,8 +41,8 @@ CityOwnedPropertiesInputSchema = pa.DataFrameSchema(
         ),
         "geometry": pa.Column("geometry"),
     },
-    checks=pa.Check(lambda df: lower <= df.shape[0] <= upper),
-    strict=True,
+    checks=row_count_check(CITY_OWNED_REFERENCE_COUNT, tolerance=0.1),
+    strict=False,
 )
 
 

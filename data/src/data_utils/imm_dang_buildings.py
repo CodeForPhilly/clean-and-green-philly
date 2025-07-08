@@ -4,7 +4,10 @@ from typing import Tuple
 import geopandas as gpd
 
 from src.validation.base import ValidationResult, validate_output
-from src.validation.imm_dang_buildings import ImmDangerOutputValidator
+from src.validation.imm_dang_buildings import (
+    ImmDangerInputValidator,
+    ImmDangerOutputValidator,
+)
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import IMMINENT_DANGER_BUILDINGS_QUERY
@@ -45,6 +48,7 @@ def imm_dang_buildings(
         name="Imminently Dangerous Buildings",
         carto_queries=IMMINENT_DANGER_BUILDINGS_QUERY,
         opa_col="opa_account_num",
+        validator=ImmDangerInputValidator(),
     )
 
     imm_dang_buildings, input_validation = loader.load_or_fetch()

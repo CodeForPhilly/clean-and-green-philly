@@ -4,7 +4,10 @@ import geopandas as gpd
 import pandas as pd
 
 from src.validation.base import ValidationResult, validate_output
-from src.validation.li_violations import LIViolationsOutputValidator
+from src.validation.li_violations import (
+    LIViolationsOutputValidator,
+    LIViolationsInputValidator,
+)
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import VIOLATIONS_SQL_QUERY
@@ -59,6 +62,7 @@ def li_violations(
         name="LI Violations",
         carto_queries=VIOLATIONS_SQL_QUERY,
         opa_col="opa_account_num",
+        validator=LIViolationsInputValidator(),
     )
 
     l_and_i_violations, input_validation = loader.load_or_fetch()

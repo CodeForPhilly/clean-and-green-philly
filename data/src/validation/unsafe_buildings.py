@@ -2,7 +2,7 @@ import geopandas as gpd
 import pandera.pandas as pa
 from pandera import Check
 
-from .base import BaseValidator
+from .base import BaseValidator, row_count_check
 
 # Define the Unsafe Buildings DataFrame Schema
 UnsafeBuildingsSchema = pa.DataFrameSchema(
@@ -31,11 +31,23 @@ UnsafeBuildingsSchema = pa.DataFrameSchema(
     strict=False,
 )
 
+# Reference count for unsafe buildings
+UNSAFE_BUILDINGS_REFERENCE_COUNT = 3520
+
+UnsafeBuildingsInputSchema = pa.DataFrameSchema(
+    columns={
+        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "geometry": pa.Column("geometry"),
+    },
+    checks=row_count_check(UNSAFE_BUILDINGS_REFERENCE_COUNT, tolerance=0.1),
+    strict=False,
+)
+
 
 class UnsafeBuildingsInputValidator(BaseValidator):
     """Validator for unsafe buildings service input."""
 
-    schema = None
+    schema = UnsafeBuildingsInputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass

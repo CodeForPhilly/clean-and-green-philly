@@ -1,7 +1,7 @@
 import geopandas as gpd
 import pandera.pandas as pa
 
-from .base import BaseValidator
+from .base import BaseValidator, row_count_check
 
 # Define the RCO Geoms DataFrame Schema
 RCOGeomsSchema = pa.DataFrameSchema(
@@ -23,11 +23,27 @@ RCOGeomsSchema = pa.DataFrameSchema(
     coerce=False,
 )
 
+# Reference count for RCO geoms
+RCO_GEOMS_REFERENCE_COUNT = 257
+
+RCOGeomsInputSchema = pa.DataFrameSchema(
+    columns={
+        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "geometry": pa.Column("geometry"),
+        "organization_name": pa.Column(str),
+        "organization_address": pa.Column(str),
+        "primary_email": pa.Column(str),
+        "primary_phone": pa.Column(str),
+    },
+    checks=row_count_check(RCO_GEOMS_REFERENCE_COUNT, tolerance=0.1),
+    strict=False,
+)
+
 
 class RCOGeomsInputValidator(BaseValidator):
     """Validator for rco geoms service input."""
 
-    schema = None  # No schema validation for input
+    schema = RCOGeomsInputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass

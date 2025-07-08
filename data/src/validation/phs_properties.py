@@ -1,7 +1,7 @@
 import geopandas as gpd
 import pandera.pandas as pa
 
-from .base import BaseValidator
+from .base import BaseValidator, row_count_check
 
 # Define the PHS Properties DataFrame Schema
 PHSPropertiesSchema = pa.DataFrameSchema(
@@ -25,11 +25,24 @@ PHSPropertiesSchema = pa.DataFrameSchema(
     coerce=True,
 )
 
+# Reference count for city owned properties
+PHS_REFERENCE_COUNT = 7796
+
+PHSPropertiesInputSchema = pa.DataFrameSchema(
+    columns={
+        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "geometry": pa.Column("geometry"),
+        "program": pa.Column(str, nullable=True),
+    },
+    checks=row_count_check(PHS_REFERENCE_COUNT, tolerance=0.1),
+    strict=False,
+)
+
 
 class PHSPropertiesInputValidator(BaseValidator):
     """Validator for PHS properties service input."""
 
-    schema = None  # No schema validation for input
+    schema = PHSPropertiesInputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass

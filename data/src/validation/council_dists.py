@@ -39,7 +39,7 @@ CouncilDistrictsInputSchema = pa.DataFrameSchema(
         lambda df: set(df["district"].dropna().unique())
         == {str(i) for i in range(1, 11)}
     ),
-    strict=True,
+    strict=False,
 )
 
 

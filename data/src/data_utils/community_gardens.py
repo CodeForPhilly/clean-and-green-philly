@@ -47,6 +47,7 @@ def community_gardens(
         name="Community Gardens",
         esri_urls=COMMUNITY_GARDENS_TO_LOAD,
         cols=["site_name"],
+        validator=CommunityGardensInputValidator(),
     )
 
     community_gardens, input_validation = loader.load_or_fetch()

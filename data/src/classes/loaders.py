@@ -386,6 +386,8 @@ class BaseLoader(ABC):
             cache_logger.info("Loading fresh data now...")
             gdf = self._load_fresh_data()
 
+        print(gdf.info())
+
         # Validation
         validation_start = time.time()
         validation_result = (

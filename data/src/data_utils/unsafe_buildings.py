@@ -4,7 +4,10 @@ from typing import Tuple
 import geopandas as gpd
 
 from src.validation.base import ValidationResult, validate_output
-from src.validation.unsafe_buildings import UnsafeBuildingsOutputValidator
+from src.validation.unsafe_buildings import (
+    UnsafeBuildingsOutputValidator,
+    UnsafeBuildingsInputValidator,
+)
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import UNSAFE_BUILDINGS_QUERY
@@ -44,6 +47,7 @@ def unsafe_buildings(
         name="Unsafe Buildings",
         carto_queries=UNSAFE_BUILDINGS_QUERY,
         opa_col="opa_account_num",
+        validator=UnsafeBuildingsInputValidator(),
     )
 
     unsafe_buildings, input_validation = loader.load_or_fetch()

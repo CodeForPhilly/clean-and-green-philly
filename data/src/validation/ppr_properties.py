@@ -3,17 +3,29 @@ import logging
 import geopandas as gpd
 import pandera.pandas as pa
 
-from .base import BaseValidator
+from .base import BaseValidator, row_count_check
 
 # Set up logging
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
+PPR_REFERENCE_COUNT = 507
+
+PPRPropertiesInputSchema = pa.DataFrameSchema(
+    columns={
+        "opa_id": pa.Column(pa.Int, checks=pa.Check(lambda s: s.dropna() != "")),
+        "geometry": pa.Column("geometry"),
+        "public_name": pa.Column(str, nullable=True),
+    },
+    checks=row_count_check(PPR_REFERENCE_COUNT, tolerance=0.1),
+    strict=False,
+)
+
 
 class PPRPropertiesInputValidator(BaseValidator):
     """Validator for PPR properties service input."""
 
-    schema = None
+    schema = PPRPropertiesInputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame):
         pass

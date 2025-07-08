@@ -5,7 +5,10 @@ import geopandas as gpd
 import requests
 
 from src.validation.base import ValidationResult, validate_output
-from src.validation.ppr_properties import PPRPropertiesOutputValidator
+from src.validation.ppr_properties import (
+    PPRPropertiesInputValidator,
+    PPRPropertiesOutputValidator,
+)
 
 from ..classes.loaders import EsriLoader, GdfLoader
 from ..constants.services import PPR_PROPERTIES_TO_LOAD
@@ -73,6 +76,7 @@ def ppr_properties(
             input=io.BytesIO(response.content),
             name="PPR Properties",
             cols=["public_name"],
+            validator=PPRPropertiesInputValidator(),
         )
         ppr_properties, input_validation = loader.load_or_fetch()
 
