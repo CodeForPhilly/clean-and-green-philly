@@ -4,6 +4,7 @@ from typing import Tuple
 import geopandas as gpd
 import requests
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.ppr_properties import PPRPropertiesOutputValidator
 
@@ -13,6 +14,7 @@ from ..utilities import spatial_join
 
 
 @validate_output(PPRPropertiesOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def ppr_properties(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -41,7 +43,7 @@ def ppr_properties(
         will fall back to loading the data from a GeoJSON URL
         https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, geometry, vacant, public_name
     """
     fallback_url = "https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson"

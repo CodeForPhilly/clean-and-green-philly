@@ -2,11 +2,13 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.tactical_urbanism import TacticalUrbanismOutputValidator
 
 
 @validate_output(TacticalUrbanismOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def tactical_urbanism(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -22,7 +24,7 @@ def tactical_urbanism(
     Columns Added:
         tactical_urbanism (bool): Indicates whether each property qualifies for tactical urbanism (True or False).
 
-    Columns Referenced:
+    Columns referenced:
         parcel_type, unsafe_building, imm_dang_building
 
     Tagline:

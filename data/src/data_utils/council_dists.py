@@ -3,6 +3,7 @@ from typing import Tuple
 import geopandas as gpd
 import pandas as pd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.council_dists import (
     CouncilDistrictsInputValidator,
@@ -17,6 +18,7 @@ pd.set_option("future.no_silent_downcasting", True)
 
 
 @validate_output(CouncilDistrictsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def council_dists(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -37,7 +39,7 @@ def council_dists(
     Columns added:
         district (str): The council district associated with the property.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, geometry
     """
 

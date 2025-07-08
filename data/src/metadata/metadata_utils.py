@@ -272,3 +272,6 @@ def provide_metadata(current_metadata: List[dict[str, Any]]):
         return wrapper
 
     return decorator
+
+
+current_metadata: List[dict] = []

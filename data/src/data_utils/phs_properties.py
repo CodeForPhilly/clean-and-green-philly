@@ -2,6 +2,7 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.phs_properties import PHSPropertiesOutputValidator
 
@@ -11,6 +12,7 @@ from ..utilities import spatial_join
 
 
 @validate_output(PHSPropertiesOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def phs_properties(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -31,7 +33,7 @@ def phs_properties(
     Columns added:
         phs_care_program (str): The PHS care program associated with the property.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, geometry
     """
 

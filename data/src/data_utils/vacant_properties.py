@@ -6,6 +6,7 @@ import geopandas as gpd
 import pandas as pd
 
 from src.config.config import ROOT_DIRECTORY
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.vacant_properties import VacantPropertiesOutputValidator
 
@@ -96,6 +97,7 @@ def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05) -> None:
 
 
 @validate_output(VacantPropertiesOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def vacant_properties(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -115,7 +117,7 @@ def vacant_properties(
     Columns Added:
         vacant (bool): Indicates whether the property is vacant.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id
 
     Known Issues:

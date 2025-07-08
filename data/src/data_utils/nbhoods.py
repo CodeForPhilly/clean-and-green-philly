@@ -2,6 +2,7 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.nbhoods import NeighborhoodsOutputValidator
 
@@ -11,6 +12,7 @@ from ..utilities import spatial_join
 
 
 @validate_output(NeighborhoodsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def nbhoods(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds neighborhood information to the input GeoDataFrame by performing a spatial join
@@ -29,7 +31,7 @@ def nbhoods(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, ValidationRe
     Columns added:
         neighborhood (str): The name of the neighborhood associated with the property.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, geometry
 
     Source:

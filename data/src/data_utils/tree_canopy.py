@@ -7,6 +7,7 @@ import geopandas as gpd
 import requests
 
 from src.classes.file_manager import FileManager, LoadType
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.tree_canopy import TreeCanopyOutputValidator
 
@@ -17,6 +18,7 @@ file_manager = FileManager()
 
 
 @validate_output(TreeCanopyOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def tree_canopy(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -37,7 +39,7 @@ def tree_canopy(
     Columns added:
         tree_canopy_gap (float): The amount of tree canopy lacking.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, geometry
 
     Source:

@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 
 from src.config.config import USE_CRS
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.dev_probability import DevProbabilityOutputValidator
 
@@ -15,6 +16,7 @@ from ..utilities import spatial_join
 
 
 @validate_output(DevProbabilityOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def dev_probability(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -37,7 +39,7 @@ def dev_probability(
         permit_count (int): The number of permits issued in the census block group.
         dev_rank (str): The development rank of the census block group.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, geometry
 
     Source:

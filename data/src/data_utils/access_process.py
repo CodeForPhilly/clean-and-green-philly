@@ -3,11 +3,13 @@ from typing import Tuple
 import geopandas as gpd
 import pandas as pd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.access_process import AccessProcessOutputValidator
 from src.validation.base import ValidationResult, validate_output
 
 
 @validate_output(AccessProcessOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def access_process(
     dataset: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -30,7 +32,7 @@ def access_process(
         access_process (str): The access process for each property based on city ownership and market value.
         Will be NA for non-vacant properties.
 
-    Columns Referenced:
+    Columns referenced:
         city_owner_agency, market_value, vacant
 
     Side Effects:

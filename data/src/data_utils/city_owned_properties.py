@@ -3,6 +3,7 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.city_owned_properties import (
     CityOwnedPropertiesInputValidator,
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 @validate_output(CityOwnedPropertiesOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def city_owned_properties(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -37,7 +39,7 @@ def city_owned_properties(
         city_owner_agency (str): The agency that owns the city property.
         side_yard_eligible (bool): Indicates if the property is eligible for the side yard program.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, owner_1, owner2
 
     Tagline:

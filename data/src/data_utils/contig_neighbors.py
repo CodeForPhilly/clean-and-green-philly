@@ -6,6 +6,7 @@ import networkx as nx
 import numpy as np
 from libpysal.weights import Queen
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.contig_neighbors import ContigNeighborsOutputValidator
 
@@ -13,6 +14,7 @@ from ..utilities import opa_join
 
 
 @validate_output(ContigNeighborsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def contig_neighbors(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -32,7 +34,7 @@ def contig_neighbors(
     Columns Added:
         n_contiguous (int): The number of contiguous vacant neighbors for each property.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, vacant
     """
     print(f"[DEBUG] contig_neighbors: Starting with {len(input_gdf)} properties")

@@ -3,11 +3,13 @@ from typing import Tuple
 import geopandas as gpd
 import pandas as pd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.owner_type import OwnerTypeOutputValidator
 
 
 @validate_output(OwnerTypeOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def owner_type(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -36,7 +38,7 @@ def owner_type(
         owner_type (str): The ownership type of the property: Public, Nonprofit/Civic,
                          Business (LLC), or Individual.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, owner_1, owner_2, city_owner_agency, standardized_mailing_address
     """
     owner_types = []

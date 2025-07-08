@@ -3,6 +3,7 @@ from typing import Tuple
 import geopandas as gpd
 import pandas as pd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.delinquencies import DelinquenciesOutputValidator
 
@@ -12,6 +13,7 @@ from ..utilities import opa_join
 
 
 @validate_output(DelinquenciesOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def delinquencies(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -41,7 +43,7 @@ def delinquencies(
         sheriff_sale (bool): Indicates if the property is at risk of sheriff sale.
         total_assessment (float): Total property assessment.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id
     """
 

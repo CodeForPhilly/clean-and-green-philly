@@ -2,6 +2,7 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.pwd_parcels import PWDParcelsOutputValidator
 
@@ -83,6 +84,7 @@ def merge_pwd_parcels_gdf(
 
 
 @validate_output(PWDParcelsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def pwd_parcels(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -109,7 +111,7 @@ def pwd_parcels(
         geometry: The geometry column is updated with validated geometries from PWD parcels.
                  Condo units retain their original point geometries.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, geometry
 
     Tagline:

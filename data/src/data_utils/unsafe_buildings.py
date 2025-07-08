@@ -3,6 +3,7 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.unsafe_buildings import UnsafeBuildingsOutputValidator
 
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 
 @validate_output(UnsafeBuildingsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def unsafe_buildings(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -34,7 +36,7 @@ def unsafe_buildings(
     Columns Added:
         unsafe_building (bool): Indicates whether each property is categorized as an unsafe building (True or False).
 
-    Columns Referenced:
+    Columns referenced:
         opa_id
 
     Source:

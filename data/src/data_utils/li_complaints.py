@@ -2,6 +2,7 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.li_complaints import LIComplaintsOutputValidator
 
@@ -10,6 +11,7 @@ from ..data_utils.kde import apply_kde_to_input
 
 
 @validate_output(LIComplaintsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def li_complaints(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -32,7 +34,7 @@ def li_complaints(
         l_and_i_complaints_density_label (str): Categorized density level.
         l_and_i_complaints_density_percentile (float): Percentile rank of density.
 
-    Columns Referenced:
+    Columns referenced:
         geometry
 
     Source:

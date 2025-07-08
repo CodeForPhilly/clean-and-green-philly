@@ -5,6 +5,7 @@ import geopandas as gpd
 import pytz
 from dateutil.parser import parse
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.conservatorship import ConservatorshipOutputValidator
 
@@ -15,6 +16,7 @@ six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astime
 
 
 @validate_output(ConservatorshipOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def conservatorship(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -27,7 +29,7 @@ def conservatorship(
     Columns Added:
         conservatorship (bool): Indicates whether each property qualifies for conservatorship (True or False).
 
-    Columns Referenced:
+    Columns referenced:
         city_owner_agency, sheriff_sale, market_value, all_violations_past_year, sale_date
 
     Tagline:

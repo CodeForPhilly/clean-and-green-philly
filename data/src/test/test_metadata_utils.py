@@ -34,7 +34,7 @@ def stub_update_vacant_community(primary_featurelayer):
     Columns updated:
         vacant: Updated to False for parcels containing community gardens.
 
-    Columns Referenced:
+    Columns referenced:
         vacant, ipa_id
     """
     pass
@@ -252,7 +252,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "columns added": [],
                     "source": "",
                     "known issues": "",
-                    "Columns Referenced": ["vacant", "ipa_id"],
+                    "Columns referenced": ["vacant", "ipa_id"],
                 },
             ),
             (
@@ -265,7 +265,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "columns added": [],
                     "columns updated": [],
                     "known issues": "",
-                    "Columns Referenced": [],
+                    "Columns referenced": [],
                 },
             ),
             (
@@ -279,7 +279,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "columns added": "list_of_12",
                     "columns updated": [],
                     "known issues": "",
-                    "Columns Referenced": [],
+                    "Columns referenced": [],
                 },
             ),
             (
@@ -302,7 +302,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "known issues": (
                         "If the Ersi REST URL is not available the function"  # NOTE: because the next line has a colon, only the first line is captured
                     ),
-                    "Columns Referenced": [],
+                    "Columns referenced": [],
                 },
             ),
             (
@@ -326,7 +326,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "columns updated": [],
                     "source": "",
                     "known issues": "",
-                    "Columns Referenced": [],
+                    "Columns referenced": [],
                 },
             ),
             (
@@ -339,7 +339,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "columns updated": [],
                     "source": "",
                     "known issues": "",
-                    "Columns Referenced": [],
+                    "Columns referenced": [],
                 },
             ),
         ]

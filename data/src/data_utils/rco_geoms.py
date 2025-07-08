@@ -4,6 +4,7 @@ from typing import Tuple
 import geopandas as gpd
 import pandas as pd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.rco_geoms import RCOGeomsOutputValidator
 
@@ -17,6 +18,7 @@ logger = logging.getLogger(__name__)
 
 
 @validate_output(RCOGeomsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def rco_geoms(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Adds Registered Community Organization (RCO) information to the input GeoDataFrame
@@ -42,7 +44,7 @@ def rco_geoms(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, Validation
     Notes:
         Modifies various columns. Fillna and infer_objects is applied to most columns.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, geometry
     """
     loader = EsriLoader(name="RCOs", esri_urls=RCOS_LAYERS_TO_LOAD)

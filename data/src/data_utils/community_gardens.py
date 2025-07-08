@@ -3,6 +3,7 @@ from typing import Tuple
 import geopandas as gpd
 
 from src.constants.city_limits import PHL_GEOMETRY
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.community_gardens import (
     CommunityGardensInputValidator,
@@ -15,6 +16,7 @@ from ..utilities import spatial_join
 
 
 @validate_output(CommunityGardensOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def community_gardens(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -36,7 +38,7 @@ def community_gardens(
     Columns updated:
         vacant: Updated to False for parcels containing community gardens.
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, vacant
 
     Source:

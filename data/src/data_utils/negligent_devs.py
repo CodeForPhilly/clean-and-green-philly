@@ -2,11 +2,13 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.negligent_devs import NegligentDevsOutputValidator
 
 
 @validate_output(NegligentDevsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def negligent_devs(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -26,7 +28,7 @@ def negligent_devs(
                                             per year for that developer (not limited to open violations
                                             or open properties)
 
-    Columns Referenced:
+    Columns referenced:
         opa_id, vacant, city_owner_agency, standardized_mailing_address, all_violations_past_year
 
     Tagline:
