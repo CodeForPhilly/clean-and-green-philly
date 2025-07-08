@@ -19,14 +19,14 @@ def li_violations(
     Process L&I (Licenses and Inspections) data for violations.
 
     This function filters and processes L&I violations data,
-    joining it with the primary feature layer based on spatial relationships
+    joining it with the input GeoDataFrame based on spatial relationships
     and OPA (Office of Property Assessment) identifiers.
 
     Args:
-        primary_featurelayer (FeatureLayer): The primary feature layer to join L&I data to.
+        input_gdf (GeoDataFrame): The input GeoDataFrame to join L&I data to.
 
     Returns:
-        FeatureLayer: The primary feature layer updated with L&I data.
+        GeoDataFrame: The input GeoDataFrame updated with L&I data.
 
     Tagline:
         Counts L&I violations
@@ -38,7 +38,7 @@ def li_violations(
     Source:
         https://phl.carto.com/api/v2/sql
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         opa_id
     """
     keywords: List[str] = [

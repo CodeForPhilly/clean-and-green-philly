@@ -4,6 +4,7 @@ import re
 import sys
 import time
 from datetime import datetime, timezone
+from typing import Any, List
 
 import geopandas as gpd
 
@@ -21,12 +22,12 @@ METADATA_FIELDS = [
     "columns updated",
     "source",
     "known issues",
-    "primary feature layer columns referenced",
+    "columns referenced",
 ]
 METADATA_FIELD_TYPES = {
     "columns added": "columns",  # with types
     "columns updated": "columns",  # without types
-    "primary feature layer columns referenced": "column_names",
+    "columns referenced": "column_names",
 }
 
 
@@ -158,7 +159,9 @@ def parse_docstring(docstring):
     return result
 
 
-def detect_added_columns(df_before, df_after):
+def detect_added_columns(
+    df_before: gpd.GeoDataFrame, df_after: gpd.GeoDataFrame
+) -> set[str]:
     """
     Detects columns that have been added in df_after compared to df_before.
     Handles cases where df_before is None or empty.
@@ -168,13 +171,14 @@ def detect_added_columns(df_before, df_after):
     return set(df_after.columns) - set(df_before.columns)
 
 
-def provide_metadata():
+def provide_metadata(current_metadata: List[dict[str, Any]]):
     """
     Decorator to collect metadata from ETL functions.
 
-    The collected metadata is stored in the`collected_metadata` attribute of the FeatureLayer object.
+    The collected metadata is stored in the an inputted `current_metadata` object that is passed into
+    each decorator attached to a data service.
 
-    Apply this decorator by adding `@provide_metadata()` above the function definition.
+    Apply this decorator by adding `@provide_metadata(current_metadata)` above the function definition.
 
     The metadata collects info from the docstring in the following format:
 
@@ -197,7 +201,7 @@ def provide_metadata():
     Columns updated:
         column_name: Description of how this column was changed.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         column_name (data_type): Description of how this column is referenced.
 
     Source:
@@ -211,31 +215,21 @@ def provide_metadata():
 
     def decorator(func):
         @functools.wraps(func)
-        def wrapper(primary_featurelayer=None):
+        def wrapper(gdf: gpd.GeoDataFrame):
             # Run the function and collect metadata
             # including start time, end time, and duration
 
-            if (
-                primary_featurelayer is None
-                or not hasattr(primary_featurelayer, "gdf")
-                or primary_featurelayer.gdf is None
-            ):
-                gdf_before = gpd.GeoDataFrame()
-                current_metadata = []
-            else:
-                gdf_before = primary_featurelayer.gdf.copy()
-                current_metadata = primary_featurelayer.collected_metadata
+            start_gdf = gdf if not gdf.empty else gpd.GeoDataFrame()
+
             start_time_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
             start_time = time.time()
-            if primary_featurelayer is None:
-                primary_featurelayer = func()
-            else:
-                primary_featurelayer = func(primary_featurelayer)
+
+            end_gdf, validation = func(gdf)
+
             end_time = time.time()
             end_time_str = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
             try:
-                gdf_after = primary_featurelayer.gdf.copy()
-                detected_columns_added = detect_added_columns(gdf_before, gdf_after)
+                detected_columns_added = detect_added_columns(start_gdf, end_gdf)
 
                 func_name = func.__name__
                 doc_meta = parse_docstring(func.__doc__)
@@ -260,7 +254,8 @@ def provide_metadata():
                         f"Listed in docstring: {names_of_columns_added}"
                     )
 
-                primary_featurelayer.collected_metadata = current_metadata + [metadata]
+                current_metadata.append(metadata)
+
             except Exception as e:
                 print("Failed to collect metadata for", func.__name__)
                 print(type(e), e)
@@ -269,9 +264,10 @@ def provide_metadata():
                     "name": func.__name__,
                     "description": "Failed to collect metadata",
                 }
-                primary_featurelayer.collected_metadata = current_metadata + [metadata]
 
-            return primary_featurelayer
+                current_metadata.append(metadata)
+
+            return end_gdf, validation
 
         return wrapper
 

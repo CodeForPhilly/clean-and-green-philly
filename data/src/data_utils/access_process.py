@@ -30,7 +30,7 @@ def access_process(
         access_process (str): The access process for each property based on city ownership and market value.
         Will be NA for non-vacant properties.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         city_owner_agency, market_value, vacant
 
     Side Effects:

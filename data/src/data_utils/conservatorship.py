@@ -19,22 +19,22 @@ def conservatorship(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Determines conservatorship eligibility for properties in a feature layer.
+    Determines conservatorship eligibility for properties in a GeoDataFrame.
 
     Args:
-        primary_featurelayer (FeatureLayer): A feature layer containing property data in a GeoDataFrame (`gdf`).
+        input_gdf (GeoDataFrame): A GeoDataFrame containing property data in a GeoDataFrame (`gdf`).
 
     Columns Added:
         conservatorship (bool): Indicates whether each property qualifies for conservatorship (True or False).
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         city_owner_agency, sheriff_sale, market_value, all_violations_past_year, sale_date
 
     Tagline:
         Identify conservatorship-eligible properties
 
     Returns:
-        FeatureLayer: The input feature layer with an added "conservatorship" column indicating
+        GeoDataFrame: The input GeoDataFrame with an added "conservatorship" column indicating
         whether each property qualifies for conservatorship (True or False).
     """
     conservatorships = []

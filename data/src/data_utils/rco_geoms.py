@@ -19,14 +19,14 @@ logger = logging.getLogger(__name__)
 @validate_output(RCOGeomsOutputValidator)
 def rco_geoms(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Adds Registered Community Organization (RCO) information to the primary feature layer
+    Adds Registered Community Organization (RCO) information to the input GeoDataFrame
     by performing a spatial join and aggregating RCO data.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with added RCO-related columns,
+        GeoDataFrame: The input GeoDataFrame with added RCO-related columns,
         including aggregated RCO information and names.
 
     Tagline:
@@ -42,7 +42,7 @@ def rco_geoms(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, Validation
     Notes:
         Modifies various columns. Fillna and infer_objects is applied to most columns.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         opa_id, geometry
     """
     loader = EsriLoader(name="RCOs", esri_urls=RCOS_LAYERS_TO_LOAD)

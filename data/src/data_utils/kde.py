@@ -138,7 +138,7 @@ def generic_kde(
     Returns:
         Tuple[str, np.ndarray]: The raster filename and the array of input points.
     """
-    performance_logger.info(f"Initializing FeatureLayer for {name}")
+    performance_logger.info(f"Initializing GeoDataFrame for {name}")
 
     # Profile data loading
     with profile_section("Data Loading"):
@@ -250,18 +250,18 @@ def apply_kde_to_input(
     batch_size: int = batch_size,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Applies KDE to the primary feature layer and adds columns for density, z-score,
+    Applies KDE to the input GeoDataFrame and adds columns for density, z-score,
     percentile, and percentile as a string.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
         name (str): Name of the KDE feature.
         query (str): SQL query to fetch data for KDE.
         resolution (int): Resolution for the KDE raster grid.
         batch_size (int): Batch size for processing grid points.
 
     Returns:
-        FeatureLayer: The input feature layer with added KDE-related columns.
+        GeoDataFrame: The input GeoDataFrame with added KDE-related columns.
     """
     raster_filename, crime_coords, input_validation = generic_kde(
         name, query, resolution, batch_size

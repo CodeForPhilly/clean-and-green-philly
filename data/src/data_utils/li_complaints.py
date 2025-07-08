@@ -14,13 +14,13 @@ def li_complaints(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Applies kernel density estimation (KDE) analysis for L&I complaints to the primary feature layer.
+    Applies kernel density estimation (KDE) analysis for L&I complaints to the input GeoDataFrame.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with KDE analysis results for L&I complaints,
+        GeoDataFrame: The input GeoDataFrame with KDE analysis results for L&I complaints,
         including density and derived metrics.
 
     Tagline:
@@ -32,7 +32,7 @@ def li_complaints(
         l_and_i_complaints_density_label (str): Categorized density level.
         l_and_i_complaints_density_percentile (float): Percentile rank of density.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         geometry
 
     Source:

@@ -139,7 +139,7 @@ def park_priority(
     Columns Added:
         park_priority (float): The park priority score from TPL's analysis.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         opa_id, geometry
 
     Source:

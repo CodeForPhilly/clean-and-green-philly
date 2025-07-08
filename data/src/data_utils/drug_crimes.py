@@ -14,13 +14,13 @@ def drug_crimes(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Applies kernel density estimation (KDE) analysis for drug crimes to the primary feature layer.
+    Applies kernel density estimation (KDE) analysis for drug crimes to the input GeoDataFrame.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with KDE analysis results for drug crimes.
+        GeoDataFrame: The input GeoDataFrame with KDE analysis results for drug crimes.
 
     Tagline:
         Density analysis for drug crimes
@@ -31,7 +31,7 @@ def drug_crimes(
         drug_crimes_density_label (str): Categorized density level.
         drug_crimes_density_percentile (float): Percentile rank of density.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         geometry
 
     Source:

@@ -23,7 +23,7 @@ from src.validation.base import ValidationResult
 
 class TestDataUtils(unittest.TestCase):
     """
-    Test methods for data utils feature layer classes
+    Test methods for data utils GeoDataFrame classes
     """
 
     @classmethod
@@ -408,7 +408,7 @@ class TestDataUtils(unittest.TestCase):
     def test_pwd_parcels_merge(self):
         """
         This tests that the merge_pwd_parcels_gdf function correctly retains
-        existing point geometries in the primary GeoDataFrame when no better
+        existing point geometries in the input GeoDataFrame when no better
         geometry is available in the PWD parcels GeoDataFrame.
         """
 

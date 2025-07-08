@@ -18,14 +18,14 @@ def unsafe_buildings(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Adds unsafe building information to the primary feature layer by joining with a dataset
+    Adds unsafe building information to the input GeoDataFrame by joining with a dataset
     of unsafe buildings.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with an added "unsafe_building" column,
+        GeoDataFrame: The input GeoDataFrame with an added "unsafe_building" column,
         indicating whether each property is categorized as an unsafe building ("Y" or "N").
 
     Tagline:
@@ -34,7 +34,7 @@ def unsafe_buildings(
     Columns Added:
         unsafe_building (bool): Indicates whether each property is categorized as an unsafe building (True or False).
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         opa_id
 
     Source:
@@ -101,7 +101,7 @@ def unsafe_buildings(
             f"Deduplicated unsafe buildings: {before_dedup} -> {after_dedup} records (removed {before_dedup - after_dedup} duplicates)"
         )
 
-    # Join unsafe buildings data with primary feature layer
+    # Join unsafe buildings data with input GeoDataFrame
     merged_gdf = opa_join(input_gdf, unsafe_buildings)
 
     # Fill missing values with False for non-unsafe buildings and convert to boolean

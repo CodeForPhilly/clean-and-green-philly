@@ -14,13 +14,13 @@ def gun_crimes(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Applies kernel density estimation (KDE) analysis for gun crimes to the primary feature layer.
+    Applies kernel density estimation (KDE) analysis for gun crimes to the input GeoDataFrame.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with KDE analysis results for gun crimes.
+        GeoDataFrame: The input GeoDataFrame with KDE analysis results for gun crimes.
 
     Tagline:
         Analyzes gun crime density
@@ -31,7 +31,7 @@ def gun_crimes(
         gun_crimes_density_label (str): Categorized density level.
         gun_crimes_density_percentile (float): Percentile rank of density.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         geometry
 
     Source:

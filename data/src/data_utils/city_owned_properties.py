@@ -5,8 +5,8 @@ import geopandas as gpd
 
 from src.validation.base import ValidationResult, validate_output
 from src.validation.city_owned_properties import (
-    CityOwnedPropertiesOutputValidator,
     CityOwnedPropertiesInputValidator,
+    CityOwnedPropertiesOutputValidator,
 )
 
 from ..classes.loaders import EsriLoader
@@ -21,23 +21,23 @@ def city_owned_properties(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Processes city-owned property data by joining it with the primary feature layer,
+    Processes city-owned property data by joining it with the input dataframe,
     renaming columns, and updating access information for properties based on ownership.
     All instances where the "city_owner_agency" is "PLB" are changed to "Land Bank (PHDC)".
 
     Args:
-        primary_featurelayer (FeatureLayer): The primary feature layer to which city-owned
+        input_gdf (GeoDataFrame): The GeoDataFrame to which city-owned
                                              property data will be joined.
 
     Returns:
-        FeatureLayer: The updated primary feature layer with processed city ownership
+        GeoDataFrame: The updated GeoDataFrame with processed city ownership
                       information.
 
     Columns added:
         city_owner_agency (str): The agency that owns the city property.
         side_yard_eligible (bool): Indicates if the property is eligible for the side yard program.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         opa_id, owner_1, owner2
 
     Tagline:

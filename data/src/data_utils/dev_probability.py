@@ -21,13 +21,13 @@ def dev_probability(
     """
     Calculates development probability based on permit counts and assigns
     development ranks to census block groups. The results are joined to the
-    primary feature layer.
+    input GeoDataFrame.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with added spatial join data for
+        GeoDataFrame: The input GeoDataFrame with added spatial join data for
         development probability and ranks.
 
     Tagline:
@@ -37,7 +37,7 @@ def dev_probability(
         permit_count (int): The number of permits issued in the census block group.
         dev_rank (str): The development rank of the census block group.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         opa_id, geometry
 
     Source:

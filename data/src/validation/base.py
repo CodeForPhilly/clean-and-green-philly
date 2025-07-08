@@ -3,7 +3,7 @@ import logging
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Tuple
 
 import geopandas as gpd
 import pandas as pd
@@ -680,11 +680,13 @@ class BaseKDEValidator(BaseValidator):
 
 
 def validate_output(
-    validator_cls: BaseValidator,
+    validator_cls: type[BaseValidator],
 ):
-    def decorator(func: Callable[[gpd.GeoDataFrame], gpd.GeoDataFrame]):
+    def decorator(
+        func: Callable[[gpd.GeoDataFrame], Tuple[gpd.GeoDataFrame, ValidationResult]],
+    ):
         @functools.wraps(func)
-        def wrapper(gdf: gpd.GeoDataFrame = None, *args, **kwargs):
+        def wrapper(gdf: gpd.GeoDataFrame, *args, **kwargs):
             decorator_start = time.time()
 
             # Create validator

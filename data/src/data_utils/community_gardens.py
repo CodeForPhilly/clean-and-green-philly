@@ -19,15 +19,15 @@ def community_gardens(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Updates the 'vacant' column in the primary feature layer to ensure community gardens
+    Updates the 'vacant' column in the input dataframe to ensure community gardens
     are marked as not vacant. This protects known community gardens from being categorized
     as vacant, preventing potential predatory development.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The input GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with the 'vacant' column updated to False
+        GeoDataFrame: The input GeoDataFrame with the 'vacant' column updated to False
         for parcels containing community gardens.
 
     Tagline:
@@ -36,7 +36,7 @@ def community_gardens(
     Columns updated:
         vacant: Updated to False for parcels containing community gardens.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         opa_id, vacant
 
     Source:

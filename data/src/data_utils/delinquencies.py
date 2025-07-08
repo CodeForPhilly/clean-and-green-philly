@@ -16,14 +16,14 @@ def delinquencies(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Adds property tax delinquency information to the primary feature layer by
+    Adds property tax delinquency information to the input GeoDataFrame by
     joining with a tax delinquencies dataset.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with added columns for tax delinquency
+        GeoDataFrame: The input GeoDataFrame with added columns for tax delinquency
         information, including total due, actionable status, payment agreements, and more.
 
     Tagline:
@@ -41,7 +41,7 @@ def delinquencies(
         sheriff_sale (bool): Indicates if the property is at risk of sheriff sale.
         total_assessment (float): Total property assessment.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         opa_id
     """
 

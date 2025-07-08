@@ -22,7 +22,7 @@ def stub_update_vacant_community(primary_featurelayer):
     as vacant, preventing potential predatory development.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The feature layer containing property data.
 
     Returns:
         FeatureLayer: The input feature layer with the 'vacant' column updated to False
@@ -34,7 +34,7 @@ def stub_update_vacant_community(primary_featurelayer):
     Columns updated:
         vacant: Updated to False for parcels containing community gardens.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         vacant, ipa_id
     """
     pass
@@ -45,7 +45,7 @@ def stub_kde_analysis(primary_featurelayer):
     Applies kernel density estimation (KDE) analysis for drug crimes to the primary feature layer.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The feature layer containing property data.
 
     Returns:
         FeatureLayer: The input feature layer with KDE analysis results for drug crimes.
@@ -95,7 +95,7 @@ def stub_update_vacant_ppr(primary_featurelayer):
     are marked as not vacant. This prevents PPR properties from being miscategorized as vacant.
 
     Args:
-        primary_featurelayer (FeatureLayer): The primary feature layer to update.
+        input_gdf (GeoDataFrame): The primary feature layer to update.
 
     Returns:
         FeatureLayer: The updated primary feature layer.
@@ -122,7 +122,7 @@ def stub_columns_added_variation(primary_featurelayer):
     Function with a docstring that uses 'Columns Added:' key variation.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer.
+        input_gdf (GeoDataFrame): The feature layer.
 
     Returns:
         FeatureLayer: The updated feature layer.
@@ -142,7 +142,7 @@ def stub_only_args_and_returns(primary_featurelayer):
     Function with only args and returns sections.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer.
+        input_gdf (GeoDataFrame): The feature layer.
 
     Returns:
         FeatureLayer: The updated feature layer.
@@ -157,7 +157,7 @@ def sample_add_columns(primary_featurelayer):
     Adds columns to the primary feature layer.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer to update.
+        input_gdf (GeoDataFrame): The feature layer to update.
 
     Returns:
         FeatureLayer: The updated primary feature layer.
@@ -252,7 +252,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "columns added": [],
                     "source": "",
                     "known issues": "",
-                    "primary feature layer columns referenced": ["vacant", "ipa_id"],
+                    "Columns Referenced": ["vacant", "ipa_id"],
                 },
             ),
             (
@@ -265,7 +265,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "columns added": [],
                     "columns updated": [],
                     "known issues": "",
-                    "primary feature layer columns referenced": [],
+                    "Columns Referenced": [],
                 },
             ),
             (
@@ -279,7 +279,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "columns added": "list_of_12",
                     "columns updated": [],
                     "known issues": "",
-                    "primary feature layer columns referenced": [],
+                    "Columns Referenced": [],
                 },
             ),
             (
@@ -302,7 +302,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "known issues": (
                         "If the Ersi REST URL is not available the function"  # NOTE: because the next line has a colon, only the first line is captured
                     ),
-                    "primary feature layer columns referenced": [],
+                    "Columns Referenced": [],
                 },
             ),
             (
@@ -326,7 +326,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "columns updated": [],
                     "source": "",
                     "known issues": "",
-                    "primary feature layer columns referenced": [],
+                    "Columns Referenced": [],
                 },
             ),
             (
@@ -339,7 +339,7 @@ class TestMetadataUtils(unittest.TestCase):
                     "columns updated": [],
                     "source": "",
                     "known issues": "",
-                    "primary feature layer columns referenced": [],
+                    "Columns Referenced": [],
                 },
             ),
         ]

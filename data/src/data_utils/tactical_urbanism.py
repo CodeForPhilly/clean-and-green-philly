@@ -11,25 +11,25 @@ def tactical_urbanism(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Assigns a 'tactical_urbanism' value to each row in the primary feature layer based on specific conditions.
+    Assigns a 'tactical_urbanism' value to each row in the input GeoDataFrame based on specific conditions.
 
     Tactical urbanism is marked as True if the property is a parcel of type 'Land',
     and does not have any unsafe or immediately dangerous buildings. Otherwise, it is False.
 
     Args:
-        primary_featurelayer: A FeatureLayer object containing a GeoDataFrame (`gdf`) as an attribute.
+        primary_featurelayer: A GeoDataFrame object containing a GeoDataFrame (`gdf`) as an attribute.
 
     Columns Added:
         tactical_urbanism (bool): Indicates whether each property qualifies for tactical urbanism (True or False).
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         parcel_type, unsafe_building, imm_dang_building
 
     Tagline:
         Identify tactical urbanism-eligible properties
 
     Returns:
-        The input FeatureLayer with a new column 'tactical_urbanism' added to its GeoDataFrame.
+        The input GeoDataFrame with a new column 'tactical_urbanism' added to its GeoDataFrame.
     """
     tactical_urbanism_values = []
 

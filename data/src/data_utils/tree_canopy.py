@@ -21,14 +21,14 @@ def tree_canopy(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Adds tree canopy gap information to the primary feature layer by downloading,
+    Adds tree canopy gap information to the input GeoDataFrame by downloading,
     processing, and spatially joining tree canopy data for Philadelphia County.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with an added "tree_canopy_gap" column
+        GeoDataFrame: The input GeoDataFrame with an added "tree_canopy_gap" column
         indicating the tree canopy gap for each property.
 
     Tagline:
@@ -37,7 +37,7 @@ def tree_canopy(
     Columns added:
         tree_canopy_gap (float): The amount of tree canopy lacking.
 
-    Primary Feature Layer Columns Referenced:
+    Columns Referenced:
         opa_id, geometry
 
     Source:
