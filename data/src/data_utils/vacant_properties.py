@@ -210,6 +210,11 @@ def vacant_properties(
     # Final check for null percentages
     check_null_percentage(df)
 
+    # Filter out specific properties that have been flagged as not vacant by owners
+    # Property 372086100 was flagged for us by the owner on July 8th, 2025 via email
+    df = df[df["opa_id"] != "372086100"]
+    print("Filtered out property 372086100 as requested by owner (July 8th, 2025)")
+
     # Add "vacant" column to input GeoDataFrame
     input_gdf["vacant"] = input_gdf["opa_id"].isin(df["opa_id"])
 

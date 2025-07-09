@@ -3,7 +3,7 @@ import threading
 from contextlib import contextmanager
 from pathlib import Path
 
-FORCE_RELOAD = False
+FORCE_RELOAD = True
 """ During the data load, whether to query the various GIS API services for the data to load. If True, will query the
 API services and report on data differences.  If false will read the cached data."""
 
@@ -20,10 +20,7 @@ log_level: int = logging.WARN
 """ overall log level for the project """
 
 # Centralized logger configuration
-ENABLED_LOGGERS = {
-    "pipeline",
-    "data_quality",
-}
+ENABLED_LOGGERS = {}
 """ Set of enabled logger types. Add/remove logger types to control what logging is active.
 Available types: "cache", "performance", "pipeline", "geometry_debug", "data_quality"
 Examples:

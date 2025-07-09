@@ -25,6 +25,183 @@ from src.config.config import (
 from src.validation.base import BaseValidator, ValidationResult
 
 
+def generate_pmtiles(
+    gdf: gpd.GeoDataFrame,
+    tiles_file_id_prefix: str,
+    upload_to_gcs: bool = True,
+    save_locally: bool = False,
+    local_file_manager: Optional[FileManager] = None,
+    local_file_label: Optional[str] = None,
+) -> str:
+    """
+    Generate PMTiles from a GeoDataFrame with options to upload to GCS and/or save locally.
+
+    Args:
+        gdf (gpd.GeoDataFrame): The GeoDataFrame to convert to PMTiles
+        tiles_file_id_prefix (str): The ID prefix used for naming the PMTiles files
+        upload_to_gcs (bool): Whether to upload to Google Cloud Storage
+        save_locally (bool): Whether to save a local copy
+        local_file_manager (Optional[FileManager]): File manager for local saving
+        local_file_label (Optional[str]): File label for local saving
+
+    Returns:
+        str: Path to the generated PMTiles file
+
+    Raises:
+        ValueError: Raised if the generated PMTiles file is smaller than the minimum allowed size
+    """
+    pipeline_logger = get_logger("pipeline")
+    pipeline_logger.info("Starting PMTiles generation.")
+
+    zoom_threshold: int = 13
+
+    # Export the GeoDataFrame to temporary GeoJSON files
+    temp_geojson_points: str = (
+        f"storage/temp/temp_{tiles_file_id_prefix}_points.geojson"
+    )
+    temp_geojson_polygons: str = (
+        f"storage/temp/temp_{tiles_file_id_prefix}_polygons.geojson"
+    )
+    temp_pmtiles_points: str = (
+        f"storage/temp/temp_{tiles_file_id_prefix}_points.pmtiles"
+    )
+    temp_pmtiles_polygons: str = (
+        f"storage/temp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
+    )
+    temp_merged_pmtiles: str = (
+        f"storage/temp/temp_{tiles_file_id_prefix}_merged.pmtiles"
+    )
+
+    # Ensure temp directory exists
+    os.makedirs("storage/temp", exist_ok=True)
+
+    try:
+        # Reproject to WGS84 for PMTiles
+        gdf_wm = gdf.to_crs(epsg=4326)
+        gdf_wm.to_file(temp_geojson_polygons, driver="GeoJSON")
+
+        # Create points dataset (centroids)
+        centroid_gdf = gdf.copy()
+        centroid_gdf["geometry"] = centroid_gdf["geometry"].centroid
+        centroid_gdf = centroid_gdf.to_crs(epsg=4326)
+        centroid_gdf.to_file(temp_geojson_points, driver="GeoJSON")
+
+        # Command for generating PMTiles for points up to zoom level zoom_threshold
+        points_command: list[str] = [
+            "tippecanoe",
+            f"--output={temp_pmtiles_points}",
+            f"--maximum-zoom={zoom_threshold}",
+            "--minimum-zoom=10",
+            "-zg",
+            "-aC",
+            "-r0",
+            temp_geojson_points,
+            "-l",
+            "vacant_properties_tiles_points",
+            "--force",
+        ]
+
+        # Command for generating PMTiles for polygons from zoom level zoom_threshold
+        polygons_command: list[str] = [
+            "tippecanoe",
+            f"--output={temp_pmtiles_polygons}",
+            f"--minimum-zoom={zoom_threshold}",
+            "--maximum-zoom=16",
+            "-zg",
+            "--no-tile-size-limit",
+            temp_geojson_polygons,
+            "-l",
+            "vacant_properties_tiles_polygons",
+            "--force",
+        ]
+
+        # Command for merging the two PMTiles files into a single output file
+        merge_command: list[str] = [
+            "tile-join",
+            f"--output={temp_merged_pmtiles}",
+            "--no-tile-size-limit",
+            temp_pmtiles_polygons,
+            temp_pmtiles_points,
+            "--force",
+        ]
+
+        # Run the commands
+        pipeline_logger.info("Running tippecanoe commands for PMTiles generation...")
+        for command in [points_command, polygons_command, merge_command]:
+            subprocess.run(command)
+
+        # Check whether the temp saved tiles files is big enough
+        file_size: int = os.stat(temp_merged_pmtiles).st_size
+        if file_size < min_tiles_file_size_in_bytes:
+            raise ValueError(
+                f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}. The file may be corrupt or incomplete."
+            )
+
+        # Save local copy if requested
+        if save_locally and local_file_manager and local_file_label:
+            local_pmtiles_path = local_file_manager.get_file_path(
+                local_file_label, LoadType.PIPELINE_CACHE, FileType.PMTILES
+            )
+            import shutil
+
+            shutil.copy2(temp_merged_pmtiles, local_pmtiles_path)
+            pipeline_logger.info(f"PMTiles saved locally to: {local_pmtiles_path}")
+
+        # Upload to GCS if requested
+        if upload_to_gcs:
+            bucket = google_cloud_bucket(require_write_access=True)
+            if bucket is None:
+                pipeline_logger.warning(
+                    "Skipping PMTiles upload due to read-only bucket access."
+                )
+            else:
+                write_files: list[str] = [f"{tiles_file_id_prefix}_staging.pmtiles"]
+                if write_production_tiles_file:
+                    write_files.append(f"{tiles_file_id_prefix}.pmtiles")
+
+                # Upload PMTiles to Google Cloud Storage
+                bucket = google_cloud_bucket()
+                for file in write_files:
+                    blob = bucket.blob(file)
+                    try:
+                        blob.upload_from_filename(temp_merged_pmtiles)
+                        pipeline_logger.info(f"PMTiles upload successful for {file}!")
+                    except Exception as e:
+                        pipeline_logger.error(f"PMTiles upload failed for {file}: {e}")
+
+        pipeline_logger.info(
+            f"PMTiles generation completed. File size: {file_size / (1024 * 1024):.2f} MB"
+        )
+
+        # Clean up temporary files
+        for temp_file in [
+            temp_geojson_points,
+            temp_geojson_polygons,
+            temp_pmtiles_points,
+            temp_pmtiles_polygons,
+            temp_merged_pmtiles,
+        ]:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+                pipeline_logger.debug(f"Cleaned up temporary file: {temp_file}")
+
+        return temp_merged_pmtiles
+
+    except Exception as e:
+        pipeline_logger.error(f"Error generating PMTiles: {str(e)}")
+        # Clean up temporary files on error
+        for temp_file in [
+            temp_geojson_points,
+            temp_geojson_polygons,
+            temp_pmtiles_points,
+            temp_pmtiles_polygons,
+            temp_merged_pmtiles,
+        ]:
+            if os.path.exists(temp_file):
+                os.remove(temp_file)
+        raise
+
+
 # Esri data loader
 def load_esri_data(esri_urls: List[str], input_crs: str, extra_query_args: dict = None):
     """
@@ -732,104 +909,7 @@ class CartoLoader(BaseLoader):
         Raises:
             ValueError: Raised if the generated PMTiles file is smaller than the minimum allowed size, indicating a potential corruption or incomplete file.
         """
-        zoom_threshold: int = 13
-
-        # Export the GeoDataFrame to a temporary GeoJSON file
-        temp_geojson_points: str = (
-            f"storage/temp/temp_{tiles_file_id_prefix}_points.geojson"
-        )
-        temp_geojson_polygons: str = (
-            f"storage/temp/temp_{tiles_file_id_prefix}_polygons.geojson"
-        )
-        temp_pmtiles_points: str = (
-            f"storage/temp/temp_{tiles_file_id_prefix}_points.pmtiles"
-        )
-        temp_pmtiles_polygons: str = (
-            f"storage/temp/temp_{tiles_file_id_prefix}_polygons.pmtiles"
-        )
-        temp_merged_pmtiles: str = (
-            f"storage/temp/temp_{tiles_file_id_prefix}_merged.pmtiles"
-        )
-
-        # Reproject
-        gdf_wm = self.gdf.to_crs(epsg=4326)
-        gdf_wm.to_file(temp_geojson_polygons, driver="GeoJSON")
-
-        # Create points dataset
-        self.centroid_gdf = self.gdf.copy()
-        self.centroid_gdf["geometry"] = self.centroid_gdf["geometry"].centroid
-        self.centroid_gdf = self.centroid_gdf.to_crs(epsg=4326)
-        self.centroid_gdf.to_file(temp_geojson_points, driver="GeoJSON")
-
-        # Command for generating PMTiles for points up to zoom level zoom_threshold
-        points_command: list[str] = [
-            "tippecanoe",
-            f"--output={temp_pmtiles_points}",
-            f"--maximum-zoom={zoom_threshold}",
-            "--minimum-zoom=10",
-            "-zg",
-            "-aC",
-            "-r0",
-            temp_geojson_points,
-            "-l",
-            "vacant_properties_tiles_points",
-            "--force",
-        ]
-
-        # Command for generating PMTiles for polygons from zoom level zoom_threshold
-        polygons_command: list[str] = [
-            "tippecanoe",
-            f"--output={temp_pmtiles_polygons}",
-            f"--minimum-zoom={zoom_threshold}",
-            "--maximum-zoom=16",
-            "-zg",
-            "--no-tile-size-limit",
-            temp_geojson_polygons,
-            "-l",
-            "vacant_properties_tiles_polygons",
-            "--force",
-        ]
-
-        # Command for merging the two PMTiles files into a single output file
-        merge_command: list[str] = [
-            "tile-join",
-            f"--output={temp_merged_pmtiles}",
-            "--no-tile-size-limit",
-            temp_pmtiles_polygons,
-            temp_pmtiles_points,
-            "--force",
-        ]
-
-        # Run the commands
-        for command in [points_command, polygons_command, merge_command]:
-            subprocess.run(command)
-
-        write_files: list[str] = [f"{tiles_file_id_prefix}_staging.pmtiles"]
-
-        if write_production_tiles_file:
-            write_files.append(f"{tiles_file_id_prefix}.pmtiles")
-
-        # Check whether the temp saved tiles files is big enough.
-        file_size: int = os.stat(temp_merged_pmtiles).st_size
-        if file_size < min_tiles_file_size_in_bytes:
-            raise ValueError(
-                f"{temp_merged_pmtiles} is {file_size} bytes in size but should be at least {min_tiles_file_size_in_bytes}. Therefore, we are not uploading any files to the GCP bucket. The file may be corrupt or incomplete."
-            )
-
-        bucket = google_cloud_bucket(require_write_access=True)
-        if bucket is None:
-            print("Skipping PMTiles upload due to read-only bucket access.")
-            return
-
-        # Upload PMTiles to Google Cloud Storage
-        bucket = google_cloud_bucket()
-        for file in write_files:
-            blob = bucket.blob(file)
-            try:
-                blob.upload_from_filename(temp_merged_pmtiles)
-                print(f"PMTiles upload successful for {file}!")
-            except Exception as e:
-                print(f"PMTiles upload failed for {file}: {e}")
+        generate_pmtiles(self.gdf, tiles_file_id_prefix)
 
     def _load_from_cache(self, cache_key: str) -> Optional[gpd.GeoDataFrame]:
         """
