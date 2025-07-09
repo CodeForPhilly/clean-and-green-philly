@@ -88,10 +88,25 @@ export default function DataDisclaimerModal() {
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-800 underline"
               >
-                when the City of Philadelphia last collected accurate vacancy
-                data
+                when the City of Philadelphia last collected reasonably reliable
+                vacancy data
               </a>
               .
+            </p>
+            <p className="mt-4">
+              For more information on the scope and history of this project,
+              please see our{' '}
+              <a
+                href="/about"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                about page
+              </a>
+              .
+            </p>
+            <p className="mt-4">
+              Thank you for being part of the C&GP journey. We are grateful for
+              your support and hope our work continues to benefit the community.
             </p>
           </ModalBody>
           <ModalFooter>

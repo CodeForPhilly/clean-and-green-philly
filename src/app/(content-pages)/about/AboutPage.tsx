@@ -125,55 +125,141 @@ export default function AboutPage() {
       </div>
 
       <div className="my-8">
-        <h2 className="heading-2xl font-semibold mb-4">Contributors</h2>
-        <p className="body-md mb-4">
-          Clean & Green Philly was built by a team of Code for Philly
-          volunteers. The project was created and led by{' '}
+        <h2 className="heading-2xl font-semibold mb-4">
+          Clean & Green Philly: Frequently Asked Questions (FAQ)
+        </h2>
+        <p className="body-md mb-6 italic">
+          This FAQ explains how Clean & Green Philly works. For information
+          about the project&rsquo;s closure, support, and data policies, please
+          see{' '}
           <a
-            href="https://nlebovits.github.io/"
+            href="https://github.com/CodeForPhilly/clean-and-green-philly/blob/main/README.md"
             target="_blank"
             rel="noopener noreferrer"
             className="link"
           >
-            Nissim Lebovits
+            our README in our GitHub repository
           </a>
-          .{' '}
-          <a
-            href="https://www.willonabike.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link"
-          >
-            Will Budreau
-          </a>{' '}
-          was responsible for user testing and research,{' '}
-          <a
-            href="https://www.brandonfcohen.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link"
-          >
-            Brandon Cohen
-          </a>{' '}
-          was the lead developer, and{' '}
-          <a
-            href="https://www.nathanielsidwell.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="link"
-          >
-            {' '}
-            Nathaniel Sidwell
-          </a>{' '}
-          led the UX team. Thanks, too, to the many other contributors along the
-          way.
+          .
         </p>
+
+        <div className="space-y-6">
+          <div>
+            <h3 className="heading-xl font-semibold mb-3">
+              Who can use Clean & Green Philly and what can I do with it?
+            </h3>
+            <p className="body-md">
+              Clean & Green Philly is for residents, community organizations,
+              nonprofits, government agencies, and anyone interested in
+              improving Philadelphia neighborhoods. You can use it to find
+              current information on vacant properties, identify which
+              properties need attention most urgently, learn about interventions
+              like cleaning or greening, and connect to resources and community
+              partners.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="heading-xl font-semibold mb-3">
+              What can&rsquo;t Clean & Green Philly do?
+            </h3>
+            <p className="body-md">
+              Clean & Green Philly does not own or manage properties, grant
+              legal access or ownership, provide direct funding, guarantee
+              outcomes, or resolve land disputes. We are not affiliated with the
+              City of Philadelphia. You must follow City and legal processes for
+              property access. We connect you to resources and opportunities but
+              don&rsquo;t replace the work of City agencies or nonprofits.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="heading-xl font-semibold mb-3">
+              What do the priority levels mean?
+            </h3>
+            <p className="body-md mb-3">
+              Priority levels are determined by gun crime density, L&I code
+              violations, L&I complaints density, tree canopy coverage, and
+              whether the property is already maintained by PHS LandCare:
+            </p>
+            <ul className="list-disc list-inside space-y-2 body-md ml-4">
+              <li>
+                <strong>High Priority (red)</strong>: Properties in areas with
+                gun crime rates more than one standard deviation above average
+                and either have code violations, high complaint density, or are
+                not in PHS LandCare. Also includes properties with medium gun
+                crime rates that have violations/complaints but aren&rsquo;t in
+                PHS LandCare and have very low tree canopy (less than 70%
+                coverage).
+              </li>
+              <li>
+                <strong>Medium Priority (yellow)</strong>: Properties in areas
+                with gun crime rates between average and one standard deviation
+                above average that have violations/complaints and are in PHS
+                LandCare, or have violations/complaints but aren&rsquo;t in PHS
+                LandCare and have adequate tree canopy. Also includes properties
+                with high gun crime rates that are in PHS LandCare but
+                don&rsquo;t have violations/complaints and have adequate tree
+                canopy.
+              </li>
+              <li>
+                <strong>Low Priority (green)</strong>: Properties in areas with
+                gun crime rates at or below average, or properties with medium
+                gun crime rates that have no violations/complaints.
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="heading-xl font-semibold mb-3">
+              All the vacant properties in my area are &lsquo;Low
+              Priority&rsquo; but there are real issues here. Does this mean my
+              neighborhood doesn&rsquo;t matter?
+            </h3>
+            <p className="body-md">
+              No, your neighborhood absolutely matters. We use a very narrow
+              definition of &lsquo;high priority&rsquo; - only about 10% of
+              vacant properties get this label. This doesn&rsquo;t mean the
+              other 90% don&rsquo;t have real problems. We&rsquo;re trying to
+              help people focus limited time and resources on the places where
+              intervention might have the biggest impact first. A &lsquo;Low
+              Priority&rsquo; rating isn&rsquo;t a judgment about your
+              neighborhood - it&rsquo;s about helping everyone be strategic with
+              where to start.
+            </p>
+          </div>
+
+          <div>
+            <h3 className="heading-xl font-semibold mb-3">
+              What types of vacancy does Clean and Green Philly NOT show?
+            </h3>
+            <p className="body-md">
+              We focus on vacant land and properties suitable for cleaning,
+              greening, or community use. We do not currently map land already
+              used for community gardens, vacant commercial storefronts,
+              industrial sites, occupied but underused buildings, short-term
+              vacancies, vacant units inside occupied apartment buildings, or
+              land not suitable for greening due to legal or environmental
+              barriers.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div className="my-8">
+        <h2 className="heading-2xl font-semibold mb-4">Acknowledgements</h2>
         <p className="body-md mb-4">
-          Our efforts have been informed and advanced by local residents,
-          community leaders, City staff, faculty at the University of
-          Pennsylvania, Temple University, and Thomas Jefferson University; and
-          many others. Special thanks are due to the Code for Philly leadership,
-          Jon Geeting, Dante Leonard, Mjumbe Poe, and Vicky Tam.
+          Clean & Green Philly was built by a team of more than fifty Code for
+          Philly volunteers. The project was founded and led by Nissim Lebovits.
+          Amanda Soskin was Executive Director. Special thanks are due to our
+          board members, Conor Carroll, Dante Leonard, and Claude Schraeder; to
+          Jon Geeting and Will Tung at the Center for Philadelphia&rsquo;s Urban
+          Future; to our tech leads, Will Budreau, Brandon Cohen, Collum
+          Freedman, Tommy Moorman, Arielle Moylen, Marvie Mulder, Hannah Vy
+          Nyugen, Tracy Tran, Gary Pang, and Nico Zigouras; and to all of the
+          local residents, community leaders, City staff, and faculty at the
+          University of Pennsylvania, Temple University, and Thomas Jefferson
+          University who informed and supported our work.
         </p>
         <p className="body-md">
           Lastly, we are grateful to Dr. Eugenia South and her colleagues, whose
