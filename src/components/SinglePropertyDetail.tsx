@@ -88,7 +88,7 @@ const SinglePropertyDetail = ({
   if (!properties) return null;
 
   const {
-    address,
+    standardized_street_address,
     council_district,
     gun_crimes_density_label,
     market_value,
@@ -106,7 +106,9 @@ const SinglePropertyDetail = ({
     phs_care_program,
   } = properties;
   const image = `https://storage.googleapis.com/cleanandgreenphl/${opa_id}.jpg`;
-  const atlasUrl = `https://atlas.phila.gov/${address}`;
+  const atlasUrl = standardized_street_address
+    ? `https://atlas.phila.gov/${standardized_street_address}`
+    : '#';
   const priorityClass = getPriorityClass(priority_level);
 
   const priorityBgClassName = priority_level.includes('High')
@@ -247,7 +249,7 @@ const SinglePropertyDetail = ({
         <div className="relative h-48 w-full rounded-lg overflow-hidden">
           <Image
             src={image}
-            alt={`Property at ${address}`}
+            alt={`Property at ${standardized_street_address}`}
             layout="fill"
             objectFit="cover"
             unoptimized
@@ -281,7 +283,8 @@ const SinglePropertyDetail = ({
               textTransform: 'capitalize',
             }}
           >
-            {address.toLowerCase()}
+            {standardized_street_address?.toLowerCase() ||
+              'Address not available'}
           </h2>
           <div>
             <Tooltip

@@ -7,6 +7,43 @@ const determineCardEnums = (property: any) => {
   const available = new Set<PropertyAccess>();
   const unavailable = new Set<PropertyAccess>();
 
+  // Debug logging for Boolean fields
+  console.log('Property Boolean fields:', {
+    side_yard_eligible: {
+      value: property.side_yard_eligible,
+      type: typeof property.side_yard_eligible,
+      isTrue: property.side_yard_eligible === true,
+      isYes: property.side_yard_eligible === 'Yes',
+      isTrueString: property.side_yard_eligible === 'True',
+      willMatch:
+        property.side_yard_eligible === true ||
+        property.side_yard_eligible === 'Yes' ||
+        property.side_yard_eligible === 'True',
+    },
+    tactical_urbanism: {
+      value: property.tactical_urbanism,
+      type: typeof property.tactical_urbanism,
+      isTrue: property.tactical_urbanism === true,
+      isYes: property.tactical_urbanism === 'Yes',
+      isTrueString: property.tactical_urbanism === 'True',
+      willMatch:
+        property.tactical_urbanism === true ||
+        property.tactical_urbanism === 'Yes' ||
+        property.tactical_urbanism === 'True',
+    },
+    conservatorship: {
+      value: property.conservatorship,
+      type: typeof property.conservatorship,
+      isTrue: property.conservatorship === true,
+      isYes: property.conservatorship === 'Yes',
+      isTrueString: property.conservatorship === 'True',
+      willMatch:
+        property.conservatorship === true ||
+        property.conservatorship === 'Yes' ||
+        property.conservatorship === 'True',
+    },
+  });
+
   if (property.access_process === 'Private Land Use Agreement') {
     best = 'PRIVATE_LAND_USE';
   }
@@ -30,19 +67,31 @@ const determineCardEnums = (property: any) => {
     unavailable.add('LAND_BANK');
   }
 
-  if (property.side_yard_eligible === 'Yes') {
+  if (
+    property.side_yard_eligible === true ||
+    property.side_yard_eligible === 'Yes' ||
+    property.side_yard_eligible === 'True'
+  ) {
     neighbor = 'SIDE_YARD';
   } else {
     unavailable.add('SIDE_YARD');
   }
 
-  if (property.tactical_urbanism === 'Yes') {
+  if (
+    property.tactical_urbanism === true ||
+    property.tactical_urbanism === 'Yes' ||
+    property.tactical_urbanism === 'True'
+  ) {
     available.add('TACTICAL_URBANISM');
   } else {
     unavailable.add('TACTICAL_URBANISM');
   }
 
-  if (property.conservatorship === 'Yes') {
+  if (
+    property.conservatorship === true ||
+    property.conservatorship === 'Yes' ||
+    property.conservatorship === 'True'
+  ) {
     available.add('CONSERVATORSHIP');
   } else {
     unavailable.add('CONSERVATORSHIP');

@@ -241,7 +241,7 @@ const PropertyMap: FC<PropertyMapProps> = ({
 
     const features = map.queryRenderedFeatures(bbox, { layers });
 
-    //Get count of features if they are clustered
+    // Get count of features if they are clustered
     const clusteredFeatureCount = features.reduce(
       (acc: number, feature: MapGeoJSONFeature) => {
         if (feature.properties?.clustered) {
@@ -361,6 +361,13 @@ const PropertyMap: FC<PropertyMapProps> = ({
     const updateFilter = () => {
       if (!map) return;
 
+      // If no filters are applied (appFilter is empty), show all properties
+      if (Object.keys(appFilter).length === 0) {
+        map.setFilter('vacant_properties_tiles_points', null);
+        map.setFilter('vacant_properties_tiles_polygons', null);
+        return;
+      }
+
       const isAnyFilterEmpty = Object.values(appFilter).some((filterItem) => {
         return filterItem.values.length === 0;
       });
@@ -368,7 +375,6 @@ const PropertyMap: FC<PropertyMapProps> = ({
       if (isAnyFilterEmpty) {
         map.setFilter('vacant_properties_tiles_points', ['==', ['id'], '']);
         map.setFilter('vacant_properties_tiles_polygons', ['==', ['id'], '']);
-
         return;
       }
 
@@ -384,7 +390,24 @@ const PropertyMap: FC<PropertyMapProps> = ({
                   0,
                 ]);
               } else {
-                thisFilterGroup.push(['in', ['get', property], item]);
+                // Handle Boolean fields that might be mixed format
+                if (
+                  [
+                    'tactical_urbanism',
+                    'conservatorship',
+                    'side_yard_eligible',
+                  ].includes(property)
+                ) {
+                  // For Boolean fields, check Boolean true, string 'Yes', and string 'True'
+                  thisFilterGroup.push([
+                    'any',
+                    ['==', ['get', property], true],
+                    ['==', ['get', property], 'Yes'],
+                    ['==', ['get', property], 'True'],
+                  ]);
+                } else {
+                  thisFilterGroup.push(['in', ['get', property], item]);
+                }
               }
               if (Object.keys(subZoning).includes(item)) {
                 subZoning[item].forEach((subZone: string) => {
@@ -408,8 +431,49 @@ const PropertyMap: FC<PropertyMapProps> = ({
         [] as any[]
       );
 
-      map.setFilter('vacant_properties_tiles_points', ['all', ...mapFilter]);
-      map.setFilter('vacant_properties_tiles_polygons', ['all', ...mapFilter]);
+      // Check if we have access-related filters
+      const accessProperties = [
+        'tactical_urbanism',
+        'conservatorship',
+        'side_yard_eligible',
+        'access_process',
+      ];
+      const hasAccessFilters = Object.keys(appFilter).some(
+        (property) =>
+          accessProperties.includes(property) &&
+          appFilter[property].values.length > 0
+      );
+
+      let finalFilter: any;
+      if (hasAccessFilters && mapFilter.length > 1) {
+        // If we have access filters and other filters, use OR for access filters
+        const accessFilterIndices = Object.keys(appFilter)
+          .map((property, index) => ({ property, index }))
+          .filter(
+            ({ property }) =>
+              accessProperties.includes(property) &&
+              appFilter[property].values.length > 0
+          )
+          .map(({ index }) => index);
+
+        const accessFilters = accessFilterIndices.map((i) => mapFilter[i]);
+        const otherFilters = mapFilter.filter(
+          (_, i) => !accessFilterIndices.includes(i)
+        );
+
+        if (otherFilters.length > 0) {
+          finalFilter = ['all', ['any', ...accessFilters], ...otherFilters];
+        } else {
+          finalFilter = ['any', ...accessFilters];
+        }
+      } else {
+        // Use original logic for all other cases
+        finalFilter =
+          mapFilter.length > 0 ? ['all', ...mapFilter] : ['==', ['id'], ''];
+      }
+
+      map.setFilter('vacant_properties_tiles_points', finalFilter);
+      map.setFilter('vacant_properties_tiles_polygons', finalFilter);
     };
 
     if (map) {
@@ -528,7 +592,10 @@ const PropertyMap: FC<PropertyMapProps> = ({
             onClose={handlePopupClose}
           >
             <div className="flex flex-row items-center nowrap space-x-1">
-              <span>{toTitleCase(popupInfo.feature.address)}</span>
+              <span>
+                {toTitleCase(popupInfo.feature.standardized_street_address) ??
+                  'Address not available'}
+              </span>
               {/* keeping invisible to maintain spacing for built-in close button */}
               <X size={16} className="invisible" />
             </div>
