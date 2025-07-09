@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Modal,
   ModalContent,
@@ -55,12 +57,41 @@ export default function DataDisclaimerModal() {
 
           <ModalBody className="p-10">
             <p>
-              The City of Philadelphia recently stopped collecting key
-              information used in determining which properties in the city are
-              likely vacant. We are currently in conversations with relevant
-              partners about how to address this challenge. In the meantime,
-              please be advised that the vacancy data that we are showing here
-              have not been updated since July of 2024.
+              🚨 <strong>Note:</strong> Clean & Green Philly ceased active
+              development and maintainence in July of 2025. For more
+              information, please see{' '}
+              <a
+                href="https://github.com/CodeForPhilly/clean-and-green-philly/blob/main/docs/PROJECT_BACKGROUND/C%26GP%20Shutdown%20Letter%2C%20June%205%2C%202025.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                our letter to stakeholders
+              </a>
+              . The site, codebase, and data will{' '}
+              <a
+                href="https://github.com/CodeForPhilly/clean-and-green-philly"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                remain available and open source
+              </a>{' '}
+              for the foreseeable future.
+            </p>
+            <p className="mt-4">
+              The data shown in the map are current as of July 2025, other than
+              the vacant properties data, which are from June of 2024, which is{' '}
+              <a
+                href="http://www.inquirer.com/opinion/commentary/mayor-parker-housing-plan-missing-data-20250625.html"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                when the City of Philadelphia last collected accurate vacancy
+                data
+              </a>
+              .
             </p>
           </ModalBody>
           <ModalFooter>
