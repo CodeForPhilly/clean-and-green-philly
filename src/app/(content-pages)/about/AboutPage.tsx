@@ -124,9 +124,9 @@ export default function AboutPage() {
         />
       </div>
 
-      <div className="my-8">
+      <div id={'faq'} className="my-8">
         <h2 className="heading-2xl font-semibold mb-4">
-          Clean & Green Philly: Frequently Asked Questions (FAQ)
+          Frequently Asked Questions
         </h2>
         <p className="body-md mb-6 italic">
           This FAQ explains how Clean & Green Philly works. For information
@@ -213,19 +213,19 @@ export default function AboutPage() {
           <div>
             <h3 className="heading-xl font-semibold mb-3">
               All the vacant properties in my area are &lsquo;Low
-              Priority&rsquo; but there are real issues here. Does this mean my
+              Priority&rsquo; but there are real issues. Does this mean my
               neighborhood doesn&rsquo;t matter?
             </h3>
             <p className="body-md">
               No, your neighborhood absolutely matters. We use a very narrow
               definition of &lsquo;high priority&rsquo; - only about 10% of
               vacant properties get this label. This doesn&rsquo;t mean the
-              other 90% don&rsquo;t have real problems. We&rsquo;re trying to
-              help people focus limited time and resources on the places where
-              intervention might have the biggest impact first. A &lsquo;Low
-              Priority&rsquo; rating isn&rsquo;t a judgment about your
-              neighborhood - it&rsquo;s about helping everyone be strategic with
-              where to start.
+              other 90% don&rsquo;t have real challenges. Clean & Green Philly
+              was created to help residents and local organizations focus
+              limited time and resources on the places where intervention might
+              have the biggest impact first. A &lsquo;Low Priority&rsquo; rating
+              isn&rsquo;t a judgment about a neighborhood - it&rsquo;s about
+              helping everyone be strategic with where to start.
             </p>
           </div>
 
@@ -256,7 +256,7 @@ export default function AboutPage() {
           Jon Geeting and Will Tung at the Center for Philadelphia&rsquo;s Urban
           Future; to our tech leads, Will Budreau, Brandon Cohen, Collum
           Freedman, Tommy Moorman, Arielle Moylen, Marvie Mulder, Hannah Vy
-          Nyugen, Tracy Tran, Gary Pang, and Nico Zigouras; and to all of the
+          Nyugen, Gary Pang, Tracy Tran, and Nico Zigouras; and to all of the
           local residents, community leaders, City staff, and faculty at the
           University of Pennsylvania, Temple University, and Thomas Jefferson
           University who informed and supported our work.

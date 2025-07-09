@@ -94,8 +94,14 @@ export default function DataDisclaimerModal() {
               .
             </p>
             <p className="mt-4">
-              For more information on the scope and history of this project,
-              please see our{' '}
+              For more information on the scope and history of this project, and{' '}
+              <a
+                href="/about#faq"
+                className="text-blue-600 hover:text-blue-800 underline"
+              >
+                frequently asked questions
+              </a>
+              , please see our{' '}
               <a
                 href="/about"
                 className="text-blue-600 hover:text-blue-800 underline"
