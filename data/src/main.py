@@ -3,6 +3,7 @@ import os
 import sys
 import traceback
 
+import geopandas as gpd
 import pandas as pd
 
 from src.classes.data_diff import DiffReport
@@ -42,6 +43,7 @@ from src.data_utils import (
     unsafe_buildings,
     vacant_properties,
 )
+from src.metadata.metadata_utils import current_metadata
 
 file_manager = FileManager()
 token = os.getenv("CAGP_SLACK_API_TOKEN")
@@ -97,7 +99,7 @@ def main():
         pipeline_errors = {}
 
         pipeline_logger.info("Loading OPA properties dataset.")
-        dataset, opa_validation = opa_properties()
+        dataset, opa_validation = opa_properties(gdf=gpd.GeoDataFrame())
         pipeline_logger.info("OPA properties loaded.")
 
         # Check for missing zoning values after OPA properties
@@ -166,15 +168,13 @@ def main():
 
         # Save metadata
         try:
-            # Initialize collected_metadata if it doesn't exist (since services return GeoDataFrame, not FeatureLayer)
-            if not hasattr(dataset, "collected_metadata"):
-                dataset.collected_metadata = []
-
-            if dataset.collected_metadata:
-                # Create tmp directory if it doesn't exist
-                os.makedirs("tmp", exist_ok=True)
-                metadata_df = pd.DataFrame(dataset.collected_metadata)
-                metadata_df.to_csv("tmp/metadata.csv", index=False)
+            if current_metadata:
+                metadata_df = pd.DataFrame(current_metadata)
+                metadata_file_path = file_manager.get_file_path(
+                    "metadata.csv", load_type=LoadType.TEMP
+                )
+                print(metadata_file_path)
+                pd.DataFrame(metadata_df).to_csv(metadata_file_path, index=False)
             else:
                 print("No collected_metadata found in dataset - skipping metadata save")
         except Exception as e:

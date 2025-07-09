@@ -4,6 +4,7 @@ from typing import Tuple
 import geopandas as gpd
 import requests
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.ppr_properties import PPRPropertiesOutputValidator
 
@@ -13,19 +14,20 @@ from ..utilities import spatial_join
 
 
 @validate_output(PPRPropertiesOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def ppr_properties(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Updates the 'vacant' column in the primary feature layer to ensure PPR properties
+    Updates the 'vacant' column in the input GeoDataFrame to ensure PPR properties
     are marked as not vacant. This prevents PPR properties from being miscategorized
     as vacant.
 
     Args:
-        primary_featurelayer (FeatureLayer): The primary feature layer to update.
+        input_gdf (GeoDataFrame): The input GeoDataFrame to update.
 
     Returns:
-        FeatureLayer: The updated primary feature layer.
+        GeoDataFrame: The updated input GeoDataFrame.
 
     Columns Updated:
         vacant: Updated to False for PPR properties.
@@ -41,7 +43,7 @@ def ppr_properties(
         will fall back to loading the data from a GeoJSON URL
         https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id, geometry, vacant, public_name
     """
     fallback_url = "https://opendata.arcgis.com/datasets/d52445160ab14380a673e5849203eb64_0.geojson"
@@ -76,7 +78,7 @@ def ppr_properties(
         )
         ppr_properties, input_validation = loader.load_or_fetch()
 
-    # Perform a spatial join with the primary feature layer
+    # Perform a spatial join with the input GeoDataFrame
     merged_gdf = spatial_join(input_gdf, ppr_properties)
 
     # Remove duplicate OPA IDs in the main dataset after spatial join
@@ -89,10 +91,10 @@ def ppr_properties(
         )
         print(f"Main dataset after deduplication: {len(merged_gdf)} records")
 
-    # Ensure the 'vacant' column exists in the primary feature layer
+    # Ensure the 'vacant' column exists in the input GeoDataFrame
     if "vacant" not in merged_gdf.columns:
         raise ValueError(
-            "The 'vacant' column is missing in the primary feature layer. Ensure it exists before running this function."
+            "The 'vacant' column is missing in the input GeoDataFrame. Ensure it exists before running this function."
         )
 
     # Create a mask for rows where PPR properties are identified

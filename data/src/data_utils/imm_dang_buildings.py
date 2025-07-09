@@ -3,6 +3,7 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.imm_dang_buildings import ImmDangerOutputValidator
 
@@ -14,18 +15,19 @@ logger = logging.getLogger(__name__)
 
 
 @validate_output(ImmDangerOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def imm_dang_buildings(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Adds information about imminently dangerous buildings to the primary feature layer
+    Adds information about imminently dangerous buildings to the input GeoDataFrame
     by joining with a dataset of dangerous buildings.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with an added "imm_dang_building" column,
+        GeoDataFrame: The input GeoDataFrame with an added "imm_dang_building" column,
         indicating whether each property is categorized as imminently dangerous ("Y" or "N").
 
     Tagline:
@@ -34,7 +36,7 @@ def imm_dang_buildings(
     Columns Added:
         imm_dang_building (bool): Indicates whether each property is categorized as imminently dangerous (True or False).
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id
 
     Source:
@@ -110,7 +112,7 @@ def imm_dang_buildings(
             f"Deduplicated imminently dangerous buildings: {before_dedup} -> {after_dedup} records (removed {before_dedup - after_dedup} duplicates)"
         )
 
-    # Join imminently dangerous buildings data with primary feature layer
+    # Join imminently dangerous buildings data with input GeoDataFrame
     merged_gdf = opa_join(
         input_gdf,
         imm_dang_buildings,

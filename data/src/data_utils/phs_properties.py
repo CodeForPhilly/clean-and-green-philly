@@ -2,6 +2,7 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.phs_properties import PHSPropertiesOutputValidator
 
@@ -11,19 +12,20 @@ from ..utilities import spatial_join
 
 
 @validate_output(PHSPropertiesOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def phs_properties(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Perform a spatial join between the primary feature layer and the PHS properties layer,
-    then update the primary feature layer with a new column 'phs_care_program' indicating
+    Perform a spatial join between the input GeoDataFrame and the PHS properties layer,
+    then update the input GeoDataFrame with a new column 'phs_care_program' indicating
     if the property is part of the PHS care program.
 
     Args:
-        merged_gdf (FeatureLayer): The primary feature layer to join with the PHS properties layer.
+        merged_gdf (GeoDataFrame): The input GeoDataFrame to join with the PHS properties layer.
 
     Returns:
-        FeatureLayer: The updated primary feature layer with the 'phs_care_program' column.
+        GeoDataFrame: The updated input GeoDataFrame with the 'phs_care_program' column.
 
     Tagline:
         Identifies PHS Care properties
@@ -31,7 +33,7 @@ def phs_properties(
     Columns added:
         phs_care_program (str): The PHS care program associated with the property.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id, geometry
     """
 
@@ -63,7 +65,7 @@ def phs_properties(
             )
             print(f"PHS properties after deduplication: {len(phs_properties)} records")
 
-    # Perform spatial join between primary feature layer and PHS properties
+    # Perform spatial join between input GeoDataFrame and PHS properties
     merged_gdf = spatial_join(input_gdf, phs_properties)
 
     print(f"After spatial join: {len(merged_gdf)} records")

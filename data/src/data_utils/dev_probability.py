@@ -6,6 +6,7 @@ import pandas as pd
 import requests
 
 from src.config.config import USE_CRS
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.dev_probability import DevProbabilityOutputValidator
 
@@ -15,19 +16,20 @@ from ..utilities import spatial_join
 
 
 @validate_output(DevProbabilityOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def dev_probability(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Calculates development probability based on permit counts and assigns
     development ranks to census block groups. The results are joined to the
-    primary feature layer.
+    input GeoDataFrame.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with added spatial join data for
+        GeoDataFrame: The input GeoDataFrame with added spatial join data for
         development probability and ranks.
 
     Tagline:
@@ -37,7 +39,7 @@ def dev_probability(
         permit_count (int): The number of permits issued in the census block group.
         dev_rank (str): The development rank of the census block group.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id, geometry
 
     Source:

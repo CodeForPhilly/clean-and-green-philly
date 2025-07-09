@@ -3,6 +3,7 @@ from typing import List, Tuple
 import geopandas as gpd
 import pandas as pd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.li_violations import LIViolationsOutputValidator
 
@@ -12,6 +13,7 @@ from ..utilities import opa_join
 
 
 @validate_output(LIViolationsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def li_violations(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -19,14 +21,14 @@ def li_violations(
     Process L&I (Licenses and Inspections) data for violations.
 
     This function filters and processes L&I violations data,
-    joining it with the primary feature layer based on spatial relationships
+    joining it with the input GeoDataFrame based on spatial relationships
     and OPA (Office of Property Assessment) identifiers.
 
     Args:
-        primary_featurelayer (FeatureLayer): The primary feature layer to join L&I data to.
+        input_gdf (GeoDataFrame): The input GeoDataFrame to join L&I data to.
 
     Returns:
-        FeatureLayer: The primary feature layer updated with L&I data.
+        GeoDataFrame: The input GeoDataFrame updated with L&I data.
 
     Tagline:
         Counts L&I violations
@@ -38,7 +40,7 @@ def li_violations(
     Source:
         https://phl.carto.com/api/v2/sql
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id
     """
     keywords: List[str] = [

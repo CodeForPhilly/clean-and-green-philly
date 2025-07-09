@@ -3,6 +3,7 @@ from typing import Tuple
 import geopandas as gpd
 
 from src.data_utils.kde import apply_kde_to_input
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.drug_crimes import DrugCrimesOutputValidator
 
@@ -10,17 +11,18 @@ from ..constants.services import DRUGCRIME_SQL_QUERY
 
 
 @validate_output(DrugCrimesOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def drug_crimes(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Applies kernel density estimation (KDE) analysis for drug crimes to the primary feature layer.
+    Applies kernel density estimation (KDE) analysis for drug crimes to the input GeoDataFrame.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with KDE analysis results for drug crimes.
+        GeoDataFrame: The input GeoDataFrame with KDE analysis results for drug crimes.
 
     Tagline:
         Density analysis for drug crimes
@@ -31,7 +33,7 @@ def drug_crimes(
         drug_crimes_density_label (str): Categorized density level.
         drug_crimes_density_percentile (float): Percentile rank of density.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         geometry
 
     Source:

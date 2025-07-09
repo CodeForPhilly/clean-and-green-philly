@@ -6,6 +6,7 @@ import geopandas as gpd
 import pandas as pd
 
 from src.config.config import ROOT_DIRECTORY
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.vacant_properties import VacantPropertiesOutputValidator
 
@@ -96,18 +97,19 @@ def check_null_percentage(df: pd.DataFrame, threshold: float = 0.05) -> None:
 
 
 @validate_output(VacantPropertiesOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def vacant_properties(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Adds a "vacant" column to the primary feature layer based on vacant property data from
+    Adds a "vacant" column to the input GeoDataFrame based on vacant property data from
     ESRI layers and backup data from local geoparquet files if necessary.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with an added "vacant" column.
+        GeoDataFrame: The input GeoDataFrame with an added "vacant" column.
 
     Tagline:
         Identify vacant properties.
@@ -115,7 +117,7 @@ def vacant_properties(
     Columns Added:
         vacant (bool): Indicates whether the property is vacant.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id
 
     Known Issues:
@@ -208,7 +210,7 @@ def vacant_properties(
     # Final check for null percentages
     check_null_percentage(df)
 
-    # Add "vacant" column to primary feature layer
+    # Add "vacant" column to input GeoDataFrame
     input_gdf["vacant"] = input_gdf["opa_id"].isin(df["opa_id"])
 
     # Drop parcel_type column after processing

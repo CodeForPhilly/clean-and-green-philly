@@ -3,6 +3,7 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.park_priority import ParkPriorityOutputValidator
 
@@ -116,6 +117,7 @@ def _park_priority_logic(
 
 
 @validate_output(ParkPriorityOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def park_priority(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -139,7 +141,7 @@ def park_priority(
     Columns Added:
         park_priority (float): The park priority score from TPL's analysis.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id, geometry
 
     Source:
