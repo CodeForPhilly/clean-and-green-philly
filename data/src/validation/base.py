@@ -754,6 +754,26 @@ def null_percentage_check(null_percent: float) -> Check:
     )
 
 
+def row_count_check(reference_count: int, tolerance: float = 0.1) -> Check:
+    """
+    Create a check that validates if the DataFrame's row count is within a specified tolerance range.
+
+    Args:
+        reference_count: The expected number of rows
+        tolerance: The allowed deviation as a percentage (default 10%)
+
+    Returns:
+        Check: A pandera Check object that validates row count
+    """
+    lower_bound = reference_count * (1 - tolerance)
+    upper_bound = reference_count * (1 + tolerance)
+
+    return Check(
+        lambda df: df.shape[0] >= lower_bound and df.shape[0] <= upper_bound,
+        error=f"DataFrame size must be between {int(lower_bound)} and {int(upper_bound)} rows (±{tolerance * 100}% from {reference_count}).",
+    )
+
+
 @dataclass
 class DistributionParams:
     min_value: Optional[int | float] = None

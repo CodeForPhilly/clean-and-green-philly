@@ -1,7 +1,7 @@
 import geopandas as gpd
 import pandera.pandas as pa
 
-from .base import BaseValidator, DistributionParams, distribution_check
+from .base import BaseValidator, DistributionParams, distribution_check, row_count_check
 
 # Define the LI Violations DataFrame Schema
 LIViolationsSchema = pa.DataFrameSchema(
@@ -31,11 +31,25 @@ LIViolationsSchema = pa.DataFrameSchema(
     coerce=False,
 )
 
+LIViolationsReferenceCount = 54401
+
+LIViolationsInputSchema = pa.DataFrameSchema(
+    columns={
+        "opa_id": pa.Column(pa.String, checks=pa.Check(lambda s: s.dropna() != "")),
+        "geometry": pa.Column("geometry"),
+        "violationcodetitle": pa.Column(str),
+        "violationnumber": pa.Column(str),
+        "violationstatus": pa.Column(str),
+    },
+    checks=row_count_check(LIViolationsReferenceCount, tolerance=0.1),
+    strict=False,
+)
+
 
 class LIViolationsInputValidator(BaseValidator):
     """Validator for LI violations service input."""
 
-    schema = None
+    schema = LIViolationsInputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass

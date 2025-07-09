@@ -4,7 +4,10 @@ import geopandas as gpd
 
 from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
-from src.validation.pwd_parcels import PWDParcelsOutputValidator
+from src.validation.pwd_parcels import (
+    PWDParcelsInputValidator,
+    PWDParcelsOutputValidator,
+)
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import PWD_PARCELS_QUERY
@@ -124,6 +127,7 @@ def pwd_parcels(
         name="PWD Parcels",
         carto_queries=PWD_PARCELS_QUERY,
         opa_col="brt_id",
+        validator=PWDParcelsInputValidator(),
     )
 
     pwd_parcels, input_validation = loader.load_or_fetch()

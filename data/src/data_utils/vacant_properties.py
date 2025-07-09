@@ -8,7 +8,10 @@ import pandas as pd
 from src.config.config import ROOT_DIRECTORY
 from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
-from src.validation.vacant_properties import VacantPropertiesOutputValidator
+from src.validation.vacant_properties import (
+    VacantPropertiesInputValidator,
+    VacantPropertiesOutputValidator,
+)
 
 from ..classes.loaders import EsriLoader, google_cloud_bucket
 from ..constants.services import VACANT_PROPS_LAYERS_TO_LOAD
@@ -128,6 +131,7 @@ def vacant_properties(
         name="Vacant Properties",
         esri_urls=VACANT_PROPS_LAYERS_TO_LOAD,
         cols=["opa_id", "parcel_type"],
+        validator=VacantPropertiesInputValidator(),
     )
 
     vacant_properties, input_validation = loader.load_or_fetch()

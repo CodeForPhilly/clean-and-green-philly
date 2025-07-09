@@ -10,7 +10,7 @@ class PriorityLevelInputValidator(BaseValidator):
 
     schema = None
 
-    def _custom_validation(self, gdf: gpd.GeoDataFrame):
+    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass
 
 

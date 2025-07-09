@@ -1,7 +1,7 @@
 import geopandas as gpd
 import pandera.pandas as pa
 
-from .base import BaseValidator
+from .base import BaseValidator, row_count_check
 
 # Define the PWD Parcels DataFrame Schema
 PWDParcelsSchema = pa.DataFrameSchema(
@@ -32,13 +32,25 @@ PWDParcelsSchema = pa.DataFrameSchema(
     coerce=False,
 )
 
+# Reference count for PWD parcels
+PWD_PARCELS_REFERENCE_COUNT = 547351
+
+PWDParcelsInputSchema = pa.DataFrameSchema(
+    columns={
+        "opa_id": pa.Column(pa.String, checks=pa.Check(lambda s: s.dropna() != "")),
+        "geometry": pa.Column("geometry"),
+    },
+    checks=row_count_check(PWD_PARCELS_REFERENCE_COUNT, tolerance=0.05),
+    strict=False,
+)
+
 
 class PWDParcelsInputValidator(BaseValidator):
     """Validator for PWD parcels service input."""
 
-    schema = None  # No schema validation for input
+    schema = PWDParcelsInputSchema
 
-    def _custom_validation(self, gdf: gpd.GeoDataFrame):
+    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass
 
 

@@ -7,11 +7,11 @@ from .base import BaseValidator, DistributionParams
 
 
 class DevProbabilityInputValidator(BaseValidator):
-    """Validator for dev probability service input from census block groups."""
+    """Validator for development probability service input."""
 
     schema = None
 
-    def _custom_validation(self, gdf: gpd.GeoDataFrame):
+    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass
 
 

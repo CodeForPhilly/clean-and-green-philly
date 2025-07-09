@@ -4,7 +4,10 @@ import geopandas as gpd
 
 from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
-from src.validation.phs_properties import PHSPropertiesOutputValidator
+from src.validation.phs_properties import (
+    PHSPropertiesInputValidator,
+    PHSPropertiesOutputValidator,
+)
 
 from ..classes.loaders import EsriLoader
 from ..constants.services import PHS_LAYERS_TO_LOAD
@@ -44,7 +47,10 @@ def phs_properties(
     print(input_gdf.head())
 
     loader = EsriLoader(
-        name="PHS Properties", esri_urls=PHS_LAYERS_TO_LOAD, cols=["program"]
+        name="PHS Properties",
+        esri_urls=PHS_LAYERS_TO_LOAD,
+        cols=["program"],
+        validator=PHSPropertiesInputValidator(),
     )
 
     phs_properties, input_validation = loader.load_or_fetch()

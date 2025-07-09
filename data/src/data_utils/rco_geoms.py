@@ -6,7 +6,7 @@ import pandas as pd
 
 from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
-from src.validation.rco_geoms import RCOGeomsOutputValidator
+from src.validation.rco_geoms import RCOGeomsOutputValidator, RCOGeomsInputValidator
 
 from ..classes.loaders import EsriLoader
 from ..constants.services import RCOS_LAYERS_TO_LOAD
@@ -47,7 +47,9 @@ def rco_geoms(input_gdf: gpd.GeoDataFrame) -> Tuple[gpd.GeoDataFrame, Validation
     Columns referenced:
         opa_id, geometry
     """
-    loader = EsriLoader(name="RCOs", esri_urls=RCOS_LAYERS_TO_LOAD)
+    loader = EsriLoader(
+        name="RCOs", esri_urls=RCOS_LAYERS_TO_LOAD, validator=RCOGeomsInputValidator()
+    )
     rco_geoms, input_validation = loader.load_or_fetch()
 
     logger.debug(f"RCO data loaded: {len(rco_geoms)} RCO records")
