@@ -1,9 +1,7 @@
 import geopandas as gpd
 import pandera.pandas as pa
 
-from .base import (
-    BaseValidator,
-)
+from .base import BaseValidator, row_count_check
 
 # Define the Community Gardens DataFrame Schema
 CommunityGardensSchema = pa.DataFrameSchema(
@@ -23,11 +21,23 @@ CommunityGardensSchema = pa.DataFrameSchema(
     coerce=True,
 )
 
+# Reference count for community gardens
+COMMUNITY_GARDENS_REFERENCE_COUNT = 205
+
+CommunityGardensInputSchema = pa.DataFrameSchema(
+    columns={
+        "geometry": pa.Column("geometry"),
+        "site_name": pa.Column(str, nullable=True),
+    },
+    checks=row_count_check(COMMUNITY_GARDENS_REFERENCE_COUNT, tolerance=0.1),
+    strict=False,
+)
+
 
 class CommunityGardensInputValidator(BaseValidator):
     """Validator for community gardens service input."""
 
-    schema = None  # No schema validation for input
+    schema = CommunityGardensInputSchema
 
     def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass

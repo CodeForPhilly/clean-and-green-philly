@@ -21,11 +21,15 @@ function getPriorityClass(priorityLevel: string) {
 }
 
 const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
-  const { address, gun_crimes_density_label, priority_level, opa_id } =
-    feature.properties;
+  const {
+    standardized_street_address,
+    gun_crimes_density_label,
+    priority_level,
+    opa_id,
+  } = feature.properties;
 
   const image = `https://storage.googleapis.com/cleanandgreenphl/${opa_id}.jpg`;
-  const formattedAddress = toTitleCase(address);
+  const formattedAddress = toTitleCase(standardized_street_address);
   const priorityClass = getPriorityClass(priority_level);
 
   const handleClick = () => setSelectedProperty(feature);
@@ -59,7 +63,7 @@ const PropertyCard = ({ feature, setSelectedProperty }: PropertyCardProps) => {
               className="font-bold heading-lg focus:bg-gray-100"
               onKeyDown={handleKeyDown}
             >
-              {formattedAddress}
+              {formattedAddress ?? 'Address not available'}
             </button>
             <div className="text-gray-700 body-sm">
               {gun_crimes_density_label} Gun Crime Rate

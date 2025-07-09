@@ -3,6 +3,7 @@ from typing import Tuple
 import geopandas as gpd
 
 from src.constants.city_limits import PHL_GEOMETRY
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.community_gardens import (
     CommunityGardensInputValidator,
@@ -15,19 +16,20 @@ from ..utilities import spatial_join
 
 
 @validate_output(CommunityGardensOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def community_gardens(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Updates the 'vacant' column in the primary feature layer to ensure community gardens
+    Updates the 'vacant' column in the input dataframe to ensure community gardens
     are marked as not vacant. This protects known community gardens from being categorized
     as vacant, preventing potential predatory development.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The input GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with the 'vacant' column updated to False
+        GeoDataFrame: The input GeoDataFrame with the 'vacant' column updated to False
         for parcels containing community gardens.
 
     Tagline:
@@ -36,7 +38,7 @@ def community_gardens(
     Columns updated:
         vacant: Updated to False for parcels containing community gardens.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id, vacant
 
     Source:
@@ -47,6 +49,7 @@ def community_gardens(
         name="Community Gardens",
         esri_urls=COMMUNITY_GARDENS_TO_LOAD,
         cols=["site_name"],
+        validator=CommunityGardensInputValidator(),
     )
 
     community_gardens, input_validation = loader.load_or_fetch()

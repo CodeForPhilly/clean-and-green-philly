@@ -2,21 +2,23 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.negligent_devs import NegligentDevsOutputValidator
 
 
 @validate_output(NegligentDevsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def negligent_devs(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Identifies negligent developers based on the number of vacant properties owned
     and calculates the average number of L&I violations per distinct owner.
-    Flags negligent developers in the primary feature layer.
+    Flags negligent developers in the input GeoDataFrame.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Columns Added:
         negligent_dev (bool): non-city owned entities owning 5+ vacant properties
@@ -26,14 +28,14 @@ def negligent_devs(
                                             per year for that developer (not limited to open violations
                                             or open properties)
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id, vacant, city_owner_agency, standardized_mailing_address, all_violations_past_year
 
     Tagline:
         Identify negligent developers
 
     Returns:
-        FeatureLayer: The input feature layer with additional columns for total properties
+        GeoDataFrame: The input GeoDataFrame with additional columns for total properties
         owned, vacant properties owned, average violations per property, and a "negligent_dev" flag.
     """
     # Count total properties and vacant properties by standardized_mailing_address

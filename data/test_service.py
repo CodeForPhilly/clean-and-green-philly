@@ -7,6 +7,8 @@ Example: uv run python test_service.py phs_properties
 
 import sys
 
+import pytest
+
 from src.classes.loaders import BaseLoader
 from src.config.config import enable_statistical_summaries
 
@@ -153,6 +155,7 @@ def run_dependencies(dataset, dependencies):
     return dataset
 
 
+@pytest.mark.skip
 def test_service(service_name: str):
     """Test a specific service with the base OPA properties dataset."""
 

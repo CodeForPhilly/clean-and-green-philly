@@ -6,6 +6,7 @@ import networkx as nx
 import numpy as np
 from libpysal.weights import Queen
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.contig_neighbors import ContigNeighborsOutputValidator
 
@@ -13,17 +14,18 @@ from ..utilities import opa_join
 
 
 @validate_output(ContigNeighborsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def contig_neighbors(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Calculates the number of contiguous vacant neighbors for each property in a feature layer.
+    Calculates the number of contiguous vacant neighbors for each property in a GeoDataFrame.
 
     Args:
-        primary_featurelayer (FeatureLayer): A feature layer containing property data in a GeoDataFrame (`gdf`).
+        input_gdf: A input GeoDataFrame containing property data in a GeoDataFrame (`gdf`).
 
     Returns:
-        FeatureLayer: The input feature layer with an added "n_contiguous" column indicating
+        GeoDataFrame: The input GeoDataFrame with an added "n_contiguous" column indicating
         the number of contiguous vacant neighbors for each property.
 
     Tagline:
@@ -32,7 +34,7 @@ def contig_neighbors(
     Columns Added:
         n_contiguous (int): The number of contiguous vacant neighbors for each property.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id, vacant
     """
     print(f"[DEBUG] contig_neighbors: Starting with {len(input_gdf)} properties")
@@ -192,7 +194,7 @@ def contig_neighbors(
         f"[DEBUG] contig_neighbors: vacant_parcels opa_ids in input_gdf: {len(matching_opa_ids)} / {len(vacant_opa_ids)}"
     )
 
-    # Merge the results back to the primary feature layer
+    # Merge the results back to the input GeoDataFrame
     input_gdf = opa_join(input_gdf, vacant_parcels[["opa_id", "n_contiguous"]])
 
     # Debug: Check what's in input_gdf after join

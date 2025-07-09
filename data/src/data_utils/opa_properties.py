@@ -7,6 +7,7 @@ import pandas as pd
 
 from src.classes.loaders import CartoLoader
 from src.config.config import get_logger
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.opa_properties import OPAPropertiesOutputValidator
 
@@ -139,8 +140,9 @@ def create_standardized_mailing_address_vectorized(gdf: gpd.GeoDataFrame) -> pd.
 
 
 @validate_output(OPAPropertiesOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def opa_properties(
-    gdf: gpd.GeoDataFrame = None,
+    gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
     Loads and processes OPA property data, standardizing addresses and cleaning geometries.

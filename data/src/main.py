@@ -3,10 +3,12 @@ import os
 import sys
 import traceback
 
+import geopandas as gpd
 import pandas as pd
 
 from src.classes.data_diff import DiffReport
 from src.classes.file_manager import FileManager, FileType, LoadType
+from src.classes.loaders import generate_pmtiles
 from src.classes.slack_reporters import SlackReporter
 from src.config.config import (
     enable_statistical_summaries,
@@ -42,6 +44,7 @@ from src.data_utils import (
     unsafe_buildings,
     vacant_properties,
 )
+from src.metadata.metadata_utils import current_metadata
 
 file_manager = FileManager()
 token = os.getenv("CAGP_SLACK_API_TOKEN")
@@ -97,7 +100,7 @@ def main():
         pipeline_errors = {}
 
         pipeline_logger.info("Loading OPA properties dataset.")
-        dataset, opa_validation = opa_properties()
+        dataset, opa_validation = opa_properties(gdf=gpd.GeoDataFrame())
         pipeline_logger.info("OPA properties loaded.")
 
         # Check for missing zoning values after OPA properties
@@ -166,15 +169,13 @@ def main():
 
         # Save metadata
         try:
-            # Initialize collected_metadata if it doesn't exist (since services return GeoDataFrame, not FeatureLayer)
-            if not hasattr(dataset, "collected_metadata"):
-                dataset.collected_metadata = []
-
-            if dataset.collected_metadata:
-                # Create tmp directory if it doesn't exist
-                os.makedirs("tmp", exist_ok=True)
-                metadata_df = pd.DataFrame(dataset.collected_metadata)
-                metadata_df.to_csv("tmp/metadata.csv", index=False)
+            if current_metadata:
+                metadata_df = pd.DataFrame(current_metadata)
+                metadata_file_path = file_manager.get_file_path(
+                    "metadata.csv", load_type=LoadType.TEMP
+                )
+                print(metadata_file_path)
+                pd.DataFrame(metadata_df).to_csv(metadata_file_path, index=False)
             else:
                 print("No collected_metadata found in dataset - skipping metadata save")
         except Exception as e:
@@ -237,6 +238,23 @@ def main():
 
         # Publish only vacant properties
         dataset = dataset[dataset["vacant"]]
+
+        # Generate and save local PMTiles copy from VACANT properties only
+        try:
+            vacant_file_label = file_manager.generate_file_label("vacant_properties")
+            generate_pmtiles(
+                dataset,
+                "vacant_properties",
+                upload_to_gcs=False,
+                save_locally=True,
+                local_file_manager=file_manager,
+                local_file_label=vacant_file_label,
+            )
+            print(
+                f"PMTiles saved locally in storage/pipeline_cache/{vacant_file_label}.pmtiles"
+            )
+        except Exception as e:
+            print(f"Warning: Failed to generate local PMTiles: {str(e)}")
 
         # Finalize
         pipeline_logger.info("ETL process completed successfully.")

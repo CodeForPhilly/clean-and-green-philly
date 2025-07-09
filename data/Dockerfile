@@ -38,6 +38,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 COPY --from=tippecanoe /usr/local/bin/tippecanoe /usr/local/bin/tippecanoe
+COPY --from=tippecanoe /usr/local/bin/tile-join /usr/local/bin/tile-join
 COPY --from=dependencies /app /app
 
 ENV GDAL_VERSION=3.6.2 \

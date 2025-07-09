@@ -3,6 +3,7 @@ from typing import Tuple
 import geopandas as gpd
 import pandas as pd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.council_dists import (
     CouncilDistrictsInputValidator,
@@ -17,18 +18,19 @@ pd.set_option("future.no_silent_downcasting", True)
 
 
 @validate_output(CouncilDistrictsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def council_dists(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Associates properties in the primary feature layer with council districts
+    Associates properties in the input GeoDataFrame with council districts
     using a spatial join.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with properties spatially joined
+        GeoDataFrame: The input GeoDataFrame with properties spatially joined
         to council districts, ensuring no duplicate entries.
 
     Tagline:
@@ -37,7 +39,7 @@ def council_dists(
     Columns added:
         district (str): The council district associated with the property.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id, geometry
     """
 
@@ -74,7 +76,7 @@ def council_dists(
 
     merged_gdf = spatial_join(input_gdf, council_dists, predicate="within")
 
-    # Drop duplicates in the primary feature layer
+    # Drop duplicates in the input GeoDataFrame
     merged_gdf.drop_duplicates(inplace=True)
 
     # Debug: Check for duplicate OPA IDs and show what's causing them

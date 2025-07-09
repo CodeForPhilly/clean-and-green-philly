@@ -2,8 +2,12 @@ from typing import Tuple
 
 import geopandas as gpd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
-from src.validation.pwd_parcels import PWDParcelsOutputValidator
+from src.validation.pwd_parcels import (
+    PWDParcelsInputValidator,
+    PWDParcelsOutputValidator,
+)
 
 from ..classes.loaders import CartoLoader
 from ..constants.services import PWD_PARCELS_QUERY
@@ -27,11 +31,11 @@ def merge_pwd_parcels_gdf(
     primary_gdf: gpd.GeoDataFrame, pwd_parcels_gdf: gpd.GeoDataFrame
 ) -> gpd.GeoDataFrame:
     """
-    Merge geometries from PWD parcels into the primary feature layer.
+    Merge geometries from PWD parcels into the input GeoDataFrame.
     Identifies condominium units by checking for "CONDO" in building_code_description.
 
     Args:
-        primary_gdf (GeoDataFrame): The primary feature layer
+        primary_gdf (GeoDataFrame): The input GeoDataFrame
         pwd_parcels_gdf (GeoDataFrame): The PWD parcels GeoDataFrame
 
     Returns:
@@ -52,9 +56,9 @@ def merge_pwd_parcels_gdf(
         primary_gdf.loc[condo_building_mask, "is_condo_unit"] = True
 
     # Join geometries from PWD parcels for non-condo units only
-    # Temporarily drop geometry from the primary feature layer
+    # Temporarily drop geometry from the input GeoDataFrame
 
-    # Filter PWD parcels to just the opa_ids in primary
+    # Filter PWD parcels to just the opa_ids in input
     opa_ids_in_primary = primary_gdf["opa_id"].unique()
     pwd_subset = pwd_parcels_gdf[pwd_parcels_gdf["opa_id"].isin(opa_ids_in_primary)]
 
@@ -83,19 +87,20 @@ def merge_pwd_parcels_gdf(
 
 
 @validate_output(PWDParcelsOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def pwd_parcels(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Updates the primary feature layer by replacing its geometry column with validated
+    Updates the input GeoDataFrame by replacing its geometry column with validated
     geometries from PWD parcels data. Retains point geometry for rows with no polygon
     geometry available. Identifies and flags condominium units.
 
     Args:
-        primary_featurelayer (FeatureLayer): The primary feature layer to update.
+        input_gdf (GeoDataFrame): The input GeoDataFrame to update.
 
     Returns:
-        FeatureLayer: The updated primary feature layer with geometries replaced
+        GeoDataFrame: The updated input GeoDataFrame with geometries replaced
                       by those from PWD parcels or retained from the original layer if no match.
 
     Columns Added:
@@ -109,7 +114,7 @@ def pwd_parcels(
         geometry: The geometry column is updated with validated geometries from PWD parcels.
                  Condo units retain their original point geometries.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id, geometry
 
     Tagline:
@@ -122,6 +127,7 @@ def pwd_parcels(
         name="PWD Parcels",
         carto_queries=PWD_PARCELS_QUERY,
         opa_col="brt_id",
+        validator=PWDParcelsInputValidator(),
     )
 
     pwd_parcels, input_validation = loader.load_or_fetch()

@@ -3,11 +3,13 @@ from typing import Tuple
 import geopandas as gpd
 import pandas as pd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.priority_level import PriorityLevelOutputValidator
 
 
 @validate_output(PriorityLevelOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def priority_level(
     dataset: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
@@ -16,10 +18,10 @@ def priority_level(
     violations, tree canopy gaps, and PHS Landcare status.
 
     Args:
-        dataset (FeatureLayer): A feature layer containing property data.
+        dataset (GeoDataFrame): A GeoDataFrame containing property data.
 
     Returns:
-        FeatureLayer: The input feature layer with an added "priority_level" column,
+        GeoDataFrame: The input GeoDataFrame with an added "priority_level" column,
         indicating the priority for each property as "Low", "Medium", or "High".
 
     Columns Added:
@@ -31,7 +33,7 @@ def priority_level(
 
     Source:
         gun_crimes_density_zscore, all_violations_past_year, l_and_i_complaints_density_zscore,
-        tree_canopy_gap, phs_care_program columns in the primary feature layer.
+        tree_canopy_gap, phs_care_program columns in the input GeoDataFrame.
     """
     priority_levels = []
     for idx, row in dataset.iterrows():

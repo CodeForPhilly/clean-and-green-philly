@@ -5,6 +5,7 @@ import geopandas as gpd
 import pytz
 from dateutil.parser import parse
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.conservatorship import ConservatorshipOutputValidator
 
@@ -15,26 +16,27 @@ six_months_ago = (datetime.datetime.now() - datetime.timedelta(days=180)).astime
 
 
 @validate_output(ConservatorshipOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def conservatorship(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Determines conservatorship eligibility for properties in a feature layer.
+    Determines conservatorship eligibility for properties in a GeoDataFrame.
 
     Args:
-        primary_featurelayer (FeatureLayer): A feature layer containing property data in a GeoDataFrame (`gdf`).
+        input_gdf (GeoDataFrame): A GeoDataFrame containing property data in a GeoDataFrame (`gdf`).
 
     Columns Added:
         conservatorship (bool): Indicates whether each property qualifies for conservatorship (True or False).
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         city_owner_agency, sheriff_sale, market_value, all_violations_past_year, sale_date
 
     Tagline:
         Identify conservatorship-eligible properties
 
     Returns:
-        FeatureLayer: The input feature layer with an added "conservatorship" column indicating
+        GeoDataFrame: The input GeoDataFrame with an added "conservatorship" column indicating
         whether each property qualifies for conservatorship (True or False).
     """
     conservatorships = []

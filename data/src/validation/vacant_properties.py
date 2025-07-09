@@ -30,13 +30,28 @@ VacantPropertiesSchema = pa.DataFrameSchema(
     coerce=True,
 )
 
+VacantPropertiesInputSchema = pa.DataFrameSchema(
+    columns={
+        "opa_id": pa.Column(
+            str,
+            nullable=True,
+        ),
+        "parcel_type": pa.Column(
+            str,
+            nullable=True,
+        ),
+        "geometry": pa.Column("geometry"),
+    },
+    strict=False,
+)
+
 
 class VacantPropertiesInputValidator(BaseValidator):
     """Validator for vacant properties service input."""
 
-    schema = None  # No schema validation for input
+    schema = VacantPropertiesInputSchema
 
-    def _custom_validation(self, gdf: gpd.GeoDataFrame):
+    def _custom_validation(self, gdf: gpd.GeoDataFrame, check_stats: bool = True):
         pass
 
 

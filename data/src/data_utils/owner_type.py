@@ -3,16 +3,18 @@ from typing import Tuple
 import geopandas as gpd
 import pandas as pd
 
+from src.metadata.metadata_utils import current_metadata, provide_metadata
 from src.validation.base import ValidationResult, validate_output
 from src.validation.owner_type import OwnerTypeOutputValidator
 
 
 @validate_output(OwnerTypeOutputValidator)
+@provide_metadata(current_metadata=current_metadata)
 def owner_type(
     input_gdf: gpd.GeoDataFrame,
 ) -> Tuple[gpd.GeoDataFrame, ValidationResult]:
     """
-    Determines the ownership type for each property in the primary feature layer based on
+    Determines the ownership type for each property in the input GeoDataFrame based on
     the 'owner_1', 'owner_2', 'city_owner_agency', and 'standardized_mailing_address' columns.
     The ownership type is set as:
     - "Public" if 'city_owner_agency' is not NA or if the mailing address matches specific
@@ -24,10 +26,10 @@ def owner_type(
     - "Individual" if none of the above conditions are met.
 
     Args:
-        primary_featurelayer (FeatureLayer): The feature layer containing property ownership data.
+        input_gdf (GeoDataFrame): The GeoDataFrame containing property ownership data.
 
     Returns:
-        FeatureLayer: The updated feature layer with the 'owner_type' column added.
+        GeoDataFrame: The updated GeoDataFrame with the 'owner_type' column added.
 
     Tagline:
         Assigns ownership types
@@ -36,7 +38,7 @@ def owner_type(
         owner_type (str): The ownership type of the property: Public, Nonprofit/Civic,
                          Business (LLC), or Individual.
 
-    Primary Feature Layer Columns Referenced:
+    Columns referenced:
         opa_id, owner_1, owner_2, city_owner_agency, standardized_mailing_address
     """
     owner_types = []

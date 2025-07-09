@@ -1,5 +1,6 @@
 import { InfoGraphicSection } from '@/components/InfoGraphicSection';
 import { NumberedIconCard } from '@/components/NumberedIconCard';
+import DataDisclaimerModal from '@/components/DataDisclaimerModal';
 import imageCleaning from '@/images/cleaningLot.jpg';
 import imageDirty from '@/images/dirtyLot.jpg';
 import imageGunCrimes from '@/images/graphic-guncrimes.png';
@@ -37,6 +38,7 @@ const images = [
 const LandingPage: FC = () => {
   return (
     <>
+      <DataDisclaimerModal />
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 md:gap-10 mb-10 md:mb-16">
         <h1 className="heading-3xl font-extrabold leading-tight md:leading-[3rem] text-pretty text-left pr-9 col-span-2">
           Cleaning and greening vacant properties can{' '}
