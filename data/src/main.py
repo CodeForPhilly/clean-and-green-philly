@@ -8,6 +8,7 @@ import pandas as pd
 
 from src.classes.data_diff import DiffReport
 from src.classes.file_manager import FileManager, FileType, LoadType
+from src.classes.loaders import generate_pmtiles
 from src.classes.slack_reporters import SlackReporter
 from src.config.config import (
     enable_statistical_summaries,
@@ -237,6 +238,23 @@ def main():
 
         # Publish only vacant properties
         dataset = dataset[dataset["vacant"]]
+
+        # Generate and save local PMTiles copy from VACANT properties only
+        try:
+            vacant_file_label = file_manager.generate_file_label("vacant_properties")
+            generate_pmtiles(
+                dataset,
+                "vacant_properties",
+                upload_to_gcs=False,
+                save_locally=True,
+                local_file_manager=file_manager,
+                local_file_label=vacant_file_label,
+            )
+            print(
+                f"PMTiles saved locally in storage/pipeline_cache/{vacant_file_label}.pmtiles"
+            )
+        except Exception as e:
+            print(f"Warning: Failed to generate local PMTiles: {str(e)}")
 
         # Finalize
         pipeline_logger.info("ETL process completed successfully.")

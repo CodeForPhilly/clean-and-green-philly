@@ -1,0 +1,2 @@
+backup_data/*.parquet filter=lfs diff=lfs merge=lfs -text
+backup_data/*.pmtiles filter=lfs diff=lfs merge=lfs -text
