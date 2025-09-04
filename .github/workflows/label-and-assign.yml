@@ -6,7 +6,7 @@ jobs:
   label:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Label PR
         uses: actions/labeler@v5
@@ -18,7 +18,7 @@ jobs:
     needs: label
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Assign Reviewers
         uses: kentaro-m/auto-assign-action@v2.0.0
