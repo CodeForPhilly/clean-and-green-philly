@@ -256,10 +256,10 @@ export default function AboutPage() {
           Jon Geeting and Will Tung at the Center for Philadelphia&rsquo;s Urban
           Future; to our tech leads, Will Budreau, Brandon Cohen, Collum
           Freedman, Tommy Moorman, Arielle Moylen, Marvie Mulder, Hannah Vy
-          Nyugen, Gary Pang, Tracy Tran, and Nico Zigouras; and to all of the
-          local residents, community leaders, City staff, and faculty at the
-          University of Pennsylvania, Temple University, and Thomas Jefferson
-          University who informed and supported our work.
+          Nyugen, Gary Pang, Nathaniel Sidwell, Tracy Tran, and Nico Zigouras;
+          and to all of the local residents, community leaders, City staff, and
+          faculty at the University of Pennsylvania, Temple University, and
+          Thomas Jefferson University who informed and supported our work.
         </p>
         <p className="body-md">
           Lastly, we are grateful to Dr. Eugenia South and her colleagues, whose
