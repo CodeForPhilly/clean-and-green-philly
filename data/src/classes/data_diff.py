@@ -7,6 +7,14 @@ from src.classes.file_manager import FileManager, FileType, LoadType
 file_manager = FileManager()
 
 
+def extract_date(filename: str) -> datetime:
+    """Parse the ``YYYY_MM_DD`` date embedded in a pipeline cache filename."""
+    match = re.search(r"\d{4}_\d{1,2}_\d{1,2}", filename)
+    if match is None:
+        raise ValueError(f"Unable to find a date string within '{filename}'")
+    return datetime.strptime(match.group(), "%Y_%m_%d")
+
+
 class DiffReport:
     def __init__(self, table_name="all_properties_end", unique_id_col="opa_id"):
         """
@@ -38,19 +46,12 @@ class DiffReport:
             self.summary_text = f"Table {self.table_name} has less than two separate files with different timestamps. Cannot perform comparison"
             return self
 
-        def extract_date(str) -> datetime:
-            pattern = "\b\d{4}_\d{1,2}_\d{1,2}\b"
-            match = re.search(pattern, str)
-
-            if match:
-                date_str = match.group()
-                return datetime.strptime(date_str, "%Y_%m_%d")
-            else:
-                raise ValueError("Unable to find matching date string within input")
-
-        cached_files.sort(key=extract_date)
+        # Sort newest first so index 0 is the latest file, 1 the previous one.
+        cached_files.sort(key=extract_date, reverse=True)
 
         latest_file, previous_file = cached_files[0], cached_files[1]
+        self.latest_timestamp = extract_date(latest_file)
+        self.previous_timestamp = extract_date(previous_file)
 
         gdf_latest = file_manager.load_gdf(
             latest_file, LoadType.PIPELINE_CACHE, FileType.PARQUET
