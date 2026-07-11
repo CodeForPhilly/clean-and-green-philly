@@ -1,4 +1,0 @@
-onlyBuiltDependencies:
-  - "protobufjs"
-  - "sharp"
-  - "unrs-resolver"

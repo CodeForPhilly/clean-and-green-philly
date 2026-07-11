@@ -65,6 +65,11 @@
   "pnpm": {
     "overrides": {
       "cross-spawn": "^7.0.5"
-    }
+    },
+    "onlyBuiltDependencies": [
+      "protobufjs",
+      "sharp",
+      "unrs-resolver"
+    ]
   }
 }
