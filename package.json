@@ -1,5 +1,6 @@
 {
   "name": "phl-vacancy-dashboard-app",
+  "packageManager": "pnpm@10.17.1",
   "version": "1.0.0",
   "private": true,
   "scripts": {
@@ -58,7 +59,8 @@
     "eslint-plugin-react": "^7.34.4",
     "postcss-nesting": "^13.0.1",
     "postcss-preset-env": "^10.1.5",
-    "semantic-release": "^24.2.2"
+    "semantic-release": "^24.2.2",
+    "@types/geojson": "^7946.0.16"
   },
   "overrides": {
     "npm": {
