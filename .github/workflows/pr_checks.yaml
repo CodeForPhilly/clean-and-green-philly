@@ -13,26 +13,27 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - run: corepack enable
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
       - name: Install dependencies
-        run: npm install
+        run: pnpm install
 
       - name: Run ESLint
-        run: npm run lint
+        run: pnpm lint
         continue-on-error: true
 
       - name: Run Prettier Check
-        run: npm run format:check
+        run: pnpm format:check
         continue-on-error: true
 
       - name: Check linting and formatting
         if: failure()
         run: |
-          echo "Linting or formatting issues found. Please run 'npm run lint:fix' and 'npm run format' to fix them."
+          echo "Linting or formatting issues found. Please run 'pnpm lint:fix' and 'pnpm format' to fix them."
           exit 1
 
       - name: Linting and formatting success
