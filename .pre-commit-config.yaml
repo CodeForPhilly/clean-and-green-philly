@@ -44,19 +44,19 @@ repos:
       # Formatting with Prettier - run directly on files
       - id: prettier
         name: Prettier (Code formatting)
-        entry: npx prettier --write
+        entry: pnpm exec prettier --write
         language: node
         files: \.(js|jsx|ts|tsx|json|css|scss|md|yml|yaml)$
       # Linting with ESLint - run directly on files
       - id: eslint
         name: ESLint (JavaScript linting)
-        entry: npx eslint --fix
+        entry: pnpm exec eslint --fix
         language: node
         files: \.(js|jsx|ts|tsx)$
       # Dependency checks for Node.js
-      - id: npm-audit
+      - id: pnpm-audit
         name: Check Node.js dependencies
-        entry: npm audit
+        entry: pnpm audit
         language: node
-        files: ^package(-lock)?\.json$
+        files: ^(package\.json|pnpm-lock\.yaml)$
         pass_filenames: false

@@ -55,7 +55,7 @@ This will install both code quality checks and commit message format validation.
 
 ### Nextjs App
 
-Navigate to the root directory of the repository. Install dependencies by running `npm i`. Then, run the development server with `pnpm dev`. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Congrats! You're all set up.
+Navigate to the root directory of the repository. Install dependencies by running `pnpm install`. Then, run the development server with `pnpm dev`. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result. Congrats! You're all set up.
 
 ### MapTiler
 
